@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/utils";
-import { cva, type VariantProps } from "class-variance-authority";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import React, { PropsWithChildren, useRef } from "react";
+import { cn } from '@/lib/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
+import React, { PropsWithChildren, useRef } from 'react';
 
 export interface DockProps extends VariantProps<typeof dockVariants> {
   className?: string;
@@ -16,7 +16,7 @@ const DEFAULT_MAGNIFICATION = 60;
 const DEFAULT_DISTANCE = 140;
 
 const dockVariants = cva(
-  "mx-auto w-max h-full p-2 flex items-end rounded-full border"
+  'mx-auto w-max h-full p-2 flex items-end rounded-full border'
 );
 
 const Dock = React.forwardRef<HTMLDivElement, DockProps>(
@@ -38,7 +38,7 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
           return React.cloneElement(child, {
             mousex,
             magnification,
-            distance,
+            distance
           } as DockIconProps);
         }
         return child;
@@ -51,15 +51,14 @@ const Dock = React.forwardRef<HTMLDivElement, DockProps>(
         onMouseMove={(e) => mousex.set(e.pageX)}
         onMouseLeave={() => mousex.set(Infinity)}
         {...props}
-        className={cn(dockVariants({ className }))}
-      >
+        className={cn(dockVariants({ className }))}>
         {renderChildren()}
       </motion.div>
     );
   }
 );
 
-Dock.displayName = "Dock";
+Dock.displayName = 'Dock';
 
 export interface DockIconProps {
   size?: number;
@@ -68,7 +67,7 @@ export interface DockIconProps {
   mousex?: any;
   className?: string;
   children?: React.ReactNode;
-  props?: PropsWithChildren;
+  props?: PropsWithChildren<any>;
 }
 
 const DockIcon = ({
@@ -96,7 +95,7 @@ const DockIcon = ({
   let width = useSpring(widthSync, {
     mass: 0.1,
     stiffness: 150,
-    damping: 12,
+    damping: 12
   });
 
   return (
@@ -104,16 +103,15 @@ const DockIcon = ({
       ref={ref}
       style={{ width }}
       className={cn(
-        "flex aspect-square cursor-pointer items-center justify-center rounded-full",
+        'flex aspect-square cursor-pointer items-center justify-center rounded-full',
         className
       )}
-      {...props}
-    >
+      {...props}>
       {children}
     </motion.div>
   );
 };
 
-DockIcon.displayName = "DockIcon";
+DockIcon.displayName = 'DockIcon';
 
 export { Dock, DockIcon, dockVariants };
