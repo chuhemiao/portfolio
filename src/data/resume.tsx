@@ -10,7 +10,7 @@ export const DATA = {
   description:
     'Product Engineer｜Digital Nomad｜DAOs Enthusiasts｜Buidl｜Bitcoin HODL.',
   summary:
-    '6 years of Web3 product engineer, 3 years of Web3 startup experience, led the design and development of 10+ Web3 products (SOL, TON, ICP), obtained 10 million level of financing, and led the team to obtain a cumulative total of 300,000 U.S. dollars. ADA, People, Degen Early Alpha.',
+    '6 years of Web3 product engineer, 3 years of Web3 startup experience, led the design and development of 10+ Web3 products (SOL, TON, ICP), obtained 10M level of financing, and led the team to obtain a cumulative total of $300,000. ICP, Tia, ADA, People, Degen Early Alpha.',
   avatarUrl: '/me.jpg',
   skills: [
     'React',
@@ -62,8 +62,25 @@ export const DATA = {
         name: 'Send Email',
         url: '#',
         icon: Icons.email,
-
         navbar: false
+      },
+      weekly: {
+        name: 'Weekly Crypto',
+        url: 'https://weekly.kkdemian.com/',
+        icon: Icons.weekly,
+        navbar: true
+      },
+      binance: {
+        name: 'Binance',
+        url: 'https://weekly.kkdemian.com/',
+        icon: Icons.binance,
+        navbar: true
+      },
+      okx: {
+        name: 'OKX',
+        url: 'https://weekly.kkdemian.com/',
+        icon: Icons.okx,
+        navbar: true
       }
     }
   },

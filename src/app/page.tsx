@@ -159,7 +159,7 @@ export default function Page() {
                 </div>
 
                 <p className='text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
-                  Buidl For Mass Crypto dApp, Past of years, I attended{' '}
+                  Buidl For Mass Crypto dApp. Recent years, I attended{' '}
                   {DATA.hackathons.length}+ hackathons.
                 </p>
               </div>
