@@ -72,13 +72,13 @@ export const DATA = {
       },
       binance: {
         name: 'Binance',
-        url: 'https://weekly.kkdemian.com/',
+        url: 'https://accounts.binance.com/en/register?ref=MKOOSEO4',
         icon: Icons.binance,
         navbar: true
       },
       okx: {
         name: 'OKX',
-        url: 'https://weekly.kkdemian.com/',
+        url: 'https://www.okx.com/join/1871789',
         icon: Icons.okx,
         navbar: true
       }
