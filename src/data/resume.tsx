@@ -5,8 +5,8 @@ export const DATA = {
   name: 'KK Demian',
   initials: 'KK',
   url: 'https://kkdemian.com',
-  location: 'Japan, 東京都',
-  locationLink: 'https://maps.app.goo.gl/MaUmZnDK5beuQNdn8',
+  location: 'Web3',
+  locationLink: '',
   description:
     'Product Engineer｜Digital Nomad｜DAOs Enthusiasts｜Buidl｜Bitcoin HODL.',
   summary:
