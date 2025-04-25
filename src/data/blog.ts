@@ -1,11 +1,12 @@
-import fs from "fs";
-import matter from "gray-matter";
-import path from "path";
-import rehypePrettyCode from "rehype-pretty-code";
-import rehypeStringify from "rehype-stringify";
-import remarkParse from "remark-parse";
-import remarkRehype from "remark-rehype";
-import { unified } from "unified";
+import fs from 'fs';
+import matter from 'gray-matter';
+import path from 'path';
+import rehypePrettyCode from 'rehype-pretty-code';
+import rehypeStringify from 'rehype-stringify';
+import remarkGfm from 'remark-gfm';
+import remarkParse from 'remark-parse';
+import remarkRehype from 'remark-rehype';
+import { unified } from 'unified';
 
 type Metadata = {
   title: string;
@@ -15,20 +16,21 @@ type Metadata = {
 };
 
 function getMDXFiles(dir: string) {
-  return fs.readdirSync(dir).filter((file) => path.extname(file) === ".mdx");
+  return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx');
 }
 
 export async function markdownToHTML(markdown: string) {
   const p = await unified()
     .use(remarkParse)
+    .use(remarkGfm)
     .use(remarkRehype)
     .use(rehypePrettyCode, {
       // https://rehype-pretty.pages.dev/#usage
       theme: {
-        light: "min-light",
-        dark: "min-dark",
+        light: 'min-light',
+        dark: 'min-dark'
       },
-      keepBackground: false,
+      keepBackground: false
     })
     .use(rehypeStringify)
     .process(markdown);
@@ -37,14 +39,14 @@ export async function markdownToHTML(markdown: string) {
 }
 
 export async function getPost(slug: string) {
-  const filePath = path.join("content", `${slug}.mdx`);
-  let source = fs.readFileSync(filePath, "utf-8");
+  const filePath = path.join('content', `${slug}.mdx`);
+  let source = fs.readFileSync(filePath, 'utf-8');
   const { content: rawContent, data: metadata } = matter(source);
   const content = await markdownToHTML(rawContent);
   return {
     source: content,
     metadata,
-    slug,
+    slug
   };
 }
 
@@ -57,12 +59,12 @@ async function getAllPosts(dir: string) {
       return {
         metadata,
         slug,
-        source,
+        source
       };
     })
   );
 }
 
 export async function getBlogPosts() {
-  return getAllPosts(path.join(process.cwd(), "content"));
+  return getAllPosts(path.join(process.cwd(), 'content'));
 }

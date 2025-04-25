@@ -29,7 +29,9 @@ export default function Page() {
                 delay={BLUR_FADE_DELAY}
                 text={DATA.description}
               />
-              <h6>それが欲しいから、それを追い求めるんだ。</h6>
+              <BlurFade delay={BLUR_FADE_DELAY}>
+                <h6>それが欲しいから、それを追い求めるんだ。</h6>
+              </BlurFade>
             </div>
             <BlurFade delay={BLUR_FADE_DELAY}>
               <Avatar className='size-28 border'>
