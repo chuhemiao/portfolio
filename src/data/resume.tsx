@@ -74,7 +74,7 @@ export const DATA = {
         name: 'Weekly Crypto',
         url: 'https://0xkkdemian.notion.site/',
         icon: Icons.weekly,
-        navbar: true
+        navbar: false
       },
       binance: {
         name: 'Binance',
@@ -93,7 +93,7 @@ export const DATA = {
 
   work: [
     {
-      company: 'IBuidl',
+      company: 'iBuidl',
       href: 'https://ibuidl.org',
       badges: [],
       location: 'Remote',
