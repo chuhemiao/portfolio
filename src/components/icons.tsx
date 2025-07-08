@@ -54,15 +54,7 @@ export const Icons = {
       src='/binance.png'
     />
   ),
-  okx: (props: IconProps) => (
-    <img
-      width={20}
-      height={20}
-      alt='kkdemian'
-      className='rounded-full mr-2'
-      src='/okx.svg'
-    />
-  ),
+
   youtube: (props: IconProps) => (
     <svg
       width='32px'

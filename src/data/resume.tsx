@@ -7,7 +7,8 @@ export const DATA = {
   url: 'https://kkdemian.com',
   location: 'Web3',
   locationLink: '',
-  description: 'Product Engineer｜Nomadism｜Stable Coin&ETFs｜Bitcoin HODL.',
+  description:
+    'Product Engineer｜Nomadism｜Stable Coin&ETFs｜Bitcoin&ETH HODL. | NS V2',
   summary:
     '6 years of Web3 product engineer, 4 years of Web3 startup experience, led the design and development of 10+ Web3 products (SOL, TON, ICP), obtained 10M level of financing, and led the team to obtain a cumulative total of $300,000. ICP, Tia, ADA, People, Degen Early Alpha.',
   avatarUrl: '/me.jpg',
@@ -81,12 +82,6 @@ export const DATA = {
         url: 'https://accounts.binance.com/en/register?ref=MKOOSEO4',
         icon: Icons.binance,
         navbar: true
-      },
-      okx: {
-        name: 'OKX',
-        url: 'https://www.okx.com/join/1871789',
-        icon: Icons.okx,
-        navbar: true
       }
     }
   },
@@ -98,10 +93,22 @@ export const DATA = {
       badges: [],
       location: 'Remote',
       title: 'Founder',
-      logoUrl: '/me.jpg',
+      logoUrl: '/ibuidl.jpg',
       start: 'Jun 2024',
       end: 'Now',
       description: '90 days to be a digital nomad, Web2 to Web3.'
+    },
+    {
+      company: 'Yamaswap',
+      href: 'https://www.yamaswap.com/',
+      badges: [],
+      location: 'Remote',
+      title: 'Co-founder & Product Engineerr',
+      logoUrl: '/yamalogo.png',
+      start: 'Nov 2024',
+      end: 'Now',
+      description:
+        'Build permissionless ETFs dApp built on top of the Intent Framework and the AI Agent, build with SOL and BASE.'
     }
   ],
   education: [
@@ -115,6 +122,91 @@ export const DATA = {
     }
   ],
   projects: [
+    {
+      title: 'Yamaswap',
+      href: 'https://yama.ag/',
+      dates: 'Nov 2024 - Now',
+      active: true,
+      description:
+        'Build permissionless ETFs dApp built on top of the Intent Framework and the AI Agent, build with SOL and BASE.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'Golang',
+        'Python',
+        'Vercel',
+        'Shadcn UI',
+        'Rust',
+        'Solana',
+        'Solidity',
+        'Chatgpt&Weaviate',
+        'Node'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: 'https://yama.ag',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/yama.png',
+      video: ''
+    },
+
+    {
+      title: 'fCurrency',
+      href: 'https://farcaster.xyz/miniapps/EGI5BYDYhzwk/fcurrency',
+      dates: 'June 2025 - Now',
+      active: true,
+      description: 'Composable conversion engine for fiat and crypto assets.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'TailwindCSS',
+        'Vercel',
+        'Shadcn UI',
+        'CMC / CG / Coinapi / FF API'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: 'https://farcaster.xyz/miniapps/EGI5BYDYhzwk/fcurrency',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/fcurrency.png',
+      video: ''
+    },
+
+    {
+      title: '🦌 AnkiRin',
+      href: 'https://rin.kkdemian.com/',
+      dates: 'June 2025 - Now',
+      active: true,
+      description: 'Master Japanese Vocabulary with AI-Powered Flashcards.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'TailwindCSS',
+        'Vercel',
+        'Shadcn UI',
+        'Firebase',
+        'Gemini AI'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: 'https://rin.kkdemian.com/',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/ankirin.png',
+      video: ''
+    },
+
     {
       title: 'IBuidl',
       href: 'https://ibuidl.org/',
@@ -144,8 +236,8 @@ export const DATA = {
     {
       title: 'Crypto Weekly',
       href: 'https://0xkkdemian.notion.site/',
-      dates: 'May 9th 2024 - Now',
-      active: true,
+      dates: 'May 9th 2024 - June 20th 2025',
+      active: false,
       description:
         'Literacy in cryptocurrencies and macroeconomics with weekly reports on finding alpha.',
       technologies: [
@@ -159,7 +251,7 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://weekly.kkdemian.com/',
+          href: 'https://0xkkdemian.notion.site/',
           icon: <Icons.globe className='size-3' />
         }
       ],
@@ -169,7 +261,7 @@ export const DATA = {
     {
       title: 'Web3 Crypto Tools',
       href: 'https://tool.ibuidl.org/',
-      dates: 'Aug 10th 2024 - Now',
+      dates: 'Aug 10th 2024 - June 20th 2025',
       active: true,
       description: 'Cryptocurrency Gadgets, Mainstream Web3 Tools.',
       technologies: [
