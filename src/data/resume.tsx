@@ -103,7 +103,7 @@ export const DATA = {
       href: 'https://www.yamaswap.com/',
       badges: [],
       location: 'Remote',
-      title: 'Co-founder & Product Engineerr',
+      title: 'TPM',
       logoUrl: '/yamalogo.png',
       start: 'Nov 2024',
       end: 'Now',
@@ -124,7 +124,7 @@ export const DATA = {
   projects: [
     {
       title: 'Yamaswap',
-      href: 'https://yama.ag/',
+      href: 'https://yamaswap.com',
       dates: 'Nov 2024 - Now',
       active: true,
       description:
@@ -146,7 +146,7 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://yama.ag',
+          href: 'https://yamaswap.com',
           icon: <Icons.globe className='size-3' />
         }
       ],
