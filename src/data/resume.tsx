@@ -82,6 +82,12 @@ export const DATA = {
         url: 'https://accounts.binance.com/en/register?ref=MKOOSEO4',
         icon: Icons.binance,
         navbar: true
+      },
+      hyper: {
+        name: 'HyperLiquid',
+        url: 'https://app.hyperliquid.xyz/trade',
+        icon: Icons.hyper,
+        navbar: true
       }
     }
   },
@@ -94,7 +100,7 @@ export const DATA = {
       location: 'Remote',
       title: 'Founder',
       logoUrl: '/ibuidl.jpg',
-      start: 'Jun 2024',
+      start: 'May 2024',
       end: 'Now',
       description: '90 days to be a digital nomad, Web2 to Web3.'
     },
@@ -105,7 +111,7 @@ export const DATA = {
       location: 'Remote',
       title: 'TPM',
       logoUrl: '/yamalogo.png',
-      start: 'Nov 2024',
+      start: 'Jun 2024',
       end: 'Now',
       description:
         'Build permissionless ETFs dApp built on top of the Intent Framework and the AI Agent, build with SOL and BASE.'

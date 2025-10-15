@@ -54,6 +54,15 @@ export const Icons = {
       src='/binance.png'
     />
   ),
+  hyper: (props: IconProps) => (
+    <img
+      width={20}
+      height={20}
+      alt='hyperliquid'
+      className='rounded-full mr-3'
+      src='/hyper.png'
+    />
+  ),
 
   youtube: (props: IconProps) => (
     <svg
