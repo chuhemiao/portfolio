@@ -8,11 +8,14 @@ import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
 
-type Metadata = {
+export type Category = 'thoughts' | 'research' | 'economics' | 'philosophy' | 'investing';
+
+export type Metadata = {
   title: string;
   publishedAt: string;
   summary: string;
   image?: string;
+  category?: Category;
 };
 
 function getMDXFiles(dir: string) {

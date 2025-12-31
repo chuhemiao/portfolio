@@ -24,21 +24,52 @@ export async function generateMetadata({
     publishedAt: publishedTime,
     summary: description,
     image,
+    category,
   } = post.metadata;
   let ogImage = image ? `${DATA.url}${image}` : `${DATA.url}/og?title=${title}`;
+
+  // Generate keywords based on category and content
+  const categoryKeywords: Record<string, string[]> = {
+    thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
+    research: ["Crypto Research", "Blockchain Analysis", "Investment Report", "DeFi Research"],
+    economics: ["Crypto Economics", "Token Economics", "Blockchain Economics", "Digital Assets"],
+    philosophy: ["Crypto Philosophy", "Decentralization", "Web3 Philosophy"],
+    investing: ["Crypto Investment", "DeFi Investing", "Digital Assets", "ETF", "Bitcoin", "Ethereum"],
+  };
+
+  const keywords = [
+    "Web3",
+    "Blockchain",
+    "Cryptocurrency",
+    "DeFi",
+    ...(category && categoryKeywords[category] ? categoryKeywords[category] : []),
+  ];
 
   return {
     title,
     description,
+    keywords,
+    authors: [{ name: DATA.name, url: DATA.url }],
+    creator: DATA.name,
+    publisher: DATA.name,
+    alternates: {
+      canonical: `${DATA.url}/blog/${post.slug}`,
+    },
     openGraph: {
       title,
       description,
       type: "article",
       publishedTime,
       url: `${DATA.url}/blog/${post.slug}`,
+      siteName: DATA.name,
+      locale: "en_US",
+      authors: [DATA.name],
       images: [
         {
           url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: title,
         },
       ],
     },
@@ -46,8 +77,10 @@ export async function generateMetadata({
       card: "summary_large_image",
       title,
       description,
+      creator: "@0xkkdemian",
       images: [ogImage],
     },
+    category: category || "Technology",
   };
 }
 
@@ -64,28 +97,50 @@ export default async function Blog({
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.metadata.title,
+    description: post.metadata.summary,
+    image: post.metadata.image
+      ? `${DATA.url}${post.metadata.image}`
+      : `${DATA.url}/og?title=${post.metadata.title}`,
+    datePublished: post.metadata.publishedAt,
+    dateModified: post.metadata.publishedAt,
+    author: {
+      "@type": "Person",
+      name: DATA.name,
+      url: DATA.url,
+      sameAs: [
+        "https://github.com/chuhemiao",
+        "https://x.com/0xkkdemian",
+        "https://www.youtube.com/@kkdemian",
+      ],
+    },
+    publisher: {
+      "@type": "Person",
+      name: DATA.name,
+      url: DATA.url,
+    },
+    url: `${DATA.url}/blog/${post.slug}`,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `${DATA.url}/blog/${post.slug}`,
+    },
+    keywords: post.metadata.category
+      ? [post.metadata.category, "Web3", "Blockchain", "Cryptocurrency", "DeFi"]
+      : ["Web3", "Blockchain", "Cryptocurrency"],
+    articleSection: post.metadata.category || "Technology",
+    inLanguage: "en-US",
+  };
+
   return (
     <section id="blog">
       <script
         type="application/ld+json"
         suppressHydrationWarning
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "BlogPosting",
-            headline: post.metadata.title,
-            datePublished: post.metadata.publishedAt,
-            dateModified: post.metadata.publishedAt,
-            description: post.metadata.summary,
-            image: post.metadata.image
-              ? `${DATA.url}${post.metadata.image}`
-              : `${DATA.url}/og?title=${post.metadata.title}`,
-            url: `${DATA.url}/blog/${post.slug}`,
-            author: {
-              "@type": "Person",
-              name: DATA.name,
-            },
-          }),
+          __html: JSON.stringify(jsonLd),
         }}
       />
       <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">

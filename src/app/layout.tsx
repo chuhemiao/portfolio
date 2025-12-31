@@ -1,3 +1,4 @@
+import { Analytics } from "@/components/analytics";
 import Navbar from "@/components/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,6 +20,36 @@ export const metadata: Metadata = {
     template: `%s | ${DATA.name}`,
   },
   description: DATA.description,
+  keywords: [
+    "Web3",
+    "Blockchain",
+    "Cryptocurrency",
+    "DeFi",
+    "Stablecoin",
+    "Bitcoin",
+    "Ethereum",
+    "Solana",
+    "Product Engineer",
+    "Crypto Investment",
+    "ETF",
+    "Smart Contracts",
+    "Decentralized Finance",
+    "Crypto Research",
+    "Web3 Development",
+    "ICP",
+    "TON",
+    "Crypto Trading",
+    "Digital Assets",
+    "Blockchain Technology"
+  ],
+  authors: [{ name: DATA.name, url: DATA.url }],
+  creator: DATA.name,
+  publisher: DATA.name,
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
     title: `${DATA.name}`,
     description: DATA.description,
@@ -26,6 +57,14 @@ export const metadata: Metadata = {
     siteName: `${DATA.name}`,
     locale: "en_US",
     type: "website",
+    images: [
+      {
+        url: `${DATA.url}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: `${DATA.name} - Web3 Product Engineer & Crypto Expert`,
+      },
+    ],
   },
   robots: {
     index: true,
@@ -39,13 +78,23 @@ export const metadata: Metadata = {
     },
   },
   twitter: {
-    title: `${DATA.name}`,
     card: "summary_large_image",
+    title: `${DATA.name}`,
+    description: DATA.description,
+    creator: "@0xkkdemian",
+    images: [`${DATA.url}/og-image.png`],
   },
   verification: {
     google: "",
     yandex: "",
   },
+  alternates: {
+    canonical: DATA.url,
+    types: {
+      "application/rss+xml": `${DATA.url}/rss.xml`,
+    },
+  },
+  category: "Technology",
 };
 
 export default function RootLayout({
@@ -67,6 +116,7 @@ export default function RootLayout({
             <Navbar />
           </TooltipProvider>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
