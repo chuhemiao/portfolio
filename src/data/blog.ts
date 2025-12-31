@@ -48,7 +48,7 @@ export async function getPost(slug: string) {
   const content = await markdownToHTML(rawContent);
   return {
     source: content,
-    metadata,
+    metadata: metadata as Metadata,
     slug
   };
 }
@@ -60,7 +60,7 @@ async function getAllPosts(dir: string) {
       let slug = path.basename(file, path.extname(file));
       let { metadata, source } = await getPost(slug);
       return {
-        metadata,
+        metadata: metadata as Metadata,
         slug,
         source
       };
