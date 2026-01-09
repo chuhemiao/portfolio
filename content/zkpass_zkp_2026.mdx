@@ -1,0 +1,162 @@
+---
+title: 'zkPass: Investment-Grade Research Report '
+publishedAt: '2026-01-08'
+summary: 'zkPass is a hybrid zkTLS oracle protocol that converts private Web2 data into on-chain, zero-knowledge proofs without exposing the underlying information. The mainnet and the $ZKP token went live in late 2025, supported by $18 M in venture funding and fresh CEX listings.'
+category: 'research'
+---
+
+## TL;DR
+
+zkPass is a hybrid zkTLS oracle protocol that converts private Web2 data into on-chain, zero-knowledge proofs without exposing the underlying information. The mainnet and the $ZKP token went live in late 2025, supported by $18 M in venture funding and fresh CEX listings. With >250 K on-chain interactions, 353 K social followers, and an SDK that delivers millisecond proofs, zkPass is emerging as core privacy infrastructure for identity, reputation, and compliance use cases.
+
+---
+
+## 1. Project Overview
+
+| Item             | Detail                                                                      |
+| ---------------- | --------------------------------------------------------------------------- |
+| Name             | **zkPass**                                                                  |
+| Domain           | <https://zkpass.org>                                                        |
+| Sector           | ZK Oracle • Privacy Infrastructure • Decentralized Identity                 |
+| Core Thesis      | Verifiable proofs from any HTTPS site via zkTLS without disclosing raw data |
+| Supported Chains | Ethereum, BNB Chain, zkSync, Linea, Manta; Solana support via SDK           |
+| Stage (2026-01)  | **Mainnet** & Token live                                                    |
+| Team             | Co-founder Joshua Peng, Head of Product “toaster”, Partner Francis Berwa    |
+| Funding Raised   | **$18 M** across Seed (2023), Series A (2024), IDO (2025)                   |
+| Website          | zkPass.org [zkPass](https://zkpass.org)                                     |
+| Technical Paper  | Hybrid 3P-TLS & VOLE-ZK design [paper](https://paper.zkpass.org/tech.pdf)   |
+
+## 2. Protocol Architecture & Technical Stack
+
+### 2.1 High-Level Flow
+
+1. **3P-TLS Handshake**: Prover (P) and Verifier (V) jointly establish TLS session keys with Data Source (S).
+2. **Traffic Recording**: V records ciphertext; P alone decrypts.
+3. **Local Proof Generation**: P computes predicates over the plaintext and produces a VOLE-in-the-Head proof in milliseconds.
+4. **On-chain / Off-chain Verification**: V (or a dApp) verifies the proof through zkPass verifier contracts or SDK helpers. [paper](https://paper.zkpass.org/tech.pdf)
+
+### 2.2 Cryptographic Primitives
+
+- **3P-TLS** (Elliptic-curve DH) + **MPC** (Paillier, OT) secure the session.
+- **VOLE-ZK** & **SoftSpokenOT** yield lightweight, transparent proofs (no trusted setup).
+- **ZKVM** wraps circuits for flexible statement logic. [paper](https://paper.zkpass.org/tech.pdf)
+
+### 2.3 Trust & Security Assumptions
+
+- Relies on standard TLS authenticity.
+- Split MAC keys prevent prover forgery.
+- No centralized servers; proofs are locally generated, minimizing data-custody risk. [zkPass](https://zkpass.org)
+
+### 2.4 Developer Tooling
+
+- **TransGate-JS-SDK** (npm `@zkpass/transgate-js-sdk`) for browser & Node integrations.
+- Proof-as-a-Service endpoints, schema templates, tutorial repos, and a browser extension. [GitHub](https://github.com/zkPassOfficial)
+
+### 2.5 Smart-Contract Interfaces
+
+Example verifier contracts (EVM/Solana) are included in `zkPass-VOLEitH-Showcase`; token contract on Ethereum: `0xe1be...dbc`. [GitHub](https://github.com/zkPassOfficial)
+
+## 3. Tokenomics & Incentive Design
+
+| Metric                 | Value                                                                               | Notes |
+| ---------------------- | ----------------------------------------------------------------------------------- | ----- |
+| Token                  | **ZKP** (ERC-20 & BEP-20)                                                           |
+| Total Supply           | **1 B ZKP** (fixed)                                                                 |
+| Circulating (Jan 2026) | **201.7 M ZKP**                                                                     |
+| Market Cap             | **$35.7 M**                                                                         |
+| FDV                    | **$176.9 M**                                                                        |
+| Launch                 | 19 Dec 2025                                                                         |
+| Exchange Coverage      | Binance, Coinbase, Bithumb, Bitget (spot & perpetuals) [zkPass](https://zkpass.org) |
+
+Distribution & Vesting
+
+| Bucket            | %      | Unlock Schedule                             |
+| ----------------- | ------ | ------------------------------------------- |
+| Community         | 48.5 % | 12.5 % TGE; 6 % next 3 mo; rest linear 5 yr |
+| Early Investors   | 22.5 % | 12-mo cliff → linear 18 mo                  |
+| Core Contributors | 14 %   | 24-mo cliff → linear 24 mo                  |
+| DAO Treasury      | 10 %   | Linear 5 yr                                 |
+| Liquidity         | 5 %    | 100 % at TGE                                |
+
+Utility  
+• Node staking collateral & delegations (e.g., Binance Wallet Booster ≥200 ZKP)  
+• Payment unit for verification throughput  
+• Governance voting (1 ZKP = 1 vote; proposal threshold 100 K) [zkPass](https://zkpass.org)
+
+Slashing mechanisms in `StakeStrategyManager` penalize invalid proofs, securing the oracle network. [paper](https://paper.zkpass.org/tech.pdf)
+
+## 4. Adoption & Usage Metrics
+
+### 4.1 On-Chain Activity (Jul 2025 → Jan 2026)
+
+| Chain     | Txns     | Unique Interactors | Token Transfers | Volume (USD) |
+| --------- | -------- | ------------------ | --------------- | ------------ |
+| Ethereum  | 109 ,757 | 86 ,377            | 281 ,771        | $17.59 M     |
+| BNB Chain | 142 ,905 | 104 ,056           | —               | —            |
+
+> Total on-chain touches: **>250 K** across chains, validating early liquidity and token utility.
+
+### 4.2 Developer Adoption
+
+- **7 public repos**, latest updates Dec 2025.
+- Active SDK (`TransGate-JS-SDK`) & tutorial dApps (e.g., Intract Quest, Verifiable Reputation Score). [GitHub](https://github.com/zkPassOfficial)
+
+### 4.3 Community & Social
+
+- **353 K** X followers, verified account.
+- Engagement: product launches & PoMA posts receive thousands of views and double-digit likes, signalling niche but active interest. [x.com](https://x.com/zkpass)
+
+### 4.4 Use-Case Traction
+
+- Identity/KYC (age, residency, accredited-investor proofs).
+- Reputation (GitHub commits, Medium authorship PoMA).
+- DeFi Collateral & proof-of-reserves integrations with Galxe & CyberConnect. [zkPass](https://zkpass.org)
+
+## 5. Protocol Economics & Sustainability
+
+| Component          | Cost Bearer                             | Current Observation                                 |
+| ------------------ | --------------------------------------- | --------------------------------------------------- |
+| Proof Generation   | End-user (local CPU); zero on-chain gas | Millisecond VOLE-ZK proofs keep UX friction low     |
+| Proof Verification | dApp / Verifier contract                | Standard gas only; no protocol fee yet              |
+| Node Rewards       | DAO-funded ZKP emissions                | Weekly Merkle drops to stakers                      |
+| Scalability        | VOLE-ZK size ≈ 2–4 KB                   | Fits L2 calldata limits; supports batch attestation |
+
+Comparative Snapshot
+
+| Protocol         | Data Type     | Privacy         | Proof System          | Fees                         |
+| ---------------- | ------------- | --------------- | --------------------- | ---------------------------- |
+| Chainlink        | Public prices | None            | N/A                   | Oracle fee per call          |
+| DECO (Chainlink) | Private HTTPS | MPC-TLS         | zkSNARK               | Unclear                      |
+| Reclaim          | Private HTTPS | zk              | Groth16               | None                         |
+| zkPass           | Private HTTPS | zkTLS + VOLE-ZK | Transparent, no setup | None (roadmap to usage fees) |
+
+## 6. Governance & Risk Analysis
+
+1. **DAO Structure** – Swiss Association; Treasury 4-of-5 multisig; 7-day proposal/vote cycle. [zkPass](https://zkpass.org)
+2. **Technical Risks**  
+   • TLS downgrades or BGP hijacks could mis-route traffic (mitigated via MPC mode).  
+   • Web2 dependency – server IP blocks may require dual-client fallback.  
+   • Implementation bugs in VOLE-ZK circuits; ongoing audits pre-TGE. [paper](https://paper.zkpass.org/tech.pdf)
+3. **Economic Risks** – Token utility tied to verification demand; low fee capture today.
+4. **Oracle Collusion** – Slashing & BLS-aggregated randomness discourage validator mis-behavior.
+
+## 7. Project Stage & Strategic Positioning
+
+- **Current Maturity**: Early mainnet with live incentives but still polishing schemas & integrations.
+- **Bottlenecks**: UX (browser extensions), developer education, regulatory clarity for KYC proofs.
+- **Strategic Edge**: First-mover hybrid 3P-TLS + VOLE-ZK, enabling light client proofs without server changes; larger addressable market than price feeds.
+- **Competitive Outlook**: Outperforms heavier MPC-TLS (TLSNotary, PADO) in latency; differentiated from Chainlink/DECO by transparent setup and flexible schemas.
+
+## 8. Final Score (1 – 5 Stars)
+
+| Dimension             | Score | Rationale                                 |
+| --------------------- | ----- | ----------------------------------------- |
+| Cryptographic Design  | ★★★★★ | Transparent VOLE-ZK, no trusted setup     |
+| Technical Innovation  | ★★★★★ | Hybrid 3P-TLS + MPC + ZKVM                |
+| Economic Model        | ★★★★☆ | Fixed supply & staking, but fees not live |
+| Developer Adoption    | ★★★★☆ | Active SDK, modest repo activity          |
+| Market Potential      | ★★★★★ | Addresses identity & compliance TAM       |
+| Governance & Security | ★★★★☆ | DAO live; audits in progress              |
+
+**Summary Verdict**  
+Developers seeking privacy-preserving attestations should build on zkPass: its lightweight zkTLS proofs, transparent cryptography, and growing cross-chain footprint position it as foundational oracle infrastructure for compliant DeFi, identity, and reputation over the long term.
