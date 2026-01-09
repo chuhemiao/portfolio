@@ -39,7 +39,7 @@ export const DATA = {
         name: 'GitHub',
         url: 'https://github.com/chuhemiao',
         icon: Icons.github,
-        navbar: true
+        navbar: false
       },
       LinkedIn: {
         name: 'LinkedIn',
@@ -51,19 +51,19 @@ export const DATA = {
         name: 'X',
         url: 'https://x.com/0xkkdemian',
         icon: Icons.x,
-        navbar: true
+        navbar: false
       },
       Books: {
         name: 'Crypto Master',
         url: 'https://book.kkdemian.com/',
         icon: Icons.books,
-        navbar: true
+        navbar: false
       },
       Youtube: {
         name: 'Youtube',
         url: 'https://www.youtube.com/@kkdemian',
         icon: Icons.youtube,
-        navbar: true
+        navbar: false
       },
       email: {
         name: 'Send Email',

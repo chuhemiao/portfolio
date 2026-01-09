@@ -52,15 +52,42 @@ export default function Page() {
           </div>
         </BlurFade>
       </section>
+      <section id='social'>
+        <BlurFade delay={BLUR_FADE_DELAY * 5}>
+          <h2 className='text-xl font-bold'>Social</h2>
+        </BlurFade>
+        <BlurFade delay={BLUR_FADE_DELAY * 6}>
+          <div className='flex flex-wrap gap-4 mt-4'>
+            {Object.entries(DATA.contact.social)
+              .filter(([_, social]) =>
+                social.name === 'GitHub' ||
+                social.name === 'X' ||
+                social.name === 'Crypto Master' ||
+                social.name === 'Youtube'
+              )
+              .map(([key, social], id) => (
+                <Link
+                  key={key}
+                  href={social.url}
+                  target='_blank'
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'
+                >
+                  {social.icon && <social.icon className='size-5' />}
+                  <span className='text-sm font-medium'>{social.name}</span>
+                </Link>
+              ))}
+          </div>
+        </BlurFade>
+      </section>
       <section id='work'>
         <div className='flex min-h-0 flex-col gap-y-3'>
-          <BlurFade delay={BLUR_FADE_DELAY * 5}>
+          <BlurFade delay={BLUR_FADE_DELAY * 7}>
             <h2 className='text-xl font-bold'>Work Experience</h2>
           </BlurFade>
           {DATA.work.map((work, id) => (
             <BlurFade
               key={work.company}
-              delay={BLUR_FADE_DELAY * 6 + id * 0.05}>
+              delay={BLUR_FADE_DELAY * 8 + id * 0.05}>
               <ResumeCard
                 key={work.company}
                 logoUrl={work.logoUrl}
@@ -78,13 +105,13 @@ export default function Page() {
       </section>
       <section id='education'>
         <div className='flex min-h-0 flex-col gap-y-3'>
-          <BlurFade delay={BLUR_FADE_DELAY * 7}>
+          <BlurFade delay={BLUR_FADE_DELAY * 9}>
             <h2 className='text-xl font-bold'>Education</h2>
           </BlurFade>
           {DATA.education.map((education, id) => (
             <BlurFade
               key={education.school}
-              delay={BLUR_FADE_DELAY * 8 + id * 0.05}>
+              delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
               <ResumeCard
                 key={education.school}
                 href={education.href}
@@ -100,12 +127,12 @@ export default function Page() {
       </section>
       <section id='skills'>
         <div className='flex min-h-0 flex-col gap-y-3'>
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
+          <BlurFade delay={BLUR_FADE_DELAY * 11}>
             <h2 className='text-xl font-bold'>Skills</h2>
           </BlurFade>
           <div className='flex flex-wrap gap-1'>
             {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 10 + id * 0.05}>
+              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 12 + id * 0.05}>
                 <Badge key={skill}>{skill}</Badge>
               </BlurFade>
             ))}
@@ -114,7 +141,7 @@ export default function Page() {
       </section>
       <section id='projects'>
         <div className='space-y-12 w-full py-12'>
-          <BlurFade delay={BLUR_FADE_DELAY * 11}>
+          <BlurFade delay={BLUR_FADE_DELAY * 13}>
             <div className='flex flex-col items-center justify-center space-y-4 text-center'>
               <div className='space-y-2'>
                 <div className='inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm'>
@@ -134,7 +161,7 @@ export default function Page() {
             {DATA.projects.map((project, id) => (
               <BlurFade
                 key={project.title}
-                delay={BLUR_FADE_DELAY * 12 + id * 0.05}>
+                delay={BLUR_FADE_DELAY * 14 + id * 0.05}>
                 <ProjectCard
                   href={project.href}
                   key={project.title}
@@ -153,7 +180,7 @@ export default function Page() {
       </section>
       <section id='hackathons'>
         <div className='space-y-12 w-full py-12'>
-          <BlurFade delay={BLUR_FADE_DELAY * 13}>
+          <BlurFade delay={BLUR_FADE_DELAY * 15}>
             <div className='flex flex-col items-center justify-center space-y-4 text-center'>
               <div className='space-y-2'>
                 <div className='inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm'>
@@ -167,12 +194,12 @@ export default function Page() {
               </div>
             </div>
           </BlurFade>
-          <BlurFade delay={BLUR_FADE_DELAY * 14}>
+          <BlurFade delay={BLUR_FADE_DELAY * 16}>
             <ul className='mb-4 ml-4 divide-y divide-dashed border-l'>
               {DATA.hackathons.map((project, id) => (
                 <BlurFade
                   key={project.title + project.dates}
-                  delay={BLUR_FADE_DELAY * 15 + id * 0.05}>
+                  delay={BLUR_FADE_DELAY * 17 + id * 0.05}>
                   <HackathonCard
                     title={project.title}
                     description={project.description}
@@ -189,7 +216,7 @@ export default function Page() {
       </section>
       <section id='contact'>
         <div className='grid items-center justify-center gap-4 px-4 text-center md:px-6 w-full py-12'>
-          <BlurFade delay={BLUR_FADE_DELAY * 16}>
+          <BlurFade delay={BLUR_FADE_DELAY * 18}>
             <div className='space-y-3'>
               <div className='inline-block rounded-lg bg-foreground text-background px-3 py-1 text-sm'>
                 Contact
@@ -198,13 +225,7 @@ export default function Page() {
                 Get in Touch
               </h2>
               <p className='mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
-                Want to chat? Just shoot me a dm{' '}
-                <Link
-                  href={DATA.contact.social.X.url}
-                  className='text-blue-500 hover:underline'>
-                  with a direct question on twitter
-                </Link>{' '}
-                and I&apos;ll respond whenever I can.
+                Want to chat? Feel free to reach out through any of my social channels above, and I&apos;ll respond whenever I can.
               </p>
             </div>
           </BlurFade>
