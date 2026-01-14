@@ -31,7 +31,7 @@ export type Book = {
 export type DataSource = {
   name: string;
   description: string;
-  category: 'market' | 'onchain' | 'defi' | 'news' | 'research';
+  category: 'market' | 'onchain' | 'defi' | 'news' | 'research' | 'language' | 'visa';
   link: string;
   isPaid: boolean;
   tags: string[];
@@ -504,6 +504,206 @@ export const dataSources: DataSource[] = [
     link: 'https://www.bankless.com/refer/kkdemian',
     isPaid: false,
     tags: ['news', 'education', 'podcast', 'newsletter']
+  },
+  {
+    name: 'Artemis Analytics',
+    description: 'Comprehensive cross-chain analytics platform for tracking protocol metrics and market data',
+    category: 'onchain',
+    link: 'https://app.artemisanalytics.com/home',
+    isPaid: false,
+    tags: ['cross-chain', 'analytics', 'metrics', 'protocols']
+  },
+  {
+    name: 'Dune Analytics - Perp DEX',
+    description: 'Perpetual DEX trading volume analytics across Hyperliquid, Lighter, Aster and other major platforms',
+    category: 'defi',
+    link: 'https://dune.com/uwusanauwu/perps',
+    isPaid: false,
+    tags: ['perp', 'DEX', 'volume', 'derivatives', 'dune']
+  },
+  {
+    name: 'Nansen',
+    description: 'On-chain analytics platform with smart money tracking and wallet insights',
+    category: 'onchain',
+    link: 'https://app.nansen.ai/',
+    isPaid: true,
+    tags: ['on-chain', 'analytics', 'smart-money', 'wallet-tracking']
+  },
+  {
+    name: 'Token Terminal',
+    description: 'Crypto protocol financial metrics and revenue analytics dashboard',
+    category: 'research',
+    link: 'https://tokenterminal.com/explorer/projects',
+    isPaid: false,
+    tags: ['metrics', 'revenue', 'fundamentals', 'protocols']
+  },
+  {
+    name: 'Blockworks Treasury Analytics',
+    description: 'Track companies and institutions holding crypto in their treasuries',
+    category: 'market',
+    link: 'https://blockworks.com/analytics/treasury-companies',
+    isPaid: false,
+    tags: ['treasury', 'institutional', 'companies', 'holdings']
+  },
+  {
+    name: 'USDC Range',
+    description: 'Monitor CCTP USDC cross-chain transfers and flow analytics across different blockchains',
+    category: 'onchain',
+    link: 'https://usdc.range.org/',
+    isPaid: false,
+    tags: ['USDC', 'CCTP', 'cross-chain', 'stablecoin', 'transfers']
+  },
+  {
+    name: 'Farside Investors',
+    description: 'Daily Bitcoin, Ethereum, and SOL ETF fund flow tracking and analytics',
+    category: 'market',
+    link: 'https://farside.co.uk/btc/',
+    isPaid: false,
+    tags: ['ETF', 'fund-flow', 'bitcoin', 'ethereum', 'SOL', 'institutional']
+  },
+  {
+    name: 'Hyperliquid Analytics',
+    description: 'Hyperliquid protocol metrics tracking including staking, buybacks, auctions, and burns',
+    category: 'defi',
+    link: 'https://data.asxn.xyz/dashboard/hl-buybacks',
+    isPaid: false,
+    tags: ['hyperliquid', 'buybacks', 'staking', 'auctions', 'burns', 'protocol']
+  },
+  {
+    name: 'Hypurrscan',
+    description: 'Hyperliquid ecosystem dashboard tracking HLP staking yields, trading fees, auction fees, and TSWAP auctions',
+    category: 'defi',
+    link: 'https://hypurrscan.io/dashboard',
+    isPaid: false,
+    tags: ['hyperliquid', 'HLP', 'staking', 'yields', 'fees', 'TSWAP', 'auctions']
+  },
+  {
+    name: 'Chainspect',
+    description: 'Crypto developer activity ranking and analytics tracking project development metrics',
+    category: 'research',
+    link: 'https://chainspect.app/dashboard/developer-activity',
+    isPaid: false,
+    tags: ['developer', 'activity', 'github', 'metrics', 'ranking']
+  },
+  {
+    name: 'Robinhood Stock Tokens Analytics',
+    description: 'On-chain analytics for Robinhood stock tokens tracking volume and activity',
+    category: 'onchain',
+    link: 'https://dune.com/entropy_advisors/robinhood-stock-tokens',
+    isPaid: false,
+    tags: ['robinhood', 'stocks', 'tokenized-assets', 'dune', 'RWA']
+  },
+  {
+    name: 'Stablewatch',
+    description: 'Comprehensive stablecoin ecosystem analytics tracking issuance, yields, RWA returns, and market dynamics',
+    category: 'defi',
+    link: 'https://www.stablewatch.io/analytics',
+    isPaid: false,
+    tags: ['stablecoin', 'yields', 'RWA', 'issuance', 'analytics']
+  },
+  {
+    name: 'Prediction Index',
+    description: 'Comprehensive map of prediction markets tracking platforms and trading activity',
+    category: 'market',
+    link: 'https://predictionindex.xyz/',
+    isPaid: false,
+    tags: ['prediction-markets', 'betting', 'polymarket', 'analytics', 'map']
+  },
+  {
+    name: 'Japanese Grammar Guide',
+    description: 'Comprehensive Japanese grammar reference and learning resource',
+    category: 'language',
+    link: 'https://res.wokanxing.info/jpgramma/index.html',
+    isPaid: false,
+    tags: ['japanese', 'grammar', 'learning', 'reference']
+  },
+  {
+    name: 'Learn Japanese Guide',
+    description: 'Complete guide for learning Japanese language from basics to advanced',
+    category: 'language',
+    link: 'https://learnjapanese.moe/guide/',
+    isPaid: false,
+    tags: ['japanese', 'learning', 'guide', 'tutorial']
+  },
+  {
+    name: 'Kotobank',
+    description: 'Comprehensive Japanese native dictionary with extensive definitions and examples',
+    category: 'language',
+    link: 'https://kotobank.jp/',
+    isPaid: false,
+    tags: ['japanese', 'dictionary', 'native', 'reference', 'definitions']
+  },
+  {
+    name: 'Dan Romero Crypto Reading',
+    description: 'Curated crypto reading list and resources by Dan Romero',
+    category: 'news',
+    link: 'https://danromero.org/crypto-reading/',
+    isPaid: false,
+    tags: ['reading', 'resources', 'curated', 'education']
+  },
+  {
+    name: 'a16z Crypto',
+    description: 'Andreessen Horowitz crypto research, insights, and industry analysis',
+    category: 'news',
+    link: 'https://a16zcrypto.com/',
+    isPaid: false,
+    tags: ['a16z', 'research', 'VC', 'insights', 'analysis']
+  },
+  {
+    name: 'Obviously',
+    description: 'Crypto newsletter and analysis covering market trends and insights',
+    category: 'news',
+    link: 'https://obviously.substack.com/',
+    isPaid: false,
+    tags: ['newsletter', 'analysis', 'trends', 'substack']
+  },
+  {
+    name: 'Japan Immigration Guide',
+    description: 'Comprehensive guide for relocating and immigrating to Japan',
+    category: 'visa',
+    link: 'https://paragraph.com/@guoyu/QEW9hZWgfe38qPVKtvhI',
+    isPaid: false,
+    tags: ['japan', 'immigration', 'visa', 'relocation', 'guide']
+  },
+  {
+    name: 'Web3 AI Digital Nomad Community',
+    description: 'Community for Web3 and AI-focused digital nomads',
+    category: 'visa',
+    link: 'https://ns.com/chuhemiao/apply',
+    isPaid: false,
+    tags: ['digital-nomad', 'web3', 'AI', 'community', 'network']
+  },
+  {
+    name: 'Nomads.com',
+    description: 'World\'s largest digital nomad community and resource hub',
+    category: 'visa',
+    link: 'https://nomads.com/',
+    isPaid: false,
+    tags: ['digital-nomad', 'community', 'resources', 'travel', 'remote-work']
+  },
+  {
+    name: 'Praxis Nation',
+    description: 'Niche digital nomad platform for building new societies and communities',
+    category: 'visa',
+    link: 'https://www.praxisnation.com/',
+    isPaid: false,
+    tags: ['digital-nomad', 'community', 'network-state', 'startup-cities']
+  },
+  {
+    name: 'Palladium Magazine',
+    description: 'Magazine covering governance, technology, and society for digital nomads',
+    category: 'visa',
+    link: 'https://www.palladiummag.com/',
+    isPaid: false,
+    tags: ['magazine', 'governance', 'technology', 'society', 'reading']
+  },
+  {
+    name: 'Mindtrip',
+    description: 'AI-powered travel planning agent for creating personalized trip itineraries',
+    category: 'visa',
+    link: 'https://mindtrip.ai/home',
+    isPaid: false,
+    tags: ['travel', 'AI', 'planning', 'itinerary', 'agent']
   }
 ];
 

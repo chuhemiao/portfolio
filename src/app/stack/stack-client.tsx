@@ -229,7 +229,9 @@ function DataSourcesSection() {
     { key: 'onchain', label: 'On-chain' },
     { key: 'defi', label: 'DeFi' },
     { key: 'news', label: 'News' },
-    { key: 'research', label: 'Research' }
+    { key: 'research', label: 'Research' },
+    { key: 'language', label: 'Language' },
+    { key: 'visa', label: 'Visa' }
   ];
 
   const filteredData = dataSources.filter((source) =>
