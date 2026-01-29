@@ -1,5 +1,5 @@
 import { Icons } from '@/components/icons';
-import { HomeIcon, NotebookIcon, LayersIcon } from 'lucide-react';
+import { HomeIcon, LayersIcon, NotebookIcon } from 'lucide-react';
 
 export const DATA = {
   name: 'kkdemian',
@@ -7,8 +7,7 @@ export const DATA = {
   url: 'https://kkdemian.com',
   location: 'Web3',
   locationLink: '',
-  description:
-    'Product Engineer｜Nomadism｜Stable Coin&ETFs｜Bitcoin&ETH HODL. | NS V2',
+  description: 'Product Engineer｜Nomadism｜Bitcoin&ETH&CRCL HODL. | NS V2',
   summary:
     '6 years of Web3 product engineer, 4 years of Web3 startup experience, led the design and development of 10+ Web3 products (SOL, TON, ICP), obtained 10M level of financing, and led the team to obtain a cumulative total of $300,000. ICP, Tia, ADA, People, Degen Early Alpha.',
   avatarUrl: '/me.jpg',
