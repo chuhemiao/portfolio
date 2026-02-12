@@ -59,19 +59,20 @@ export default function Page() {
         <BlurFade delay={BLUR_FADE_DELAY * 6}>
           <div className='flex flex-wrap gap-4 mt-4'>
             {Object.entries(DATA.contact.social)
-              .filter(([_, social]) =>
-                social.name === 'GitHub' ||
-                social.name === 'X' ||
-                social.name === 'Crypto Master' ||
-                social.name === 'Youtube'
+              .filter(
+                ([_, social]) =>
+                  social.name === 'GitHub' ||
+                  social.name === 'X' ||
+                  social.name === 'Crypto Master' ||
+                  social.name === 'Youtube' ||
+                  social.name === 'Telegram'
               )
               .map(([key, social], id) => (
                 <Link
                   key={key}
                   href={social.url}
                   target='_blank'
-                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'
-                >
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
                   {social.icon && <social.icon className='size-5' />}
                   <span className='text-sm font-medium'>{social.name}</span>
                 </Link>
@@ -225,7 +226,8 @@ export default function Page() {
                 Get in Touch
               </h2>
               <p className='mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed'>
-                Want to chat? Feel free to reach out through any of my social channels above, and I&apos;ll respond whenever I can.
+                Want to chat? Feel free to reach out through any of my social
+                channels above, and I&apos;ll respond whenever I can.
               </p>
             </div>
           </BlurFade>

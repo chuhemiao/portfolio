@@ -1,5 +1,10 @@
 import { Icons } from '@/components/icons';
-import { HomeIcon, LayersIcon, NotebookIcon } from 'lucide-react';
+import {
+  HomeIcon,
+  LayersIcon,
+  NotebookIcon,
+  TrendingUpIcon
+} from 'lucide-react';
 
 export const DATA = {
   name: 'kkdemian',
@@ -29,7 +34,8 @@ export const DATA = {
   navbar: [
     { href: '/', icon: HomeIcon, label: 'Home' },
     { href: '/blog', icon: NotebookIcon, label: 'Blog' },
-    { href: '/stack', icon: LayersIcon, label: 'Stack' }
+    { href: '/stack', icon: LayersIcon, label: 'Stack' },
+    { href: '/fund', icon: TrendingUpIcon, label: 'Fund' }
   ],
   contact: {
     email: 'Y2h1aGVtaWFvQGdtYWlsLmNvbQ==',
@@ -53,6 +59,12 @@ export const DATA = {
         icon: Icons.x,
         navbar: false
       },
+      Telegram: {
+        name: 'Telegram',
+        url: 'https://t.me/kkdemian_laobai',
+        icon: Icons.telegram,
+        navbar: false
+      },
       Books: {
         name: 'Crypto Master',
         url: 'https://book.kkdemian.com/',
@@ -69,12 +81,6 @@ export const DATA = {
         name: 'Send Email',
         url: '#',
         icon: Icons.email,
-        navbar: false
-      },
-      weekly: {
-        name: 'Weekly Crypto',
-        url: 'https://0xkkdemian.notion.site/',
-        icon: Icons.weekly,
         navbar: false
       },
       binance: {
@@ -239,31 +245,6 @@ export const DATA = {
       video: ''
     },
 
-    {
-      title: 'Crypto Weekly',
-      href: 'https://0xkkdemian.notion.site/',
-      dates: 'May 9th 2024 - June 20th 2025',
-      active: false,
-      description:
-        'Literacy in cryptocurrencies and macroeconomics with weekly reports on finding alpha.',
-      technologies: [
-        'Next.js',
-        'Typescript',
-        'React',
-        'TailwindCSS',
-        'Vercel',
-        'Shadcn UI'
-      ],
-      links: [
-        {
-          type: 'Website',
-          href: 'https://0xkkdemian.notion.site/',
-          icon: <Icons.globe className='size-3' />
-        }
-      ],
-      image: '/weekly.png',
-      video: ''
-    },
     {
       title: 'Web3 Crypto Tools',
       href: 'https://tool.ibuidl.org/',
