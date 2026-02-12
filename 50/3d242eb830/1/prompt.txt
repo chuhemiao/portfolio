@@ -1,0 +1,82 @@
+Implement the following plan:
+
+# Plan: Create /fund Investment Portfolio Page
+
+## Context
+User wants a dedicated page at `/fund` to display their investment portfolio (currently in `content/investing.mdx`). The page should be parallel to `/blog` and `/stack`, referencing Paradigm's portfolio style (card grid layout with categories).
+
+## Files to Create
+1. **`src/data/fund.ts`** — Investment data extracted from investing.mdx, structured as typed arrays
+2. **`src/app/fund/page.tsx`** — Server component (metadata + render client)
+3. **`src/app/fund/fund-client.tsx`** — Client component with category tabs and card grid
+
+## Files to Modify
+4. **`src/data/resume.tsx`** — Add `/fund` to `navbar` array
+
+## Data Structure (`src/data/fund.ts`)
+
+```ts
+type AssetCategory = 'quality' | 'l1' | 'infra' | 'ai' | 'legacy' | 'web3-stock' | 'us-stock' | 'platform';
+
+type Asset = {
+  name: string;
+  ticker?: string;       // e.g. "BTC", "COIN"
+  category: AssetCategory;
+  description: string;
+  link?: string;
+};
+```
+
+Data from investing.mdx mapped into these categories:
+- **Quality Crypto**: BTC, ETH, Hyperliquid
+- **L1**: BNB, SOL, SUI, Canton(CC)
+- **Infrastructure**: LINK, AAVE, SKY, UNI, SYRUP
+- **AI**: SENT
+- **Legacy**: XRP, DOGE
+- **Web3 US Stocks**: BLOCK, COINBASE, RGTI, CRDO, BMNR, DFDV, ACHR, CRCL
+- **US Stocks**: FLANNG, PLTR, Figma, DDOG, NET
+- **Platforms**: Jupiter, Stablestock, Ondo, Hyperliquid
+
+Also include the philosophy/principles text at the top of the page.
+
+## Page Layout (Paradigm-inspired)
+
+```
+┌──────────────────────────────────┐
+│  fund                            │  ← h1 title
+│  Investment philosophy text...   │  ← intro paragraph from MDX
+│  Last updated: 2026/01/28       │
+│                                  │
+│  [All] [Quality] [L1] [Infra]   │  ← category filter tabs
+│  [AI] [Legacy] [Web3 Stocks]    │
+│  [US Stocks] [Platforms]        │
+│                                  │
+│  ┌─────────┐ ┌─────────┐       │
+│  │ BTC     │ │ ETH     │       │  ← responsive card grid
+│  │ desc    │ │ desc    │       │     (2-3 cols on desktop)
+│  └─────────┘ └─────────┘       │
+│  ...                            │
+└──────────────────────────────────┘
+```
+
+Each card: ticker/name, short description, optional external link. Clean minimal style matching the existing site.
+
+## Implementation Steps
+
+1. Create `src/data/fund.ts` with types and asset data
+2. Create `src/app/fund/page.tsx` — simple server wrapper like stack/page.tsx
+3. Create `src/app/fund/fund-client.tsx` — follows stack-client.tsx pattern: BlurFade animations, category filter buttons, responsive grid of asset cards
+4. Add nav entry in `src/data/resume.tsx`: `{ href: '/fund', icon: TrendingUpIcon, label: 'Fund' }` (import `TrendingUpIcon` from lucide-react)
+
+## Verification
+- Run `npm run dev` / `next dev` and visit `/fund`
+- Check category filtering works
+- Check responsive layout (mobile / desktop)
+- Verify navbar shows the Fund link
+
+
+If you need specific details from before exiting plan mode (like exact code snippets, error messages, or content you generated), read the full transcript at: /Users/kk/.REDACTED.jsonl
+
+---
+
+增加预测市场的资产  polymarket  https://app.opinion.trade/macro   https://probable.markets/  目前有这三个项目
