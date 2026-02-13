@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import ScrollToTop from "@/components/blog/scroll-to-top";
 import TableOfContents from "@/components/blog/table-of-contents";
+import Mermaid from "@/components/mermaid";
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -164,6 +165,7 @@ export default async function Blog({
           dangerouslySetInnerHTML={{ __html: post.source }}
         ></article>
       </section>
+      <Mermaid />
       <ScrollToTop />
     </>
   );

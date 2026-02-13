@@ -109,12 +109,66 @@ export const assets: Asset[] = [
     description: 'Institutional DeFi lending protocol.'
   },
 
-  // AI maybe not have
+  // AI — top companies and assets worth holding 10+ years
   {
-    name: 'Sentinel',
-    ticker: 'SENT',
+    name: 'Nvidia',
+    ticker: 'NVDA',
     category: 'ai',
-    description: 'Decentralized AI and VPN infrastructure network.'
+    description: 'Dominant AI chip maker, powering the entire AI infrastructure stack.'
+  },
+  {
+    name: 'Microsoft',
+    ticker: 'MSFT',
+    category: 'ai',
+    description: 'Azure AI + OpenAI partnership, enterprise AI leader with Copilot ecosystem.'
+  },
+  {
+    name: 'Google',
+    ticker: 'GOOGL',
+    category: 'ai',
+    description: 'DeepMind, Gemini models, and AI-first search transformation.'
+  },
+  {
+    name: 'Anthropic',
+    category: 'ai',
+    description: 'Claude maker, frontier AI safety research lab. Not yet public.',
+    link: 'https://www.anthropic.com/'
+  },
+  {
+    name: 'OpenAI',
+    category: 'ai',
+    description: 'ChatGPT creator, leading frontier model development. Not yet public.',
+    link: 'https://openai.com/'
+  },
+  {
+    name: 'Meta',
+    ticker: 'META',
+    category: 'ai',
+    description: 'Open-source Llama models, massive AI infra investment and social AI integration.'
+  },
+  {
+    name: 'TSMC',
+    ticker: 'TSM',
+    category: 'ai',
+    description: 'Sole manufacturer of advanced AI chips, irreplaceable in the AI supply chain.'
+  },
+  {
+    name: 'Broadcom',
+    ticker: 'AVGO',
+    category: 'ai',
+    description: 'Custom AI accelerators (TPU, ASIC) and networking chips for AI data centers.'
+  },
+  {
+    name: 'AMD',
+    ticker: 'AMD',
+    category: 'ai',
+    description: 'Second-largest AI GPU maker, growing data center AI business with MI series.'
+  },
+  {
+    name: 'Tesla',
+    ticker: 'TSLA',
+    category: 'ai',
+    description: 'Full self-driving AI, Dojo supercomputer, Optimus robotics — AI applied at scale.'
   },
 
   // Prediction Market

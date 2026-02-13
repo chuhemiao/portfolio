@@ -69,7 +69,7 @@ export default function FundClient() {
         {filteredAssets.map((asset, id) => (
           <BlurFade
             delay={BLUR_FADE_DELAY * 3 + id * 0.05}
-            key={asset.name}>
+            key={`${asset.name}-${asset.category}`}>
             {asset.link ? (
               <a
                 href={asset.link}

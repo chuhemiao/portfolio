@@ -7,6 +7,32 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
+function rehypeMermaid() {
+  return (tree: any) => {
+    function walk(node: any) {
+      if (node.children) {
+        for (const child of node.children) {
+          if (
+            child.type === 'element' &&
+            child.tagName === 'pre' &&
+            child.children?.length === 1 &&
+            child.children[0].tagName === 'code'
+          ) {
+            const code = child.children[0];
+            const className = (code.properties?.className as string[]) || [];
+            if (className.includes('language-mermaid')) {
+              const text = code.children[0]?.value || '';
+              child.properties = { className: ['mermaid'] };
+              child.children = [{ type: 'text', value: text }];
+            }
+          }
+          walk(child);
+        }
+      }
+    }
+    walk(tree);
+  };
+}
 
 export type Category = 'thoughts' | 'research' | 'economics' | 'philosophy' | 'investing';
 
@@ -44,6 +70,7 @@ export async function markdownToHTML(markdown: string) {
     .use(remarkParse)
     .use(remarkGfm)
     .use(remarkRehype)
+    .use(rehypeMermaid)
     .use(rehypePrettyCode, {
       // https://rehype-pretty.pages.dev/#usage
       theme: {
