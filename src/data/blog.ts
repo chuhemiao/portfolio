@@ -7,6 +7,11 @@ import remarkGfm from 'remark-gfm';
 import remarkParse from 'remark-parse';
 import remarkRehype from 'remark-rehype';
 import { unified } from 'unified';
+
+const CONTENT_DIR = path.join(process.cwd(), 'content');
+const BLOG_CONTENT_DIR = path.join(CONTENT_DIR, 'blog');
+const DRAFT_DIRECTORY_NAMES = new Set(['drafts', '_drafts']);
+
 function rehypeMermaid() {
   return (tree: any) => {
     function walk(node: any) {
@@ -42,10 +47,126 @@ export type Metadata = {
   summary: string;
   image?: string;
   category?: Category;
+  slug?: string;
+  draft?: boolean;
+  status?: string;
 };
 
-function getMDXFiles(dir: string) {
-  return fs.readdirSync(dir).filter((file) => path.extname(file) === '.mdx');
+type PostIndexEntry = {
+  slug: string;
+  filePath: string;
+};
+
+function getMDXFiles(dir: string): string[] {
+  if (!fs.existsSync(dir)) {
+    return [];
+  }
+
+  return fs.readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const fullPath = path.join(dir, entry.name);
+
+    if (entry.isDirectory()) {
+      return getMDXFiles(fullPath);
+    }
+
+    if (entry.isFile() && path.extname(entry.name) === '.mdx') {
+      return [fullPath];
+    }
+
+    return [];
+  });
+}
+
+function getLegacyRootMDXFiles(): string[] {
+  if (!fs.existsSync(CONTENT_DIR)) {
+    return [];
+  }
+
+  return fs
+    .readdirSync(CONTENT_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && path.extname(entry.name) === '.mdx')
+    .map((entry) => path.join(CONTENT_DIR, entry.name));
+}
+
+function getBlogMDXFiles(): string[] {
+  return [...getLegacyRootMDXFiles(), ...getMDXFiles(BLOG_CONTENT_DIR)];
+}
+
+function normalizeSlug(slug: string): string {
+  return slug.trim().replace(/^\/+|\/+$/g, '');
+}
+
+function isDraftPath(filePath: string): boolean {
+  const relativePath = path.relative(CONTENT_DIR, filePath);
+  const segments = relativePath.split(path.sep).map((segment) => segment.toLowerCase());
+  return segments.some((segment) => DRAFT_DIRECTORY_NAMES.has(segment));
+}
+
+function isDraftPost(metadata: Metadata, filePath: string): boolean {
+  if (isDraftPath(filePath)) {
+    return true;
+  }
+
+  if (metadata.draft === true) {
+    return true;
+  }
+
+  if (typeof metadata.status === 'string' && metadata.status.toLowerCase() === 'draft') {
+    return true;
+  }
+
+  return false;
+}
+
+function resolveSlug(filePath: string, metadata: Metadata): string {
+  const fallbackSlug = path.basename(filePath, path.extname(filePath));
+  const configuredSlug =
+    typeof metadata.slug === 'string' && metadata.slug.length > 0
+      ? metadata.slug
+      : fallbackSlug;
+  const slug = normalizeSlug(configuredSlug);
+
+  if (!slug) {
+    throw new Error(`Empty slug found in ${path.relative(process.cwd(), filePath)}`);
+  }
+
+  if (slug.includes('/')) {
+    throw new Error(
+      `Invalid slug "${slug}" in ${path.relative(process.cwd(), filePath)}. Nested slugs are not supported with /blog/[slug].`
+    );
+  }
+
+  return slug;
+}
+
+function getPostIndex(includeDrafts = false): PostIndexEntry[] {
+  const mdxFiles = getBlogMDXFiles();
+  const slugToPath = new Map<string, string>();
+  const entries: PostIndexEntry[] = [];
+
+  for (const filePath of mdxFiles) {
+    const source = fs.readFileSync(filePath, 'utf-8');
+    const { data } = matter(source);
+    const metadata = data as Metadata;
+
+    if (!includeDrafts && isDraftPost(metadata, filePath)) {
+      continue;
+    }
+
+    const slug = resolveSlug(filePath, metadata);
+    const existingPath = slugToPath.get(slug);
+
+    if (existingPath) {
+      throw new Error(
+        `Duplicate slug "${slug}" found in ${path.relative(process.cwd(), existingPath)} and ${path.relative(process.cwd(), filePath)}`
+      );
+    }
+
+    slugToPath.set(slug, filePath);
+    entries.push({ slug, filePath });
+  }
+
+  return entries;
 }
 
 function generateId(text: string): string {
@@ -109,8 +230,7 @@ function extractToc(markdown: string): TocItem[] {
   return toc;
 }
 
-export async function getPost(slug: string) {
-  const filePath = path.join('content', `${slug}.mdx`);
+async function parsePostFile(filePath: string, slug: string) {
   let source = fs.readFileSync(filePath, 'utf-8');
   const { content: rawContent, data: metadata } = matter(source);
   const content = await markdownToHTML(rawContent);
@@ -123,12 +243,23 @@ export async function getPost(slug: string) {
   };
 }
 
-async function getAllPosts(dir: string) {
-  let mdxFiles = getMDXFiles(dir);
+export async function getPost(slug: string) {
+  const normalizedSlug = normalizeSlug(slug);
+  const entry = getPostIndex().find((post) => post.slug === normalizedSlug);
+
+  if (!entry) {
+    return null;
+  }
+
+  return parsePostFile(entry.filePath, entry.slug);
+}
+
+async function getAllPosts() {
+  const postIndex = getPostIndex();
+
   return Promise.all(
-    mdxFiles.map(async (file) => {
-      let slug = path.basename(file, path.extname(file));
-      let { metadata, source } = await getPost(slug);
+    postIndex.map(async ({ slug, filePath }) => {
+      let { metadata, source } = await parsePostFile(filePath, slug);
       return {
         metadata: metadata as Metadata,
         slug,
@@ -139,5 +270,5 @@ async function getAllPosts(dir: string) {
 }
 
 export async function getBlogPosts() {
-  return getAllPosts(path.join(process.cwd(), 'content'));
+  return getAllPosts();
 }
