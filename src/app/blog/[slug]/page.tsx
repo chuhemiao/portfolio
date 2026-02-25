@@ -8,6 +8,38 @@ import ScrollToTop from "@/components/blog/scroll-to-top";
 import TableOfContents from "@/components/blog/table-of-contents";
 import Mermaid from "@/components/mermaid";
 
+const CATEGORY_KEYWORDS: Record<string, string[]> = {
+  thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
+  research: ["Crypto Research", "Blockchain Analysis", "Investment Report", "DeFi Research"],
+  economics: ["Crypto Economics", "Token Economics", "Blockchain Economics", "Digital Assets"],
+  philosophy: ["Crypto Philosophy", "Decentralization", "Web3 Philosophy"],
+  investing: ["Crypto Investment", "DeFi Investing", "Digital Assets", "ETF", "Bitcoin", "Ethereum"],
+};
+
+function resolveOgImageUrl(image: string | undefined, title: string) {
+  if (!image || image.trim().length === 0) {
+    return `${DATA.url}/og?title=${encodeURIComponent(title)}`;
+  }
+
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  if (image.startsWith("/")) {
+    return `${DATA.url}${image}`;
+  }
+
+  return `${DATA.url}/${image}`;
+}
+
+function toIsoOrNow(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return new Date().toISOString();
+  }
+  return date.toISOString();
+}
+
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
   return posts.map((post) => ({ slug: post.slug }));
@@ -29,27 +61,19 @@ export async function generateMetadata({
   let {
     title,
     publishedAt: publishedTime,
-    summary: description,
+    summary,
     image,
     category,
   } = post.metadata;
-  let ogImage = image ? `${DATA.url}${image}` : `${DATA.url}/og?title=${title}`;
-
-  // Generate keywords based on category and content
-  const categoryKeywords: Record<string, string[]> = {
-    thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
-    research: ["Crypto Research", "Blockchain Analysis", "Investment Report", "DeFi Research"],
-    economics: ["Crypto Economics", "Token Economics", "Blockchain Economics", "Digital Assets"],
-    philosophy: ["Crypto Philosophy", "Decentralization", "Web3 Philosophy"],
-    investing: ["Crypto Investment", "DeFi Investing", "Digital Assets", "ETF", "Bitcoin", "Ethereum"],
-  };
+  const description = summary || `${title} - ${DATA.name}`;
+  let ogImage = resolveOgImageUrl(image, title);
 
   const keywords = [
     "Web3",
     "Blockchain",
     "Cryptocurrency",
     "DeFi",
-    ...(category && categoryKeywords[category] ? categoryKeywords[category] : []),
+    ...(category && CATEGORY_KEYWORDS[category] ? CATEGORY_KEYWORDS[category] : []),
   ];
 
   return {
@@ -105,16 +129,17 @@ export default async function Blog({
     notFound();
   }
 
+  const ogImage = resolveOgImageUrl(post.metadata.image, post.metadata.title);
+  const publishedAtIso = toIsoOrNow(post.metadata.publishedAt);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.metadata.title,
-    description: post.metadata.summary,
-    image: post.metadata.image
-      ? `${DATA.url}${post.metadata.image}`
-      : `${DATA.url}/og?title=${post.metadata.title}`,
-    datePublished: post.metadata.publishedAt,
-    dateModified: post.metadata.publishedAt,
+    description: post.metadata.summary || post.metadata.title,
+    image: ogImage,
+    datePublished: publishedAtIso,
+    dateModified: publishedAtIso,
     author: {
       "@type": "Person",
       name: DATA.name,
@@ -158,9 +183,12 @@ export default async function Blog({
         </h1>
         <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
           <Suspense fallback={<p className="h-5" />}>
-            <p className="text-sm text-neutral-600 dark:text-neutral-400">
+            <time
+              dateTime={publishedAtIso}
+              className="text-sm text-neutral-600 dark:text-neutral-400"
+            >
               {formatDate(post.metadata.publishedAt)}
-            </p>
+            </time>
           </Suspense>
         </div>
         <article

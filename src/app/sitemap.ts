@@ -4,6 +4,7 @@ import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const posts = await getBlogPosts();
+  const now = new Date();
 
   const blogPosts = posts.map((post) => ({
     url: `${DATA.url}/blog/${post.slug}`,
@@ -12,11 +13,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const routes = ['', '/blog'].map((route) => ({
+  const routes = ['', '/blog', '/fund', '/stack'].map((route) => ({
     url: `${DATA.url}${route}`,
-    lastModified: new Date(),
+    lastModified: now,
     changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1 : 0.9,
+    priority: route === '' ? 1 : 0.9
   }));
 
   return [...routes, ...blogPosts];

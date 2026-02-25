@@ -7,13 +7,78 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { DATA } from '@/data/resume';
 import Link from 'next/link';
+import type { Metadata } from 'next';
 import Markdown from 'react-markdown';
 
 const BLUR_FADE_DELAY = 0.04;
 
+export const metadata: Metadata = {
+  title: 'Home',
+  description: DATA.description,
+  alternates: {
+    canonical: DATA.url
+  },
+  openGraph: {
+    title: `${DATA.name} | Web3 Product Engineer`,
+    description: DATA.description,
+    url: DATA.url,
+    siteName: DATA.name,
+    locale: 'en_US',
+    type: 'website',
+    images: [
+      {
+        url: `${DATA.url}/og`,
+        width: 1200,
+        height: 630,
+        alt: `${DATA.name} profile and portfolio`
+      }
+    ]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `${DATA.name} | Web3 Product Engineer`,
+    description: DATA.description,
+    creator: '@0xkkdemian',
+    images: [`${DATA.url}/og`]
+  }
+};
+
 export default function Page() {
+  const personJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: DATA.name,
+    url: DATA.url,
+    image: `${DATA.url}${DATA.avatarUrl}`,
+    description: DATA.description,
+    sameAs: [
+      DATA.contact.social.GitHub.url,
+      DATA.contact.social.X.url,
+      DATA.contact.social.Youtube.url,
+      DATA.contact.social.Telegram.url
+    ]
+  };
+
+  const websiteJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: DATA.name,
+    url: DATA.url,
+    description: DATA.description
+  };
+
   return (
     <main className='flex flex-col min-h-[100dvh] space-y-10'>
+      <script
+        type='application/ld+json'
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
+      />
+      <script
+        type='application/ld+json'
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
       <section id='hero'>
         <div className='mx-auto w-full max-w-2xl space-y-8'>
           <div className='gap-2 flex justify-between'>

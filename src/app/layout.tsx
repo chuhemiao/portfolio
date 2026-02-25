@@ -15,8 +15,10 @@ const fontSans = FontSans({
 
 export const metadata: Metadata = {
   metadataBase: new URL(DATA.url),
+  applicationName: DATA.name,
+  referrer: "origin-when-cross-origin",
   title: {
-    default: DATA.name,
+    default: `${DATA.name} | Web3 Product Engineer`,
     template: `%s | ${DATA.name}`,
   },
   description: DATA.description,
@@ -51,7 +53,7 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: `${DATA.name}`,
+    title: `${DATA.name} | Web3 Product Engineer`,
     description: DATA.description,
     url: DATA.url,
     siteName: `${DATA.name}`,
@@ -59,7 +61,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${DATA.url}/og-image.png`,
+        url: `${DATA.url}/og`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} - Web3 Product Engineer & Crypto Expert`,
@@ -79,20 +81,21 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: `${DATA.name}`,
+    title: `${DATA.name} | Web3 Product Engineer`,
     description: DATA.description,
     creator: "@0xkkdemian",
-    images: [`${DATA.url}/og-image.png`],
-  },
-  verification: {
-    google: "",
-    yandex: "",
+    images: [`${DATA.url}/og`],
   },
   alternates: {
     canonical: DATA.url,
     types: {
       "application/rss+xml": `${DATA.url}/rss.xml`,
     },
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
   category: "Technology",
 };
