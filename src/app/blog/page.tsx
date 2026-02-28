@@ -36,12 +36,37 @@ export const metadata: Metadata = {
 
 export default async function BlogPage() {
   const posts = await getBlogPosts();
+  const sortedPosts = posts.sort(
+    (a, b) =>
+      new Date(b.metadata.publishedAt).getTime() -
+      new Date(a.metadata.publishedAt).getTime()
+  );
+
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
     name: `${DATA.name} Blog`,
     description: 'My thoughts on software development, life, crypto, and more.',
-    url: `${DATA.url}/blog`
+    url: `${DATA.url}/blog`,
+    author: {
+      '@type': 'Person',
+      name: DATA.name,
+      url: DATA.url,
+    },
+  };
+
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `${DATA.name} Blog Posts`,
+    description: 'Articles on Web3, DeFi, crypto investing, and blockchain technology.',
+    url: `${DATA.url}/blog`,
+    itemListElement: sortedPosts.map((post, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: `${DATA.url}/blog/${post.slug}`,
+      name: post.metadata.title,
+    })),
   };
 
   return (
@@ -50,6 +75,11 @@ export default async function BlogPage() {
         type='application/ld+json'
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(blogJsonLd) }}
+      />
+      <script
+        type='application/ld+json'
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
       />
       <BlogClient posts={posts} />
     </>

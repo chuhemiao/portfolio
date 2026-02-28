@@ -167,6 +167,31 @@ export default async function Blog({
     inLanguage: "en-US",
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      {
+        "@type": "ListItem",
+        position: 1,
+        name: "Home",
+        item: DATA.url,
+      },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Blog",
+        item: `${DATA.url}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        position: 3,
+        name: post.metadata.title,
+        item: `${DATA.url}/blog/${post.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <TableOfContents toc={post.toc} />
@@ -176,6 +201,13 @@ export default async function Blog({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(jsonLd),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(breadcrumbJsonLd),
           }}
         />
         <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">

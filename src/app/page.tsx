@@ -51,12 +51,29 @@ export default function Page() {
     url: DATA.url,
     image: `${DATA.url}${DATA.avatarUrl}`,
     description: DATA.description,
+    jobTitle: 'Web3 Product Engineer',
+    knowsAbout: [
+      'Web3',
+      'Blockchain',
+      'DeFi',
+      'Solana',
+      'TON',
+      'ICP',
+      'Smart Contracts',
+      'Cryptocurrency',
+      'Product Engineering',
+      'Digital Nomad',
+      'Crypto Investment',
+      'ETF',
+      'AI Agent',
+    ],
     sameAs: [
       DATA.contact.social.GitHub.url,
       DATA.contact.social.X.url,
       DATA.contact.social.Youtube.url,
-      DATA.contact.social.Telegram.url
-    ]
+      DATA.contact.social.Telegram.url,
+      DATA.contact.social.Books.url,
+    ],
   };
 
   const websiteJsonLd = {
@@ -64,7 +81,27 @@ export default function Page() {
     '@type': 'WebSite',
     name: DATA.name,
     url: DATA.url,
-    description: DATA.description
+    description: DATA.description,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${DATA.url}/blog?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  };
+
+  const profilePageJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    url: DATA.url,
+    name: `${DATA.name} - Web3 Product Engineer`,
+    description: DATA.description,
+    mainEntity: {
+      '@type': 'Person',
+      name: DATA.name,
+      identifier: DATA.name,
+      description: DATA.summary,
+      jobTitle: 'Web3 Product Engineer',
+    },
   };
 
   return (
@@ -78,6 +115,11 @@ export default function Page() {
         type='application/ld+json'
         suppressHydrationWarning
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <script
+        type='application/ld+json'
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profilePageJsonLd) }}
       />
       <section id='hero'>
         <div className='mx-auto w-full max-w-2xl space-y-8'>
