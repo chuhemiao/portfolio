@@ -14,6 +14,7 @@ export type Asset = {
   category: AssetCategory;
   description: string;
   link?: string;
+  researchLink?: string;
 };
 
 export const philosophy = {
@@ -24,8 +25,8 @@ export const philosophy = {
   criteria:
     'Criteria for ETF selection: Favored by capitalists and institutions, has user base, has trading volume, team fundamentals are solid, REV value, no major bugs.',
   thought:
-    'A thought: After large-scale cryptocurrencies and DAPPs emerge, what are the essential needs? RWA tokenization, stablecoin will be continue war.',
-  lastUpdated: '2024/1/1 ~ 2026/02/12'
+    'A thought: After large-scale cryptocurrencies and DAPPs emerge, what are the essential needs? RWA tokenization, stablecoin, prediction will be continue war.',
+  lastUpdated: '2024/1/1 ~ 2026/03/02'
 };
 
 export const assets: Asset[] = [
@@ -34,21 +35,24 @@ export const assets: Asset[] = [
     name: 'Bitcoin',
     ticker: 'BTC',
     category: 'quality',
-    description: 'Digital gold, the original cryptocurrency and store of value.'
+    description: 'Digital gold, the original cryptocurrency and store of value.',
+    researchLink: '/blog/bitcoin_2026_report'
   },
   {
     name: 'Ethereum',
     ticker: 'ETH',
     category: 'quality',
     description:
-      'Programmable blockchain, the foundation for DeFi and smart contracts.'
+      'Programmable blockchain, the foundation for DeFi and smart contracts.',
+    researchLink: '/blog/eth_outlook_2026'
   },
   {
     name: 'Hyperliquid',
     ticker: 'HYPE',
     category: 'quality',
     description: 'High-performance perpetuals DEX with on-chain order book.',
-    link: 'https://app.hyperliquid.xyz/trade'
+    link: 'https://app.hyperliquid.xyz/trade',
+    researchLink: '/blog/hyperliquid_report_2026'
   },
 
   // L1
@@ -68,13 +72,15 @@ export const assets: Asset[] = [
     name: 'SUI',
     ticker: 'SUI',
     category: 'l1',
-    description: 'Move-based L1 with object-centric data model.'
+    description: 'Move-based L1 with object-centric data model.',
+    researchLink: '/blog/sui_report_2026'
   },
   {
     name: 'Canton',
     ticker: 'CC',
     category: 'l1',
-    description: 'Privacy-enabled blockchain for institutional use cases.'
+    description: 'Privacy-enabled blockchain for institutional use cases.',
+    researchLink: '/blog/canton_network_report'
   },
 
   // Infrastructure
@@ -88,7 +94,8 @@ export const assets: Asset[] = [
     name: 'Aave',
     ticker: 'AAVE',
     category: 'infra',
-    description: 'Leading decentralized lending and borrowing protocol.'
+    description: 'Leading decentralized lending and borrowing protocol.',
+    researchLink: '/blog/aave_defi_lend'
   },
   {
     name: 'Sky',
@@ -100,13 +107,22 @@ export const assets: Asset[] = [
     name: 'Uniswap',
     ticker: 'UNI',
     category: 'infra',
-    description: 'The largest decentralized exchange protocol.'
+    description: 'The largest decentralized exchange protocol.',
+    researchLink: '/blog/uniswap_uni_x'
   },
   {
     name: 'Maple',
     ticker: 'SYRUP',
     category: 'infra',
-    description: 'Institutional DeFi lending protocol.'
+    description: 'Institutional DeFi lending protocol.',
+    researchLink: '/blog/maple_finance_syrup'
+  },
+  {
+    name: 'Ondo',
+    ticker: 'ONDO',
+    category: 'infra',
+    description:
+      'RWA tokenization protocol offering institutional-grade on-chain assets (OUSG, USDY).'
   },
 
   // AI — top companies and assets worth holding 10+ years
@@ -114,13 +130,15 @@ export const assets: Asset[] = [
     name: 'Nvidia',
     ticker: 'NVDA',
     category: 'ai',
-    description: 'Dominant AI chip maker, powering the entire AI infrastructure stack.'
+    description:
+      'Dominant AI chip maker, powering the entire AI infrastructure stack.'
   },
   {
     name: 'Microsoft',
     ticker: 'MSFT',
     category: 'ai',
-    description: 'Azure AI + OpenAI partnership, enterprise AI leader with Copilot ecosystem.'
+    description:
+      'Azure AI + OpenAI partnership, enterprise AI leader with Copilot ecosystem.'
   },
   {
     name: 'Google',
@@ -131,44 +149,51 @@ export const assets: Asset[] = [
   {
     name: 'Anthropic',
     category: 'ai',
-    description: 'Claude maker, frontier AI safety research lab. Not yet public.',
+    description:
+      'Claude maker, frontier AI safety research lab. Not yet public.',
     link: 'https://www.anthropic.com/'
   },
   {
     name: 'OpenAI',
     category: 'ai',
-    description: 'ChatGPT creator, leading frontier model development. Not yet public.',
+    description:
+      'ChatGPT creator, leading frontier model development. Not yet public.',
     link: 'https://openai.com/'
   },
   {
     name: 'Meta',
     ticker: 'META',
     category: 'ai',
-    description: 'Open-source Llama models, massive AI infra investment and social AI integration.'
+    description:
+      'Open-source Llama models, massive AI infra investment and social AI integration.'
   },
   {
     name: 'TSMC',
     ticker: 'TSM',
     category: 'ai',
-    description: 'Sole manufacturer of advanced AI chips, irreplaceable in the AI supply chain.'
+    description:
+      'Sole manufacturer of advanced AI chips, irreplaceable in the AI supply chain.'
   },
   {
     name: 'Broadcom',
     ticker: 'AVGO',
     category: 'ai',
-    description: 'Custom AI accelerators (TPU, ASIC) and networking chips for AI data centers.'
+    description:
+      'Custom AI accelerators (TPU, ASIC) and networking chips for AI data centers.'
   },
   {
     name: 'AMD',
     ticker: 'AMD',
     category: 'ai',
-    description: 'Second-largest AI GPU maker, growing data center AI business with MI series.'
+    description:
+      'Second-largest AI GPU maker, growing data center AI business with MI series.'
   },
   {
     name: 'Tesla',
     ticker: 'TSLA',
     category: 'ai',
-    description: 'Full self-driving AI, Dojo supercomputer, Optimus robotics — AI applied at scale.'
+    description:
+      'Full self-driving AI, Dojo supercomputer, Optimus robotics — AI applied at scale.'
   },
 
   // Prediction Market
@@ -176,19 +201,22 @@ export const assets: Asset[] = [
     name: 'Polymarket',
     category: 'prediction',
     description: 'The largest decentralized prediction market platform.',
-    link: 'https://polymarket.com/'
+    link: 'https://polymarket.com/',
+    researchLink: '/blog/polymarket_kalshi_prediction_2026'
   },
   {
     name: 'Opinion Trade',
     category: 'prediction',
     description: 'Macro-focused prediction market for global events.',
-    link: 'https://app.opinion.trade/macro'
+    link: 'https://app.opinion.trade/macro',
+    researchLink: '/blog/opinion_labs_pred'
   },
   {
     name: 'Probable Markets',
     category: 'prediction',
     description: 'Prediction market for real-world event outcomes.',
-    link: 'https://probable.markets/'
+    link: 'https://probable.markets/',
+    researchLink: '/blog/probable_predict'
   },
 
   // Web3 US Stocks
@@ -196,7 +224,8 @@ export const assets: Asset[] = [
     name: 'Coinbase',
     ticker: 'COIN',
     category: 'web3-stock',
-    description: 'Largest US cryptocurrency exchange, institutional gateway.'
+    description: 'Largest US cryptocurrency exchange, institutional gateway.',
+    researchLink: '/blog/coinbase_report_2026'
   },
 
   {
@@ -210,17 +239,11 @@ export const assets: Asset[] = [
     name: 'Circle',
     ticker: 'CRCL',
     category: 'web3-stock',
-    description: 'USDC stablecoin issuer, global financial infrastructure.'
+    description: 'USDC stablecoin issuer, global financial infrastructure.',
+    researchLink: '/blog/circle_stablecoin_arc'
   },
 
   // US Stocks
-  {
-    name: 'FLANNG',
-    ticker: 'FLANNG',
-    category: 'us-stock',
-    description:
-      'Facebook, LinkedIn, Apple, Netflix, Nvidia, Google — mega-cap tech basket.'
-  },
   {
     name: 'Palantir',
     ticker: 'PLTR',
@@ -250,7 +273,8 @@ export const assets: Asset[] = [
     name: 'Jupiter',
     category: 'platform',
     description: 'Purchase US stocks and crypto equities on Solana.',
-    link: 'https://jup.ag/'
+    link: 'https://jup.ag/',
+    researchLink: '/blog/jupiter_ag_defi_solana'
   },
   {
     name: 'Stablestock',
@@ -269,7 +293,8 @@ export const assets: Asset[] = [
     category: 'platform',
     description:
       'After HIP-3, supports mainstream US stock trading and unlisted US AI giants.',
-    link: 'https://app.hyperliquid.xyz/trade'
+    link: 'https://app.hyperliquid.xyz/trade',
+    researchLink: '/blog/hyperliquid_report_2026'
   }
 ];
 

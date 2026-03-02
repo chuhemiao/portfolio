@@ -7,7 +7,8 @@ import {
   philosophy,
   type AssetCategory
 } from '@/data/fund';
-import { ExternalLinkIcon } from 'lucide-react';
+import { BookOpenIcon, ExternalLinkIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 const BLUR_FADE_DELAY = 0.04;
@@ -30,7 +31,7 @@ export default function FundClient() {
   );
 
   return (
-    <section>
+    <section className='overflow-x-clip'>
       <BlurFade delay={BLUR_FADE_DELAY}>
         <h1 className='font-medium text-2xl mb-4 tracking-tighter'>fund</h1>
       </BlurFade>
@@ -65,53 +66,57 @@ export default function FundClient() {
         </div>
       </BlurFade>
 
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4'>
+      {/* breakout container: escapes max-w-2xl body constraint */}
+      <div className='relative left-1/2 -translate-x-1/2 w-[min(100vw,1280px)] px-6'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
         {filteredAssets.map((asset, id) => (
           <BlurFade
             delay={BLUR_FADE_DELAY * 3 + id * 0.05}
             key={`${asset.name}-${asset.category}`}>
-            {asset.link ? (
-              <a
-                href={asset.link}
-                target='_blank'
-                rel='noopener noreferrer'
-                className='border rounded-lg p-4 hover:shadow-md transition-shadow block h-full'>
-                <AssetCardContent asset={asset} />
-              </a>
-            ) : (
-              <div className='border rounded-lg p-4 h-full'>
-                <AssetCardContent asset={asset} />
+            <div className='border rounded-lg p-4 h-full flex flex-col'>
+              <div className='flex items-start justify-between mb-2'>
+                <div>
+                  <h3 className='font-semibold'>{asset.name}</h3>
+                  {asset.ticker && (
+                    <span className='text-xs text-muted-foreground'>
+                      {asset.ticker}
+                    </span>
+                  )}
+                </div>
+                <span className='text-xs px-2 py-0.5 rounded bg-secondary text-secondary-foreground shrink-0'>
+                  {categoryLabels[asset.category]}
+                </span>
               </div>
-            )}
+              <p className='text-sm text-muted-foreground flex-1'>
+                {asset.description}
+              </p>
+              {(asset.link || asset.researchLink) && (
+                <div className='flex items-center gap-3 mt-3 pt-3 border-t'>
+                  {asset.link && (
+                    <a
+                      href={asset.link}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'>
+                      <ExternalLinkIcon className='size-3' />
+                      Site
+                    </a>
+                  )}
+                  {asset.researchLink && (
+                    <Link
+                      href={asset.researchLink}
+                      className='flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors'>
+                      <BookOpenIcon className='size-3' />
+                      Research
+                    </Link>
+                  )}
+                </div>
+              )}
+            </div>
           </BlurFade>
         ))}
       </div>
-    </section>
-  );
-}
-
-function AssetCardContent({ asset }: { asset: (typeof assets)[number] }) {
-  return (
-    <>
-      <div className='flex items-start justify-between mb-2'>
-        <div>
-          <h3 className='font-semibold'>{asset.name}</h3>
-          {asset.ticker && (
-            <span className='text-xs text-muted-foreground'>
-              {asset.ticker}
-            </span>
-          )}
-        </div>
-        <div className='flex items-center gap-2'>
-          <span className='text-xs px-2 py-0.5 rounded bg-secondary text-secondary-foreground'>
-            {categoryLabels[asset.category]}
-          </span>
-          {asset.link && (
-            <ExternalLinkIcon className='size-3 text-muted-foreground' />
-          )}
-        </div>
       </div>
-      <p className='text-sm text-muted-foreground'>{asset.description}</p>
-    </>
+    </section>
   );
 }
