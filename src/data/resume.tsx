@@ -1,5 +1,7 @@
 import { Icons } from '@/components/icons';
 import {
+  ActivityIcon,
+  BookOpenIcon,
   HomeIcon,
   LayersIcon,
   NotebookIcon,
@@ -35,7 +37,9 @@ export const DATA = {
     { href: '/', icon: HomeIcon, label: 'Home' },
     { href: '/blog', icon: NotebookIcon, label: 'Blog' },
     { href: '/stack', icon: LayersIcon, label: 'Stack' },
-    { href: '/fund', icon: TrendingUpIcon, label: 'Fund' }
+    { href: '/fund', icon: TrendingUpIcon, label: 'Fund' },
+    { href: '/fear', icon: ActivityIcon, label: 'Fear' },
+    { href: '/philosophy', icon: BookOpenIcon, label: 'Philosophy' }
   ],
   contact: {
     email: 'Y2h1aGVtaWFvQGdtYWlsLmNvbQ==',

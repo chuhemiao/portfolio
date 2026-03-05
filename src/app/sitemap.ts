@@ -13,7 +13,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const routes = ['', '/blog', '/fund', '/stack'].map((route) => ({
+  const routes = ['', '/blog', '/fund', '/stack', '/fear', '/philosophy'].map((route) => ({
     url: `${DATA.url}${route}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,

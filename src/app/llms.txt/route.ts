@@ -34,6 +34,8 @@ ${DATA.summary}
 - [Blog](${DATA.url}/blog): Articles on Web3, DeFi, crypto investing, blockchain technology, and product engineering
 - [Stack](${DATA.url}/stack): Tools, frameworks, and technologies used daily
 - [Fund](${DATA.url}/fund): Crypto investment portfolio and fund insights
+- [Fear](${DATA.url}/fear): Bitcoin bottom probability dashboard with valuation, on-chain, sentiment, macro, and risk layers
+- [Philosophy](${DATA.url}/philosophy): Personal notes about purpose, love, long-term direction, and correct repetition
 
 ## Recent Blog Posts
 
