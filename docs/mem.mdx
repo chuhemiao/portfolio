@@ -1,0 +1,214 @@
+# AI 长久记忆（long-term memory for AI agents）
+
+如果从2025–2026年的研究和工程实践来看，“AI 长久记忆（long-term memory for AI agents）”目前已经形成了几条较为稳定的技术路线。不同路线解决的问题不同，因此“最好的方案”实际上取决于三个维度：
+
+1 记忆容量（能存多少）
+2 检索效率（能否快速找到相关信息）
+3 语义一致性（长期是否仍然保持正确理解）
+
+目前行业内最先进的方案可以分为五个层级架构。
+
+第一层：向量记忆（Vector Memory）
+
+这是目前最普遍使用的长期记忆方案，本质是把文本或事件编码为 embedding，然后存储到向量数据库中，通过相似度检索实现“回忆”。
+
+典型架构
+
+User Input
+→ Embedding Model
+→ Vector Database
+→ Similarity Search
+→ Retrieved Context
+→ LLM
+
+常见数据库：
+
+• Pinecone
+• Weaviate
+• Milvus
+• Qdrant
+
+优点
+
+扩展性强
+实现简单
+支持数亿级记忆
+
+缺点
+
+无法形成真正的“结构化记忆”
+容易出现语义漂移
+
+因此现在大多数系统会叠加第二层。
+
+第二层：分层记忆（Hierarchical Memory）
+
+这是目前最先进的 Agent memory 架构之一，核心思想来自认知科学。
+
+将记忆分为三层：
+
+1 短期记忆（working memory）
+2 事件记忆（episodic memory）
+3 语义记忆（semantic memory）
+
+结构如下：
+
+Working Memory
+存储当前对话上下文
+
+Episodic Memory
+记录事件，例如
+“2026-03-11 用户研究 AI memory”
+
+Semantic Memory
+提取长期知识，例如
+“用户是 Web3 产品工程师”
+
+很多先进 Agent 框架都在用这种模式：
+
+• LangGraph
+• LlamaIndex
+• AutoGPT
+
+优点
+
+更接近人类记忆模型
+长期一致性更好
+
+第三层：知识图谱记忆（Knowledge Graph Memory）
+
+这是目前机构级 AI 系统越来越多使用的方案。
+
+核心思想是：
+
+把记忆存成“关系网络”，而不是文本。
+
+例如
+
+User → works_on → YamaSwap
+YamaSwap → type → DeFi ETF
+User → skill → Rust
+
+技术栈
+
+Graph Database
+
+• Neo4j
+• TigerGraph
+
+优点
+
+推理能力强
+可以做复杂关系查询
+支持 agent reasoning
+
+缺点
+
+构建成本较高
+
+第四层：自我压缩记忆（Memory Compression）
+
+这是最近 AI 研究中的重要方向。
+
+核心思想：
+
+AI 会不断“总结”自己的历史记忆。
+
+例如
+
+1000 条对话
+→ 总结成 1 条长期知识
+
+例如：
+
+Raw memory
+
+User: 我在做 Web3 ETF
+User: 我开发 Solana 项目
+User: 我写白皮书
+
+压缩后
+
+User Profile
+→ Web3 protocol builder
+
+这类系统很多研究来自
+
+• OpenAI
+• Anthropic
+
+第五层：反思型记忆（Reflection Memory）
+
+这是目前最前沿的一类 memory architecture。
+
+Agent 会在任务完成后进行自我反思。
+
+流程：
+
+Task
+→ Result
+→ Reflection
+→ Store lesson
+
+例如
+
+Agent 执行交易分析
+发现预测错误
+
+写入记忆：
+
+Lesson:
+Momentum signals unreliable during low liquidity
+
+这个结构来自经典论文
+
+• Reflexion
+
+很多 autonomous agent 已经采用。
+
+综合来看，如果你要做“真正长期记忆 AI Agent”，目前最先进的工程架构通常是：
+
+Vector DB
+
+- Knowledge Graph
+- Memory Compression
+- Reflection
+
+完整结构：
+
+Input
+↓
+Working Memory
+↓
+Vector Retrieval
+↓
+Knowledge Graph Reasoning
+↓
+LLM Decision
+↓
+Reflection
+↓
+Memory Compression
+↓
+Long-term Storage
+
+这种架构已经接近“认知系统”，而不仅仅是聊天机器人。
+
+如果从2026年的技术趋势来看，未来最有潜力的三种 memory 方向是：
+
+第一：Graph Memory
+第二：Self-Compressing Memory
+第三：Persistent Agent Memory
+
+例如一些新项目正在尝试：
+
+• MemGPT
+• Generative Agents
+
+如果从工程成熟度来说，目前最稳的方案是：
+
+Vector DB + Memory Summary
+
+如果从未来能力上限来说：
+
+Vector + Graph + Reflection Memory
