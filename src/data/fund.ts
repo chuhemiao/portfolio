@@ -15,6 +15,9 @@ export type Asset = {
   description: string;
   link?: string;
   researchLink?: string;
+  hasToken?: boolean;
+  tokenTicker?: string;
+  coingeckoLink?: string;
 };
 
 export const philosophy = {
@@ -200,23 +203,43 @@ export const assets: Asset[] = [
   {
     name: 'Polymarket',
     category: 'prediction',
-    description: 'The largest decentralized prediction market platform.',
+    description: 'The largest decentralized prediction market on Polygon. No token issued yet.',
     link: 'https://polymarket.com/',
-    researchLink: '/blog/polymarket_kalshi_prediction_2026'
+    researchLink: '/blog/polymarket_kalshi_prediction_2026',
+    hasToken: false,
+    coingeckoLink: 'https://www.coingecko.com/en/exchanges/polymarket'
+  },
+  {
+    name: 'Kalshi',
+    category: 'prediction',
+    description: 'US-regulated centralized prediction market, CFTC licensed. No token.',
+    link: 'https://kalshi.com/',
+    hasToken: false
   },
   {
     name: 'Opinion Trade',
     category: 'prediction',
-    description: 'Macro-focused prediction market for global events.',
+    description: 'Macro-focused prediction market on BNB Smart Chain.',
     link: 'https://app.opinion.trade/macro',
-    researchLink: '/blog/opinion_labs_pred'
+    researchLink: '/blog/opinion_labs_pred',
+    hasToken: true,
+    tokenTicker: 'OPNT',
+    coingeckoLink: 'https://www.coingecko.com/en/coins/opinion-trade'
   },
   {
-    name: 'Probable Markets',
+    name: 'Limitless',
     category: 'prediction',
-    description: 'Prediction market for real-world event outcomes.',
-    link: 'https://probable.markets/',
-    researchLink: '/blog/probable_predict'
+    description: 'Binary & categorical prediction market on Base. No token yet.',
+    link: 'https://limitless.exchange/',
+    hasToken: false,
+    coingeckoLink: 'https://www.coingecko.com/en/exchanges/limitless-exchange'
+  },
+  {
+    name: 'Football.fun',
+    category: 'prediction',
+    description: 'Sports-focused scalar prediction market on Base. AMM model.',
+    link: 'https://www.football.fun/',
+    hasToken: false
   },
 
   // Web3 US Stocks

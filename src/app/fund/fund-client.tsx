@@ -83,9 +83,34 @@ export default function FundClient() {
                     </span>
                   )}
                 </div>
-                <span className='text-xs px-2 py-0.5 rounded bg-secondary text-secondary-foreground shrink-0'>
-                  {categoryLabels[asset.category]}
-                </span>
+                <div className='flex flex-col items-end gap-1 shrink-0'>
+                  <span className='text-xs px-2 py-0.5 rounded bg-secondary text-secondary-foreground'>
+                    {categoryLabels[asset.category]}
+                  </span>
+                  {asset.category === 'prediction' && (
+                    asset.hasToken && asset.tokenTicker ? (
+                      <a
+                        href={asset.coingeckoLink}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-xs px-2 py-0.5 rounded bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 hover:opacity-80 transition-opacity'>
+                        ${asset.tokenTicker}
+                      </a>
+                    ) : asset.coingeckoLink ? (
+                      <a
+                        href={asset.coingeckoLink}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        className='text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400 hover:opacity-80 transition-opacity'>
+                        no token ↗
+                      </a>
+                    ) : (
+                      <span className='text-xs px-2 py-0.5 rounded bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400'>
+                        no token
+                      </span>
+                    )
+                  )}
+                </div>
               </div>
               <p className='text-sm text-muted-foreground flex-1'>
                 {asset.description}
