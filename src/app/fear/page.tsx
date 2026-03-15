@@ -3,7 +3,7 @@ import { DATA } from '@/data/resume';
 import { getFearDashboardData } from '@/lib/fear-data';
 import type { Metadata } from 'next';
 
-export const revalidate = 300;
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Fear',
