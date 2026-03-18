@@ -233,6 +233,51 @@ export default function Page() {
           ))}
         </div>
       </section>
+      <section id='philosophy'>
+        <div className='flex min-h-0 flex-col gap-y-3'>
+          <BlurFade delay={BLUR_FADE_DELAY * 10.5}>
+            <h2 className='text-xl font-bold'>Philosophy</h2>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 10.6}>
+            <div className='rounded-xl border p-5 space-y-4'>
+              <h3 className='text-base font-semibold'>Three Answers to Why We Live</h3>
+              <ol className='space-y-2 text-sm leading-7 text-muted-foreground'>
+                <li>1. Something to depend on</li>
+                <li>2. Something to look forward to</li>
+                <li>3. A tomorrow</li>
+              </ol>
+            </div>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 10.7}>
+            <div className='rounded-xl border p-5 space-y-4'>
+              <h3 className='text-base font-semibold'>Keep Searching</h3>
+              <p className='text-sm leading-7 text-muted-foreground'>
+                Steve Jobs said it best at the 2005 Stanford commencement:
+              </p>
+              <blockquote className='border-l-2 pl-4 text-sm leading-7 text-muted-foreground space-y-3'>
+                <p>
+                  You&apos;ve got to find what you love. And that is as true for your work as it is
+                  for your lovers. Your work is going to fill a large part of your life, and the
+                  only way to be truly satisfied is to do what you believe is great work.
+                </p>
+                <p>
+                  If you haven&apos;t found it yet, keep looking. Don&apos;t settle. As with all
+                  matters of the heart, you&apos;ll know when you find it.
+                </p>
+              </blockquote>
+            </div>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 10.8}>
+            <div className='rounded-xl border p-5 space-y-4'>
+              <h3 className='text-base font-semibold'>What Is Correct Repetition?</h3>
+              <ul className='space-y-2 text-sm leading-7 text-muted-foreground'>
+                <li>1. Choose the right direction — let time silently work as leverage.</li>
+                <li>2. Find your advantage — keep stacking on the effect.</li>
+              </ul>
+            </div>
+          </BlurFade>
+        </div>
+      </section>
       <section id='skills'>
         <div className='flex min-h-0 flex-col gap-y-3'>
           <BlurFade delay={BLUR_FADE_DELAY * 11}>

@@ -1,0 +1,129 @@
+---
+title: 'Centrifuge (CFG) RWA Tokenization Infrastructure Investment Research Report'
+publishedAt: '2026-03-18'
+summary: 'Centrifuge stands out as a mature RWA tokenization infrastructure layer, powering over $1.3B in tokenized assets primarily through institutional-grade products like the Janus Henderson Anemoy Treasury Fund (JTRSY, ~$761M NAV) and AAA CLO Fund (JAAA, ~$416M-$780M).'
+slug: 'centrifuge-cfg-rwa-tokenization-infrastructure-investment-research-report'
+category: 'research'
+---
+
+## TL;DR
+
+Centrifuge stands out as a mature RWA tokenization infrastructure layer, powering over $1.3B in tokenized assets primarily through institutional-grade products like the Janus Henderson Anemoy Treasury Fund (JTRSY, ~$761M NAV) and AAA CLO Fund (JAAA, ~$416M-$780M). [Dune](https://dune.com/centrifuge/centrifuge) [RWA.xyz](https://app.rwa.xyz/assets/JTRSY) Its hub-and-spoke architecture bridges TradFi yield (U.S. Treasuries, structured credit) to DeFi composability, with recent exchange listings (Binance, Upbit, Bithumb) driving CFG trading volume spikes to $184M on March 16, 2026. [TokenTerminal](https://tokenterminal.com/explorer/projects/centrifuge) While TVL growth signals strong product-market fit among institutions, low on-chain activity (DAU 1-18) and hybrid governance raise questions about retail/decentralized traction. This positions Centrifuge as a build-on/partner-with play for RWA middleware, though token upside hinges on fee accrual execution.
+
+## 1. Project Overview
+
+Centrifuge is a decentralized protocol for tokenizing real-world assets (RWAs) like invoices, royalties, real estate, and structured credit, enabling them to serve as collateral in DeFi lending pools and yield strategies. Launched in 2017, it has evolved from early Tinlake pools to a multi-chain infrastructure supporting $1.3B+ in tokenized assets across Ethereum (dominant), Avalanche, Base, and Stellar. [Dune](https://dune.com/centrifuge/centrifuge) [Centrifuge.io](https://centrifuge.io/)
+
+Core Positioning: RWA infrastructure bridging TradFi institutions (e.g., Janus Henderson, Apollo, S&P Dow Jones Indices) to on-chain liquidity via compliant, composable vaults. The protocol is in the institutional adoption/scaling phase, evidenced by TVL peaks at $1.37B (combined monthly) and partnerships like Resolv's $100M JAAA deployment on Aave Horizon. [Dune](https://dune.com/centrifuge/centrifuge)
+
+Team/Organization: Led by finance and tech pioneers (e.g., founders with prior high-adoption businesses), operating via Centrifuge Labs (CNF subsidiary) post-CP171 governance shift for execution velocity. Backed by $49M+ from ParaFi Capital, Greenfield Capital, Galaxy, and IOSG Ventures. [Internal DB](https://internal)
+
+## 2. Product & Technical Stack
+
+Centrifuge's hub-and-spoke architecture uses the native Centrifuge Chain (Substrate-based, Nominated Proof-of-Stake consensus) as a coordination hub for EVM "spokes" on Ethereum, Base, Avalanche, Stellar, and BNB. This enables multi-chain asset issuance, liquidity routing, and DeFi composability without single-chain bottlenecks. Ethereum hosts ~90-100% of TVL (e.g., JTRSY ~$530M, JAAA ~$530M as of January 2026). [Dune](https://dune.com/centrifuge/centrifuge)
+
+Asset Tokenization: RWAs are originated off-chain (e.g., invoices as NFTs), tokenized via pools/vaults, and issued as ERC-20 shares. Issuers (asset managers) handle compliance; investors redeem in USDC. ERC-7540 asynchronous tokenized vaults address TradFi realities like NAV delays and redemption queues, extending ERC-4626 for yield-bearing composability (e.g., JTRSY as collateral on Aave/Stellar). [Docs](https://docs.centrifuge.io/)
+
+Pools/Vaults: Evolved from Tinlake to V3 vaults supporting treasuries (JTRSY: U.S. T-Bills, daily liquidity), CLOs (JAAA: floating-rate credit, no duration risk), and indices (S&P 500 tokenized fund). Automated origination/reporting via SDK/API; 21+ audits ensure institutional readiness. [Cantina](https://cantina.xyz/portfolio/693b6f24-6e47-4194-97b0-356d10dc1df6) [GitHub](https://github.com/centrifuge/)
+
+Developer Stack: Open-source Substrate pallets, EVM contracts (Ethereum/Base), cross-chain bridges for share tokens. Integrations: Aave Horizon, Morpho, Pendle; permissioned layers for KYC/AML. BVI SPVs provide bankruptcy remoteness. [Docs](https://docs.centrifuge.io/)
+
+This design excels for institutions: verifiable on-chain NAV, DeFi looping (e.g., Resolv's $100M JAAA leverage), multichain distribution.
+
+| Chain     | TVL Share | Key Products | Notes [Dune](https://dune.com/centrifuge/centrifuge) |
+| --------- | --------- | ------------ | ---------------------------------------------------- |
+| Ethereum  | ~90-100%  | JTRSY, JAAA  | Dominant; peaked $770M JAAA Nov 2025                 |
+| Avalanche | ~20-30%   | JAAA         | Stable ~$250M                                        |
+| Base/BNB  | <1%       | Negligible   | Emerging                                             |
+
+Data Limitation: Exact bridge protocols (e.g., specific messaging layers) not detailed; assumes standard Substrate-EVM bridges audited via Cantina.
+
+## 3. Tokenomics & Funding
+
+CFG Utility: Governance (DAO/CNF oversight), fees, staking (NPoS security), incentives. No direct fee capture yet; value via treasury emissions (3% annual inflation to treasury). [Docs](https://docs.centrifuge.io/getting-started/token-summary/)
+
+| Metric             | Value                                               | Notes                                                                                                                                                                                |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Total Supply       | 692M                                                | Post-CP149 (115M incentives vesting to 2029) [Docs](https://docs.centrifuge.io/getting-started/token-summary/)                                                                       |
+| Circulating Supply | 577M                                                | Post-V3 migration (May-Dec 2025, 1:1 swap) [TokenTerminal](https://tokenterminal.com/explorer/projects/centrifuge) [CoinMarketCap](https://coinmarketcap.com/currencies/centrifuge/) |
+| Market Cap         | ~$86M ($0.15/coin)                                  | FDV ~$102M [CoinMarketCap](https://coinmarketcap.com/currencies/centrifuge/)                                                                                                         |
+| Inflation          | 3% annual                                           | To treasury [Docs](https://docs.centrifuge.io/getting-started/token-summary/)                                                                                                        |
+| Vesting            | Core: 48m lock/12m cliff; Incentives linear to 2029 | 50% "released" [Internal DB](https://internal)                                                                                                                                       |
+
+Allocations (Jan 2026): Ecosystem 24% (incl. treasury/CP149), Team 14% (to 2030), Incentives 12% locked, Stakeholders 0.1% (to Mar 2026), Released 50%. [Docs](https://docs.centrifuge.io/getting-started/token-summary/)
+
+Funding: $49.6M raised; key rounds: Series A ($15M, ParaFi/Greenfield 2024), Strategic ($4M Coinbase Ventures 2022). Supports execution credibility. [Internal DB](https://internal)
+
+Assessment: Token design prioritizes long-term alignment (vesting/inflation to treasury) but lacks direct accrual; indirect via governance/usage growth. Supply pressure moderate post-V3.
+
+## 4. Users, Adoption & On-Chain Metrics
+
+Centrifuge shows institutional PMF with TVL growth from <$50M (2023) to $1.37B peak, now ~$1.3B (stable post-July 2025 drawdown). [Dune](https://dune.com/centrifuge/centrifuge) [TokenTerminal](https://tokenterminal.com/explorer/projects/centrifuge)
+
+| Metric               | Value (Recent)           | Trend [Dune](https://dune.com/centrifuge/centrifuge) [TokenTerminal](https://tokenterminal.com/explorer/projects/centrifuge) |
+| -------------------- | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------- |
+| TVL                  | $1.3B (Mar 2026)         | +Explosive 2024-25; JTRSY $761M, JAAA $780M (Jan)                                                                            |
+| Holders              | 8.7k (Mar 16)            | +Steady growth from 0 (May 2025)                                                                                             |
+| DAU/WAU/MAU          | 1-18 / 5-32 / 27-53      | Low; spikes on listings                                                                                                      |
+| Token Volume (24h)   | $94M (Mar 16 peak $184M) | +800% on Binance/Upbit listings                                                                                              |
+| Active Pools         | JTRSY/JAAA dominant      | Ethereum 100% JTRSY; multi-chain JAAA                                                                                        |
+| Cumulative Addresses | ~12.5k (Jan 2026)        | +Upward; peaks Nov 2025                                                                                                      |
+
+Adoption: 600+ dApps? No; focused on 4-5 institutional funds. Partners: Aave (Resolv $100M), Stellar (JTRSY deRWA). Korean listings (Upbit/Bithumb) drove 187%/54% surges. [News](https://thedefiant.io/news/markets/centrifuge-cfg-rallies-60-on-binance-listing)
+
+Insight: TVL sticky (institutional), but crypto-native usage nascent (low DAU). Growth via issuers (Janus/Apollo), not retail.
+
+Limitation: No precise issuer count; proxies via TVL composition.
+
+## 5. Protocol Revenue & Economics
+
+Fees generated via Anemoy products (JTRSY/JAAA); CNF manages collection/distribution per CP162 (50bps protocol fee temporarily 0 during V3). 100% net fees to protocol treasury post-service providers. Forecast: $15M 2026. [Gov](https://gov.centrifuge.io/t/cp162-enable-protocol-revenue-through-cnf-managed-fee-flows/7050)
+
+Model: Management (0.5-1% AUM?), origination/redemption. No direct CFG burn/buyback; accrues via treasury (3% emissions). JAAA excess yield (vs Treasuries) attracts allocators. [Dune](https://dune.com/centrifuge/centrifuge)
+
+Sustainable? Yes—institutional demand (TVL stable despite outflows); subsidized early via incentives. Viewed as RWA issuance OS for DeFi (e.g., Aave looping).
+
+Limitation: Exact fee splits unpublished; relies on CNF transparency reports.
+
+## 6. Governance, Security & Risk
+
+Governance: Hybrid post-CP171 (Nov 2025): CNF (Foundation) handles execution/treasury; DAO oversight/reclaim rights. Active forum (CP162 revenue, CP149 incentives); low voter turnout historically. [Gov](https://gov.centrifuge.io/t/cp171-aligning-for-execution-transparency-and-cfg-value-accrual-through-centrifuge-network-foundation/7132)
+
+Security: 21+ audits (Cantina on pools/ERC-7540); no exploits/defaults. BVI FSC-licensed SPVs for remoteness. [Cantina](https://cantina.xyz/portfolio/693b6f24-6e47-4194-97b0-356d10dc1df6)
+
+Risks:
+
+| Category         | Severity | Details                                                   |
+| ---------------- | -------- | --------------------------------------------------------- |
+| Smart Contract   | Medium   | Audited; cross-chain bridges standard risk                |
+| RWA Credit       | Medium   | AAA CLOs/T-Bills low default; issuer underwriting         |
+| Legal/Regulatory | Medium   | BVI compliant; U.S. non-eligible (professional investors) |
+| Governance       | Medium   | CNF centralization; DAO reclaim possible                  |
+| Liquidity        | Low      | Daily redemptions; $195M 30d JTRSY volume                 |
+
+Crypto risks low; RWA-specific (off-chain enforcement) managed via SPVs.
+
+## 7. Competitive Positioning & Project Stage Assessment
+
+PMF: Achieved institutionally ($1.3B TVL, fastest $1B JAAA); sticky via Janus/Apollo. Engine: Partnerships (Aave, Stellar), multichain (8+ chains). Moat: ERC-7540 pioneer, institutional track record.
+
+| Competitor | TVL   | Focus                | Centrifuge Edge               |
+| ---------- | ----- | -------------------- | ----------------------------- |
+| Ondo       | $15B+ | Treasuries           | Multi-asset (credit/equities) |
+| Maple      | $85M  | Institutional Credit | Broader TradFi (Janus/S&P)    |
+| Goldfinch  | $110M | Emerging Loans       | AAA-grade, DeFi composability |
+
+Stage: Scaling to RWA middleware (like Aave for lending); defensible via issuer network effects, but needs fee accrual for token flywheel.
+
+## 8. Final Score (1–5 stars)
+
+- Tech Stack ★★★★★ (Hub-spoke/ERC-7540 mature)
+- Protocol Design ★★★★★ (Institutional-grade)
+- Token Design ★★★☆☆ (Indirect accrual)
+- Business Model ★★★★☆ ($15M rev forecast)
+- RWA Market Positioning ★★★★★ (Leader)
+- Governance ★★★☆☆ (Hybrid risks)
+- Security Posture ★★★★★ (Clean record)
+- Institutional Readiness ★★★★★ (BVI/FSC)
+
+Summary Verdict: Partner with and build on Centrifuge for RWA-DeFi primitives; token investment merits caution pre-fee accrual but offers asymmetric upside as tokenized assets hit $25B+. Fundamentals position it as RWA infrastructure winner, tempered by low native activity.

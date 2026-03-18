@@ -35,7 +35,7 @@ ${DATA.summary}
 - [Stack](${DATA.url}/stack): Tools, frameworks, and technologies used daily
 - [Fund](${DATA.url}/fund): Crypto investment portfolio and fund insights
 - [Fear](${DATA.url}/fear): Bitcoin bottom probability dashboard with valuation, on-chain, sentiment, macro, and risk layers
-- [Philosophy](${DATA.url}/philosophy): Personal notes about purpose, love, long-term direction, and correct repetition
+- [Research](${DATA.url}/research): Deep-dive investment research reports on 60+ crypto projects — exchanges, DeFi, L1/L2, ZK, AI/DePIN, RWA
 
 ## Recent Blog Posts
 
