@@ -1,0 +1,119 @@
+---
+title: 'Tempo Research Report: Payments-Optimized L1 Blockchain'
+publishedAt: '2026-03-21'
+summary: 'Tempo is an EVM-compatible Layer 1 blockchain launched on mainnet March 18, 2026, designed as high-throughput infrastructure for stablecoin payments and agentic commerce. Co-incubated by Stripe and Paradigm, it differentiates from general-purpose chains by prioritizing predictable low fees (paid in stablecoins via an integrated AMM), sub-second finality, and native account abstraction—making it a specialized "rail" for real-world payment flows like remittances, payroll, and AI agent transactions rather than a native stablecoin issuer.'
+slug: 'tempo-research-report-payments-optimized-l1-blockchain'
+category: 'research'
+---
+
+## TL;DR
+
+Tempo is an EVM-compatible Layer 1 blockchain launched on mainnet March 18, 2026, designed as high-throughput infrastructure for stablecoin payments and agentic commerce. Co-incubated by Stripe and Paradigm, it differentiates from general-purpose chains by prioritizing predictable low fees (paid in stablecoins via an integrated AMM), sub-second finality, and native account abstraction—making it a specialized "rail" for real-world payment flows like remittances, payroll, and AI agent transactions rather than a native stablecoin issuer. With $500M in Series A funding and partnerships including Visa, Mastercard, and Klarna, Tempo positions itself as the "decentralized, internet-scale SWIFT" for stablecoins, but its extreme recency limits on-chain visibility. [Tempo](https://tempo.xyz/blog/mainnet)
+
+## 1. Project Overview
+
+- Name: Tempo
+- Domain: Official site [tempo.xyz](https://tempo.xyz/), docs [docs.tempo.xyz](https://docs.tempo.xyz/), explorer [explore.tempo.xyz](https://explore.tempo.xyz/), GitHub [github.com/tempoxyz/tempo](https://github.com/tempoxyz/tempo) (1,724 commits as of March 2026, active development with recent hardforks).
+- Sector: Payments Infrastructure / Settlement Layer for Stablecoins / Agentic Finance. Not a stablecoin itself but a purpose-built L1 supporting third-party stablecoins (e.g., USDC, EURT) with features like ISO 20022 memos and compliance controls.
+- Chains Supported: Native EVM L1 (chain ID 42431 on testnet; mainnet live). No multi-chain bridging evident yet; focuses on standalone high TPS (tens of thousands claimed).
+- Stage: Mainnet (launched 2026-03-18, ~3 days old as of report cutoff). Public testnet ran since Dec 2025 with partners testing payouts/remittances.
+- Team Background: Led by Matt Huang (Founder/CEO, ex-Paradigm), Georgios Konstantopoulos (Eng Lead, ex-Paradigm), with Stripe collaboration. Backed by payments experts; distinguishes from unrelated Solana bot project "Tempo (formerly Sol Statz)". [Tempo Team](https://tempo.xyz/) [DB Internal](internal data)
+
+Tempo targets enterprise payments (e.g., Klarna stablecoin issuance) and AI agents via MPP, addressing gaps in existing chains like volatile fees on Ethereum or low programmability in fiat rails.
+
+## 2. Product & Technical Stack
+
+Tempo's stack centers on payments optimization: no native gas token (fees in any stablecoin via TIP-20 AMM), native account abstraction (passkeys, sponsored fees, batching), and MPP for autonomous agents. Key modules from docs/blog:
+
+| Module                          | Description                                                                                          | Key Features                                                                                                                                                                                                                                              |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| TIP-20 Token Standard           | Native ERC-20 extension for payments. [Tempo Blog](https://tempo.xyz/blog/tip20)                     | Stablecoin-denominated fees (AMM converts user stablecoin to validator preference); native mint/burn/restrictions; yield distribution; transfer memos (ISO 20022 compliant).                                                                              |
+| Machine Payments Protocol (MPP) | Open standard co-authored with Stripe for agent-to-machine payments. [MPP.dev](https://mpp.dev/)     | "Sessions": one-time authorization reserves funds; streams micro-payments (e.g., API calls) aggregated into single settlement. Supports stablecoins/cards/Lightning. Directory of 100+ services (Alchemy data, Dune queries, fal.ai models, Browserbase). |
+| Account Abstraction             | Protocol-level (no smart contracts needed). [Tempo Blog](https://tempo.xyz/blog/account-abstraction) | Passkey sign-in; fee sponsorship; scoped access keys; batch/parallel/scheduled txns.                                                                                                                                                                      |
+| Compliance & Policies           | TIP-403 for role-based controls. [Tempo Blog](https://tempo.xyz/blog/compliance-controls)            | Mint/freeze/burn delegation; audit logs; default-deny for policies.                                                                                                                                                                                       |
+| Payments Flows                  | Mint/redeem via partners; no central reserves (third-party issuers).                                 | Payroll batching, remittances, embedded finance; on-chain FX roadmap.                                                                                                                                                                                     |
+
+Stablecoin Type: Rail for fiat/RWA-backed third-party stablecoins (e.g., Klarna's planned issuance). No native Tempo stablecoin; peg via issuer reserves (not managed by Tempo). Integrates wallets (passkeys), DEXs (0x Swap API live [TradingView](https://www.tradingview.com/news/coindar:5cf9175dd094b:0-0x-launches-swap-api-support-on-tempo-mainnet/)), custody (UBS testnet). SDKs/RPCs public; EVM-compatible. [Docs](https://docs.tempo.xyz/)
+
+This setup excels for high-volume B2B (60% stablecoin volume) but relies on issuer transparency for peg stability.
+
+## 3. Tokenomics & Funding (Real Data Enhanced)
+
+No native token launched (regulatory clarity pending); value accrues to validators (stablecoin fees), ecosystem (Stripe/Paradigm equity), and issuers (distribution/yield tools). No whitepaper/token page; value via network fees (AMM captures spread) and enterprise services.
+
+Funding (Total: $500M):
+
+| Round      | Amount | Date       | Lead Investors            | Others                                                 |
+| ---------- | ------ | ---------- | ------------------------- | ------------------------------------------------------ |
+| Series A   | $500M  | 2025-10-17 | Thrive Capital, Greenoaks | Sequoia, Ribbit, SV Angel [DB Internal](internal data) |
+| Incubation | N/A    | 2025-09-04 | -                         | Paradigm, Stripe                                       |
+
+No circulating supply/holders (no token). GitHub active (recent commits on audits, e2e tests). No unlocks/vesting public.
+
+## 4. Users & On-chain Metrics (Integrate External Dashboards)
+
+Mainnet too new (3 days); no Dune/DefiLlama/TokenTerminal dashboards yet (searches returned ETH/Solana unrelated). Explorer active but no aggregated stats. Twitter: @tempo (82K followers, mainnet post 594K views, 2.2K likes). [X](https://x.com/tempo/status/2034253704807780543)
+
+| Metric            | Value                 | Notes/Source                                                                                                                                                          |
+| ----------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Stablecoin Supply | N/A                   | Rail only; partners like Klarna to issue.                                                                                                                             |
+| Users/DAU         | N/A                   | Testnet: Mastercard/Visa/Klarna pilots.                                                                                                                               |
+| Tx Volume         | N/A                   | Claimed 100K+ TPS; 0x live for swaps. [Coindesk](https://www.coindesk.com/tech/2026/03/18/stripe-led-payments-blockchain-tempo-goes-live-with-protocol-for-ai-agents) |
+| Community         | 82K Twitter followers | High engagement post-launch. [DB Internal](internal data)                                                                                                             |
+
+Early signals: MPP directory live (100+ services); hackathon March 19. Retention unknown; growth via integrations.
+
+## 5. Protocol Revenue & Economics
+
+No direct revenue data (new mainnet). Model: Stablecoin fee capture via AMM spreads (validator payments); enterprise services (issuance/compliance tooling); potential Stripe cut (co-author MPP).
+
+- Sources: Tx fees (predictable, low, stablecoin-denominated); TIP-20 yield distro (issuer revenue share?); MPP sessions (streaming efficiency boosts volume).
+- No charts available; projected from claims: high TPS → fee volume scales with adoption. Vs. competitors: lower costs than ETH L2s. [TokenTerminal](https://tokenterminal.com/explorer/projects/tempo) (no data yet).
+
+Sustainable if payments migrate (Stripe's $1.9T 2025 volume as tailwind).
+
+## 6. Governance & Risk
+
+Governance: Centralized/company-led (Stripe/Paradigm team); no DAO/foundation evident. GitHub PR audits internal. [Tempo Blog](https://tempo.xyz/blog/)
+
+Risks:
+
+| Risk           | Severity | Details                                                                           |
+| -------------- | -------- | --------------------------------------------------------------------------------- |
+| Smart Contract | High     | No public audits (Trail of Bits/etc. absent); recent commits include e2e fixes.   |
+| Reserve/Peg    | Medium   | Relies on third-party issuers; TIP-20 compliance mitigates but no Tempo reserves. |
+| Regulatory     | Medium   | Payments focus + Stripe ties strong, but stablecoin scrutiny rising.              |
+| Adoption       | High     | New mainnet; competes with Plasma/Arc/Base.                                       |
+| Centralization | Medium   | Validator incentives via fees; geographic dispersion unknown.                     |
+
+Depeg low (fiat-backed partners); liquidity/redemption via AMM/0x.
+
+## 7. Project Stage Assessment
+
+PMF: Early; testnet validated (Visa pilots), mainnet momentum via MPP (100+ services). Growth engine: Stripe distribution + agentic narrative (MPP vs. x402). Edge: Compliance (ISO 20022), sessions for streaming (beats stateless x402 for APIs), EVM portability. Potential as niche settlement layer (B2B payments) if volume hits claims; vs. USDC/USDT: specialized rail, not competitor.
+
+Data Limitation: Metrics pending; assess post-1 month.
+
+## 8. Final Score (1–5 stars)
+
+- Stablecoin Design: ★★★★☆ (Excellent rail/tools; no native issuance)
+- Reserve Transparency: ★★★☆☆ (Issuer-dependent; TIP-20 audit trails strong)
+- UX/Onboarding: ★★★★★ (Native AA/passkeys game-changer)
+- Business Model: ★★★★☆ (Fee capture scales; Stripe moat)
+- Market Share: ★★☆☆☆ (New; high potential)
+- Governance: ★★★☆☆ (Centralized but expert-led)
+
+Summary Verdict:
+n: ★★★★☆ (Excellent rail/tools; no native issuance)
+
+- Reserve Transparency: ★★★☆☆ (Issuer-dependent; TIP-20 audit trails strong)
+- UX/Onboarding: ★★★★★ (Native AA/passkeys game-changer)
+- Business Model: ★★★★☆ (Fee capture scales; Stripe moat)
+- Market Share: ★★☆☆☆ (New; high potential)
+- Governance: ★★★☆☆ (Centralized but expert-led)
+
+Summary Verdict:
+
+> Integrate/build on Tempo for agentic/payments apps—its Stripe-backed infra and MPP position it for explosive growth in stablecoin rails, but wait 1-3 months for on-chain proof and audits before heavy exposure. High-upside bet on AI commerce shift.
+
+Outlook: Bull case ($10B+ TVL via enterprises); base (niche L1); bear (adoption lag). Catalysts: Klarna stablecoin, audit reports, volume dashboards. [Tempo Mainnet](https://tempo.xyz/blog/mainnet)
