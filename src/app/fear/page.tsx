@@ -8,14 +8,14 @@ export const dynamic = 'force-dynamic';
 export const metadata: Metadata = {
   title: 'Fear',
   description:
-    'Bitcoin bottom-fishing index dashboard across valuation, on-chain activity, sentiment, macro environment, and volatility risk.',
+    'Bitcoin and crypto market observation dashboard across valuation, on-chain activity, sentiment, macro environment, leverage, and volatility risk.',
   alternates: {
     canonical: `${DATA.url}/fear`
   },
   openGraph: {
     title: `Fear | ${DATA.name}`,
     description:
-      'Bitcoin bottom-fishing index dashboard across valuation, on-chain activity, sentiment, macro environment, and volatility risk.',
+      'Bitcoin and crypto market observation dashboard across valuation, on-chain activity, sentiment, macro environment, leverage, and volatility risk.',
     url: `${DATA.url}/fear`,
     siteName: DATA.name,
     locale: 'en_US',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Fear | ${DATA.name}`,
     description:
-      'Bitcoin bottom-fishing index dashboard across valuation, on-chain activity, sentiment, macro environment, and volatility risk.',
+      'Bitcoin and crypto market observation dashboard across valuation, on-chain activity, sentiment, macro environment, leverage, and volatility risk.',
     creator: '@0xkkdemian',
     images: [`${DATA.url}/og?title=${encodeURIComponent('Fear')}`]
   }

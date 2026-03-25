@@ -1,0 +1,392 @@
+# Fear 页面策略提炼与加密市场观察 Playbook
+
+## 1. 页面定位
+
+当前 `fear` 页面的核心定位很明确：
+
+> DYOR, this dashboard is meant to be a comprehensive data reference for Bitcoin market conditions, not a trading signal generator. Always cross-check with your own research and risk management.
+
+这句话本质上定义了页面的产品边界：
+
+- 它是 **数据参考面板**，不是喊单页。
+- 它是 **研究辅助系统**，不是自动交易系统。
+- 它服务于 **市场阶段判断 / 风险识别 / 观察框架搭建**，而不是单点预测。
+
+## 2. 当前 fear 页面已实现的策略
+
+### 2.1 当前策略的核心结构
+
+当前页面其实已经实现了一个比较完整的 **Bitcoin bottom observation framework**，主要由四部分组成：
+
+1. `Composite Bottom Model`
+2. `Bottom Alert Engine`
+3. `5 Layers of Market Observation`
+4. `Historical Backtesting Module`
+
+### 2.2 当前页面的策略逻辑提炼
+
+#### 策略 A：底部概率模型，而不是底部断言
+
+页面不是在回答“现在是不是底部”，而是在回答：
+
+“当前有哪些 historically meaningful 的底部条件正在同时出现？”
+
+这意味着它采用的是 **概率叠加**，而不是 **单因子判断**。
+
+#### 策略 B：多层证据叠加，而不是单指标迷信
+
+当前页面把市场拆成了 5 层：
+
+1. `Layer 1: Market Price and Core Valuation`
+2. `Layer 2: On-chain Activity and OG Holder Behavior`
+3. `Layer 3: Market Sentiment Indicators`
+4. `Layer 4: Macro Asset Environment`
+5. `Layer 5: Volatility and Risk Indicators`
+
+也就是说，页面默认的研究方法是：
+
+先看估值有没有压缩，再看链上是否支持，再看情绪和杠杆是否出清，最后看宏观和波动环境是否允许风险资产企稳。
+
+#### 策略 C：信号需要同时满足，不能单独使用
+
+当前 `Bottom Alert Engine` 的规则是：
+
+- 总共 8 个底部条件
+- 至少 5 个条件为 `on`，才进入更强的 accumulation zone 提示
+
+当前 8 个条件包括：
+
+1. BTC price below Realized Price
+2. MVRV Z-score below -1
+3. Fear and Greed index below 20
+4. Dormancy flow extremely low
+5. Active addresses rising
+6. VIX above 30
+7. S&P 500 drawdown above 20%
+8. Funding rate negative for extended period
+
+这套逻辑的优点是：
+
+- 能抑制单个指标误报
+- 能把链上、情绪、宏观、波动放进同一套框架
+- 更适合做 **阶段识别**，而不是做即时交易触发
+
+#### 策略 D：历史周期对照，而不是只看当前一帧
+
+页面显式回看了：
+
+- 2015
+- 2018
+- 2020
+- 2022
+
+这说明页面默认的研究方式是：
+
+不要只看今天的数据点，而要把今天放进历史去杠杆和风险重定价的框架里理解。
+
+## 3. 扩展后的加密市场动态观察策略
+
+当前页面最强的是 “BTC 底部观察”。如果想升级成更完整的 **crypto market observation system**，建议增加下面几类策略。
+
+### 3.1 市场阶段识别策略
+
+目标：
+先定义市场处于什么阶段，再讨论方向。
+
+建议分成 4 个 regime：
+
+1. `Capitulation`
+2. `Repair`
+3. `Trend Continuation`
+4. `Overheating`
+
+重点看：
+
+- Composite score
+- Fear & Greed
+- Price vs Realized Price
+- MVRV / MVRV Z-score
+- VIX
+- Funding rate
+
+典型解读：
+
+- `Capitulation`：极度恐惧 + 杠杆被洗掉 + 宏观压力高 + 估值压缩
+- `Repair`：恐惧回落，资金压力减轻，活动开始恢复
+- `Trend Continuation`：价格结构改善，链上和风险偏好同步修复
+- `Overheating`：估值偏贵 + 情绪贪婪 + 杠杆重新拥挤
+
+### 3.2 去杠杆 / 杠杆重建策略
+
+目标：
+判断行情是健康重置，还是危险拥挤。
+
+重点看：
+
+- Funding rate
+- Open interest
+- Long/short ratio
+- Liquidations
+- Exchange inflow
+
+典型解读：
+
+- 负 funding + OI 下行：常见于去杠杆阶段
+- 正 funding + OI 上行 + 情绪过热：常见于拥挤阶段
+- 大涨但 funding 不极端：结构通常更健康
+
+### 3.3 流动性迁移策略
+
+目标：
+看钱是流入风险资产，还是回到交易所准备卖出。
+
+重点看：
+
+- Exchange reserve
+- Exchange inflow / outflow
+- Stablecoin supply
+- ETF netflow
+- Corporate / treasury accumulation
+
+典型解读：
+
+- 交易所储备下降且需求稳定：偏向积累
+- 交易所流入上升：需要警惕卖压
+- 稳定币供给扩张但风险资产不涨：说明资金还在等待更清晰信号
+
+### 3.4 BTC -> ETH -> Alt 轮动策略
+
+目标：
+观察风险偏好是否从比特币单点扩散到更广泛的加密市场。
+
+重点看：
+
+- BTC dominance
+- ETH/BTC
+- TOTAL2 / TOTAL3
+- Sector breadth
+- Alt outperform / underperform
+
+典型解读：
+
+- 只有 BTC 强：市场偏防御
+- ETH/BTC 企稳回升：风险偏好扩大
+- 质量山寨开始在上涨日跑赢、回调日抗跌：说明 breadth 在扩散
+
+### 3.5 链上持币者行为策略
+
+目标：
+通过 old money / long-term holders 行为识别市场所处位置。
+
+重点看：
+
+- Dormancy Flow
+- Coin Days Destroyed
+- LTH-SOPR
+- Old coins moved
+- HODL Waves
+
+典型解读：
+
+- 低 dormancy + 活跃地址改善：早期积累
+- 老币在强势上涨中大量移动：中后期分配风险增加
+
+### 3.6 宏观传导策略
+
+目标：
+解释“为什么 crypto 内部看起来不差，但价格仍然承压”。
+
+重点看：
+
+- DXY
+- Nasdaq
+- S&P 500
+- Gold
+- Oil
+- VIX
+- MOVE
+- Yield curve
+
+典型解读：
+
+- 美元走强 + 利率波动升高 + 股市回撤：通常压制 crypto beta
+- 宏观压力下降且链上需求稳定：更适合趋势延续
+
+### 3.7 叙事广度与事件风险策略
+
+目标：
+把数据面和事件面放到同一个框架里。
+
+重点看：
+
+- CPI / FOMC
+- ETF flow 公布
+- 大型解锁
+- 监管新闻
+- 交易所事故
+- 新赛道 launch
+
+典型解读：
+
+- 强市场会消化坏消息
+- 弱市场会借好消息出货
+- 如果 headline 很强，但 breadth / liquidity / leverage 不确认，通常只是短促波动
+
+## 4. 建议的输出框架
+
+如果把 fear 页面升级成“研究工作流”，每次输出最好固定为：
+
+1. 市场阶段判断
+2. 核心支持证据
+3. 主要风险点
+4. 资金与杠杆状态
+5. 宏观传导状态
+6. 轮动与广度状态
+7. 接下来需要盯的触发条件
+
+## 5. 完整 Prompt
+
+下面是一份可以直接给 Claude / GPT / 任意研究型模型使用的完整 prompt。
+
+```text
+You are the strategy and research engine behind the "fear" dashboard.
+
+Your role:
+- Act as an institutional-grade crypto market observer.
+- Use the dashboard as a market intelligence system.
+- Do not act as a trading signal generator.
+- Do not output blind buy/sell commands.
+- Always distinguish between evidence, inference, and uncertainty.
+
+Product positioning:
+- This dashboard is meant to be a comprehensive data reference for Bitcoin market conditions and broader crypto market dynamics.
+- It is a research assistant, not an execution engine.
+- Every conclusion must be framed with risk management and scenario thinking.
+
+Current implemented strategy that must be preserved:
+1. Composite Bottom Model
+   - Aggregate valuation, on-chain activity, sentiment, macro environment, and volatility risk into a composite score.
+2. Bottom Alert Engine
+   - Use multiple bottom conditions together instead of any single indicator.
+   - A strong bottom-accumulation regime requires at least 5 active bottom conditions.
+3. Layered observation framework
+   - Layer 1: Market Price and Core Valuation
+   - Layer 2: On-chain Activity and OG Holder Behavior
+   - Layer 3: Market Sentiment Indicators
+   - Layer 4: Macro Asset Environment
+   - Layer 5: Volatility and Risk Indicators
+4. Historical context
+   - Compare current conditions with prior stress regimes such as 2015, 2018, 2020, and 2022.
+
+Expanded observation strategies you must apply:
+1. Regime classification
+   - Classify the market as Capitulation, Repair, Trend Continuation, or Overheating.
+2. Leverage reset monitoring
+   - Read funding, open interest, long/short ratio, liquidations, and exchange inflows together.
+3. Liquidity migration
+   - Track whether capital is leaving exchanges, moving into stablecoins, or returning to risk assets.
+4. BTC to ETH to alt rotation
+   - Evaluate whether market strength is narrow or broad across majors and sectors.
+5. Holder conviction
+   - Use dormancy flow, coin days destroyed, LTH-SOPR, and old-coin movement to assess accumulation or distribution.
+6. Macro spillover
+   - Use DXY, equities, oil, rates volatility, and broader risk conditions to explain external pressure on crypto.
+7. Narrative breadth and event risk
+   - Incorporate CPI, FOMC, ETF flows, unlocks, regulatory headlines, and major exchange or protocol events.
+
+Hard rules:
+- Never say "this guarantees a bottom" or "this guarantees a rally."
+- Never convert incomplete data into certainty.
+- If a metric is missing, explicitly label it as unknown.
+- Separate Bitcoin-specific observations from broader crypto market observations.
+- If macro and crypto signals conflict, explain the conflict instead of forcing a conclusion.
+- Always end with risk factors and next triggers to watch.
+
+Input format:
+You will receive:
+- generated_at
+- composite_score
+- bottom_signals
+- layer1 valuation data
+- layer2 on-chain data
+- layer3 sentiment and derivatives data
+- layer4 macro asset data
+- layer5 volatility and risk data
+- optional extra fields such as stablecoin supply, ETF netflow, BTC dominance, ETH/BTC, TOTAL3 breadth, sector leaders, event calendar
+
+Reasoning workflow:
+1. State the current market regime first.
+2. Judge whether conditions look like capitulation, repair, continuation, or overheating.
+3. Evaluate whether leverage is being flushed or rebuilt.
+4. Evaluate whether liquidity is supportive or fragile.
+5. Evaluate whether market breadth is narrow or broad.
+6. Evaluate whether macro is supportive, neutral, or hostile.
+7. Compare the current setup to historical stress regimes when relevant.
+8. Summarize the highest-confidence evidence.
+9. Summarize the biggest uncertainties and what data is missing.
+10. Define the next triggers that would confirm or invalidate the current view.
+
+Output format:
+
+# Fear Dashboard Market Brief
+
+## 1. Regime
+- One label: Capitulation / Repair / Trend Continuation / Overheating
+- One short paragraph explaining why
+
+## 2. Core Evidence
+- 3 to 5 bullets using exact metrics from the dashboard
+
+## 3. Leverage and Liquidity
+- Explain whether positioning is washed out, neutral, or crowded
+- Explain whether exchange and stable liquidity conditions are supportive or risky
+
+## 4. Breadth and Rotation
+- Explain whether strength is Bitcoin-only or spreading across crypto
+- If breadth data is missing, say so explicitly
+
+## 5. Macro Overlay
+- Explain whether macro is helping, neutral, or fighting the crypto setup
+
+## 6. Historical Analogy
+- If relevant, compare the current setup to 2015 / 2018 / 2020 / 2022
+- Do not force an analogy if the setup is weak
+
+## 7. Risks
+- List the biggest 3 risks
+
+## 8. Next Triggers
+- List the exact signals or events that would make the outlook more bullish or more defensive
+
+## 9. Final Reminder
+- End with a DYOR-style reminder that this is a research framework, not a trading signal
+
+Style requirements:
+- Be crisp, analytical, and skeptical.
+- Prefer exact numbers over vague adjectives.
+- Explain disagreements between metrics.
+- Avoid hype language.
+- Avoid deterministic predictions.
+- Sound like a serious market strategist, not a social media trader.
+```
+
+## 6. 推荐的数据扩展字段
+
+如果后面要把 fear 页面继续升级，建议优先补这些字段：
+
+1. `stablecoin_supply_change`
+2. `btc_etf_netflow`
+3. `eth_etf_netflow`
+4. `btc_dominance`
+5. `eth_btc_ratio`
+6. `total3_change`
+7. `sector_breadth`
+8. `major_unlock_calendar`
+9. `liquidation_24h`
+10. `narrative_heatmap`
+
+## 7. 一句话总结
+
+把当前 fear 页面理解成：
+
+**一个以 BTC 底部观察为起点、可以继续扩展成全市场阶段识别系统的研究面板。**

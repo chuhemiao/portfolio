@@ -1,4 +1,9 @@
 import type { FearDashboardData, SignalStatus } from '@/lib/fear-data';
+import {
+  FEAR_CORE_STRATEGIES,
+  FEAR_EXPANDED_STRATEGIES,
+  FEAR_OPERATOR_GUIDELINES
+} from '@/data/fear-playbook';
 
 function formatNumber(
   value: number | null,
@@ -128,6 +133,29 @@ function ListBlock({ title, items }: { title: string; items: string[] }) {
   );
 }
 
+function StrategyCard({
+  title,
+  description,
+  checks,
+  interpretation
+}: {
+  title: string;
+  description: string;
+  checks: string[];
+  interpretation: string[];
+}) {
+  return (
+    <div className='rounded-xl border p-4 bg-background/80 space-y-4'>
+      <div className='space-y-2'>
+        <h3 className='text-sm font-semibold'>{title}</h3>
+        <p className='text-sm text-muted-foreground'>{description}</p>
+      </div>
+      <ListBlock title='What to watch' items={checks} />
+      <ListBlock title='How to read it' items={interpretation} />
+    </div>
+  );
+}
+
 export default function FearClient({ data }: { data: FearDashboardData }) {
   const activeSignals = data.bottomSignals.filter(
     (s) => s.status === 'on'
@@ -143,6 +171,11 @@ export default function FearClient({ data }: { data: FearDashboardData }) {
           DYOR, this dashboard is meant to be a comprehensive data reference for
           Bitcoin market conditions, not a trading signal generator. Always
           cross-check with your own research and risk management.
+        </p>
+        <p className='text-sm text-muted-foreground'>
+          Use the playbook below to observe regime shifts, leverage resets,
+          liquidity migration, market rotation, and macro spillovers across
+          crypto.
         </p>
         <p className='text-xs text-muted-foreground'>
           Last refresh: {new Date(data.generatedAt).toLocaleString('en-US')}
@@ -572,6 +605,53 @@ export default function FearClient({ data }: { data: FearDashboardData }) {
               'Yield curve inversion',
               'VIX > 30'
             ]}
+          />
+        </div>
+
+        <div className='rounded-xl border p-5 space-y-5'>
+          <div className='space-y-2'>
+            <h2 className='text-lg font-semibold'>Observation Playbook</h2>
+            <p className='text-sm text-muted-foreground'>
+              Extract the current fear-page strategy first, then extend it into
+              a broader crypto market observation workflow.
+            </p>
+          </div>
+
+          <div className='space-y-4'>
+            <div>
+              <h3 className='text-sm font-semibold'>Current page strategy</h3>
+              <p className='text-sm text-muted-foreground mt-1'>
+                The existing implementation is a bottom-observation framework
+                built around layered evidence and a risk-first operating rule.
+              </p>
+            </div>
+            <div className='grid grid-cols-1 xl:grid-cols-3 gap-4'>
+              {FEAR_CORE_STRATEGIES.map((strategy) => (
+                <StrategyCard key={strategy.title} {...strategy} />
+              ))}
+            </div>
+          </div>
+
+          <div className='space-y-4'>
+            <div>
+              <h3 className='text-sm font-semibold'>
+                Expanded crypto market observation strategies
+              </h3>
+              <p className='text-sm text-muted-foreground mt-1'>
+                These strategies make the dashboard more useful for daily and
+                weekly market review beyond pure bottom-fishing.
+              </p>
+            </div>
+            <div className='grid grid-cols-1 xl:grid-cols-2 gap-4'>
+              {FEAR_EXPANDED_STRATEGIES.map((strategy) => (
+                <StrategyCard key={strategy.title} {...strategy} />
+              ))}
+            </div>
+          </div>
+
+          <ListBlock
+            title='Operator rules'
+            items={FEAR_OPERATOR_GUIDELINES}
           />
         </div>
 
