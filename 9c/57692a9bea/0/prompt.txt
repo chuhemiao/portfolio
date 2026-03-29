@@ -1,0 +1,994 @@
+my project 增加两个项目  稳定币观察  https://usdc.kkdemian.com/   Fear Dashboard
+Crypto market observation & regime classification system
+
+   https://watch.kkdemian.com/
+
+---
+
+帮两个项目加上截图 image 字段  稳定币观察改为：Stablecoin Flow & Supply Dashboard
+Real-time monitoring of stablecoin issuance, flows, and market dynamics
+
+---
+
+Base directory for this skill: /Users/kk/.claude/skills/gstack
+
+<!-- AUTO-GENERATED from SKILL.md.tmpl — do not edit directly -->
+<!-- Regenerate: bun run gen:skill-docs -->
+
+## Preamble (run first)
+
+```bash
+_UPD=$(~/.claude/skills/gstack/bin/gstack-update-check 2>/dev/null || .claude/skills/gstack/bin/gstack-update-check 2>/dev/null || true)
+[ -n "$_UPD" ] && echo "$_UPD" || true
+mkdir -p ~/.gstack/sessions
+touch ~/.gstack/sessions/"$PPID"
+_SESSIONS=$(find ~/.gstack/sessions -mmin -120 -type f 2>/dev/null | wc -l | tr -d ' ')
+find ~/.gstack/sessions -mmin +120 -type f -delete 2>/dev/null || true
+_CONTRIB=$(~/.claude/skills/gstack/bin/gstack-config get gstack_contributor 2>/dev/null || true)
+_PROACTIVE=$(~/.claude/skills/gstack/bin/gstack-config get proactive 2>/dev/null || echo "true")
+_BRANCH=$(git branch --show-current 2>/dev/null || echo "unknown")
+echo "BRANCH: $_BRANCH"
+echo "PROACTIVE: $_PROACTIVE"
+_LAKE_SEEN=$([ -f ~/.gstack/.completeness-intro-seen ] && echo "yes" || echo "no")
+echo "LAKE_INTRO: $_LAKE_SEEN"
+_TEL=$(~/.claude/skills/gstack/bin/gstack-config get telemetry 2>/dev/null || true)
+_TEL_PROMPTED=$([ -f ~/.gstack/.telemetry-prompted ] && echo "yes" || echo "no")
+_TEL_START=$(date +%s)
+_SESSION_ID="$$-$(date +%s)"
+echo "TELEMETRY: ${_TEL:-off}"
+echo "TEL_PROMPTED: $_TEL_PROMPTED"
+mkdir -p ~/.gstack/analytics
+echo '{"skill":"gstack","ts":"'$(date -u +%Y-%m-%dT%H:%M:%SZ)'","repo":"'$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null || echo "unknown")'"}'  >> ~/.gstack/analytics/skill-usage.jsonl 2>/dev/null || true
+for _PF in ~/.gstack/analytics/.pending-*; do [ -f "$_PF" ] && ~/.claude/skills/gstack/bin/gstack-telemetry-log --event-type skill_run --skill _pending_finalize --outcome unknown --session-id "$_SESSION_ID" 2>/dev/null || true; break; done
+```
+
+If `PROACTIVE` is `"false"`, do not proactively suggest gstack skills — only invoke
+them when the user explicitly asks. The user opted out of proactive suggestions.
+
+If output shows `UPGRADE_AVAILABLE <old> <new>`: read `~/.claude/skills/gstack/gstack-upgrade/SKILL.md` and follow the "Inline upgrade flow" (auto-upgrade if configured, otherwise AskUserQuestion with 4 options, write snooze state if declined). If `JUST_UPGRADED <from> <to>`: tell user "Running gstack v{to} (just updated!)" and continue.
+
+If `LAKE_INTRO` is `no`: Before continuing, introduce the Completeness Principle.
+Tell the user: "gstack follows the **Boil the Lake** principle — always do the complete
+thing when AI makes the marginal cost near-zero. Read more: https://garryslist.org/posts/boil-the-ocean"
+Then offer to open the essay in their default browser:
+
+```bash
+open https://garryslist.org/posts/boil-the-ocean
+touch ~/.gstack/.completeness-intro-seen
+```
+
+Only run `open` if the user says yes. Always run `touch` to mark as seen. This only happens once.
+
+If `TEL_PROMPTED` is `no` AND `LAKE_INTRO` is `yes`: After the lake intro is handled,
+ask the user about telemetry. Use AskUserQuestion:
+
+> Help gstack get better! Community mode shares usage data (which skills you use, how long
+> they take, crash info) with a stable device ID so we can track trends and fix bugs faster.
+> No code, file paths, or repo names are ever sent.
+> Change anytime with `gstack-config set telemetry off`.
+
+Options:
+- A) Help gstack get better! (recommended)
+- B) No thanks
+
+If A: run `~/.claude/skills/gstack/bin/gstack-config set telemetry community`
+
+If B: ask a follow-up AskUserQuestion:
+
+> How about anonymous mode? We just learn that *someone* used gstack — no unique ID,
+> no way to connect sessions. Just a counter that helps us know if anyone's out there.
+
+Options:
+- A) Sure, anonymous is fine
+- B) No thanks, fully off
+
+If B→A: run `~/.claude/skills/gstack/bin/gstack-config set telemetry anonymous`
+If B→B: run `~/.claude/skills/gstack/bin/gstack-config set telemetry off`
+
+Always run:
+```bash
+touch ~/.gstack/.telemetry-prompted
+```
+
+This only happens once. If `TEL_PROMPTED` is `yes`, skip this entirely.
+
+## AskUserQuestion Format
+
+**ALWAYS follow this structure for every AskUserQuestion call:**
+1. **Re-ground:** State the project, the current branch (use the `_BRANCH` value printed by the preamble — NOT any branch from conversation history or gitStatus), and the current plan/task. (1-2 sentences)
+2. **Simplify:** Explain the problem in plain English a smart 16-year-old could follow. No raw function names, no internal jargon, no implementation details. Use concrete examples and analogies. Say what it DOES, not what it's called.
+3. **Recommend:** `RECOMMENDATION: Choose [X] because [one-line reason]` — always prefer the complete option over shortcuts (see Completeness Principle). Include `Completeness: X/10` for each option. Calibration: 10 = complete implementation (all edge cases, full coverage), 7 = covers happy path but skips some edges, 3 = shortcut that defers significant work. If both options are 8+, pick the higher; if one is ≤5, flag it.
+4. **Options:** Lettered options: `A) ... B) ... C) ...` — when an option involves effort, show both scales: `(human: ~X / CC: ~Y)`
+
+Assume the user hasn't looked at this window in 20 minutes and doesn't have the code open. If you'd need to read the source to understand your own explanation, it's too complex.
+
+Per-skill instructions may add additional formatting rules on top of this baseline.
+
+## Completeness Principle — Boil the Lake
+
+AI-assisted coding makes the marginal cost of completeness near-zero. When you present options:
+
+- If Option A is the complete implementation (full parity, all edge cases, 100% coverage) and Option B is a shortcut that saves modest effort — **always recommend A**. The delta between 80 lines and 150 lines is meaningless with CC+gstack. "Good enough" is the wrong instinct when "complete" costs minutes more.
+- **Lake vs. ocean:** A "lake" is boilable — 100% test coverage for a module, full feature implementation, handling all edge cases, complete error paths. An "ocean" is not — rewriting an entire system from scratch, adding features to dependencies you don't control, multi-quarter platform migrations. Recommend boiling lakes. Flag oceans as out of scope.
+- **When estimating effort**, always show both scales: human team time and CC+gstack time. The compression ratio varies by task type — use this reference:
+
+| Task type | Human team | CC+gstack | Compression |
+|-----------|-----------|-----------|-------------|
+| Boilerplate / scaffolding | 2 days | 15 min | ~100x |
+| Test writing | 1 day | 15 min | ~50x |
+| Feature implementation | 1 week | 30 min | ~30x |
+| Bug fix + regression test | 4 hours | 15 min | ~20x |
+| Architecture / design | 2 days | 4 hours | ~5x |
+| Research / exploration | 1 day | 3 hours | ~3x |
+
+- This principle applies to test coverage, error handling, documentation, edge cases, and feature completeness. Don't skip the last 10% to "save time" — with AI, that 10% costs seconds.
+
+**Anti-patterns — DON'T do this:**
+- BAD: "Choose B — it covers 90% of the value with less code." (If A is only 70 lines more, choose A.)
+- BAD: "We can skip edge case handling to save time." (Edge case handling costs minutes with CC.)
+- BAD: "Let's defer test coverage to a follow-up PR." (Tests are the cheapest lake to boil.)
+- BAD: Quoting only human-team effort: "This would take 2 weeks." (Say: "2 weeks human / ~1 hour CC.")
+
+## Contributor Mode
+
+If `_CONTRIB` is `true`: you are in **contributor mode**. You're a gstack user who also helps make it better.
+
+**At the end of each major workflow step** (not after every single command), reflect on the gstack tooling you used. Rate your experience 0 to 10. If it wasn't a 10, think about why. If there is an obvious, actionable bug OR an insightful, interesting thing that could have been done better by gstack code or skill markdown — file a field report. Maybe our contributor will help make us better!
+
+**Calibration — this is the bar:** For example, `$B js "await fetch(...)"` used to fail with `SyntaxError: await is only valid in async functions` because gstack didn't wrap expressions in async context. Small, but the input was reasonable and gstack should have handled it — that's the kind of thing worth filing. Things less consequential than this, ignore.
+
+**NOT worth filing:** user's app bugs, network errors to user's URL, auth failures on user's site, user's own JS logic bugs.
+
+**To file:** write `~/.gstack/contributor-logs/{slug}.md` with **all sections below** (do not truncate — include every section through the Date/Version footer):
+
+```
+# {Title}
+
+Hey gstack team — ran into this while using /{skill-name}:
+
+**What I was trying to do:** {what the user/agent was attempting}
+**What happened instead:** {what actually happened}
+**My rating:** {0-10} — {one sentence on why it wasn't a 10}
+
+## Steps to reproduce
+1. {step}
+
+## Raw output
+```
+{paste the actual error or unexpected output here}
+```
+
+## What would make this a 10
+{one sentence: what gstack should have done differently}
+
+**Date:** {YYYY-MM-DD} | **Version:** {gstack version} | **Skill:** /{skill}
+```
+
+Slug: lowercase, hyphens, max 60 chars (e.g. `browse-js-no-await`). Skip if file already exists. Max 3 reports per session. File inline and continue — don't stop the workflow. Tell user: "Filed gstack field report: {title}"
+
+## Completion Status Protocol
+
+When completing a skill workflow, report status using one of:
+- **DONE** — All steps completed successfully. Evidence provided for each claim.
+- **DONE_WITH_CONCERNS** — Completed, but with issues the user should know about. List each concern.
+- **BLOCKED** — Cannot proceed. State what is blocking and what was tried.
+- **NEEDS_CONTEXT** — Missing information required to continue. State exactly what you need.
+
+### Escalation
+
+It is always OK to stop and say "this is too hard for me" or "I'm not confident in this result."
+
+Bad work is worse than no work. You will not be penalized for escalating.
+- If you have attempted a task 3 times without success, STOP and escalate.
+- If you are uncertain about a security-sensitive change, STOP and escalate.
+- If the scope of work exceeds what you can verify, STOP and escalate.
+
+Escalation format:
+```
+STATUS: BLOCKED | NEEDS_CONTEXT
+REASON: [1-2 sentences]
+ATTEMPTED: [what you tried]
+RECOMMENDATION: [what the user should do next]
+```
+
+## Telemetry (run last)
+
+After the skill workflow completes (success, error, or abort), log the telemetry event.
+Determine the skill name from the `name:` field in this file's YAML frontmatter.
+Determine the outcome from the workflow result (success if completed normally, error
+if it failed, abort if the user interrupted).
+
+**PLAN MODE EXCEPTION — ALWAYS RUN:** This command writes telemetry to
+`~/.gstack/analytics/` (user config directory, not project files). The skill
+preamble already writes to the same directory — this is the same pattern.
+Skipping this command loses session duration and outcome data.
+
+Run this bash:
+
+```bash
+_TEL_END=$(date +%s)
+_TEL_DUR=$(( _TEL_END - _TEL_START ))
+rm -f ~/.gstack/analytics/.pending-"$_SESSION_ID" 2>/dev/null || true
+~/.claude/skills/gstack/bin/gstack-telemetry-log \
+  --skill "SKILL_NAME" --duration "$_TEL_DUR" --outcome "OUTCOME" \
+  --used-browse "USED_BROWSE" --session-id "$_SESSION_ID" 2>/dev/null &
+```
+
+Replace `SKILL_NAME` with the actual skill name from frontmatter, `OUTCOME` with
+success/error/abort, and `USED_BROWSE` with true/false based on whether `$B` was used.
+If you cannot determine the outcome, use "unknown". This runs in the background and
+never blocks the user.
+
+If `PROACTIVE` is `false`: do NOT proactively suggest other gstack skills during this session.
+Only run skills the user explicitly invokes. This preference persists across sessions via
+`gstack-config`.
+
+# gstack browse: QA Testing & Dogfooding
+
+Persistent headless Chromium. First call auto-starts (~3s), then ~100-200ms per command.
+Auto-shuts down after 30 min idle. State persists between calls (cookies, tabs, sessions).
+
+## SETUP (run this check BEFORE any browse command)
+
+```bash
+_ROOT=$(git rev-parse --show-toplevel 2>/dev/null)
+B=""
+[ -n "$_ROOT" ] && [ -x "$_ROOT/.claude/skills/gstack/browse/dist/browse" ] && B="$_ROOT/.claude/skills/gstack/browse/dist/browse"
+[ -z "$B" ] && B=~/.claude/skills/gstack/browse/dist/browse
+if [ -x "$B" ]; then
+  echo "READY: $B"
+else
+  echo "NEEDS_SETUP"
+fi
+```
+
+If `NEEDS_SETUP`:
+1. Tell the user: "gstack browse needs a one-time build (~10 seconds). OK to proceed?" Then STOP and wait.
+2. Run: `cd <SKILL_DIR> && ./setup`
+3. If `bun` is not installed: `curl -fsSL https://bun.sh/install | bash`
+
+## IMPORTANT
+
+- Use the compiled binary via Bash: `$B <command>`
+- NEVER use `mcp__claude-in-chrome__*` tools. They are slow and unreliable.
+- Browser persists between calls — cookies, login sessions, and tabs carry over.
+- Dialogs (alert/confirm/prompt) are auto-accepted by default — no browser lockup.
+- **Show screenshots:** After `$B screenshot`, `$B snapshot -a -o`, or `$B responsive`, always use the Read tool on the output PNG(s) so the user can see them. Without this, screenshots are invisible.
+
+## QA Workflows
+
+### Test a user flow (login, signup, checkout, etc.)
+
+```bash
+# 1. Go to the page
+$B goto https://app.example.com/login
+
+# 2. See what's interactive
+$B snapshot -i
+
+# 3. Fill the form using refs
+$B fill @e3 "test@example.com"
+$B fill @e4 "password123"
+$B click @e5
+
+# 4. Verify it worked
+$B snapshot -D              # diff shows what changed after clicking
+$B is visible ".dashboard"  # assert the dashboard appeared
+$B screenshot /tmp/after-login.png
+```
+
+### Verify a deployment / check prod
+
+```bash
+$B goto https://yourapp.com
+$B text                          # read the page — does it load?
+$B console                       # any JS errors?
+$B network                       # any failed requests?
+$B js "document.title"           # correct title?
+$B is visible ".hero-section"    # key elements present?
+$B screenshot /tmp/prod-check.png
+```
+
+### Dogfood a feature end-to-end
+
+```bash
+# Navigate to the feature
+$B goto https://app.example.com/new-feature
+
+# Take annotated screenshot — shows every interactive element with labels
+$B snapshot -i -a -o /tmp/feature-annotated.png
+
+# Find ALL clickable things (including divs with cursor:pointer)
+$B snapshot -C
+
+# Walk through the flow
+$B snapshot -i          # baseline
+$B click @e3            # interact
+$B snapshot -D          # what changed? (unified diff)
+
+# Check element states
+$B is visible ".success-toast"
+$B is enabled "#next-step-btn"
+$B is checked "#agree-checkbox"
+
+# Check console for errors after interactions
+$B console
+```
+
+### Test responsive layouts
+
+```bash
+# Quick: 3 screenshots at mobile/tablet/desktop
+$B goto https://yourapp.com
+$B responsive /tmp/layout
+
+# Manual: specific viewport
+$B viewport 375x812     # iPhone
+$B screenshot /tmp/mobile.png
+$B viewport 1440x900    # Desktop
+$B screenshot /tmp/desktop.png
+
+# Element screenshot (crop to specific element)
+$B screenshot "#hero-banner" /tmp/hero.png
+$B snapshot -i
+$B screenshot @e3 /tmp/button.png
+
+# Region crop
+$B screenshot --clip 0,0,800,600 /tmp/above-fold.png
+
+# Viewport only (no scroll)
+$B screenshot --viewport /tmp/viewport.png
+```
+
+### Test file upload
+
+```bash
+$B goto https://app.example.com/upload
+$B snapshot -i
+$B upload @e3 /path/to/test-file.pdf
+$B is visible ".upload-success"
+$B screenshot /tmp/upload-result.png
+```
+
+### Test forms with validation
+
+```bash
+$B goto https://app.example.com/form
+$B snapshot -i
+
+# Submit empty — check validation errors appear
+$B click @e10                        # submit button
+$B snapshot -D                       # diff shows error messages appeared
+$B is visible ".error-message"
+
+# Fill and resubmit
+$B fill @e3 "valid input"
+$B click @e10
+$B snapshot -D                       # diff shows errors gone, success state
+```
+
+### Test dialogs (delete confirmations, prompts)
+
+```bash
+# Set up dialog handling BEFORE triggering
+$B dialog-accept              # will auto-accept next alert/confirm
+$B click "#delete-button"     # triggers confirmation dialog
+$B dialog                     # see what dialog appeared
+$B snapshot -D                # verify the item was deleted
+
+# For prompts that need input
+$B dialog-accept "my answer"  # accept with text
+$B click "#rename-button"     # triggers prompt
+```
+
+### Test authenticated pages (import real browser cookies)
+
+```bash
+# Import cookies from your real browser (opens interactive picker)
+$B cookie-import-browser
+
+# Or import a specific domain directly
+$B cookie-import-browser comet --domain .github.com
+
+# Now test authenticated pages
+$B goto https://github.com/settings/profile
+$B snapshot -i
+$B screenshot /tmp/github-profile.png
+```
+
+### Compare two pages / environments
+
+```bash
+$B diff https://staging.app.com https://prod.app.com
+```
+
+### Multi-step chain (efficient for long flows)
+
+```bash
+echo '[
+  ["goto","https://app.example.com"],
+  ["snapshot","-i"],
+  ["fill","@e3","test@test.com"],
+  ["fill","@e4","password"],
+  ["click","@e5"],
+  ["snapshot","-D"],
+  ["screenshot","/tmp/result.png"]
+]' | $B chain
+```
+
+## Quick Assertion Patterns
+
+```bash
+# Element exists and is visible
+$B is visible ".modal"
+
+# Button is enabled/disabled
+$B is enabled "#submit-btn"
+$B is disabled "#submit-btn"
+
+# Checkbox state
+$B is checked "#agree"
+
+# Input is editable
+$B is editable "#name-field"
+
+# Element has focus
+$B is focused "#search-input"
+
+# Page contains text
+$B js "document.body.textContent.includes('Success')"
+
+# Element count
+$B js "document.querySelectorAll('.list-item').length"
+
+# Specific attribute value
+$B attrs "#logo"    # returns all attributes as JSON
+
+# CSS property
+$B css ".button" "background-color"
+```
+
+## Snapshot System
+
+The snapshot is your primary tool for understanding and interacting with pages.
+
+```
+-i        --interactive           Interactive elements only (buttons, links, inputs) with @e refs
+-c        --compact               Compact (no empty structural nodes)
+-d <N>    --depth                 Limit tree depth (0 = root only, default: unlimited)
+-s <sel>  --selector              Scope to CSS selector
+-D        --diff                  Unified diff against previous snapshot (first call stores baseline)
+-a        --annotate              Annotated screenshot with red overlay boxes and ref labels
+-o <path> --output                Output path for annotated screenshot (default: /tmp/browse-annotated.png)
+-C        --cursor-interactive    Cursor-interactive elements (@c refs — divs with pointer, onclick)
+```
+
+All flags can be combined freely. `-o` only applies when `-a` is also used.
+Example: `$B snapshot -i -a -C -o /tmp/annotated.png`
+
+**Ref numbering:** @e refs are assigned sequentially (@e1, @e2, ...) in tree order.
+@c refs from `-C` are numbered separately (@c1, @c2, ...).
+
+After snapshot, use @refs as selectors in any command:
+```bash
+$B click @e3       $B fill @e4 "value"     $B hover @e1
+$B html @e2        $B css @e5 "color"      $B attrs @e6
+$B click @c1       # cursor-interactive ref (from -C)
+```
+
+**Output format:** indented accessibility tree with @ref IDs, one element per line.
+```
+  @e1 [heading] "Welcome" [level=1]
+  @e2 [textbox] "Email"
+  @e3 [button] "Submit"
+```
+
+Refs are invalidated on navigation — run `snapshot` again after `goto`.
+
+## Command Reference
+
+### Navigation
+| Command | Description |
+|---------|-------------|
+| `back` | History back |
+| `forward` | History forward |
+| `goto <url>` | Navigate to URL |
+| `reload` | Reload page |
+| `url` | Print current URL |
+
+### Reading
+| Command | Description |
+|---------|-------------|
+| `accessibility` | Full ARIA tree |
+| `forms` | Form fields as JSON |
+| `html [selector]` | innerHTML of selector (throws if not found), or full page HTML if no selector given |
+| `links` | All links as "text → href" |
+| `text` | Cleaned page text |
+
+### Interaction
+| Command | Description |
+|---------|-------------|
+| `click <sel>` | Click element |
+| `cookie <name>=<value>` | Set cookie on current page domain |
+| `cookie-import <json>` | Import cookies from JSON file |
+| `cookie-import-browser [browser] [--domain d]` | Import cookies from Comet, Chrome, Arc, Brave, or Edge (opens picker, or use --domain for direct import) |
+| `dialog-accept [text]` | Auto-accept next alert/confirm/prompt. Optional text is sent as the prompt response |
+| `dialog-dismiss` | Auto-dismiss next dialog |
+| `fill <sel> <val>` | Fill input |
+| `header <name>:<value>` | Set custom request header (colon-separated, sensitive values auto-redacted) |
+| `hover <sel>` | Hover element |
+| `press <key>` | Press key — Enter, Tab, Escape, ArrowUp/Down/Left/Right, Backspace, Delete, Home, End, PageUp, PageDown, or modifiers like Shift+Enter |
+| `scroll [sel]` | Scroll element into view, or scroll to page bottom if no selector |
+| `select <sel> <val>` | Select dropdown option by value, label, or visible text |
+| `type <text>` | Type into focused element |
+| `upload <sel> <file> [file2...]` | Upload file(s) |
+| `useragent <string>` | Set user agent |
+| `viewport <WxH>` | Set viewport size |
+| `wait <sel|--networkidle|--load>` | Wait for element, network idle, or page load (timeout: 15s) |
+
+### Inspection
+| Command | Description |
+|---------|-------------|
+| `attrs <sel|@ref>` | Element attributes as JSON |
+| `console [--clear|--errors]` | Console messages (--errors filters to error/warning) |
+| `cookies` | All cookies as JSON |
+| `css <sel> <prop>` | Computed CSS value |
+| `dialog [--clear]` | Dialog messages |
+| `eval <file>` | Run JavaScript from file and return result as string (path must be under /tmp or cwd) |
+| `is <prop> <sel>` | State check (visible/hidden/enabled/disabled/checked/editable/focused) |
+| `js <expr>` | Run JavaScript expression and return result as string |
+| `network [--clear]` | Network requests |
+| `perf` | Page load timings |
+| `storage [set k v]` | Read all localStorage + sessionStorage as JSON, or set <key> <value> to write localStorage |
+
+### Visual
+| Command | Description |
+|---------|-------------|
+| `diff <url1> <url2>` | Text diff between pages |
+| `pdf [path]` | Save as PDF |
+| `responsive [prefix]` | Screenshots at mobile (375x812), tablet (768x1024), desktop (1280x720). Saves as {prefix}-mobile.png etc. |
+| `screenshot [--viewport] [--clip x,y,w,h] [selector|@ref] [path]` | Save screenshot (supports element crop via CSS/@ref, --clip region, --viewport) |
+
+### Snapshot
+| Command | Description |
+|---------|-------------|
+| `snapshot [flags]` | Accessibility tree with @e refs for element selection. Flags: -i interactive only, -c compact, -d N depth limit, -s sel scope, -D diff vs previous, -a annotated screenshot, -o path output, -C cursor-interactive @c refs |
+
+### Meta
+| Command | Description |
+|---------|-------------|
+| `chain` | Run commands from JSON stdin. Format: [["cmd","arg1",...],...] |
+
+### Tabs
+| Command | Description |
+|---------|-------------|
+| `closetab [id]` | Close tab |
+| `newtab [url]` | Open new tab |
+| `tab <id>` | Switch to tab |
+| `tabs` | List open tabs |
+
+### Server
+| Command | Description |
+|---------|-------------|
+| `handoff [message]` | Open visible Chrome at current page for user takeover |
+| `restart` | Restart server |
+| `resume` | Re-snapshot after user takeover, return control to AI |
+| `status` | Health check |
+| `stop` | Shutdown server |
+
+## Tips
+
+1. **Navigate once, query many times.** `goto` loads the page; then `text`, `js`, `screenshot` all hit the loaded page instantly.
+2. **Use `snapshot -i` first.** See all interactive elements, then click/fill by ref. No CSS selector guessing.
+3. **Use `snapshot -D` to verify.** Baseline → action → diff. See exactly what changed.
+4. **Use `is` for assertions.** `is visible .modal` is faster and more reliable than parsing page text.
+5. **Use `snapshot -a` for evidence.** Annotated screenshots are great for bug reports.
+6. **Use `snapshot -C` for tricky UIs.** Finds clickable divs that the accessibility tree misses.
+7. **Check `console` after actions.** Catch JS errors that don't surface visually.
+8. **Use `chain` for long flows.** Single command, no per-step CLI overhead.
+
+---
+
+描述用 AI-powered Japanese learning app，tech stack 不变，截图文件名是 lingoi.png   # lingoi
+
+`lingoi` 是一个面向 JLPT 学习者的日语学习 Web App。
+
+核心目标不是做题库，而是把词汇学习拆成更自然的输入路径：
+
+- 用 Anki 风格的词汇卡片翻阅和标注 F1-F4 掌握度
+- 用故事阅读器把词汇重新放回上下文
+- 用共享词库和轻量复习链路把发现、加入、复习串起来
+- 后续再接 AI 联想和订阅系统
+
+## 当前进度
+
+截至 `2026-03-28`，当前开发状态如下：
+
+| Plan         | 状态       | 说明        |
+| ------------ | -------------- | ---------------------------------------------------------------- |
+| Plan A       | `已完成`       | Next.js 基础架构、认证、Prisma/Postgres、N5 seed 数据、Dashboard |
+| Plan B       | `已完成`       | N5 词汇卡片模式（F1-F4 筛选 + 卡片翻阅 + 掌握度更新）    |
+| Plan C       | `已完成增强版` | Story Reader、真实词汇面板、朗读、例句来源入库     |
+| Notebook MVP | `已完成`       | 共享词库、曝光记录、轻量艾宾浩斯复习、双入口学习闭环             |
+| Plan D       | `已完成`       | OpenAI 故事生成、mnemonic、图片联想、配额控制        |
+| Plan E       | `已完成`       | Stripe / Binance Pay 订阅与账单管理     |
+
+## 当前可用功能
+
+- 邮箱密码注册 / 登录
+- Google OAuth 登录
+- 受保护的 `/dashboard`
+- N5 词汇数据 seed
+- `/level/5` 词汇卡片模式：
+  - F1 / F2 / F3 / F4 筛选切换（带各级词数统计）
+  - 卡片正面：汉字 + 假名 + 罗马音 + 🔊 朗读
+  - 卡片背面：中英释义 + 例句（最多 2 条）
+  - 三档评分：不认识 → F-1 / 模糊 → 不变 / 认识 → F+1
+  - 完成当轮后显示统计，可重新开始
+- `/stories` 故事列表（当前 N5 共 37 篇）
+- `/stories/[id]` 故事阅读器：
+  - 假名 / 汉字 / 振假名模式切换
+  - 点击词汇弹出详情面板（释义、例句、F 级别）
+  - 单词 / 例句 / 全文朗读
+- `/notebook` 共享词库（待复习 / 新加入 / 稍后）
+- `/review` 复习会话（艾宾浩斯阶梯：0.5 → 1 → 3 → 7 → 14 → 30 天）
+- `/settings` 设置页面（账单、个人资料）
+- 用户菜单：当前套餐、AI 配额、付款入口
+- `PATCH /api/progress` 更新用户词汇 F-level
+
+当前套餐范围：
+
+- `FREE` 用户可访问 N5
+- `N4-N1` 对付费用户显示"即将开放"
+
+## 主要路由
+
+| Route    | 说明          |
+| ------------------------- | ---------------------------------- |
+| `/`     | Landing page（已登录自动跳转到 /dashboard）|
+| `/login`        | 登录页          |
+| `/register`            | 注册页   |
+| `/dashboard`    | 学习总览页 |
+| `/level/[level]`      | 词汇卡片，目前 N5 完整可用         |
+| `/stories`     | 故事列表页     |
+| `/stories/[id]`      | 故事阅读器           |
+| `/notebook`      | 共享词库      |
+| `/review`          | 复习会话      |
+| `/settings`           | 设置页面（账单、个人资料）     |
+| `/blog`          | 博客文章列表  |
+| `/api/auth/register`      | 注册接口         |
+| `/api/auth/[...nextauth]` | NextAuth handler    |
+| `/api/progress`           | 更新词汇 F-level            |
+| `/api/stories` | 获取静态故事列表       |
+| `/api/stories/[id]`       | 获取单个故事      |
+| `/api/words/exposure`     | 记录词汇曝光         |
+| `/api/notebook`           | 获取 / 添加共享词库条目            |
+| `/api/notebook/[wordId]`  | 归档词库条目       |
+| `/api/review/session`     | 获取复习队列               |
+| `/api/review/result`      | 提交复习结果           |
+
+## 技术栈
+
+- Next.js 16 App Router
+- React 19
+- TypeScript
+- Tailwind CSS v4
+- shadcn/ui + Radix UI
+- Prisma 7 + PostgreSQL
+- NextAuth v5
+- Zustand
+- Zod
+- Web Speech API for Japanese pronunciation
+
+## 本地开发
+
+### 1. 安装依赖
+
+```bash
+pnpm install
+```
+
+### 2. 准备环境变量
+
+复制 `.env.example` 到 `.env.local`，至少补齐这些字段：
+
+```bash
+DATABASE_URL=...
+DIRECT_URL=...
+AUTH_SECRET=...
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+如果要测试 Google 登录，再补：
+
+```bash
+AUTH_GOOGLE_ID=...
+AUTH_GOOGLE_SECRET=...
+```
+
+### 3. 初始化数据库
+
+```bash
+pnpm exec prisma generate
+pnpm exec prisma db push
+pnpm exec prisma db seed
+```
+
+### 4. 启动开发环境
+
+```bash
+pnpm dev
+```
+
+打开 [http://localhost:3000](http://localhost:3000)
+
+## 验证命令
+
+```bash
+node --import tsx --test tests/auth-proxy.test.ts tests/canvas/*.test.ts tests/story/*.test.ts tests/words/*.test.ts tests/notebook/*.test.ts tests/review/*.test.ts
+pnpm lint
+pnpm exec next build --webpack --debug
+```
+
+说明：
+
+- `next build` 使用 `--webpack --debug` 以获得更稳定的构建输出
+- `next/font/google` 构建时需要网络访问字体源
+- 故事朗读依赖浏览器 Web Speech 能力，系统和浏览器不同会略有差异
+
+## 目录结构
+
+```text
+app/
+  (app)/dashboard/          学习总览
+  (app)/notebook/  共享词库
+  (app)/review/    复习会话
+  (app)/stories/        故事阅读器
+  (canvas)/level/[level]/   词汇卡片
+  api/notebook/             词库 API
+  api/review/       复习 API
+  api/words/exposure/       曝光记录 API
+  api/progress/             F-level 更新接口
+  api/stories/       故事 API
+
+components/canvas/ 词汇卡片 UI（CardDeckClient、CanvasInspector）
+components/notebook/        共享词库 UI
+components/review/          复习 UI
+components/story/           故事阅读器组件
+hooks/          日语语音、学习时长追踪
+lib/canvas/    词汇数据结构、F-level 常量、掌握度更新
+lib/notebook/    词库服务与 DTO
+lib/review/       复习调度与服务
+lib/story/      故事阅读器数据装配
+lib/words/          例句合并 / 朗读辅助
+prisma/data/       N5 词汇、故事、引用例句 seed 数据
+tests/canvas/               F-level、掌握度、词汇数据测试
+tests/notebook/        词库相关测试
+tests/review/         复习链路测试
+tests/story/     Story Reader 相关测试
+tests/words/          例句合并与 seed 相关测试
+```
+
+## JLPT source
+
+- <http://www.tanos.co.uk/jlpt/>
+- <https://github.com/wkei/jlpt-vocab-api/tree/main/data-source>
+
+---
+
+增加 telegram的订阅频道  我用来发布我的想法和投资策略 https://t.me/kkdemian2050
+
+---
+
+在 about 下面增加 my garden板块，链接使用 TelegramChannel
+
+---
+
+youtube 频道和 crypto master 也转移到  My Garden 板块
+
+---
+
+My Garden 的卡片  一行放完 不需要下面的描述
+
+---
+
+skills 部分改成 My Tool  把 Stack、Fear 、Watch 放在下面
+
+---
+
+LayersIcon is not defined
+
+---
+
+技能部分的内容 不在需要展示，底部的navbar 不在展示 fear 和stacks
+
+---
+
+my Tool 移动到Social的上方
+
+---
+
+My Garden 和 my tool 下的卡片，鼠标浮动上去给出当前项目的提示
+
+---
+
+# 全球顶级企业  - 40家公司
+
+# 一、Publics（30家上市公司）
+
+## 🇺🇸 美股 & 全球科技核心
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| NVIDIA | NVDA | ✅ | AI算力垄断级龙头，GPU+CUDA生态构建护城河 |
+| Microsoft | MSFT | ✅ | 企业软件+云+AI平台三位一体现金流机器 |
+| Google (Alphabet) | GOOGL | ✅ | AI+搜索广告双引擎，但AI变现节奏是关键 |
+| Amazon | AMZN | ✅ | AWS+电商双飞轮，AI推高云业务价值 |
+| Tesla | TSLA | ✅ | 电车+自动驾驶+机器人，估值锚在AI而非车 |
+| TSMC | TSM | ✅ | 全球先进制程唯一核心供给方 |
+| Meta | META | ✅ | 广告现金流+开源AI+XR押注 |
+| Broadcom | AVGO | ✅ | AI ASIC+半导体并购整合王 |
+| Oracle | ORCL | ✅ | 云转型+AI数据库需求回升 |
+| Tencent | 0700.HK | ✅ | 游戏+社交现金牛，AI提升效率 |
+
+---
+
+## 🧠 半导体 / 硬科技链
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| ARM | ARM | ✅ | CPU架构IP统治移动+渗透AI芯片 |
+| ASML | ASML | ✅ | EUV光刻机唯一供应商，半导体皇冠 |
+| AMD | AMD | ✅ | GPU追赶NVDA，数据中心份额提升 |
+| SK Hynix | 000660.KS | ✅ | HBM核心受益者，AI存储爆发 |
+|  | - | - | - |
+
+---
+
+## 🧠 软件 / SaaS / 数据
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| Palantir | PLTR | ✅ | AI+数据平台，政府与企业双轮驱动 |
+| SAP | SAP | ✅ | ERP龙头，云转型释放利润 |
+| ServiceNow | NOW | ✅ | 企业自动化平台，AI提升ARPU |
+| Snowflake | SNOW | ✅ | 数据云平台，AI数据层受益者 |
+| Intuit | INTU | ✅ | 财税软件+AI自动化提升效率 |
+
+---
+
+## 🌍 消费互联网 / 平台
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| Netflix | NFLX | ✅ | 流媒体龙头+广告模式打开空间 |
+| Spotify | SPOT | ✅ | 音乐平台+AI推荐+播客变现 |
+| Shopify | SHOP | ✅ | 独立站基础设施，受益电商去平台化 |
+| Uber | UBER | ✅ | 平台网络效应+盈利拐点已现 |
+| AppLovin | APP | ✅ | 广告+AI算法驱动利润爆发 |
+
+---
+
+## 🌏 中国 / 新兴市场
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| Alibaba | BABA | ✅ | 电商+云，估值低但增长承压 |
+| Xiaomi | 1810.HK | ✅ | 手机+IoT+汽车新故事 |
+| Tencent（已列） | - | - | - |
+
+---
+
+## ⚙️ 工业 / 其他
+
+| 公司 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| GE Vernova | GEV | ✅ | 电力设备+能源转型受益 |
+| Intuitive Surgical | ISRG | ✅ | 手术机器人垄断 |
+| CrowdStrike | CRWD | ✅ | 云安全龙头，AI安全需求爆发 |
+| Constellation Energy | CEG | ✅ | 核电+AI算力电力需求受益 |
+
+---
+
+# 二、Privates / Crypto（10个）
+
+| 公司/资产 | Ticker | 上市 | 一句话基本面 |
+| --- | --- | --- | --- |
+| Bitcoin | BTC | ❌ | 数字黄金，机构资产配置核心 |
+| OpenAI | - | ❌ | AI模型与生态中心，算力+数据+应用闭环 |
+| Ethereum | ETH | ❌ | 智能合约基础层，Web3基础设施 |
+| SpaceX | - | ❌ | 商业航天+星链，现金流已验证 |
+| Anthropic | - | ❌ | Claude模型，安全AI路线 |
+| ByteDance | - | ❌ | TikTok全球流量霸主 |
+| Stripe | - | ❌ | 全球支付基础设施 |
+| Databricks | - | ❌ | 数据+AI平台（Lakehouse） |
+| Revolut | - | ❌ | 欧洲数字银行超级App |
+| xAI | - | ❌ | 马斯克AI公司，算力+数据整合 |
+
+（私有公司估值均为独角兽级别，例如 OpenAI、Stripe、Databricks 等均为百亿级以上估值 ([维基百科](https://en.wikipedia.org/wiki/List_of_unicorn_startup_companies?utm_source=chatgpt.com))）
+
+---
+
+# 三、总结（核心投资逻辑）
+
+Coatue这个名单本质在押三条主线：
+
+### 1️⃣ AI基础设施（最核心）
+
+- NVDA / TSM / ASML / AMD / Hynix
+    
+    👉 **卖铲子**
+    
+
+### 2️⃣ AI平台层
+
+- MSFT / Google / OpenAI / Databricks
+    
+    👉 **做系统**
+    
+
+### 3️⃣ AI应用与流量
+
+- Meta / ByteDance / Shopify / Uber
+    
+    👉 **拿用户+变现**
+    
+
+---
+
+# 四、一个关键洞察（很重要）
+
+👉 这个“Fantastic 40”不是价值组合，而是：
+
+> **“未来5年市值增量最大化组合”**
+> 
+
+核心特征：
+
+- 高增长优先 > 低估值
+- AI敞口优先
+- 平台型公司优先
+
+---
+
+## 最优10只组合（进攻+防守）
+
+- MSFT
+- NVDA
+- TSM
+- ASML
+- AMZN
+- META
+- AVGO
+- CRWD
+- AMD
+- ORCL（低估补位）
+
+---
+
+## 👉 最大分歧机会（可能超额收益）
+
+- BABA
+- Tencent
+- Ethereum/BTC
+- Snowflake  根据我的最新投资组合和策略，更新我的fund 页面  投资下一个未来  也许2050会进入下一个时代
+
+---
+
+保留预测市场  同时增加 hype coinbase circle 拼多多  paypay 小米 美团 cloudfare vercel  的投资  不用 divergence 标签    BABA / Tencent / BTC / ETH    这几个都是确定性投资
+
+---
+
+BABA, Tencent,  也列到china板块
+
+---
+
+Parsing ecmascript source code failed
+
+---
+
+预测市场没有 https://polymarket.com/ 新增
+
+---
+
+在预测市场中 没有看到Polymarket 这个项目  只有 kalshi和 opn ，  crypto 增加 binance  Canton  uniswap ondo
