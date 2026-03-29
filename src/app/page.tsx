@@ -9,6 +9,8 @@ import { DATA } from '@/data/resume';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import Markdown from 'react-markdown';
+import { ActivityIcon, LayersIcon, TrendingUpIcon } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -159,6 +161,97 @@ export default function Page() {
           </div>
         </BlurFade>
       </section>
+      <section id='garden'>
+        <BlurFade delay={BLUR_FADE_DELAY * 4.5}>
+          <h2 className='text-xl font-bold'>My Garden</h2>
+        </BlurFade>
+        <BlurFade delay={BLUR_FADE_DELAY * 4.6}>
+          <div className='mt-3 flex flex-wrap gap-3'>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={DATA.contact.social.TelegramChannel.url}
+                  target='_blank'
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                  <DATA.contact.social.TelegramChannel.icon className='size-5' />
+                  <span className='text-sm font-medium'>kkdemian2050</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Thoughts & investment strategy</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={DATA.contact.social.Youtube.url}
+                  target='_blank'
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                  <DATA.contact.social.Youtube.icon className='size-5' />
+                  <span className='text-sm font-medium'>YouTube</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Videos & tutorials</TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href={DATA.contact.social.Books.url}
+                  target='_blank'
+                  className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                  <DATA.contact.social.Books.icon className='size-5' />
+                  <span className='text-sm font-medium'>Crypto Master</span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent>Crypto research & notes</TooltipContent>
+            </Tooltip>
+          </div>
+        </BlurFade>
+      </section>
+      <section id='skills'>
+        <div className='flex min-h-0 flex-col gap-y-3'>
+          <BlurFade delay={BLUR_FADE_DELAY * 11}>
+            <h2 className='text-xl font-bold'>My Tool</h2>
+          </BlurFade>
+          <BlurFade delay={BLUR_FADE_DELAY * 12.5}>
+            <div className='flex flex-wrap gap-3'>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href='/stack'
+                    className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                    <LayersIcon className='size-4' />
+                    <span className='text-sm font-medium'>Stack</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>My tech stack & tools</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href='https://watch.kkdemian.com/'
+                    target='_blank'
+                    className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                    <ActivityIcon className='size-4' />
+                    <span className='text-sm font-medium'>Fear</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>Crypto market observation & regime classification</TooltipContent>
+              </Tooltip>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Link
+                    href='https://usdc.kkdemian.com/'
+                    target='_blank'
+                    className='flex items-center gap-2 px-4 py-2 rounded-lg border hover:bg-accent transition-colors'>
+                    <TrendingUpIcon className='size-4' />
+                    <span className='text-sm font-medium'>Watch</span>
+                  </Link>
+                </TooltipTrigger>
+                <TooltipContent>Stablecoin flow & supply dashboard</TooltipContent>
+              </Tooltip>
+            </div>
+          </BlurFade>
+        </div>
+      </section>
       <section id='social'>
         <BlurFade delay={BLUR_FADE_DELAY * 5}>
           <h2 className='text-xl font-bold'>Social</h2>
@@ -170,8 +263,6 @@ export default function Page() {
                 ([_, social]) =>
                   social.name === 'GitHub' ||
                   social.name === 'X' ||
-                  social.name === 'Crypto Master' ||
-                  social.name === 'Youtube' ||
                   social.name === 'Telegram'
               )
               .map(([key, social], id) => (
@@ -276,20 +367,6 @@ export default function Page() {
               </ul>
             </div>
           </BlurFade>
-        </div>
-      </section>
-      <section id='skills'>
-        <div className='flex min-h-0 flex-col gap-y-3'>
-          <BlurFade delay={BLUR_FADE_DELAY * 11}>
-            <h2 className='text-xl font-bold'>Skills</h2>
-          </BlurFade>
-          <div className='flex flex-wrap gap-1'>
-            {DATA.skills.map((skill, id) => (
-              <BlurFade key={skill} delay={BLUR_FADE_DELAY * 12 + id * 0.05}>
-                <Badge key={skill}>{skill}</Badge>
-              </BlurFade>
-            ))}
-          </div>
         </div>
       </section>
       <section id='projects'>

@@ -1,9 +1,6 @@
 import { Icons } from '@/components/icons';
 import {
-  ActivityIcon,
-  BookOpenIcon,
   HomeIcon,
-  LayersIcon,
   NotebookIcon,
   SearchIcon,
   TrendingUpIcon
@@ -26,20 +23,17 @@ export const DATA = {
     'Typescript',
     'Solidity',
     'Go',
-    'Supabase',
+    'Supabase&Vercel',
     'Cloudflare',
     'Figma',
-    'SEO',
     'Rust',
     'AI Agent',
-    'Motoko'
+    'Claude Code'
   ],
   navbar: [
     { href: '/', icon: HomeIcon, label: 'Home' },
     { href: '/blog', icon: NotebookIcon, label: 'Blog' },
-    { href: '/stack', icon: LayersIcon, label: 'Stack' },
     { href: '/fund', icon: TrendingUpIcon, label: 'Fund' },
-    { href: '/fear', icon: ActivityIcon, label: 'Fear' },
     { href: '/research', icon: SearchIcon, label: 'Research' }
   ],
   contact: {
@@ -67,6 +61,12 @@ export const DATA = {
       Telegram: {
         name: 'Telegram',
         url: 'https://t.me/kkdemian_laobai',
+        icon: Icons.telegram,
+        navbar: false
+      },
+      TelegramChannel: {
+        name: 'Telegram Channel',
+        url: 'https://t.me/kkdemian2050',
         icon: Icons.telegram,
         navbar: false
       },
@@ -140,6 +140,58 @@ export const DATA = {
   ],
   projects: [
     {
+      title: 'Stablecoin Flow & Supply Dashboard',
+      href: 'https://usdc.kkdemian.com/',
+      dates: 'Mar 2026 - Now',
+      active: true,
+      description:
+        'Real-time monitoring of stablecoin issuance, flows, and market dynamics.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'TailwindCSS',
+        'Vercel',
+        'Shadcn UI'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: 'https://usdc.kkdemian.com/',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/stablecoin_watch.png',
+      video: ''
+    },
+
+    {
+      title: 'Fear Dashboard',
+      href: 'https://watch.kkdemian.com/',
+      dates: 'Mar 2026 - Now',
+      active: true,
+      description:
+        'Crypto market observation & regime classification system. Tracks market sentiment, fear & greed cycles, and macro regime signals.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'TailwindCSS',
+        'Vercel',
+        'Shadcn UI'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: 'https://watch.kkdemian.com/',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/fear_dashboard.png',
+      video: ''
+    },
+
+    {
       title: 'Yamaswap',
       href: 'https://yamaswap.com',
       dates: 'Nov 2024 - Now',
@@ -198,11 +250,11 @@ export const DATA = {
     },
 
     {
-      title: '🦌 AnkiRin',
-      href: 'https://rin.kkdemian.com/',
+      title: 'Lingoi',
+      href: 'https://lingoi.xyz',
       dates: 'June 2025 - Now',
       active: true,
-      description: 'Master Japanese Vocabulary with AI-Powered Flashcards.',
+      description: 'AI-powered Japanese learning app.',
       technologies: [
         'Next.js',
         'Typescript',
@@ -216,11 +268,11 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://rin.kkdemian.com/',
+          href: 'https://lingoi.xyz',
           icon: <Icons.globe className='size-3' />
         }
       ],
-      image: '/ankirin.png',
+      image: '/lingoi.png',
       video: ''
     },
 
@@ -242,7 +294,7 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://blog.ibuidl.org/',
+          href: 'https://ibuidl.org/',
           icon: <Icons.globe className='size-3' />
         }
       ],

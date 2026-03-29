@@ -774,6 +774,14 @@ const PROJECTS: ResearchProject[] = [
     color: '#0284C7',
     initial: 'TR',
   },
+  {
+    name: 'PreStocks',
+    description: 'PreStocks tokenizes economic exposure to pre-IPO private companies like Space...',
+    type: 'RWA',
+    slug: 'prestocks-bringing-spacex-and-openai-on-chain-a-new-gateway',
+    color: '#F59E0B',
+    initial: 'PRES',
+  },
 ];
 
 const ALL_TYPES = [
