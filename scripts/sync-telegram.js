@@ -9,10 +9,14 @@ async function fetchChannelMessages() {
   const res = await fetch(url);
   const data = await res.json();
 
+  console.log('API Response:', JSON.stringify(data, null, 2));
+
   if (!data.ok) throw new Error('Failed to fetch messages');
 
-  return data.result
-    .filter(u => u.channel_post && u.channel_post.text)
+  const channelPosts = data.result.filter(u => u.channel_post && u.channel_post.text);
+  console.log(`Found ${channelPosts.length} channel posts`);
+
+  return channelPosts
     .map(u => ({
       id: String(u.channel_post.message_id),
       text: u.channel_post.text,
