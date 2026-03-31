@@ -4,13 +4,16 @@ import BlurFadeText from '@/components/magicui/blur-fade-text';
 import { ProjectCard } from '@/components/project-card';
 import { ResumeCard } from '@/components/resume-card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 import { DATA } from '@/data/resume';
-import Link from 'next/link';
-import type { Metadata } from 'next';
-import Markdown from 'react-markdown';
 import { ActivityIcon, LayersIcon, TrendingUpIcon } from 'lucide-react';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import Markdown from 'react-markdown';
 
 const BLUR_FADE_DELAY = 0.04;
 
@@ -67,15 +70,15 @@ export default function Page() {
       'Digital Nomad',
       'Crypto Investment',
       'ETF',
-      'AI Agent',
+      'AI Agent'
     ],
     sameAs: [
       DATA.contact.social.GitHub.url,
       DATA.contact.social.X.url,
       DATA.contact.social.Youtube.url,
       DATA.contact.social.Telegram.url,
-      DATA.contact.social.Books.url,
-    ],
+      DATA.contact.social.Books.url
+    ]
   };
 
   const websiteJsonLd = {
@@ -87,8 +90,8 @@ export default function Page() {
     potentialAction: {
       '@type': 'SearchAction',
       target: `${DATA.url}/blog?q={search_term_string}`,
-      'query-input': 'required name=search_term_string',
-    },
+      'query-input': 'required name=search_term_string'
+    }
   };
 
   const profilePageJsonLd = {
@@ -102,8 +105,8 @@ export default function Page() {
       name: DATA.name,
       identifier: DATA.name,
       description: DATA.summary,
-      jobTitle: 'Web3 Product Engineer',
-    },
+      jobTitle: 'Web3 Product Engineer'
+    }
   };
 
   return (
@@ -163,7 +166,7 @@ export default function Page() {
       </section>
       <section id='garden'>
         <BlurFade delay={BLUR_FADE_DELAY * 4.5}>
-          <h2 className='text-xl font-bold'>My Garden</h2>
+          <h2 className='text-xl font-bold'>My Garden&thoughts</h2>
         </BlurFade>
         <BlurFade delay={BLUR_FADE_DELAY * 4.6}>
           <div className='mt-3 flex flex-wrap gap-3'>
@@ -234,7 +237,9 @@ export default function Page() {
                     <span className='text-sm font-medium'>Fear</span>
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent>Crypto market observation & regime classification</TooltipContent>
+                <TooltipContent>
+                  Crypto market observation & regime classification
+                </TooltipContent>
               </Tooltip>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -246,7 +251,9 @@ export default function Page() {
                     <span className='text-sm font-medium'>Watch</span>
                   </Link>
                 </TooltipTrigger>
-                <TooltipContent>Stablecoin flow & supply dashboard</TooltipContent>
+                <TooltipContent>
+                  Stablecoin flow & supply dashboard
+                </TooltipContent>
               </Tooltip>
             </div>
           </BlurFade>
@@ -331,7 +338,9 @@ export default function Page() {
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 10.6}>
             <div className='rounded-xl border p-5 space-y-4'>
-              <h3 className='text-base font-semibold'>Three Answers to Why We Live</h3>
+              <h3 className='text-base font-semibold'>
+                Three Answers to Why We Live
+              </h3>
               <ol className='space-y-2 text-sm leading-7 text-muted-foreground'>
                 <li>1. Something to depend on</li>
                 <li>2. Something to look forward to</li>
@@ -347,22 +356,29 @@ export default function Page() {
               </p>
               <blockquote className='border-l-2 pl-4 text-sm leading-7 text-muted-foreground space-y-3'>
                 <p>
-                  You&apos;ve got to find what you love. And that is as true for your work as it is
-                  for your lovers. Your work is going to fill a large part of your life, and the
-                  only way to be truly satisfied is to do what you believe is great work.
+                  You&apos;ve got to find what you love. And that is as true for
+                  your work as it is for your lovers. Your work is going to fill
+                  a large part of your life, and the only way to be truly
+                  satisfied is to do what you believe is great work.
                 </p>
                 <p>
-                  If you haven&apos;t found it yet, keep looking. Don&apos;t settle. As with all
-                  matters of the heart, you&apos;ll know when you find it.
+                  If you haven&apos;t found it yet, keep looking. Don&apos;t
+                  settle. As with all matters of the heart, you&apos;ll know
+                  when you find it.
                 </p>
               </blockquote>
             </div>
           </BlurFade>
           <BlurFade delay={BLUR_FADE_DELAY * 10.8}>
             <div className='rounded-xl border p-5 space-y-4'>
-              <h3 className='text-base font-semibold'>What Is Correct Repetition?</h3>
+              <h3 className='text-base font-semibold'>
+                What Is Correct Repetition?
+              </h3>
               <ul className='space-y-2 text-sm leading-7 text-muted-foreground'>
-                <li>1. Choose the right direction — let time silently work as leverage.</li>
+                <li>
+                  1. Choose the right direction — let time silently work as
+                  leverage.
+                </li>
                 <li>2. Find your advantage — keep stacking on the effect.</li>
               </ul>
             </div>

@@ -1,8 +1,8 @@
 import BlurFade from '@/components/magicui/blur-fade';
 import { formatDistanceToNow } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
-import type { Metadata } from 'next';
 import { promises as fs } from 'fs';
+import type { Metadata } from 'next';
 import path from 'path';
 
 export const metadata: Metadata = {
@@ -36,7 +36,7 @@ export default async function ThoughtsPage() {
         <div className='mx-auto w-full max-w-2xl space-y-8'>
           <BlurFade delay={0.04}>
             <h1 className='text-3xl font-bold'>Thoughts</h1>
-            <p className='text-muted-foreground'>来自 Telegram 的碎碎念</p>
+            <p className='text-muted-foreground'>来自 kk 的碎碎念</p>
           </BlurFade>
 
           {thoughts.length === 0 ? (
