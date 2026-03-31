@@ -1,5 +1,5 @@
 import BlurFade from '@/components/magicui/blur-fade';
-import { formatDistanceToNow } from 'date-fns';
+import { format } from 'date-fns';
 import { zhCN } from 'date-fns/locale';
 import { promises as fs } from 'fs';
 import type { Metadata } from 'next';
@@ -45,13 +45,10 @@ export default async function ThoughtsPage() {
             <div className='space-y-4'>
               {thoughts.map((t: Thought, i: number) => (
                 <BlurFade key={t.id} delay={0.08 + i * 0.05}>
-                  <div className='rounded-lg border p-4 space-y-2'>
+                  <div className='rounded-lg border p-4'>
                     <p className='text-sm leading-7'>{t.text}</p>
-                    <p className='text-xs text-muted-foreground'>
-                      {formatDistanceToNow(new Date(t.date), {
-                        addSuffix: true,
-                        locale: zhCN
-                      })}
+                    <p className='text-xs text-muted-foreground text-right mt-2'>
+                      {format(new Date(t.date), 'M月d日', { locale: zhCN })}
                     </p>
                   </div>
                 </BlurFade>
