@@ -1,0 +1,38 @@
+const fs = require('fs');
+const path = require('path');
+
+const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID;
+
+async function fetchChannelMessages() {
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/getUpdates?limit=100`;
+  const res = await fetch(url);
+  const data = await res.json();
+
+  if (!data.ok) throw new Error('Failed to fetch messages');
+
+  return data.result
+    .filter(u => u.channel_post && u.channel_post.text)
+    .map(u => ({
+      id: String(u.channel_post.message_id),
+      text: u.channel_post.text,
+      date: new Date(u.channel_post.date * 1000).toISOString(),
+      timestamp: u.channel_post.date
+    }))
+    .sort((a, b) => b.timestamp - a.timestamp);
+}
+
+async function main() {
+  const thoughts = await fetchChannelMessages();
+  const data = {
+    thoughts,
+    lastSync: new Date().toISOString(),
+    totalCount: thoughts.length
+  };
+
+  const filePath = path.join(__dirname, '..', 'content', 'thoughts.json');
+  fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
+  console.log(`Synced ${thoughts.length} thoughts`);
+}
+
+main().catch(console.error);
