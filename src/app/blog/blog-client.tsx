@@ -28,6 +28,7 @@ type CategoryInfo = {
 const categories: CategoryInfo[] = [
   { key: 'all', label: 'All' },
   { key: 'thoughts', label: 'Thoughts' },
+  { key: 'tech', label: 'Tech' },
   { key: 'research', label: 'Research' },
   { key: 'investing', label: 'Investing' },
   { key: 'economics', label: 'Economics' },
