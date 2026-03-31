@@ -269,6 +269,20 @@ async function getAllPosts() {
   );
 }
 
+function getAllPostsMetadata() {
+  const postIndex = getPostIndex();
+
+  return postIndex.map(({ slug, filePath }) => {
+    const source = fs.readFileSync(filePath, 'utf-8');
+    const { data } = matter(source);
+    return {
+      metadata: data as Metadata,
+      slug,
+      source: ''
+    };
+  });
+}
+
 export async function getBlogPosts() {
-  return getAllPosts();
+  return getAllPostsMetadata();
 }
