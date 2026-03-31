@@ -33,11 +33,13 @@
 - **Stack**：Next.js 16 + TypeScript + Tailwind + MDX
 - **部署**：Vercel → kkdemian.com
 - **内容管理**：`content/blog/` 目录，MDX 格式
+- **新功能**：`/thoughts` 页面，通过 Telegram Bot 自动同步频道消息
 - **常用命令**：
   ```bash
   pnpm dev          # 启动开发服务器
   pnpm new:post     # 创建新博客文章
   pnpm content:check # 检查内容格式
+  pnpm sync:telegram # 手动同步 Telegram 消息
   ```
 
 ### 2. Yamaswap
@@ -85,4 +87,5 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-03-31**：实现 `/thoughts` 页面 + Telegram 自动同步功能。使用 GitHub Actions 每天同步频道 @kkdemian2050 的消息到 `content/thoughts.json`，前端展示为 Twitter/X 风格时间线。Bot: fulipy_bot。
 - **2026-03-11**：研究 AI 长久记忆方案（mem.mdx），讨论了五层记忆架构（Vector/Hierarchical/KG/Compression/Reflection），推荐工程起点为 `CLAUDE.md + SESSION_LOG + Mem0`。
