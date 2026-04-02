@@ -1,0 +1,138 @@
+---
+title: 'Hyperliquid: 从订单簿引擎到金融枢纽的范式跃迁'
+publishedAt: '2026-04-02'
+summary: 'Hyperliquid 今日的地位——DeFi Perp 市场份额超 60%，日交易量峰值 60 亿美元，TVL 逾 40 亿美元，HYPE 市值 83.6 亿美元（2026-04-02，价格 $35.06）——常被简化成“链上 CEX”的叙事。但这忽略了其核心悖论：为什么一个为高频订单簿优化的专属引擎，会演变为承载 LST（总供应 2900 万）、稳定币（总供应 9.78 亿，以 USDC 主导 65%）和 DEX 交易（累计 421 亿）的通用 L1'
+slug: 'hyperliquid-the-paradigm-leap-from-the-order-book-engine-to'
+category: 'thoughts'
+---
+
+## TL;DR
+
+## 研究定义
+
+- 调研对象：Hyperliquid，作为一个以高性能订单簿为核心的 Layer 1 区块链，包括其 HyperCore 执行引擎、HyperEVM 智能合约层，以及原生代币 HYPE 的价值捕获机制。
+- 调研目的：通过历史演进视角，剖析其从专属衍生品 DEX 向通用金融基础设施的结构转型逻辑，揭示垂直整合架构如何驱动生态成功，并评估其在解锁压力下的长期确定性。
+- 时间跨度：2022 年底（FTX 崩盘后自研启动）至 2026 年 4 月（HyperEVM 生态成熟期）。
+- 核心问题：Hyperliquid 的订单簿优先设计如何反向塑造其 L1 生态？MEV 主导的 HyperEVM 是早期增长引擎还是长期负债？
+- 重点关注：技术范式切换（HyperCore → HyperEVM）、商业模式演化（积分激励 → 收入回购）、生态结构（用户市场 vs 机构 RWA）。
+- 研究边界：聚焦 Hyperliquid 内部演进，不扩展至平行 EVM L1（如 Berachain）或纯 AMM Perp（如 GMX）的全面对比；数据截止 2026-03-16 UTC，主要基于 Dune、TokenTerminal 和官方 Gitbook。[Dune](https://dune.com/wintermute_research/hyperevm) [TokenTerminal](https://tokenterminal.com/explorer/projects/hyperliquid)
+
+## 一、破题：订单簿不是起点，而是 L1 的原罪与解药
+
+Hyperliquid 今日的地位——DeFi Perp 市场份额超 60%，日交易量峰值 60 亿美元，TVL 逾 40 亿美元，HYPE 市值 83.6 亿美元（2026-04-02，价格 $35.06）——常被简化成“链上 CEX”的叙事。但这忽略了其核心悖论：为什么一个为高频订单簿优化的专属引擎，会演变为承载 LST（总供应 2900 万）、稳定币（总供应 9.78 亿，以 USDC 主导 65%）和 DEX 交易（累计 421 亿）的通用 L1？[Dune](https://dune.com/wintermute_research/hyperevm) [db_internal_token_info_hype_20260402051152]
+
+市场误读源于将 Hyperliquid 等同于 dYdX 或 GMX：前者是 Cosmos AppChain 的渐进优化，后者是 oracle-AMM 的去中心化妥协。Hyperliquid 的不同在于，它不是“DEX 迁到链上”，而是从 FTX 崩盘的“自托管饥渴”中诞生，先建订单簿引擎（HyperCore），后补 EVM（HyperEVM），从而反转了 L1 设计范式：不是通用 VM 堆订单簿，而是订单簿定义 VM。这不是工程巧合，而是结构必然——高性能金融原语（如亚秒结算、200k 订单/秒）决定了其从专精到普适的路径。[hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview]
+
+本文通过 2022-2026 的四代范式演进，回答：HyperCore 的垂直整合如何解决 DeFi Perp 的“协调鸿沟”（off-chain 撮合 vs on-chain 结算），却暴露 MEV 碎片化风险？HIP-3 用户市场与 97% 收入回购的飞轮，又如何重塑生态权力分配？最终推演其在 2025-2027 解锁期的三种路径，揭示“订单簿 L1”是否能逃脱“专精诅咒”。
+
+## 二、历史演进分析
+
+### 第一代：自托管原点（2022 Q4 - 2023 Q2）：从 FTX 废墟中铸就 HyperCore 引擎
+
+2022 年 11 月 FTX 崩盘如“数字新加坡的英国撤军”：Solana TVL 蒸发 75%，DeFi Perp 用户从 CEX 回流，却发现链上无一能匹配 Binance 的低延迟与深度。Hyperliquid 创始人 Jeff Yan（哈佛数学背景，前 Hudson River Trading）抓住这一“1968 时刻”，自研 L1 而非 fork Arbitrum 或 Cosmos SDK。核心突破是 HyperBFT 共识（HotStuff 变体）：中位延迟 0.2s、99% 分位 0.9s、200k 订单/秒吞吐，实现全链上订单簿——价格为 tick size 整数倍、大小为 lot size 整数倍，按价格-时间优先匹配，无需 off-chain 撮合。[hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview] [hyperliquid.gitbook.io/hyperliquid-docs/trading/order-book]
+
+代表案例是 HyperCore：其状态包括保证金与匹配引擎，每笔订单、取消、交易、爆仓均一区块终局，避免 dYdX v3 的混合撮合风险。价值捕获初现：Perps 费用从 2023 Q1 的 0.5M 美元/月飙至 Q3 的 4.2M 美元，累计收入 2560 万美元（Q4 投影 4500 万）。[dune_5304643](https://dune.com/sealaunch/hyperliquid)
+
+但结构性缺陷显露：纯金融引擎忽略通用计算，桥接 TVL 从 2024 Q1 的 6500 万美元峰值 45 亿美元后波动至 38 亿美元，用户依赖 Arbitrum USDC 桥，暴露跨链摩擦。[dune_5305163](https://dune.com/sealaunch/hyperliquid) 演进动力源于“流动性孤岛”：Perp 量峰值 80 亿美元/月（2024 Q8），但无 EVM 无法吸引开发者，迫使向第二代转型。
+
+这一代奠基了 Hyperliquid 的“订单簿原罪”：专精性能却牺牲通用性，正如新加坡早期依赖英军经济，必须工业升级。
+
+### 第二代：积分资本积累期（2023 Q3 - 2024 Q2）：Points 飞轮与 TVL 爆炸
+
+积分程序（2023-11-01 启动，2024-05-01 结束 L1 前期）标志范式切换：从纯性能竞赛转向激励协调。每周 100 万积分（后 70 万），基于交易量、持仓、推荐，TVL 从近零飙至 45 亿美元峰值，桥存量稳定 30-40 亿美元。[dune_5305163](https://dune.com/sealaunch/hyperliquid) 积分非简单空投，而是“用户工厂”：附属赚取推荐积分 1/4，推动 TVL 增长 71%（Arbitrum USDC TVL 中 Hyperliquid 占比）。[db_internal_project_overview_hyperliquid_20260402051152]
+
+HyperCore 优化支撑：Perps OI 峰值 46B 美元，费用 MA 稳定 3M 美元/Q4。[dune_5304643](https://dune.com/sealaunch/hyperliquid) 价值捕获深化：HIP-1（许可less 代币标准）引入，HIP-2（Hyperliquidity）自动化流动性范围（0.3% 价差每 3s 更新），桥稳定币峰值 7500 万美元（USD0 主导）。[hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-2-hyperliquidity] [dune_5752255](https://dune.com/wintermute_research/hyperevm)
+
+缺陷暴露：MEV 主导合约互动（51.7M txns，45.2%），DEX 量碎片（Hyperswap → Project X），稳定币从 feUSD/USDXL 转向 USDC（65% 份额）。积分结束，TVL 回调 25% 至 28-30 亿美元，生态需“通用计算”解锁开发者。演进动力：积分制造了“流动性饥渴”，但无 EVM，MEV 机器人（26.1% 互动）主导，迫生 HyperEVM。[dune_5757690](https://dune.com/wintermute_research/hyperevm)
+
+### 第三代：EVM 普适转型（2024 Q3 - 2025 Q4）：HyperEVM 与 HIP-3 的双轮驱动
+
+HyperEVM 主网上线（2025），标志从专精引擎向通用 L1 跃迁：EVM 兼容，gas 由 HYPE 支付，但继承 HyperBFT 终局。桥接机制成熟：Core spot（uETH/uBTC）经 sendAsset 转 EVM ERC20，系统地址（如 HYPE `0x222...2`）确保互操作，无需外部桥。[hyperliquid.gitbook.io/hyperliquid-docs/for-developers/hyperevm/hypercore-less-than-greater-than-hyperevm-transfers]
+
+HIP-3（用户创建市场）爆炸增长：OI ATH 13 亿美元、周量 48 亿美元，占总量的 46%，商品/RWA 交易主导（周末 14 亿美元）。[Twitter HyperliquidX](https://x.com/HyperliquidX/status/2031994448444531053) LST 供应峰值 4600 万（kHYPE 主导 70%），稳定币 9.78 亿（USDC 6.39 亿）。DEX 量累计 421 亿，Project X 峰值 19 亿/周。[dune_5931575](https://dune.com/wintermute_research/hyperevm) [dune_5752227](https://dune.com/wintermute_research/hyperevm)
+
+价值捕获：费用月均 38M 美元（Nov 2025），97% 回购 HYPE（日均 230 万美元买回）。[news bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi](https://bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi/) 但 MEV 仍霸占 gas（47.7%），合约互动 1.5-3.5M/周，“Others” 30.2%。[dune_5762472](https://dune.com/wintermute_research/hyperevm)
+
+缺陷：HyperEVM 流量仍 MEV/套利主导（Hyperswap 4.5%），有机 DeFi 碎片（Project X 75% 份额后衰退）。解锁压力初现（238M HYPE，2025-2027）。演进动力：RWA/OI 13 亿美元需机构级稳定，MEV 需转向生产力。[dune_5757690](https://dune.com/wintermute_research/hyperevm)
+
+### 第四代：主权金融枢纽（2026 Q1 - 当前）：TGE 后 RWA 与政策中心
+
+HYPE TGE（2024-11），31% 供应空投 9.4 万钱包，峰值 75 亿美元最值空投，无 CEX 上线，自链交易。OI 稳定 80-100 亿美元，RWA 周末量 14 亿。[db_internal_tokenomics_hype_20260402051152] [Twitter HyperliquidX](https://x.com/HyperliquidX/status/2031994448444531053)
+
+Hyper Foundation 捐 100 万 HYPE 建 Policy Center（Jake Chervinsky 领军），桥 OI 40.5 亿。[Twitter HyperliquidX](https://x.com/HyperliquidX/status/2024116702154473737) HYPE 质押费折扣 + gas，收入回购飞轮（年化 4.43 亿，7.1% 流通）。[protocol_data_hyperliquid_tvl_volume_fee_revenue_users_market_treasury_supply_2023-01-01](https://tokenterminal.com/explorer/projects/hyperliquid)
+
+当前 TVL 9.67-10.2 亿，桥存 39-40 亿，用户 DAU 5-8 万。[dune_5305163](https://dune.com/sealaunch/hyperliquid) [protocol_data_hyperliquid_tvl_volume_fee_revenue_users_market_treasury_supply_2023-01-01](https://tokenterminal.com/explorer/projects/hyperliquid) 缺陷：解锁 238M（日卖压 1700 万美元，8x 回购），MEV 45% 互动，HyperEVM LST 仅 6.7% HYPE。[dune_5752227](https://dune.com/wintermute_research/hyperevm)
+
+## 三、结构性洞察：垂直整合的“订单簿诅咒”与解药
+
+Hyperliquid 的转折点是 2025 HyperEVM 部署：表面补 EVM 通用性，深层是订单簿“诅咒”的解药——HyperCore 的亚秒匹配创造流动性磁场，却因无计算层导致 MEV 机器人（29.8M txns）蚕食有机增长。以 Dune 数据，MEV 占 45.2% 互动，但 DEX 量峰后衰（Project X 从 75% 至碎片），证明专精引擎需普适外壳。[dune_5757690](https://dune.com/wintermute_research/hyperevm)
+
+第二洞察：HIP-3 非“民主化上市”，而是“流动性再分配”——用户市场 OI 13 亿占 46%，但 90% 费减免重定向至回购，97% 收入飞轮（月 1.16 亿）确保 HYPE 稀缺，而非补贴散户。这从积分时代（TVL x71）演化，证明激励从“用户获取”转向“价值内循环”。[news bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi](https://bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi/)
+
+第三：MEV 是 HyperEVM 的“双刃剑”——47.7% gas，但驱动稳定币增长（USDC 从 0 至 6.39 亿），预示从机器人经济向 LST/RWA 转型。若失败，将如 Solana 早期 MEV 碎片。[dune_5762472](https://dune.com/wintermute_research/hyperevm)
+
+## 四、当前格局与竞争态势
+
+Hyperliquid 霸占 DeFi Perp 60%，但竞争分化：垂直 L1 vs AppChain vs Oracle-AMM。
+
+| 维度   | Hyperliquid                           | dYdX v4 (Cosmos)         | GMX (Oracle-AMM)           | 结构解释                                           |
+| ------ | ------------------------------------- | ------------------------ | -------------------------- | -------------------------------------------------- |
+| 架构   | HyperCore + HyperEVM (HyperBFT, 0.2s) | CometBFT AppChain (1-2s) | Arbitrum/AVAX L2 + Oracles | 性能 vs 互操作：Hyperliquid 牺牲地理去中心化换终局 |
+| OI/量  | 80-100B / 60B 日峰                    | 25B / 25B 日峰           | 12B / 12B 日峰             | HIP-3 敏捷上市（RWA 13B）> dYdX 保守               |
+| 费捕获 | 97% 回购 (月1.16B)                    | 质押分红                 | GLP 收益                   | 收入飞轮 > 分散激励                                |
+| 优势   | 200k TPS, 无 gas 交易                 | IBC 桥                   | 去中心化无爆仓             | 订单簿深度护城河                                   |
+| 风险   | 24 验证者中心化, 解锁                 | 延迟+ indexer 依赖       | Oracle 风险                | 历史路径：Hyperliquid 专精先，通用后               |
+
+Hyperliquid 的垂直整合降低协调成本（无 IBC 摩擦），HIP-3 上市速度碾压 dYdX（仅 40 市场），但 GMX 的 oracle 无需 L1 负担更轻。[medium.com/@gwrx2005/technical-comparison-of-dydx-v4-vs-hyperliquid-34a16f2556e8]
+
+## 五、未来推演：三种路径
+
+乐观场景 (25%)：RWA/机构催化，解锁吸纳。触发：Policy Center 推动监管清晰，Nasdaq 国债分配 6 亿。路径：OI x2 至 200B，HYPE FDV 300B。指标：月回购超解锁 2x，HyperEVM LST >20% HYPE。[news bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi](https://bitcoinworld.co.in/hyperliquid-revenue-token-buyback-defi/)
+
+基准场景 (55%)：稳态扩张，解锁消化。维持：MEV 转向 LST，HIP-4 结果市场。路径：Perp 份额 50%，EVM TVL 20 亿。指标：DAU 10 万，收入稳定 1B/月。
+
+悲观场景 (20%)：解锁崩盘，MEV 碎片。触发：熊市+竞争（Jupiter）。路径：TVL -50%，份额降 30%。指标：回购/OI 比 <0.5x。
+
+## 六、哲学升华：订单簿重构的权力再分配
+
+Hyperliquid 真正重构的不是性能，而是“金融原语的原子化”：HyperCore 将 CEX 黑箱拆为链上 tick/lot，HyperEVM 赋予其可组合性，重分配权力从撮合者（CEX/validator）至用户（HIP-3）。其本质是“专精通往普适的反路径依赖”，逃脱 L1 困境：先订单簿吸流动性，再 EVM 捕获开发者，避免 Ethereum 的通用低效与 Solana 的碎片。这不仅是工程，而是对 DeFi 的结构宣言：流动性非副产品，而是原生共识产物。
+
+## 参考文献
+
+[1] Hyperliquid Docs. _HyperCore Overview_. 2025. [https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview](https://hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview)  
+[2] Dune Analytics. _HyperEVM Dashboards_. 2026-03-16. [https://dune.com/wintermute_research/hyperevm](https://dune.com/wintermute_research/hyperevm)  
+[3] TokenTerminal. _Hyperliquid Metrics_. 2026-02. [https://tokenterminal.com/explorer/projects/hyperliquid](https://tokenterminal.com/explorer/projects/hyperliquid)  
+[4] WuBlockchain. _Jeff Yan Interview_. 2025. [https://wublock.substack.com/p/exclusive-interview-with-hyperliquid](https://wublock.substack.com/p/exclusive-interview-with-hyperliquid)  
+[5] Medium. _dYdX v4 vs Hyperliquid_. 2025. [https://medium.com/@gwrx2005/technical-comparison-of-dydx-v4-vs-hyperliquid-34a16f2556e8](https://medium.com/@gwrx2005/technical-comparison-of-dydx-v4-vs-hyperliquid-34a16f2556e8)
+
+## 关键洞察摘要
+
+### 核心洞察
+
+1. 垂直整合反转 L1 范式：HyperCore 先建订单簿引擎吸流动性，再补 HyperEVM，避免通用 VM 的性能陷阱。支撑：0.2s 延迟驱动 OI 峰 100B。[hyperliquid.gitbook.io/hyperliquid-docs/hypercore/overview] 实践：DeFi Perp 份额 60%。
+2. 积分 → HIP-3 的激励连续体：非空投赌博，而是从用户获取到市场创造的结构升级。支撑：HIP-3 OI 13B，占 46%。[Twitter HyperliquidX](https://x.com/HyperliquidX/status/2015812710483845519) 实践：97% 回购飞轮。
+3. MEV 是过渡负债：HyperEVM 45% MEV 互动驱动早期量，但需 LST/RWA 转型。支撑：kHYPE 供应 2e7。[dune_5752227](https://dune.com/wintermute_research/hyperevm) 实践：解锁期关键验证。
+
+## 信息来源清单
+
+### 一手资料
+
+- Hyperliquid Gitbook：HyperCore/HyperEVM 文档、HIP 提案。
+- db_internal：HYPE 代币经济、团队。
+
+### 研究与数据
+
+- Dune：HyperEVM TVL/量/MEV 仪表板（2026-03-16）。
+- TokenTerminal：收入/用户指标。
+
+### 社区与补充
+
+- Twitter HyperliquidX：HIP-3/RWA 更新。
+- News：回购、移动 App。
+
+## 延伸阅读建议
+
+1. Hyperliquid Docs - HIP-2/3：官方提案，理解流动性自动化。[https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips) 理由：核心治理机制，与演进动力直接相关。
+2. WuBlockchain Jeff Yan 访谈：自筹资金哲学。[https://wublock.substack.com/p/exclusive-interview-with-hyperliquid](https://wublock.substack.com/p/exclusive-interview-with-hyperliquid) 理由：创始人路径依赖解释。
+3. Dune HyperEVM Dashboard：实时 MEV/TVL。[https://dune.com/wintermute_research/hyperevm](https://dune.com/wintermute_research/hyperevm) 理由：验证生态健康，与未来场景关联。
+4. Medium dYdX vs Hyperliquid：架构对比。[https://medium.com/@gwrx2005/technical-comparison-of-dydx-v4-vs-hyperliquid-34a16f2556e8](https://medium.com/@gwrx2005/technical-comparison-of-dydx-v4-vs-hyperliquid-34a16f2556e8) 理由：竞争结构补充。
