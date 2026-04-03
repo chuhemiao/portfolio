@@ -27,16 +27,31 @@ async function fetchChannelMessages() {
 }
 
 async function main() {
-  const thoughts = await fetchChannelMessages();
+  const filePath = path.join(__dirname, '..', 'content', 'thoughts.json');
+
+  // 读取现有数据
+  let existing = { thoughts: [] };
+  if (fs.existsSync(filePath)) {
+    existing = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+  }
+
+  const newThoughts = await fetchChannelMessages();
+
+  // 合并数据，按 ID 去重
+  const existingIds = new Set(existing.thoughts.map(t => t.id));
+  const merged = [
+    ...newThoughts.filter(t => !existingIds.has(t.id)),
+    ...existing.thoughts
+  ].sort((a, b) => b.timestamp - a.timestamp);
+
   const data = {
-    thoughts,
+    thoughts: merged,
     lastSync: new Date().toISOString(),
-    totalCount: thoughts.length
+    totalCount: merged.length
   };
 
-  const filePath = path.join(__dirname, '..', 'content', 'thoughts.json');
   fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
-  console.log(`Synced ${thoughts.length} thoughts`);
+  console.log(`Synced ${newThoughts.length} new, total ${merged.length} thoughts`);
 }
 
 main().catch(console.error);

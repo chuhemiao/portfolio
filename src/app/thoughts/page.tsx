@@ -1,6 +1,5 @@
 import BlurFade from '@/components/magicui/blur-fade';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import ThoughtsList from '@/components/thoughts-list';
 import { promises as fs } from 'fs';
 import type { Metadata } from 'next';
 import path from 'path';
@@ -9,13 +8,6 @@ export const metadata: Metadata = {
   title: 'Thoughts',
   description: '我的碎碎念'
 };
-
-interface Thought {
-  id: string;
-  text: string;
-  date: string;
-  timestamp: number;
-}
 
 async function getThoughts() {
   try {
@@ -42,18 +34,7 @@ export default async function ThoughtsPage() {
           {thoughts.length === 0 ? (
             <p className='text-muted-foreground text-center py-12'>暂无内容</p>
           ) : (
-            <div className='space-y-4'>
-              {thoughts.map((t: Thought, i: number) => (
-                <BlurFade key={t.id} delay={0.08 + i * 0.05}>
-                  <div className='rounded-lg border p-4'>
-                    <p className='text-sm leading-7'>{t.text}</p>
-                    <p className='text-xs text-muted-foreground text-right mt-2'>
-                      {format(new Date(t.date), 'M月d日', { locale: zhCN })}
-                    </p>
-                  </div>
-                </BlurFade>
-              ))}
-            </div>
+            <ThoughtsList thoughts={thoughts} />
           )}
         </div>
       </section>
