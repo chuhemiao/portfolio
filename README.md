@@ -29,14 +29,14 @@ Built with Next.js, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Vercel.
 
 ## Pages
 
-| Route        | Description                                              |
-| ------------ | -------------------------------------------------------- |
-| `/`          | Home — bio, work, projects, philosophy, hackathons       |
-| `/blog`      | Blog posts organized by year/category                    |
-| `/stack`     | Tools and tech stack                                     |
-| `/fund`      | Fund tracker                                             |
-| `/fear`      | Crypto Fear & Greed index                                |
-| `/research`  | Deep-dive research map — 72 crypto project reports       |
+| Route       | Description                                        |
+| ----------- | -------------------------------------------------- |
+| `/`         | Home — bio, work, projects, philosophy, hackathons |
+| `/blog`     | Blog posts organized by year/category              |
+| `/stack`    | Tools and tech stack                               |
+| `/fund`     | Fund tracker                                       |
+| `/fear`     | Crypto Fear & Greed index                          |
+| `/research` | Deep-dive research map — 72 crypto project reports |
 
 ## Content Management
 
@@ -61,7 +61,9 @@ category: 'research'
 
 ```bash
 # Create a new post (auto-generates category, slug, and path)
-pnpm new:post -- "A deep research report about BTC and macro liquidity"
+pnpm new:post -- "A deep research report about BTC and macro liquidity" --category  research
+
+
 
 # Validate content before publishing
 pnpm content:check
@@ -83,6 +85,7 @@ pnpm sync:research --add
 Deep-dive investment research published at `/research`. Listed by project:
 
 ### Exchanges (CEX)
+
 - Binance: Institutional-Grade Exchange Research Report
 - Coinbase Investment-Grade Research Report (2026)
 - Bybit: Liquidity Deep Dive — $22.9B Daily Trading Volume
@@ -95,6 +98,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - OSL Digital Financial Infrastructure Investment Research
 
 ### Perpetual DEX
+
 - Hyperliquid Investment-Grade Research Report (2025/2026)
 - AsterDEX Investment-Grade Research Report
 - Reya Network In-Depth Investment Research Report
@@ -104,6 +108,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Flyingtulip In-Depth Research Report 2026
 
 ### DEX / Lending / DeFi
+
 - Uniswap Ecosystem Panoramic Research: AMM to Multi-Chain Infrastructure
 - Jupiter Protocol: The Execution Layer Paradox
 - Aave Deep Research: Leading Position in the Lending Market
@@ -119,6 +124,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Definitive (EDGE): Non-Custodial Multi-Chain TWAP Trading Terminal
 
 ### L1 / L2 / Infrastructure
+
 - Bitcoin: Global Neutral Monetary Network and Digital Reserve Asset Analysis
 - Ethereum (ETH): Institutional Research Report
 - Sui Institutional Research Report
@@ -132,6 +138,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Sentio: Web3 Data Infrastructure New Paradigm — On-Chain Analytics
 
 ### ZK / FHE / Privacy
+
 - Aztec Network: Privacy-First zk-Rollup Architecture
 - Succinct Labs: Decentralized ZK Proof Infrastructure
 - Brevis (BREV) In-Depth Investment Research Report
@@ -143,6 +150,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Inference Labs: Verifiable AI via zkML and On-Chain Proofs
 
 ### Prediction Markets
+
 - Prediction Market Sector: Polymarket & Kalshi Research (2025/2026)
 - The Rise of Prediction Markets: PMF Analysis
 - Opinion Labs: Investment Thesis for OPINION Macro Exchange
@@ -152,6 +160,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Probable: The Orderbook Oracle On-Chain Prediction Market
 
 ### Stablecoin / PayFi
+
 - Circle Global Stablecoin, Cross-Chain Settlement Research
 - Global Stablecoin Sector: Investment-Grade Research Report
 - RedotPay: Institutional-Grade PayFi Infrastructure Analysis
@@ -163,6 +172,7 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Tria Chain-Abstraction Neobank & BestPath AVS Analysis
 
 ### AI / DePIN
+
 - Gensyn: Investment-Grade Research Report
 - Sentient Protocol: Investment-Grade Analysis & Strategic Assessment
 - DeAgentAI Deep Dive: Back on Binance Futures and Alpha
@@ -170,13 +180,16 @@ Deep-dive investment research published at `/research`. Listed by project:
 - Fabric Protocol In-Depth Research: AI Robotics Infrastructure
 
 ### RWA
+
 - Centrifuge (CFG) RWA Tokenization Infrastructure Report
 - BlockStreet: VC-Grade Infrastructure for Tokenized Capital Markets
 
 ### Wallet
+
 - Rainbow Wallet: Investment-Grade Research Report
 
 ### Market Analysis
+
 - 2026 Crypto Market Structural Outlook Report
 - 2026 Crypto Market Outlook: From Liquidity Flood to Value Settlement
 - Ethereum (ETH): Institutional Research Report
