@@ -838,6 +838,38 @@ const PROJECTS: ResearchProject[] = [
     color: '#F59E0B',
     initial: 'XX',
   },
+  {
+    name: 'Dogecoin (DOGE)',
+    description: 'Dogecoin (DOGE) has evolved from a 2013 internet joke into crypto is most end...',
+    type: 'PayFi',
+    slug: 'dogecoin-doge-in-depth-research-report-cultural-blue-chip-meme',
+    color: '#0EA5E9',
+    initial: 'DD',
+  },
+  {
+    name: 'The Exchange Chains of BNB Ecosystem',
+    description: 'BNB occupies a structurally unique position in crypto as the native token of ...',
+    type: 'CEX',
+    slug: 'the-exchange-chains-of-bnb-ecosystem-no-binance-no-bsc',
+    color: '#4F46E5',
+    initial: 'TE',
+  },
+  {
+    name: 'TRON',
+    description: 'TRON occupies a structurally important niche as the dominant settlement layer...',
+    type: 'Stablecoin',
+    slug: 'tron-stablecoin-settlement-dominator-or-fragile-market-structure-beneficiary',
+    color: '#059669',
+    initial: 'TRON',
+  },
+  {
+    name: 'USDC',
+    description: 'USDC, issued by Circle, holds a $77.5B market cap as of 2026-04-05, represent...',
+    type: 'Stablecoin',
+    slug: 'usdc-compliant-infrastructure-in-crypto-is-dollar-layer-positioning-durability',
+    color: '#D97706',
+    initial: 'USDC',
+  },
 ];
 
 const ALL_TYPES = [
