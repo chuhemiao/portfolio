@@ -1054,6 +1054,46 @@ const PROJECTS: ResearchProject[] = [
     color: '#0EA5E9',
     initial: 'ZZ',
   },
+  {
+    name: 'Cronos',
+    description: 'Been looking at Cronos lately, and honestly, the numbers don not add up. Trad...',
+    type: 'L2',
+    slug: 'cronos-crypto-loyalty-cro',
+    color: '#F59E0B',
+    initial: 'CRON',
+  },
+  {
+    name: 'Internet Computer (ICP)',
+    description: 'Been revisiting ICP lately, and honestly, it is gotten more interesting since...',
+    type: 'AI/DePIN',
+    slug: 'internet-computer-icp-institutional-venture-memo-on-full-stack-on',
+    color: '#D97706',
+    initial: 'IC',
+  },
+  {
+    name: 'OKB',
+    description: 'OKB, the native token of the OKX ecosystem, has undergone a transformative to...',
+    type: 'CEX',
+    slug: 'okb-exchange-utility-token-in-a-post-scarcity-era-capturing',
+    color: '#0284C7',
+    initial: 'OKB',
+  },
+  {
+    name: 'Pharos Network',
+    description: 'Pharos Network: Pre-TGE RWA L1 Venture Investment Memo, T RWA Opportunity Risks',
+    type: 'L1',
+    slug: 'pharos-network-pre-tge-rwa-l1-venture-investment-memo-t',
+    color: '#0284C7',
+    initial: 'PN',
+  },
+  {
+    name: 'Toncoin (TON)',
+    description: 'TON is a distribution-led consumer platform with payments optionality, not do...',
+    type: 'PayFi',
+    slug: 'toncoin-ton-telegram-distribution-moat-and-the-quest-for-consumer',
+    color: '#EC4899',
+    initial: 'TT',
+  },
 ];
 
 const ALL_TYPES = [
