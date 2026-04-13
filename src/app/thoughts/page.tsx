@@ -23,7 +23,7 @@ export default async function ThoughtsPage() {
   const { thoughts } = await getThoughts();
 
   return (
-    <main className='flex flex-col min-h-[100dvh] space-y-10'>
+    <main className='mx-auto flex min-h-[100dvh] w-full max-w-4xl flex-col space-y-10 px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8'>
       <section id='thoughts'>
         <div className='mx-auto w-full max-w-2xl space-y-8'>
           <BlurFade delay={0.04}>

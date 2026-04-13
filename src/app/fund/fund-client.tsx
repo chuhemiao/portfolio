@@ -66,8 +66,7 @@ export default function FundClient() {
         </div>
       </BlurFade>
 
-      <div className='relative left-1/2 -translate-x-1/2 w-[min(100vw,1280px)] px-6'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+      <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
           {filteredAssets.map((asset, id) => (
             <BlurFade
               delay={BLUR_FADE_DELAY * 3 + id * 0.05}
@@ -144,7 +143,6 @@ export default function FundClient() {
               </div>
             </BlurFade>
           ))}
-        </div>
       </div>
     </section>
   );

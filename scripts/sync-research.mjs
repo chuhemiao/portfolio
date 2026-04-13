@@ -9,6 +9,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
+import { syncResearchLogos } from './sync-research-logos.mjs';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const RESEARCH_CLIENT = path.join(
@@ -140,33 +141,46 @@ function appendToProjects(scaffolds) {
   fs.writeFileSync(RESEARCH_CLIENT, src, 'utf-8');
 }
 
-// Main
-const posts = getAllResearchPosts();
-const existing = getExistingSlugs();
-const missing = posts.filter(p => !existing.has(p.slug));
+async function main() {
+  const posts = getAllResearchPosts();
+  const existing = getExistingSlugs();
+  const missing = posts.filter(p => !existing.has(p.slug));
 
-if (missing.length === 0) {
-  console.log('✓ research-client.tsx is in sync — no missing entries.');
-  process.exit(0);
-}
+  if (missing.length === 0) {
+    console.log('✓ research-client.tsx is in sync — no missing entries.');
 
-console.log(`Found ${missing.length} research post(s) not in research-client.tsx:\n`);
-const scaffolds = [];
-for (const post of missing) {
-  console.log(`  slug: ${post.slug}`);
-  console.log(`  title: ${post.title}`);
-  if (ADD_FLAG) {
-    scaffolds.push(buildScaffold(post));
-    console.log(`  → scaffold generated`);
+    if (ADD_FLAG) {
+      console.log('↻ Syncing local research logos...');
+      await syncResearchLogos();
+    }
+
+    return;
   }
-  console.log('');
+
+  console.log(`Found ${missing.length} research post(s) not in research-client.tsx:\n`);
+  const scaffolds = [];
+  for (const post of missing) {
+    console.log(`  slug: ${post.slug}`);
+    console.log(`  title: ${post.title}`);
+    if (ADD_FLAG) {
+      scaffolds.push(buildScaffold(post));
+      console.log(`  → scaffold generated`);
+    }
+    console.log('');
+  }
+
+  if (ADD_FLAG) {
+    appendToProjects(scaffolds);
+    console.log(`✓ Appended ${scaffolds.length} scaffold entry(s) to PROJECTS.`);
+    console.log('↻ Syncing local research logos...');
+    await syncResearchLogos();
+  } else {
+    console.log('Run with --add to auto-append scaffold entries:');
+    console.log('  pnpm sync:research --add');
+  }
 }
 
-if (ADD_FLAG) {
-  appendToProjects(scaffolds);
-  console.log(`✓ Appended ${scaffolds.length} scaffold entry(s) to PROJECTS.`);
-  console.log('  Review and adjust color/initial/type/logoUrl as needed.');
-} else {
-  console.log('Run with --add to auto-append scaffold entries:');
-  console.log('  pnpm sync:research --add');
-}
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});

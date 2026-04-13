@@ -37,5 +37,9 @@ export const metadata: Metadata = {
 };
 
 export default function FundPage() {
-  return <FundClient />;
+  return (
+    <div className='mx-auto w-full max-w-[1150px] px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8'>
+      <FundClient />
+    </div>
+  );
 }
