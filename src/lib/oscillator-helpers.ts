@@ -55,12 +55,23 @@ export type BinanceBtcMarket = {
   quoteVolume: number | null;
 };
 
+export type SurfMarketRankingCoin = {
+  symbol?: string;
+  name?: string;
+  rank?: number | null;
+  price_usd?: number | null;
+  market_cap_usd?: number | null;
+  volume_24h_usd?: number | null;
+  change_24h_pct?: number | null;
+};
+
 export type MarketSourceCoin = {
   id: string;
   symbol: string;
   name: string;
   coingeckoRank: number | null;
   coinmarketcapRank: number | null;
+  marketRank: number | null;
   dualTop300: boolean;
   researchFocus: boolean;
   researchSlug: string | null;
@@ -72,6 +83,14 @@ export type MarketSourceCoin = {
   change24h: number | null;
   change7d: number | null;
   change30d: number | null;
+};
+
+export type PaginationSlice<T> = {
+  items: T[];
+  currentPage: number;
+  totalPages: number;
+  start: number;
+  end: number;
 };
 
 const EXCLUDED_SYMBOLS = new Set([
@@ -96,6 +115,18 @@ const EXCLUDED_SYMBOLS = new Set([
   'GHO',
   'FRAX',
 ]);
+const SUBSCRIPT_DIGITS = {
+  '0': '₀',
+  '1': '₁',
+  '2': '₂',
+  '3': '₃',
+  '4': '₄',
+  '5': '₅',
+  '6': '₆',
+  '7': '₇',
+  '8': '₈',
+  '9': '₉',
+};
 
 function normalizeName(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]+/g, '');
@@ -105,6 +136,13 @@ function toNumber(value: string | number | null | undefined): number | null {
   if (value === null || value === undefined) return null;
   const parsed = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+function toSubscript(value: number): string {
+  return String(value)
+    .split('')
+    .map((digit) => SUBSCRIPT_DIGITS[digit as keyof typeof SUBSCRIPT_DIGITS] ?? digit)
+    .join('');
 }
 
 function buildSymbolIndex(coins: CoinGeckoMarketCoin[]) {
@@ -130,6 +168,48 @@ export function isExcludedFromAltUniverse(symbol: string, name: string): boolean
   );
 }
 
+export function formatAltBtcRatio(value: number | null): string {
+  if (value === null || !Number.isFinite(value)) return 'N/A';
+
+  const sign = value < 0 ? '-' : '';
+  const absolute = Math.abs(value);
+
+  if (absolute === 0) return '0.000000';
+  if (absolute >= 0.0001) return `${sign}${absolute.toFixed(6)}`;
+
+  const [mantissa, exponentValue] = absolute.toExponential(12).split('e');
+  const exponent = Number(exponentValue);
+
+  if (!Number.isFinite(exponent) || exponent >= 0) {
+    return `${sign}${absolute.toFixed(6)}`;
+  }
+
+  const zeroCount = Math.abs(exponent) - 1;
+  const significantDigits = mantissa.replace('.', '').slice(0, 4).padEnd(4, '0');
+
+  return `${sign}0.0${toSubscript(zeroCount)}${significantDigits}`;
+}
+
+export function paginateCollection<T>(
+  items: T[],
+  currentPage: number,
+  pageSize: number
+): PaginationSlice<T> {
+  const safePageSize = Math.max(1, Math.floor(pageSize));
+  const totalPages = Math.max(1, Math.ceil(items.length / safePageSize));
+  const normalizedPage = Math.min(Math.max(1, Math.floor(currentPage)), totalPages);
+  const offset = (normalizedPage - 1) * safePageSize;
+  const pageItems = items.slice(offset, offset + safePageSize);
+
+  return {
+    items: pageItems,
+    currentPage: normalizedPage,
+    totalPages,
+    start: pageItems.length ? offset + 1 : 0,
+    end: pageItems.length ? offset + pageItems.length : 0,
+  };
+}
+
 export function mergeMarketSources(
   coingeckoCoins: CoinGeckoMarketCoin[],
   coinmarketcapCoins: CoinMarketCapListing[],
@@ -152,6 +232,7 @@ export function mergeMarketSources(
       name: coin.name,
       coingeckoRank: coin.market_cap_rank ?? null,
       coinmarketcapRank: null,
+      marketRank: coin.market_cap_rank ?? null,
       dualTop300: false,
       researchFocus: Boolean(research),
       researchSlug: research?.slug ?? null,
@@ -188,6 +269,12 @@ export function mergeMarketSources(
       name: existing?.name ?? match?.name ?? coin.name,
       coingeckoRank: existing?.coingeckoRank ?? match?.market_cap_rank ?? null,
       coinmarketcapRank: coin.cmcRank ?? null,
+      marketRank:
+        existing?.marketRank ??
+        existing?.coingeckoRank ??
+        match?.market_cap_rank ??
+        coin.cmcRank ??
+        null,
       dualTop300: Boolean(existing || match),
       researchFocus: existing?.researchFocus ?? Boolean(research),
       researchSlug: existing?.researchSlug ?? research?.slug ?? null,
@@ -209,10 +296,62 @@ export function mergeMarketSources(
     const rightResearch = right.researchFocus ? 0 : 1;
     if (leftResearch !== rightResearch) return leftResearch - rightResearch;
 
-    const leftRank =
-      left.coingeckoRank ?? left.coinmarketcapRank ?? Number.MAX_SAFE_INTEGER;
-    const rightRank =
-      right.coingeckoRank ?? right.coinmarketcapRank ?? Number.MAX_SAFE_INTEGER;
+    const leftRank = left.marketRank ?? Number.MAX_SAFE_INTEGER;
+    const rightRank = right.marketRank ?? Number.MAX_SAFE_INTEGER;
+    return leftRank - rightRank;
+  });
+}
+
+export function appendSurfRankingFallbackRows(
+  sourceRows: MarketSourceCoin[],
+  surfRows: SurfMarketRankingCoin[],
+  researchFocusMap: Map<string, ResearchFocusItem>
+): MarketSourceCoin[] {
+  if (!surfRows.length) return sourceRows;
+
+  const merged = new Map(sourceRows.map((row) => [row.symbol, row]));
+
+  for (const surfCoin of surfRows) {
+    const symbol = String(surfCoin.symbol ?? '').toUpperCase();
+    const name = String(surfCoin.name ?? '').trim();
+
+    if (!symbol || !name || merged.has(symbol) || isExcludedFromAltUniverse(symbol, name)) {
+      continue;
+    }
+
+    const research = researchFocusMap.get(symbol) ?? null;
+
+    merged.set(symbol, {
+      id: symbol.toLowerCase(),
+      symbol,
+      name,
+      coingeckoRank: null,
+      coinmarketcapRank: null,
+      marketRank: toNumber(surfCoin.rank),
+      dualTop300: false,
+      researchFocus: Boolean(research),
+      researchSlug: research?.slug ?? null,
+      researchType: research?.type ?? null,
+      currentPriceUsd: toNumber(surfCoin.price_usd),
+      marketCap: toNumber(surfCoin.market_cap_usd),
+      volume24h: toNumber(surfCoin.volume_24h_usd),
+      volumeToMarketCap:
+        toNumber(surfCoin.market_cap_usd) && toNumber(surfCoin.volume_24h_usd)
+          ? Number(surfCoin.volume_24h_usd) / Number(surfCoin.market_cap_usd)
+          : null,
+      change24h: toNumber(surfCoin.change_24h_pct),
+      change7d: null,
+      change30d: null,
+    });
+  }
+
+  return Array.from(merged.values()).sort((left, right) => {
+    const leftResearch = left.researchFocus ? 0 : 1;
+    const rightResearch = right.researchFocus ? 0 : 1;
+    if (leftResearch !== rightResearch) return leftResearch - rightResearch;
+
+    const leftRank = left.marketRank ?? Number.MAX_SAFE_INTEGER;
+    const rightRank = right.marketRank ?? Number.MAX_SAFE_INTEGER;
     return leftRank - rightRank;
   });
 }

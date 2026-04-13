@@ -27,3 +27,10 @@ test('oscillator page shows a visible weekly update notice', () => {
   assert.match(oscillatorClientSource, /Updates every week/);
   assert.match(oscillatorClientSource, /Short-term market moves after the snapshot may not be reflected yet/);
 });
+
+test('oscillator page describes the breadth universe as top 500 and includes pagination controls', () => {
+  assert.match(oscillatorClientSource, /top 500/i);
+  assert.doesNotMatch(oscillatorClientSource, /top 300/i);
+  assert.match(oscillatorClientSource, /Previous/);
+  assert.match(oscillatorClientSource, /Next/);
+});

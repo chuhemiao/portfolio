@@ -94,6 +94,7 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-04-13**：`/oscillator` 继续扩到前 500 观察宇宙并补上兜底。页面文案统一改为 top 500，`Altcoin Breadth` 新增每页 50 条的分页；`ALT/BTC` 很小的数值改成 `0.0₆1700` 这类下标零格式，不再显示科学计数法。同步脚本新增 Surf ranking 补齐逻辑与旧 CG / CMC cache-friendly fallback：当新的 `CG page2=250` 或 `CMC limit=500` 超时拿不到时，会退回旧缓存 URL 并继续用 Surf top ranking 补全 universe，避免周更快照缩到只有单一来源。最新快照 `asOf=2026-04-13T08:45:24.316Z`，共 `492` 个 altcoins、`190` 个 dual-ranked、`76` 个 Binance BTC pairs。
 - **2026-04-13**：`/oscillator` 的历史指标已用配置好 key 的 Surf 重新生成，`Cycle Peak` / `Above 5Y Low` 基本补齐。`24H / 7D / 30D` 现采用分层迁移：`24H` 继续全量优先用 Surf `market-ranking`，`7D / 30D / 24H` 对高优先级币种（Research Focus + 高排名币）优先用 Surf `project-detail token_info` 覆盖，其余仍保留 CoinGecko / CMC 兜底，避免周更时一次性消耗过多 credits。
 - **2026-04-13**：安装并验证 `surf` CLI（`~/.local/bin/surf`，版本 `1.0.0-alpha.26`），`sync:oscillator` 现已优先使用 Surf 的 `exchange-price` 和 `market-ranking` 做 BTC 价格与市场排行覆盖；`/oscillator` 页面顶部新增醒目的周更快照提示条，展示更新时间与“短线波动可能未反映”的提醒。
 - **2026-04-13**：`/oscillator` 改为本地周更快照方案，运行时不再直连 CoinGecko / CMC / Binance。新增 `pnpm sync:oscillator` 生成 `src/data/oscillator-manual-snapshot.ts`，脚本优先拉实时接口，超时则自动回退读取 `.next` fetch cache，并在拿到空 universe 时拒绝覆盖旧快照。
@@ -103,5 +104,3 @@
 - **2026-04-13**：修正全站 layout 结构。移除了根布局 `body` 上的 `max-w-2xl` 与全局上下 padding，改成 full-width app shell；首页、thoughts、blog、stack、fear、fund、research、博客详情页分别改为按页面类型自选容器宽度。`/research` 同步去掉顶部黑边/空白，小屏改为单列，平板与桌面按 2-4 列自适应。
 - **2026-04-13**：继续升级首页为更像成品站的 portfolio landing。重做了首页信息架构：hero 改成大标题 + 快速入口 + 个人资料侧栏，about / publish / tools / social 改成卡片化内容区，work / education / philosophy 统一为更精致的 surface，projects 与 hackathons 也同步升级；`ProjectCard`、`ResumeCard`、`HackathonCard` 一并重做视觉与交互，保证首页整体风格一致。
 - **2026-04-13**：将 research logo 流程接入 `pnpm sync:research --add`。现在新增 research 条目写入 `PROJECTS` 后会自动运行本地 logo 同步；logo 来源新增 `logo.wine`，并在 `sync-research-logos.mjs` 中按多来源顺序兜底下载到 `public/research-logos/`。
-- **2026-04-12**：`/research` 页面 logo 改为本地静态资源方案。新增 `pnpm sync:research:logos` 自动为 `PROJECTS` 下载/生成 `public/research-logos/` 下的本地图片，并回写 `logoUrl` 为本地路径；新增 `pnpm check:research:logos` 校验所有研究项目都存在本地 logo 文件，避免远程超时和 404。
-- **2026-03-31**：实现 `/thoughts` 页面 + Telegram 自动同步功能。使用 GitHub Actions 每天同步频道 @kkdemian2050 的消息到 `content/thoughts.json`，前端展示为 Twitter/X 风格时间线。Bot: fulipy_bot。

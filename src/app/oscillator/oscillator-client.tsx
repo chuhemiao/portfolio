@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import type {
   Grade,
   MarketBreadthRow,
@@ -8,6 +8,7 @@ import type {
   OscillatorResult,
   OscillatorSummary,
 } from '@/lib/oscillator-data';
+import { formatAltBtcRatio, paginateCollection } from '@/lib/oscillator-helpers';
 
 const GRADE_STYLES: Record<Grade, { bg: string; text: string; border: string; label: string }> = {
   S: { bg: 'bg-emerald-500/15', text: 'text-emerald-600', border: 'border-emerald-500/30', label: 'Outperformed' },
@@ -24,12 +25,7 @@ const ACTION_STYLES: Record<string, string> = {
 
 type FocusFilterTab = 'all' | 'S' | 'A' | 'B' | 'F';
 type UniverseFilterTab = 'all' | 'research' | 'binance' | 'dual' | 'positive7d';
-
-function formatRatio(value: number | null): string {
-  if (value === null) return 'N/A';
-  if (value < 0.0001) return value.toExponential(4);
-  return value.toFixed(6);
-}
+const UNIVERSE_PAGE_SIZE = 50;
 
 function formatPct(value: number | null): string {
   if (value === null) return 'N/A';
@@ -127,7 +123,7 @@ function SummaryGrid({ summary }: { summary: OscillatorSummary }) {
       <StatCard
         label='Tracked Alts'
         value={summary.trackedAltcoins.toString()}
-        hint='The top-300 altcoin universe after removing BTC and stablecoins from the CoinGecko + CoinMarketCap ranking set.'
+        hint='The top-500 altcoin universe after removing BTC and stablecoins from the CoinGecko + CoinMarketCap ranking set.'
       />
       <StatCard
         label='Research Focus'
@@ -142,7 +138,7 @@ function SummaryGrid({ summary }: { summary: OscillatorSummary }) {
       <StatCard
         label='Dual Ranked'
         value={summary.dualRankedCount.toString()}
-        hint='Names that appear in both the CoinGecko and CoinMarketCap top-300 ranking sets.'
+        hint='Names that appear in both the CoinGecko and CoinMarketCap top-500 ranking sets.'
       />
       <StatCard
         label='7D Breadth'
@@ -229,7 +225,7 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
       </div>
 
       <div className='grid gap-2 sm:grid-cols-3 xl:grid-cols-6'>
-        <MetricCard label='Current ALT/BTC' value={formatRatio(result.currentRatio)} accent={result.currentRatioSource} />
+        <MetricCard label='Current ALT/BTC' value={formatAltBtcRatio(result.currentRatio)} accent={result.currentRatioSource} />
         <MetricCard label='24H' value={formatPct(result.change24h)} tone={result.change24h} />
         <MetricCard label='7D' value={formatPct(result.change7d)} tone={result.change7d} />
         <MetricCard label='30D' value={formatPct(result.change30d)} tone={result.change30d} />
@@ -238,7 +234,7 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
       </div>
 
       <div className='grid gap-2 sm:grid-cols-2 xl:grid-cols-5'>
-        <MetricCard label='Cycle Peak' value={formatRatio(result.currentCyclePeak)} />
+        <MetricCard label='Cycle Peak' value={formatAltBtcRatio(result.currentCyclePeak)} />
         <MetricCard label='VS Last Top' value={result.coin.category === 'veteran' ? formatPct(result.cycleChange) : '—'} tone={result.cycleChange} />
         <MetricCard label='Above 5Y Low' value={formatPct(result.aboveFiveYearLow)} tone={result.aboveFiveYearLow} />
         <MetricCard label='Market Cap' value={formatUsd(result.marketCap)} />
@@ -342,7 +338,7 @@ function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
                 <td className={`px-4 py-3 font-medium ${toneClass(row.change24h)}`}>{formatPct(row.change24h)}</td>
                 <td className={`px-4 py-3 font-medium ${toneClass(row.change7d)}`}>{formatPct(row.change7d)}</td>
                 <td className={`px-4 py-3 font-medium ${toneClass(row.change30d)}`}>{formatPct(row.change30d)}</td>
-                <td className='px-4 py-3 font-medium'>{formatRatio(row.currentRatio)}</td>
+                <td className='px-4 py-3 font-medium'>{formatAltBtcRatio(row.currentRatio)}</td>
                 <td className='px-4 py-3 font-medium'>
                   {formatVolumeRatio(row.volume24h && row.marketCap ? row.volume24h / row.marketCap : null)}
                 </td>
@@ -378,6 +374,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'veteran' | 'single-cycle'>('all');
   const [universeFilter, setUniverseFilter] = useState<UniverseFilterTab>('all');
   const [query, setQuery] = useState('');
+  const [universePage, setUniversePage] = useState(1);
 
   const filteredFocus = data.results.filter((row) => {
     if (focusFilter !== 'all' && row.grade !== focusFilter) return false;
@@ -398,6 +395,17 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
     return true;
   });
 
+  useEffect(() => {
+    setUniversePage(1);
+  }, [query, universeFilter]);
+
+  const paginatedUniverse = paginateCollection(
+    filteredUniverse,
+    universePage,
+    UNIVERSE_PAGE_SIZE
+  );
+  const totalTracked = data.universe.length;
+
   return (
     <section className='space-y-10 pb-8'>
       <div className='space-y-4'>
@@ -405,7 +413,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
           <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>oscillator</h1>
           <p className='max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]'>
             An altcoin strength monitor built in two layers: a focused oscillator watchlist for your highest-conviction names,
-            and a broader market table covering the CoinGecko / CoinMarketCap top 300 with Binance BTC-pair context.
+            and a broader market table covering the CoinGecko / CoinMarketCap top 500 with Binance BTC-pair context.
           </p>
         </div>
         <UpdateNotice data={data} />
@@ -428,11 +436,11 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
         <div className='grid gap-3 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4'>
           <div className='space-y-1'>
             <p className='font-medium text-foreground'>Focus Cards</p>
-            <p>Only the focus set runs through the full ALT/BTC cycle framework, which keeps the page opinionated without overloading historical data calls for all 300 names.</p>
+            <p>Only the focus set runs through the full ALT/BTC cycle framework, which keeps the page opinionated without overloading historical data calls for all 500 names.</p>
           </div>
           <div className='space-y-1'>
             <p className='font-medium text-foreground'>Breadth Table</p>
-            <p>The breadth table covers the top 300 alts and highlights ranking, price performance, ALT/BTC, liquidity efficiency, and Binance tradability.</p>
+            <p>The breadth table covers the top 500 alts and highlights ranking, price performance, ALT/BTC, liquidity efficiency, and Binance tradability.</p>
           </div>
           <div className='space-y-1'>
             <p className='font-medium text-foreground'>Source Priority</p>
@@ -498,7 +506,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
         <div className='space-y-1'>
           <h2 className='text-xl font-semibold tracking-tight'>Altcoin Breadth</h2>
           <p className='text-sm text-muted-foreground'>
-            The full-market observation layer. By default it tracks the top 300 alts after removing BTC and stablecoins, and you can switch into research, Binance BTC-pair, or dual-ranked views.
+            The full-market observation layer. By default it tracks the top 500 alts after removing BTC and stablecoins, and you can switch into research, Binance BTC-pair, or dual-ranked views.
           </p>
         </div>
 
@@ -533,10 +541,53 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
         </div>
 
         <p className='text-xs text-muted-foreground'>
-          Showing {filteredUniverse.length} / {data.universe.length} altcoins.
+          {filteredUniverse.length === 0
+            ? `Showing 0 of ${totalTracked} tracked altcoins.`
+            : `Showing ${paginatedUniverse.start}-${paginatedUniverse.end} of ${filteredUniverse.length} matched altcoins${
+                filteredUniverse.length === totalTracked ? '' : ` (${totalTracked} tracked)`
+              }.`}
         </p>
 
-        <UniverseTable rows={filteredUniverse} />
+        <UniverseTable rows={paginatedUniverse.items} />
+
+        {paginatedUniverse.totalPages > 1 ? (
+          <div className='flex flex-col gap-3 rounded-2xl border border-border/70 bg-background/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between'>
+            <p className='text-xs text-muted-foreground'>
+              Page {paginatedUniverse.currentPage} of {paginatedUniverse.totalPages} · {UNIVERSE_PAGE_SIZE} rows per page
+            </p>
+            <div className='flex flex-wrap items-center gap-2'>
+              <button
+                onClick={() => setUniversePage((page) => Math.max(1, page - 1))}
+                disabled={paginatedUniverse.currentPage === 1}
+                className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+              >
+                Previous
+              </button>
+              {Array.from({ length: paginatedUniverse.totalPages }, (_, index) => index + 1).map((page) => (
+                <button
+                  key={page}
+                  onClick={() => setUniversePage(page)}
+                  className={`size-9 rounded-full border text-xs transition-colors ${
+                    page === paginatedUniverse.currentPage
+                      ? 'border-foreground bg-foreground text-background'
+                      : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
+              <button
+                onClick={() =>
+                  setUniversePage((page) => Math.min(paginatedUniverse.totalPages, page + 1))
+                }
+                disabled={paginatedUniverse.currentPage === paginatedUniverse.totalPages}
+                className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        ) : null}
       </section>
 
       <div className='border-t pt-4 text-xs text-muted-foreground space-y-1'>

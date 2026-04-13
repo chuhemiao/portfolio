@@ -10,16 +10,19 @@ import {
   OSCILLATOR_RESEARCH_FOCUS,
 } from '../src/data/oscillator-coins.ts';
 import {
+  appendSurfRankingFallbackRows,
   mergeMarketSources,
   pickBinanceBtcMarket,
 } from '../src/lib/oscillator-helpers.ts';
 
 const COINGECKO_PAGE_SIZE = 250;
+const TOP_UNIVERSE_LIMIT = 500;
 const COINGECKO_RATIO_BATCH = 80;
 const HISTORY_BATCH_SIZE = 4;
 const FETCH_TIMEOUT_MS = 12000;
 const SURF_TOKEN_INFO_LIMIT = 72;
 const SURF_TOKEN_INFO_CONCURRENCY = 6;
+const SURF_MARKET_RANKING_OFFSETS = [0, 100, 200, 300, 400];
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const SNAPSHOT_PATH = path.resolve(
@@ -198,7 +201,7 @@ function ratioToPct(value, total) {
 }
 
 function bestRank(row) {
-  return row.coingeckoRank ?? row.coinmarketcapRank ?? null;
+  return row.marketRank ?? row.coingeckoRank ?? row.coinmarketcapRank ?? null;
 }
 
 function buildResearchFocusMap() {
@@ -220,22 +223,33 @@ function buildResearchFocusMap() {
 
 async function fetchCoinGeckoTopCoins() {
   const cfg = coingeckoConfig();
-  const first = fetchJson(
-    `${cfg.base}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${COINGECKO_PAGE_SIZE}&page=1&sparkline=false&price_change_percentage=24h,7d,30d`,
-    { headers: cfg.headers }
+  const pages = await Promise.all(
+    Array.from({ length: Math.ceil(TOP_UNIVERSE_LIMIT / COINGECKO_PAGE_SIZE) }, (_, index) =>
+      fetchJson(
+        `${cfg.base}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=${COINGECKO_PAGE_SIZE}&page=${index + 1}&sparkline=false&price_change_percentage=24h,7d,30d`,
+        { headers: cfg.headers }
+      )
+    )
   );
-  const second = fetchJson(
-    `${cfg.base}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=2&sparkline=false&price_change_percentage=24h,7d,30d`,
-    { headers: cfg.headers }
-  );
+  const coins = pages.flatMap((page) => page ?? []);
 
-  const [page1, page2] = await Promise.all([first, second]);
-  return [...(page1 ?? []), ...(page2 ?? [])];
+  if ((pages[1]?.length ?? 0) === 0) {
+    const legacySecondPage = await fetchJson(
+      `${cfg.base}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=2&sparkline=false&price_change_percentage=24h,7d,30d`,
+      { headers: cfg.headers }
+    );
+    coins.push(...(legacySecondPage ?? []));
+  }
+
+  return Array.from(new Map(coins.map((coin) => [coin.id, coin])).values()).slice(
+    0,
+    TOP_UNIVERSE_LIMIT
+  );
 }
 
 async function fetchSurfMarketRanking() {
   const pages = await Promise.all(
-    [0, 100, 200].map((offset) =>
+    SURF_MARKET_RANKING_OFFSETS.map((offset) =>
       runSurfJson('market-ranking', [
         '--sort-by',
         'market_cap',
@@ -252,9 +266,15 @@ async function fetchSurfMarketRanking() {
 
 async function fetchCoinMarketCapTopCoins() {
   const data = await fetchJson(
+    `https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=${TOP_UNIVERSE_LIMIT}&sortBy=market_cap&sortType=desc`
+  );
+  const primary = data?.data?.cryptoCurrencyList ?? [];
+  if (primary.length) return primary;
+
+  const fallback = await fetchJson(
     'https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=300&sortBy=market_cap&sortType=desc'
   );
-  return data?.data?.cryptoCurrencyList ?? [];
+  return fallback?.data?.cryptoCurrencyList ?? [];
 }
 
 async function fetchSurfBinanceBtcMarkets(symbols) {
@@ -456,6 +476,7 @@ function applySurfRankingOverlay(sourceRows, surfRows) {
     return {
       ...row,
       name: surfCoin.name ?? row.name,
+      marketRank: asNumber(surfCoin.rank) ?? row.marketRank,
       currentPriceUsd: asNumber(surfCoin.price_usd) ?? row.currentPriceUsd,
       marketCap,
       volume24h,
@@ -655,7 +676,7 @@ function buildUniverseRows(sourceRows, ratios, binanceTickers) {
 
       return {
         ...row,
-        bestRank: row.coingeckoRank ?? row.coinmarketcapRank ?? null,
+        bestRank: bestRank(row),
         binanceSymbol: binanceMarket?.symbol ?? null,
         binanceListed: Boolean(binanceMarket),
         currentRatio,
@@ -826,9 +847,13 @@ async function buildSnapshotData() {
   ]);
 
   const rankedRows = applySurfRankingOverlay(
-    mergeMarketSources(
-      coingeckoCoins,
-      coinmarketcapCoins,
+    appendSurfRankingFallbackRows(
+      mergeMarketSources(
+        coingeckoCoins,
+        coinmarketcapCoins,
+        researchFocusMap
+      ),
+      surfRanking,
       researchFocusMap
     ),
     surfRanking

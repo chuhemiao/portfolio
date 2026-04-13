@@ -201,7 +201,7 @@ export const DATA = {
       dates: 'Apr 2026 - Now',
       active: true,
       description:
-        'ALT/BTC strength monitor combining oscillator grading, research focus names, and top-300 altcoin breadth.',
+        'ALT/BTC strength monitor combining oscillator grading, research focus names, and top-500 altcoin breadth.',
       technologies: [
         'Next.js',
         'Typescript',

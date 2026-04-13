@@ -49,3 +49,14 @@ test('oscillator sync script prefers surf-backed market data when available', ()
   assert.match(syncScriptSource, /market-price/);
   assert.match(syncScriptSource, /project-detail/);
 });
+
+test('oscillator sync script expands the market universe to the top 500', () => {
+  assert.match(syncScriptSource, /TOP_UNIVERSE_LIMIT\s*=\s*500/);
+  assert.match(syncScriptSource, /\[0,\s*100,\s*200,\s*300,\s*400\]/);
+  assert.match(syncScriptSource, /limit=\$\{TOP_UNIVERSE_LIMIT\}/);
+});
+
+test('oscillator sync script keeps cache-friendly legacy fallbacks for CG and CMC', () => {
+  assert.match(syncScriptSource, /per_page=50&page=2/);
+  assert.match(syncScriptSource, /limit=300/);
+});
