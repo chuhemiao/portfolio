@@ -1,5 +1,6 @@
 import { Icons } from '@/components/icons';
 import {
+  ActivityIcon,
   HomeIcon,
   MessageSquareIcon,
   NotebookIcon,
@@ -36,7 +37,8 @@ export const DATA = {
     { href: '/blog', icon: NotebookIcon, label: 'Blog' },
     { href: '/fund', icon: TrendingUpIcon, label: 'Fund' },
     { href: '/research', icon: SearchIcon, label: 'Research' },
-    { href: '/thoughts', icon: MessageSquareIcon, label: 'Thoughts' }
+    { href: '/thoughts', icon: MessageSquareIcon, label: 'Thoughts' },
+    { href: '/oscillator', icon: ActivityIcon, label: 'Oscillator' }
   ],
   contact: {
     email: 'Y2h1aGVtaWFvQGdtYWlsLmNvbQ==',
@@ -190,6 +192,33 @@ export const DATA = {
         }
       ],
       image: '/fear_dashboard.png',
+      video: ''
+    },
+
+    {
+      title: 'Oscillator',
+      href: '/oscillator',
+      dates: 'Apr 2026 - Now',
+      active: true,
+      description:
+        'ALT/BTC strength monitor combining oscillator grading, research focus names, and top-300 altcoin breadth.',
+      technologies: [
+        'Next.js',
+        'Typescript',
+        'React',
+        'TailwindCSS',
+        'CoinGecko',
+        'CoinMarketCap',
+        'Binance'
+      ],
+      links: [
+        {
+          type: 'Website',
+          href: '/oscillator',
+          icon: <Icons.globe className='size-3' />
+        }
+      ],
+      image: '/article/token_btc_trend.png',
       video: ''
     },
 

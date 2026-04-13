@@ -5,9 +5,13 @@ import { TocItem } from '@/data/blog';
 
 interface TableOfContentsProps {
   toc: TocItem[];
+  className?: string;
 }
 
-export default function TableOfContents({ toc }: TableOfContentsProps) {
+export default function TableOfContents({
+  toc,
+  className = '',
+}: TableOfContentsProps) {
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
@@ -47,7 +51,7 @@ export default function TableOfContents({ toc }: TableOfContentsProps) {
   const minLevel = Math.min(...toc.map((item) => item.level));
 
   return (
-    <aside className="hidden min-[1400px]:block fixed top-24 max-h-[calc(100vh-6rem)] overflow-y-auto w-44 right-[calc(50%+350px)]">
+    <aside className={className}>
       <div className="border-l-2 border-border/50 pl-3">
         <h2 className="text-xs font-medium uppercase tracking-wider mb-3 text-muted-foreground">
           On this page

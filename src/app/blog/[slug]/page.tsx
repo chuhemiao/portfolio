@@ -194,42 +194,49 @@ export default async function Blog({
 
   return (
     <>
-      <TableOfContents toc={post.toc} />
       <section
         id="blog"
-        className="mx-auto w-full max-w-4xl px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8"
+        className="mx-auto w-full max-w-6xl px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8"
       >
-        <script
-          type="application/ld+json"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(jsonLd),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(breadcrumbJsonLd),
-          }}
-        />
-        <h1 className="title font-medium text-2xl tracking-tighter max-w-[650px]">
-          {post.metadata.title}
-        </h1>
-        <div className="flex justify-between items-center mt-2 mb-8 text-sm max-w-[650px]">
-          <Suspense fallback={<p className="h-5" />}>
-            <time
-              dateTime={publishedAtIso}
-              className="text-sm text-neutral-600 dark:text-neutral-400"
-            >
-              {formatDate(post.metadata.publishedAt)}
-            </time>
-          </Suspense>
+        <div className="xl:grid xl:grid-cols-[220px_minmax(0,1fr)] xl:gap-12">
+          <TableOfContents
+            toc={post.toc}
+            className="hidden xl:block xl:sticky xl:top-24 xl:max-h-[calc(100vh-6rem)] xl:self-start xl:overflow-y-auto"
+          />
+          <div className="min-w-0 xl:max-w-3xl">
+            <script
+              type="application/ld+json"
+              suppressHydrationWarning
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(jsonLd),
+              }}
+            />
+            <script
+              type="application/ld+json"
+              suppressHydrationWarning
+              dangerouslySetInnerHTML={{
+                __html: JSON.stringify(breadcrumbJsonLd),
+              }}
+            />
+            <h1 className="title max-w-[650px] text-2xl font-medium tracking-tighter">
+              {post.metadata.title}
+            </h1>
+            <div className="mt-2 mb-8 flex max-w-[650px] items-center justify-between text-sm">
+              <Suspense fallback={<p className="h-5" />}>
+                <time
+                  dateTime={publishedAtIso}
+                  className="text-sm text-neutral-600 dark:text-neutral-400"
+                >
+                  {formatDate(post.metadata.publishedAt)}
+                </time>
+              </Suspense>
+            </div>
+            <article
+              className="prose max-w-none break-words dark:prose-invert [overflow-wrap:anywhere] prose-pre:max-w-full prose-pre:overflow-x-auto prose-img:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
+              dangerouslySetInnerHTML={{ __html: post.source }}
+            ></article>
+          </div>
         </div>
-        <article
-          className="prose dark:prose-invert"
-          dangerouslySetInnerHTML={{ __html: post.source }}
-        ></article>
       </section>
       <Mermaid />
       <ScrollToTop />
