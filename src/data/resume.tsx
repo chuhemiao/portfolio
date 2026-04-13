@@ -279,12 +279,12 @@ export const DATA = {
     },
 
     {
-      title: 'IBuidl',
+      title: 'iBuidl',
       href: 'https://ibuidl.org/',
       dates: 'June 3rd 2024 - Now',
       active: true,
       description:
-        'IBuidl is a digital nomad community as well as a convenient and efficient Web3 transformation platform that helps students gain access to cutting-edge industry resources and technical support.',
+        'iBuidl is a digital nomad community as well as a convenient and efficient Web3 transformation platform that helps students gain access to cutting-edge industry resources and technical support.',
       technologies: [
         'Next.js',
         'Typescript',

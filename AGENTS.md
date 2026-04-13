@@ -96,6 +96,7 @@
 
 - **2026-04-13**：继续升级 `/research` 页面视觉层，不改数据与路由。优化了 logo tile 的白底与 ring 质感、卡片 hover 阴影与顶部色带、标题与描述层级、type tag 样式、筛选 pills 的选中/悬停状态，并将页面改成 full-bleed 结构：research 内容区放宽到 `1150px`，背景改为整页铺开的 ambient layer，不再受全局窄列布局影响。
 - **2026-04-13**：修正全站 layout 结构。移除了根布局 `body` 上的 `max-w-2xl` 与全局上下 padding，改成 full-width app shell；首页、thoughts、blog、stack、fear、fund、research、博客详情页分别改为按页面类型自选容器宽度。`/research` 同步去掉顶部黑边/空白，小屏改为单列，平板与桌面按 2-4 列自适应。
+- **2026-04-13**：继续升级首页为更像成品站的 portfolio landing。重做了首页信息架构：hero 改成大标题 + 快速入口 + 个人资料侧栏，about / publish / tools / social 改成卡片化内容区，work / education / philosophy 统一为更精致的 surface，projects 与 hackathons 也同步升级；`ProjectCard`、`ResumeCard`、`HackathonCard` 一并重做视觉与交互，保证首页整体风格一致。
 - **2026-04-13**：将 research logo 流程接入 `pnpm sync:research --add`。现在新增 research 条目写入 `PROJECTS` 后会自动运行本地 logo 同步；logo 来源新增 `logo.wine`，并在 `sync-research-logos.mjs` 中按多来源顺序兜底下载到 `public/research-logos/`。
 - **2026-04-12**：`/research` 页面 logo 改为本地静态资源方案。新增 `pnpm sync:research:logos` 自动为 `PROJECTS` 下载/生成 `public/research-logos/` 下的本地图片，并回写 `logoUrl` 为本地路径；新增 `pnpm check:research:logos` 校验所有研究项目都存在本地 logo 文件，避免远程超时和 404。
 - **2026-03-31**：实现 `/thoughts` 页面 + Telegram 自动同步功能。使用 GitHub Actions 每天同步频道 @kkdemian2050 的消息到 `content/thoughts.json`，前端展示为 Twitter/X 风格时间线。Bot: fulipy_bot。
