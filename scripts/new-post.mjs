@@ -13,6 +13,7 @@ const VALID_CATEGORIES = [
   'economics',
   'philosophy',
   'investing',
+  'story',
 ];
 
 function parseArgs(argv) {
@@ -120,6 +121,10 @@ function containsCJK(input) {
 function inferCategory(text) {
   const input = text.toLowerCase();
   const groups = [
+    {
+      category: 'story',
+      keywords: ['story', 'legend', 'biography', 'founder', '传奇', '故事', '人物', '创始人'],
+    },
     {
       category: 'research',
       keywords: [

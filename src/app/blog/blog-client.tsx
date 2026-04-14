@@ -32,7 +32,8 @@ const categories: CategoryInfo[] = [
   { key: 'research', label: 'Research' },
   { key: 'investing', label: 'Investing' },
   { key: 'economics', label: 'Economics' },
-  { key: 'philosophy', label: 'Philosophy' }
+  { key: 'philosophy', label: 'Philosophy' },
+  { key: 'story', label: 'Story' }
 ];
 
 export default function BlogClient({ posts }: { posts: Post[] }) {
