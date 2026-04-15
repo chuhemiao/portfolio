@@ -1,0 +1,34 @@
+# Session Context
+
+## User Prompts
+
+### Prompt 1
+
+无法访问 research 页面 Build Error
+
+
+
+Parsing ecmascript source code failed
+./src/app/research/research-client.tsx (1413:3)  Parsing ecmascript source code failed
+
+### Prompt 2
+
+Encountered two children with the same key, `usdt-the-backbone-of-crypto-liquidity`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version.
+src/app/research/research-client.tsx (1596:13) @ <unknown>
+
+
+  1594 |         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4'>
+  1595 |           {filt...
+
+### Prompt 3
+
+在 research 增加一个搜索功能，支持模糊搜索 symbol
+
+### Prompt 4
+
+左侧增加一个可以快速索引的目录 鼠标浮动过去展示  默认隐藏 索引从字母A-Z
+
+### Prompt 5
+
+所有项目排序 A-Z 当前看起来整体数据不对
+
