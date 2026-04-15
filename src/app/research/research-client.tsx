@@ -965,7 +965,7 @@ const PROJECTS: ResearchProject[] = [
     description:
       'USDT remains the undisputed king of stablecoins, commanding $184B in outstand...',
     type: 'Perp DEX',
-    slug: 'usdt-the-backbone-of-crypto-liquidity',
+    slug: 'usdt-dominance-stablecoin-king',
     color: '#EF4444',
     initial: 'UD',
     logoUrl: "/research-logos/usdt-the-backbone-of-crypto-liquidity--usdtdominance.png",
@@ -1409,7 +1409,7 @@ const PROJECTS: ResearchProject[] = [
     color: '#2563EB',
     initial: 'WING',
     logoUrl: "/research-logos/wingbits-comprehensive-review-from-hardware-incentives-to-token-value-capture.svg",
-  }
+  },
   {
     name: 'ADI Chain',
     description: 'ADI Chain represents an intriguing experiment in bridging sovereign instituti...',
@@ -1543,17 +1543,66 @@ function ProjectLogo({ project }: { project: ResearchProject }) {
 
 export default function ResearchClient() {
   const [activeType, setActiveType] = useState('All');
+  const [query, setQuery] = useState('');
 
-  const filtered =
-    activeType === 'All'
-      ? PROJECTS
-      : PROJECTS.filter((p) => p.type === activeType);
+  const filtered = PROJECTS.filter((p) => {
+    const matchType = activeType === 'All' || p.type === activeType;
+    const q = query.trim().toLowerCase();
+    const matchQuery =
+      !q ||
+      p.name.toLowerCase().includes(q) ||
+      p.initial.toLowerCase().includes(q) ||
+      p.slug.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q);
+    return matchType && matchQuery;
+  }).sort((a, b) => a.name.localeCompare(b.name));
+
+  const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+
+  const sortedAll = [...PROJECTS].sort((a, b) => a.name.localeCompare(b.name));
+  const letterMap = ALPHABET.reduce<Record<string, string>>((acc, letter) => {
+    const match = sortedAll.find((p) => p.name.toUpperCase().startsWith(letter));
+    if (match) acc[letter] = match.slug;
+    return acc;
+  }, {});
+
+  const scrollToLetter = (letter: string) => {
+    const slug = letterMap[letter];
+    if (!slug) return;
+    const el = document.getElementById(`project-${slug}`);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  };
 
   return (
     <div className='relative min-h-[100dvh] overflow-x-clip'>
       <div className='pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#f8fafc_0%,#eff6ff_34%,#f8fafc_100%)] dark:bg-[linear-gradient(180deg,#030712_0%,#06111f_38%,#020617_100%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(circle_at_12%_14%,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.14),transparent_24%),radial-gradient(circle_at_50%_22%,rgba(99,102,241,0.1),transparent_32%)] dark:bg-[radial-gradient(circle_at_12%_14%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.16),transparent_22%),radial-gradient(circle_at_50%_22%,rgba(59,130,246,0.14),transparent_34%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-[24rem] h-[34rem] bg-[radial-gradient(circle_at_20%_30%,rgba(148,163,184,0.1),transparent_24%),radial-gradient(circle_at_82%_24%,rgba(125,211,252,0.14),transparent_22%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(15,23,42,0.55),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(14,165,233,0.12),transparent_24%)]' />
+
+      {/* A-Z floating index — left side, hidden by default, visible on hover */}
+      <div className='group fixed left-0 top-1/2 z-50 hidden -translate-y-1/2 lg:flex'>
+        {/* trigger strip */}
+        <div className='flex h-full w-3 cursor-pointer items-center justify-center' />
+        {/* index panel */}
+        <div className='pointer-events-none ml-1 flex translate-x-[-110%] flex-col items-center gap-[2px] rounded-xl border border-border/60 bg-background/90 px-2 py-3 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 opacity-0'>
+          {ALPHABET.map((letter) => {
+            const active = !!letterMap[letter];
+            return (
+              <button
+                key={letter}
+                disabled={!active}
+                onClick={() => scrollToLetter(letter)}
+                className={`flex h-5 w-5 items-center justify-center rounded text-[10px] font-semibold tracking-wide transition-colors duration-150 ${
+                  active
+                    ? 'text-foreground hover:bg-foreground/10 cursor-pointer'
+                    : 'text-muted-foreground/30 cursor-default'
+                }`}>
+                {letter}
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <section className='relative mx-auto flex min-h-[100dvh] w-full max-w-[1150px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8'>
         <header className='space-y-5 sm:space-y-6'>
@@ -1572,6 +1621,23 @@ export default function ResearchClient() {
             </p>
           </div>
         </header>
+
+        <div className='relative max-w-xs'>
+          <input
+            type='text'
+            placeholder='Search by symbol or name...'
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className='w-full rounded-full border border-border/70 bg-background/60 px-4 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm outline-none transition-all duration-200 focus:border-foreground/30 focus:bg-background/85'
+          />
+          {query && (
+            <button
+              onClick={() => setQuery('')}
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground'>
+              ✕
+            </button>
+          )}
+        </div>
 
         <div className='flex flex-wrap gap-2.5'>
           {ALL_TYPES.filter((t) => {
@@ -1595,6 +1661,7 @@ export default function ResearchClient() {
           {filtered.map((project) => (
             <Link
               key={project.slug}
+              id={`project-${project.slug}`}
               href={`/blog/${project.slug}`}
               className='group relative flex min-h-[16.5rem] flex-col gap-3 overflow-hidden rounded-[1.4rem] border border-border/60 bg-background/72 p-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.6)] backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:bg-background/84 hover:shadow-[0_28px_55px_-34px_rgba(15,23,42,0.78)]'>
               <div
