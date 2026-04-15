@@ -11,6 +11,7 @@ const COIN_LOGO_BASE = 'https://static.coinpaprika.com/coin';
 const EXCHANGE_LOGO_BASE = 'https://static.coinpaprika.com/exchanges';
 const FAVICON_BASE = 'https://www.google.com/s2/favicons?sz=128&domain=';
 const LOGO_WINE_BASE = 'https://download.logo.wine/logo';
+const FETCH_TIMEOUT_MS = 10000;
 
 const DOMAIN_BLACKLIST = new Set([
   'defillama.com',
@@ -311,6 +312,7 @@ async function writeLocalLogo(project, remoteUrl) {
   }
 
   const response = await fetch(remoteUrl, {
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     redirect: 'follow',
     headers: {
       'user-agent': 'kkdemian-portfolio-logo-sync/1.0',
@@ -519,12 +521,34 @@ function buildSourceCandidates(project, coinByName, slugToFile) {
   return candidates;
 }
 
+async function fetchCoinPaprikaCoins() {
+  try {
+    const response = await fetch('https://api.coinpaprika.com/v1/coins', {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+      headers: {
+        'user-agent': 'kkdemian-portfolio-logo-sync/1.0',
+      },
+    });
+
+    if (!response.ok) {
+      return [];
+    }
+
+    const coins = await response.json();
+    return Array.isArray(coins) ? coins : [];
+  } catch (error) {
+    const code = error?.cause?.code ?? error?.code ?? 'UNKNOWN';
+    console.warn(`Coinpaprika coin list unavailable (${code}), continuing with non-coin logo fallbacks.`);
+    return [];
+  }
+}
+
 export async function syncResearchLogos() {
   fs.mkdirSync(LOGO_DIR, { recursive: true });
 
   const [source, coins] = await Promise.all([
     fs.promises.readFile(RESEARCH_FILE, 'utf8'),
-    fetch('https://api.coinpaprika.com/v1/coins').then((response) => response.json()),
+    fetchCoinPaprikaCoins(),
   ]);
 
   const { byName: coinByName } = buildCoinMaps(coins);

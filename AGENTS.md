@@ -94,6 +94,7 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-04-15**：修复 `pnpm sync:research --add` 在 `api.coinpaprika.com/v1/coins` 网络抖动时会整段中断的问题。`scripts/sync-research-logos.mjs` 现在为 Coinpaprika coin list 增加超时与容错：失败时只告警并继续走 `domain / logo.wine / monogram` 等非 coin 候选，不再因为单一源 `ECONNRESET` 直接退出；`writeLocalLogo` 下载也加了超时。新增回归测试 `scripts/sync-research-logos.test.mjs` 覆盖“Coinpaprika 挂了也能同步 monogram fallback”。本地重新执行 `pnpm sync:research --add` 已成功，随后 `node scripts/check-research-logos.mjs` 通过，当前校验到 `150` 个 research projects 都有本地 logo 文件。
 - **2026-04-13**：`/oscillator` 继续扩到前 500 观察宇宙并补上兜底。页面文案统一改为 top 500，`Altcoin Breadth` 新增每页 50 条的分页；`ALT/BTC` 很小的数值改成 `0.0₆1700` 这类下标零格式，不再显示科学计数法。同步脚本新增 Surf ranking 补齐逻辑与旧 CG / CMC cache-friendly fallback：当新的 `CG page2=250` 或 `CMC limit=500` 超时拿不到时，会退回旧缓存 URL 并继续用 Surf top ranking 补全 universe，避免周更快照缩到只有单一来源。最新快照 `asOf=2026-04-13T08:45:24.316Z`，共 `492` 个 altcoins、`190` 个 dual-ranked、`76` 个 Binance BTC pairs。
 - **2026-04-13**：`/oscillator` 的历史指标已用配置好 key 的 Surf 重新生成，`Cycle Peak` / `Above 5Y Low` 基本补齐。`24H / 7D / 30D` 现采用分层迁移：`24H` 继续全量优先用 Surf `market-ranking`，`7D / 30D / 24H` 对高优先级币种（Research Focus + 高排名币）优先用 Surf `project-detail token_info` 覆盖，其余仍保留 CoinGecko / CMC 兜底，避免周更时一次性消耗过多 credits。
 - **2026-04-13**：安装并验证 `surf` CLI（`~/.local/bin/surf`，版本 `1.0.0-alpha.26`），`sync:oscillator` 现已优先使用 Surf 的 `exchange-price` 和 `market-ranking` 做 BTC 价格与市场排行覆盖；`/oscillator` 页面顶部新增醒目的周更快照提示条，展示更新时间与“短线波动可能未反映”的提醒。
