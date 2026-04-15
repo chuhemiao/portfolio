@@ -41,13 +41,21 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     'all'
   );
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPosts = posts
-    .filter((post) =>
-      selectedCategory === 'all'
-        ? true
-        : post.metadata.category === selectedCategory
-    )
+    .filter((post) => {
+      const matchesCategory =
+        selectedCategory === 'all'
+          ? true
+          : post.metadata.category === selectedCategory;
+      if (!searchQuery.trim()) return matchesCategory;
+      const q = searchQuery.toLowerCase();
+      const matchesSearch =
+        post.metadata.title.toLowerCase().includes(q) ||
+        post.metadata.summary.toLowerCase().includes(q);
+      return matchesCategory && matchesSearch;
+    })
     .sort((a, b) => {
       if (new Date(a.metadata.publishedAt) > new Date(b.metadata.publishedAt)) {
         return -1;
@@ -64,6 +72,11 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
 
   const handleCategoryChange = (category: Category | 'all') => {
     setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
     setCurrentPage(1);
   };
 
@@ -102,6 +115,30 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
         <h1 className='font-medium text-2xl mb-8 tracking-tighter'>blog</h1>
       </BlurFade>
 
+      <BlurFade delay={BLUR_FADE_DELAY * 1.2}>
+        <div className='relative mb-6'>
+          <input
+            type='text'
+            placeholder='Search posts...'
+            value={searchQuery}
+            onChange={handleSearchChange}
+            className='w-full px-4 py-2 pl-9 rounded-lg text-sm bg-secondary text-secondary-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-1 focus:ring-primary'
+          />
+          <svg
+            className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground'
+            fill='none'
+            stroke='currentColor'
+            viewBox='0 0 24 24'>
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              strokeWidth={2}
+              d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+            />
+          </svg>
+        </div>
+      </BlurFade>
+
       <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
         <div className='flex flex-wrap gap-2 mb-8'>
           {categories.map((category) => (
@@ -118,6 +155,12 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
           ))}
         </div>
       </BlurFade>
+
+      {filteredPosts.length === 0 && (
+        <p className='text-sm text-muted-foreground py-8 text-center'>
+          No posts found.
+        </p>
+      )}
 
       {paginatedPosts.map((post, id) => (
         <BlurFade delay={BLUR_FADE_DELAY * 2 + id * 0.05} key={post.slug}>
