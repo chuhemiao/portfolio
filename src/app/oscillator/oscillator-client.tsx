@@ -25,58 +25,73 @@ const ACTION_STYLES: Record<string, string> = {
 
 type FocusFilterTab = 'all' | 'S' | 'A' | 'B' | 'F';
 type UniverseFilterTab = 'all' | 'research' | 'binance' | 'dual' | 'positive7d';
+type MainTab = 'focus' | 'breadth' | 'heat';
 const UNIVERSE_PAGE_SIZE = 50;
 
+// ── BTC Heat API types ──────────────────────────────────────────────────────
+
+interface BtcIndicator {
+  name: string;
+  value: number | null;
+  score: number;
+  weight: number;
+  group: string;
+}
+
+interface BtcScoreData {
+  btcPrice: number;
+  score: number;
+  dailyScore: number;
+  weeklyScore: number;
+  level: string;
+  suggestion: string;
+  indicators: BtcIndicator[];
+  timestamp?: string;
+  _cached?: boolean;
+}
+
+// ── Formatters ──────────────────────────────────────────────────────────────
+
 function formatPct(value: number | null): string {
-  if (value === null) return 'N/A';
+  if (value === null || value === undefined) return 'N/A';
   const sign = value >= 0 ? '+' : '';
-  return `${sign}${value.toFixed(1)}%`;
+  return `${sign}${value.toFixed(2)}%`;
 }
 
 function formatUsd(value: number | null): string {
-  if (value === null) return 'N/A';
-  if (value >= 1_000_000_000_000) return `$${(value / 1_000_000_000_000).toFixed(2)}T`;
-  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(2)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(2)}K`;
+  if (value === null || value === undefined) return 'N/A';
+  if (value >= 1e9) return `$${(value / 1e9).toFixed(2)}B`;
+  if (value >= 1e6) return `$${(value / 1e6).toFixed(2)}M`;
+  if (value >= 1e3) return `$${(value / 1e3).toFixed(2)}K`;
   return `$${value.toFixed(2)}`;
 }
 
 function formatVolumeRatio(value: number | null): string {
-  if (value === null) return 'N/A';
-  return `${(value * 100).toFixed(1)}%`;
+  if (value === null || value === undefined) return 'N/A';
+  return `${(value * 100).toFixed(2)}%`;
 }
 
 function formatSnapshotTimestamp(value: string | null): string {
   if (!value) return 'N/A';
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return 'N/A';
-
-  return date.toLocaleString('en-US', {
-    dateStyle: 'medium',
-    timeStyle: 'short',
+  return new Date(value).toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
   });
 }
 
 function formatSnapshotAge(value: string | null): string {
-  if (!value) return 'Snapshot time unavailable';
-
-  const timestamp = new Date(value).getTime();
-  if (Number.isNaN(timestamp)) return 'Snapshot time unavailable';
-
-  const diffMs = Date.now() - timestamp;
-  if (diffMs < 0) return 'Snapshot scheduled';
-
-  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  if (!value) return 'N/A';
+  const now = Date.now();
+  const ts = new Date(value).getTime();
+  const diffMs = now - ts;
+  const diffDays = Math.floor(diffMs / 86400000);
   if (diffDays === 0) return 'Updated today';
-  if (diffDays === 1) return 'Updated 1 day ago';
-  if (diffDays < 7) return `Updated ${diffDays} days ago`;
-
-  const diffWeeks = Math.floor(diffDays / 7);
-  if (diffWeeks === 1) return 'Updated 1 week ago';
-  return `Updated ${diffWeeks} weeks ago`;
+  if (diffDays === 1) return '1 day ago';
+  return `${diffDays} days ago`;
 }
+
+// ── Shared sub-components ────────────────────────────────────────────────────
 
 function UpdateNotice({ data }: { data: OscillatorData }) {
   const snapshotTime = data.snapshotAsOf ?? data.generatedAt;
@@ -99,15 +114,7 @@ function UpdateNotice({ data }: { data: OscillatorData }) {
   );
 }
 
-function StatCard({
-  label,
-  value,
-  hint,
-}: {
-  label: string;
-  value: string;
-  hint: string;
-}) {
+function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
     <div className='rounded-2xl border border-border/70 bg-background/75 p-4 shadow-sm'>
       <p className='text-[11px] uppercase tracking-[0.16em] text-muted-foreground'>{label}</p>
@@ -362,14 +369,381 @@ function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
   );
 }
 
-function toneClass(value: number | null): string {
-  if (value === null) return '';
+function toneClass(value: number | null | undefined): string {
+  if (value === null || value === undefined) return '';
   if (value > 0) return 'text-emerald-600';
   if (value < 0) return 'text-rose-600';
   return '';
 }
 
+const INDICATOR_NAME_EN: Record<string, string> = {
+  'ETF 每日净流入': 'ETF Daily Net Flow',
+  'Funding Rate': 'Funding Rate',
+  '多空比': 'Long/Short Ratio',
+  '恐惧贪婪指数': 'Fear & Greed Index',
+  'LTH-MVRV': 'LTH-MVRV',
+  'NUPL': 'NUPL',
+  'LTH-SOPR': 'LTH-SOPR',
+  'STH-SOPR': 'STH-SOPR',
+  'LTH 持有者占比': 'LTH Supply %',
+  '365日均线倍数': '365D MA Ratio',
+  '200周均线倍数': '200W MA Multiplier',
+  '周线 RSI': 'Weekly RSI',
+  '成交量变化': 'Volume Change',
+};
+
+
+
+const INDICATOR_DESCRIPTIONS: Record<string, string> = {
+  'ETF 每日净流入': 'Net daily USD flow into spot Bitcoin ETFs (e.g. BlackRock IBIT, Fidelity FBTC). Large inflows signal institutional buying pressure; large outflows signal selling.',
+  'Funding Rate': 'Periodic payment between longs and shorts in perpetual futures. Positive = longs pay shorts (bullish bias). Negative = shorts pay longs (bearish). High positive rates indicate crowded long positions.',
+  '多空比': 'Ratio of long to short positions on major exchanges. Above 1.0 = more longs. Extreme long crowding (>2.0) is vulnerable to liquidation cascades.',
+  '恐惧贪婪指数': 'Composite sentiment index (0–100) aggregating volatility, volume, social media, surveys, dominance, and Google Trends. <15 = extreme fear; >80 = extreme greed.',
+  'LTH-MVRV': 'Market Value to Realized Value for Long-Term Holders (coins held >155 days). <1.0 means LTH are underwater — historically only seen at major cycle bottoms.',
+  'NUPL': 'Net Unrealized Profit/Loss = (Market Cap − Realized Cap) / Market Cap. Negative = network-wide losses (capitulation). >0.75 = euphoria (likely top).',
+  'LTH-SOPR': 'Spent Output Profit Ratio for Long-Term Holders. <1.0 means LTH are selling at a loss — extremely rare and a powerful bottom signal.',
+  'STH-SOPR': 'Spent Output Profit Ratio for Short-Term Holders (coins held <155 days). Persistently <1.0 means recent buyers are panic selling — a bear market signal.',
+  'LTH 持有者占比': 'Percentage of total BTC supply held by Long-Term Holders. High % = accumulation phase (coins in strong hands). Low % = distribution phase (coins moving to speculators). Inverted indicator.',
+  '365日均线倍数': 'Current BTC price divided by its 365-day moving average. <1.0 means price is below the annual average — historically a bear market accumulation zone.',
+  '200周均线倍数': 'Current BTC price divided by the 200-week moving average. The 200WMA has acted as the ultimate floor in every Bitcoin cycle. Ratios >3.5x have marked cycle tops.',
+  '周线 RSI': '14-period Relative Strength Index on the weekly chart. <30 = historically rare oversold levels seen only at major cycle bottoms. >80 = late-stage bull market tops.',
+  '成交量变化': 'Current 24h trading volume vs. 30-day average. Volume dry-up after a crash signals selling exhaustion. Extreme volume spikes after a rally can indicate a blow-off top.',
+};
+
+// ── BTC Heat components ──────────────────────────────────────────────────────
+
+function heatLevelStyle(score: number): { color: string; label: string; dot: string } {
+  if (score <= 15) return { color: 'text-blue-600', label: 'Extreme Fear', dot: 'bg-blue-500' };
+  if (score <= 30) return { color: 'text-emerald-600', label: 'Fear', dot: 'bg-emerald-500' };
+  if (score <= 45) return { color: 'text-emerald-500', label: 'Moderate Fear', dot: 'bg-emerald-400' };
+  if (score <= 55) return { color: 'text-muted-foreground', label: 'Neutral', dot: 'bg-zinc-400' };
+  if (score <= 70) return { color: 'text-amber-600', label: 'Moderate Greed', dot: 'bg-amber-500' };
+  if (score <= 85) return { color: 'text-orange-600', label: 'Greed', dot: 'bg-orange-500' };
+  return { color: 'text-rose-600', label: 'Extreme Greed', dot: 'bg-rose-500' };
+}
+
+function HeatScoreBar({ score }: { score: number }) {
+  const style = heatLevelStyle(score);
+  return (
+    <div className='space-y-2'>
+      <div className='h-2 w-full rounded-full bg-muted overflow-hidden'>
+        <div
+          className='h-full rounded-full transition-all'
+          style={{
+            width: `${score}%`,
+            background: 'linear-gradient(90deg, #3b82f6 0%, #22c55e 30%, #eab308 60%, #f97316 80%, #ef4444 100%)',
+          }}
+        />
+      </div>
+      <div className='flex justify-between text-[10px] text-muted-foreground'>
+        <span>0 Extreme Fear</span>
+        <span>50 Neutral</span>
+        <span>100 Extreme Greed</span>
+      </div>
+    </div>
+  );
+}
+
+function BtcHeatIndicatorCard({ indicator }: { indicator: BtcIndicator }) {
+  const pct = Math.round(indicator.score);
+  const style = heatLevelStyle(pct);
+  const nameEn = INDICATOR_NAME_EN[indicator.name] ?? indicator.name;
+  const description = INDICATOR_DESCRIPTIONS[indicator.name];
+  const rawDisplay =
+    indicator.value !== null && indicator.value !== undefined
+      ? typeof indicator.value === 'number'
+        ? indicator.value.toFixed(Math.abs(indicator.value) < 10 ? 3 : 1)
+        : String(indicator.value)
+      : '—';
+
+  return (
+    <div className='group relative rounded-xl border border-border/70 bg-background/60 p-3 space-y-2'>
+      <div className='flex items-start justify-between gap-2'>
+        <p className={`text-[11px] leading-tight text-muted-foreground ${description ? 'cursor-help underline decoration-dashed underline-offset-2' : ''}`}>
+          {nameEn}
+        </p>
+        <span className='shrink-0 text-[10px] text-muted-foreground'>×{indicator.weight}</span>
+      </div>
+      <div className='flex items-end justify-between'>
+        <p className={`text-lg font-semibold ${style.color}`}>{pct}</p>
+        <p className='text-[10px] text-muted-foreground'>{rawDisplay}</p>
+      </div>
+      <div className='h-1 w-full rounded-full bg-muted overflow-hidden'>
+        <div
+          className='h-full rounded-full'
+          style={{
+            width: `${pct}%`,
+            background: 'linear-gradient(90deg, #3b82f6 0%, #22c55e 30%, #eab308 60%, #f97316 80%, #ef4444 100%)',
+          }}
+        />
+      </div>
+      {description ? (
+        <div className='pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-64 rounded-xl border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100'>
+          {description}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function BtcHeatTab() {
+  const [data, setData] = useState<BtcScoreData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('/api/btc-score')
+      .then((r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return r.json();
+      })
+      .then((json) => {
+        setData(json);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message ?? 'Failed to load');
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center py-20'>
+        <p className='text-sm text-muted-foreground animate-pulse'>Loading BTC Market Heat...</p>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className='rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground'>
+        Unable to load BTC heat data — {error ?? 'unknown error'}. Try refreshing.
+      </div>
+    );
+  }
+
+  const levelStyle = heatLevelStyle(data.score);
+  const dailyIndicators = data.indicators.filter((i) => i.group === 'daily');
+  const weeklyIndicators = data.indicators.filter((i) => i.group === 'weekly');
+  const levelLabel = levelStyle.label;
+
+  return (
+    <div className='space-y-6'>
+      {data._cached ? (
+        <div className='rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-xs text-amber-700'>
+          Live API unavailable — showing last cached data{data.timestamp ? ` (as of ${new Date(data.timestamp).toLocaleString('en-US')})` : ''}.
+        </div>
+      ) : null}
+
+      {/* Score header */}
+      <div className='rounded-2xl border border-border/70 bg-background/80 p-5 shadow-sm shadow-black/5 space-y-4'>
+        <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
+          <div className='space-y-1'>
+            <p className='text-[11px] uppercase tracking-[0.16em] text-muted-foreground'>Market Heat Score</p>
+            <div className='flex items-baseline gap-3'>
+              <span className={`text-4xl font-semibold ${levelStyle.color}`}>{Math.round(data.score)}</span>
+              <span className='text-lg text-muted-foreground'>/ 100</span>
+              <span className={`flex items-center gap-1.5 text-sm font-medium ${levelStyle.color}`}>
+                <span className={`size-2 rounded-full ${levelStyle.dot}`} />
+                {levelLabel}
+              </span>
+            </div>
+          </div>
+          <div className='flex gap-4 text-xs text-muted-foreground'>
+            <div className='text-center'>
+              <p className='text-lg font-semibold text-foreground'>{Math.round(data.dailyScore)}</p>
+              <p>Daily / 32</p>
+            </div>
+            <div className='text-center'>
+              <p className='text-lg font-semibold text-foreground'>{Math.round(data.weeklyScore)}</p>
+              <p>Weekly / 68</p>
+            </div>
+            <div className='text-center'>
+              <p className='text-lg font-semibold text-foreground'>
+                {data.btcPrice ? `$${data.btcPrice.toLocaleString('en-US', { maximumFractionDigits: 0 })}` : '—'}
+              </p>
+              <p>BTC Price</p>
+            </div>
+          </div>
+        </div>
+        <HeatScoreBar score={data.score} />
+        {data.suggestion ? (
+          <p className='text-sm text-muted-foreground border-t border-border/50 pt-3'>
+            {data.score <= 15
+              ? 'Extreme fear — historically a strong accumulation window. Consider building 60–80% of planned BTC allocation.'
+              : data.score <= 30
+                ? 'Market is fearful and undervalued. Batch accumulation recommended (40–60% of allocation).'
+                : data.score <= 45
+                  ? 'Cool market with emerging opportunity. Begin building position (20–40% of allocation).'
+                  : data.score <= 55
+                    ? 'Neutral sentiment. Hold current position and monitor for a directional shift.'
+                    : data.score <= 70
+                      ? 'Market running hot. Tighten stops and consider trimming 10–20%.'
+                      : data.score <= 85
+                        ? 'Overheated — distribution phase likely. Gradually take profits, reduce to 40–60% of peak position.'
+                        : 'Extreme greed — historic top signal. Aggressive profit-taking recommended, reduce to 20% or less.'}
+          </p>
+        ) : null}
+      </div>
+
+      {/* Daily Pulse */}
+      <div className='space-y-3'>
+        <div className='flex items-center gap-2'>
+          <h3 className='text-sm font-semibold tracking-tight'>Daily Pulse</h3>
+          <span className='text-xs text-muted-foreground'>4 indicators · 32 pts</span>
+        </div>
+        <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-4'>
+          {dailyIndicators.map((ind) => (
+            <BtcHeatIndicatorCard key={ind.name} indicator={ind} />
+          ))}
+        </div>
+      </div>
+
+      {/* Weekly Structure */}
+      <div className='space-y-3'>
+        <div className='flex items-center gap-2'>
+          <h3 className='text-sm font-semibold tracking-tight'>Weekly Structure</h3>
+          <span className='text-xs text-muted-foreground'>9 indicators · 68 pts</span>
+        </div>
+        <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-3'>
+          {weeklyIndicators.map((ind) => (
+            <BtcHeatIndicatorCard key={ind.name} indicator={ind} />
+          ))}
+        </div>
+      </div>
+
+      {/* BTC Heat FAQ */}
+      <FaqSection items={BTC_HEAT_FAQ} />
+    </div>
+  );
+}
+
+// ── FAQ ──────────────────────────────────────────────────────────────────────
+
+interface FaqItem {
+  q: string;
+  a: string;
+}
+
+function FaqSection({ items }: { items: FaqItem[] }) {
+  const [open, setOpen] = useState<number | null>(null);
+  return (
+    <div className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
+      <div className='px-5 py-4 border-b border-border/50'>
+        <h3 className='text-sm font-semibold tracking-tight'>FAQ</h3>
+      </div>
+      <div className='divide-y divide-border/50'>
+        {items.map((item, i) => (
+          <div key={i}>
+            <button
+              onClick={() => setOpen(open === i ? null : i)}
+              className='w-full flex items-center justify-between gap-4 px-5 py-4 text-left text-sm font-medium hover:bg-muted/30 transition-colors'
+            >
+              <span>{item.q}</span>
+              <span className='shrink-0 text-muted-foreground text-lg leading-none'>
+                {open === i ? '−' : '+'}
+              </span>
+            </button>
+            {open === i ? (
+              <div className='px-5 pb-4 text-sm text-muted-foreground leading-relaxed'>
+                {item.a}
+              </div>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const FOCUS_FAQ: FaqItem[] = [
+  {
+    q: 'What is the Research Focus set?',
+    a: 'The focus set is a hand-curated watchlist of high-conviction altcoins that run through the full ALT/BTC cycle framework. Each name is scored, graded (S/A/B/F), and given an action label (Focus / Watch / Avoid) based on its oscillator position relative to historical cycle peaks.',
+  },
+  {
+    q: 'What do the grades mean?',
+    a: 'S = outperforming BTC this cycle. A = structurally strong oscillator. B = not yet confirmed, worth tracking. F = failed or still in decline — avoid until structure improves.',
+  },
+  {
+    q: 'What is Veteran vs Single-Cycle?',
+    a: 'Veteran coins have existed across multiple Bitcoin halving cycles and have historical peak data to compare against. Single-Cycle names only have data from the current or most recent cycle, so VS Last Top comparisons are not applicable.',
+  },
+  {
+    q: 'How often does this data update?',
+    a: 'The focus set updates weekly via a snapshot refresh. Short-term price moves between refreshes will not be reflected immediately.',
+  },
+];
+
+const BREADTH_FAQ: FaqItem[] = [
+  {
+    q: 'What is Altcoin Breadth?',
+    a: 'The breadth table covers the top ~500 altcoins from CoinGecko and CoinMarketCap (after removing BTC and stablecoins). It gives a market-wide view of how alts are performing relative to BTC.',
+  },
+  {
+    q: 'What does the Research tag mean in the table?',
+    a: 'Research-tagged coins are ones that appear in both this breadth universe and your current research pipeline (the focus set). It keeps content work and market monitoring connected in one view.',
+  },
+  {
+    q: 'What does Dual mean?',
+    a: 'Dual means the token is ranked in the top 300 on both CoinGecko and CoinMarketCap simultaneously. Higher overlap between the two sources generally indicates better data quality and liquidity.',
+  },
+  {
+    q: 'What is ALT/BTC and why does it matter?',
+    a: 'ALT/BTC is the exchange rate between an altcoin and Bitcoin. When ALT/BTC is rising, the altcoin is outperforming BTC. USD price is influenced by BTC movements — ALT/BTC strips that out to show real relative strength.',
+  },
+];
+
+const BTC_HEAT_FAQ: FaqItem[] = [
+  {
+    q: 'What is the Market Heat Score?',
+    a: 'A weighted composite score from 0 to 100 combining 13 on-chain, sentiment, and market indicators. 0 = Extreme Fear (historically the best accumulation windows). 100 = Extreme Greed (historically the best distribution windows).',
+  },
+  {
+    q: 'What is the difference between Daily Pulse and Weekly Structure?',
+    a: 'Daily Pulse (4 indicators, 32 pts) tracks fast-moving signals like ETF flows, funding rates, and sentiment. Weekly Structure (9 indicators, 68 pts) tracks slow-moving on-chain cycle signals like MVRV, NUPL, and SOPR. Weekly indicators are weighted heavier because they have a better track record for identifying cycle extremes.',
+  },
+  {
+    q: 'How should I use this score?',
+    a: 'Use the score as one input among many, not as a trading signal. Low scores suggest the market is undervalued and fearful — historically better times to accumulate. High scores suggest the market is overheated — historically better times to reduce exposure. Always DCA rather than going all-in.',
+  },
+  {
+    q: 'How often does this data refresh?',
+    a: 'BTC Heat data is fetched live on every page visit from the Day1Global API. Daily indicators can shift within hours. Weekly on-chain indicators typically move over days to weeks.',
+  },
+];
+
+// ── Tab pill ─────────────────────────────────────────────────────────────────
+
+function TabPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
+        active
+          ? 'border-foreground bg-foreground text-background'
+          : 'border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+// ── Main export ───────────────────────────────────────────────────────────────
+
 export default function OscillatorClient({ data }: { data: OscillatorData }) {
+  const [activeTab, setActiveTab] = useState<MainTab>('focus');
   const [focusFilter, setFocusFilter] = useState<FocusFilterTab>('all');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'veteran' | 'single-cycle'>('all');
   const [universeFilter, setUniverseFilter] = useState<UniverseFilterTab>('all');
@@ -399,15 +773,12 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
     setUniversePage(1);
   }, [query, universeFilter]);
 
-  const paginatedUniverse = paginateCollection(
-    filteredUniverse,
-    universePage,
-    UNIVERSE_PAGE_SIZE
-  );
+  const paginatedUniverse = paginateCollection(filteredUniverse, universePage, UNIVERSE_PAGE_SIZE);
   const totalTracked = data.universe.length;
 
   return (
-    <section className='space-y-10 pb-8'>
+    <section className='space-y-8 pb-8'>
+      {/* Header */}
       <div className='space-y-4'>
         <div className='space-y-2'>
           <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>oscillator</h1>
@@ -429,169 +800,175 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
         {data.note ? <p className='text-xs text-muted-foreground'>{data.note}</p> : null}
       </div>
 
+      {/* Summary — always visible */}
       <SummaryGrid summary={data.summary} />
 
-      <div className='rounded-2xl border border-border/70 bg-background/80 p-5 shadow-sm shadow-black/5 space-y-3'>
-        <h2 className='text-sm font-semibold tracking-tight'>How To Read This Page</h2>
-        <div className='grid gap-3 text-xs text-muted-foreground sm:grid-cols-2 xl:grid-cols-4'>
-          <div className='space-y-1'>
-            <p className='font-medium text-foreground'>Focus Cards</p>
-            <p>Only the focus set runs through the full ALT/BTC cycle framework, which keeps the page opinionated without overloading historical data calls for all 500 names.</p>
-          </div>
-          <div className='space-y-1'>
-            <p className='font-medium text-foreground'>Breadth Table</p>
-            <p>The breadth table covers the top 500 alts and highlights ranking, price performance, ALT/BTC, liquidity efficiency, and Binance tradability.</p>
-          </div>
-          <div className='space-y-1'>
-            <p className='font-medium text-foreground'>Source Priority</p>
-            <p>Each weekly refresh prefers Binance spot BTC pairs first. When no usable BTC pair exists or Binance times out, the snapshot falls back to CoinGecko BTC pricing.</p>
-          </div>
-          <div className='space-y-1'>
-            <p className='font-medium text-foreground'>Research Tag</p>
-            <p>Names that sit inside your current research pipeline are tagged as `Research`, so content work and market monitoring stay connected.</p>
-          </div>
-        </div>
+      {/* Tab switcher */}
+      <div className='flex flex-wrap gap-2'>
+        <TabPill active={activeTab === 'focus'} onClick={() => setActiveTab('focus')}>
+          Research Focus
+        </TabPill>
+        <TabPill active={activeTab === 'breadth'} onClick={() => setActiveTab('breadth')}>
+          Altcoin Breadth
+        </TabPill>
+        <TabPill active={activeTab === 'heat'} onClick={() => setActiveTab('heat')}>
+          BTC Market Heat
+        </TabPill>
       </div>
 
-      <section className='space-y-4'>
-        <div className='space-y-1'>
-          <h2 className='text-xl font-semibold tracking-tight'>Research Focus</h2>
-          <p className='text-sm text-muted-foreground'>
-            The focus set keeps the oscillator logic front and center, so you can quickly separate structurally strong names from decaying or still-unproven ones.
-          </p>
-        </div>
-
-        <div className='flex flex-wrap gap-2'>
-          {(['all', 'S', 'A', 'B', 'F'] as FocusFilterTab[]).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setFocusFilter(tab)}
-              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                focusFilter === tab
-                  ? 'border-foreground bg-foreground text-background'
-                  : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
-              }`}
-            >
-              {tab === 'all' ? 'All Grades' : `${tab} Grade`}
-            </button>
-          ))}
-          <div className='mx-1 w-px bg-border' />
-          {(['all', 'veteran', 'single-cycle'] as const).map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setCategoryFilter(tab)}
-              className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                categoryFilter === tab
-                  ? 'border-foreground bg-foreground text-background'
-                  : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
-              }`}
-            >
-              {tab === 'all' ? 'All Types' : tab === 'veteran' ? 'Veteran' : 'Single-Cycle'}
-            </button>
-          ))}
-        </div>
-
-        <div className='space-y-3'>
-          {filteredFocus.length === 0 ? (
-            <p className='rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground'>
-              No focus names match the current filter.
+      {/* Tab: Research Focus */}
+      {activeTab === 'focus' ? (
+        <div className='space-y-6'>
+          <div className='space-y-1'>
+            <h2 className='text-xl font-semibold tracking-tight'>Research Focus</h2>
+            <p className='text-sm text-muted-foreground'>
+              The focus set keeps the oscillator logic front and center, so you can quickly separate structurally strong names from decaying or still-unproven ones.
             </p>
-          ) : (
-            filteredFocus.map((result) => <FocusCoinCard key={result.coin.symbol} result={result} />)
-          )}
-        </div>
-      </section>
+          </div>
 
-      <section className='space-y-4'>
-        <div className='space-y-1'>
-          <h2 className='text-xl font-semibold tracking-tight'>Altcoin Breadth</h2>
-          <p className='text-sm text-muted-foreground'>
-            The full-market observation layer. By default it tracks the top 500 alts after removing BTC and stablecoins, and you can switch into research, Binance BTC-pair, or dual-ranked views.
-          </p>
-        </div>
-
-        <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
           <div className='flex flex-wrap gap-2'>
-            {([
-              ['all', 'All'],
-              ['research', 'Research'],
-              ['binance', 'Binance BTC'],
-              ['dual', 'CG + CMC'],
-              ['positive7d', '7D > 0'],
-            ] as const).map(([tab, label]) => (
+            {(['all', 'S', 'A', 'B', 'F'] as FocusFilterTab[]).map((tab) => (
               <button
                 key={tab}
-                onClick={() => setUniverseFilter(tab)}
+                onClick={() => setFocusFilter(tab)}
                 className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
-                  universeFilter === tab
+                  focusFilter === tab
                     ? 'border-foreground bg-foreground text-background'
                     : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
                 }`}
               >
-                {label}
+                {tab === 'all' ? 'All Grades' : `${tab} Grade`}
+              </button>
+            ))}
+            <div className='mx-1 w-px bg-border' />
+            {(['all', 'veteran', 'single-cycle'] as const).map((tab) => (
+              <button
+                key={tab}
+                onClick={() => setCategoryFilter(tab)}
+                className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                  categoryFilter === tab
+                    ? 'border-foreground bg-foreground text-background'
+                    : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                }`}
+              >
+                {tab === 'all' ? 'All Types' : tab === 'veteran' ? 'Veteran' : 'Single-Cycle'}
               </button>
             ))}
           </div>
-          <input
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder='Search token / symbol'
-            className='h-10 rounded-full border border-border bg-background px-4 text-sm outline-none transition focus:border-foreground/30'
-          />
+
+          <div className='space-y-3'>
+            {filteredFocus.length === 0 ? (
+              <p className='rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground'>
+                No focus names match the current filter.
+              </p>
+            ) : (
+              filteredFocus.map((result) => <FocusCoinCard key={result.coin.symbol} result={result} />)
+            )}
+          </div>
+
+          <FaqSection items={FOCUS_FAQ} />
         </div>
+      ) : null}
 
-        <p className='text-xs text-muted-foreground'>
-          {filteredUniverse.length === 0
-            ? `Showing 0 of ${totalTracked} tracked altcoins.`
-            : `Showing ${paginatedUniverse.start}-${paginatedUniverse.end} of ${filteredUniverse.length} matched altcoins${
-                filteredUniverse.length === totalTracked ? '' : ` (${totalTracked} tracked)`
-              }.`}
-        </p>
-
-        <UniverseTable rows={paginatedUniverse.items} />
-
-        {paginatedUniverse.totalPages > 1 ? (
-          <div className='flex flex-col gap-3 rounded-2xl border border-border/70 bg-background/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between'>
-            <p className='text-xs text-muted-foreground'>
-              Page {paginatedUniverse.currentPage} of {paginatedUniverse.totalPages} · {UNIVERSE_PAGE_SIZE} rows per page
+      {/* Tab: Altcoin Breadth */}
+      {activeTab === 'breadth' ? (
+        <div className='space-y-4'>
+          <div className='space-y-1'>
+            <h2 className='text-xl font-semibold tracking-tight'>Altcoin Breadth</h2>
+            <p className='text-sm text-muted-foreground'>
+              The full-market observation layer. By default it tracks the top 500 alts after removing BTC and stablecoins, and you can switch into research, Binance BTC-pair, or dual-ranked views.
             </p>
-            <div className='flex flex-wrap items-center gap-2'>
-              <button
-                onClick={() => setUniversePage((page) => Math.max(1, page - 1))}
-                disabled={paginatedUniverse.currentPage === 1}
-                className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
-              >
-                Previous
-              </button>
-              {Array.from({ length: paginatedUniverse.totalPages }, (_, index) => index + 1).map((page) => (
+          </div>
+
+          <div className='flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between'>
+            <div className='flex flex-wrap gap-2'>
+              {([
+                ['all', 'All'],
+                ['research', 'Research'],
+                ['binance', 'Binance BTC'],
+                ['dual', 'CG + CMC'],
+                ['positive7d', '7D > 0'],
+              ] as const).map(([tab, label]) => (
                 <button
-                  key={page}
-                  onClick={() => setUniversePage(page)}
-                  className={`size-9 rounded-full border text-xs transition-colors ${
-                    page === paginatedUniverse.currentPage
+                  key={tab}
+                  onClick={() => setUniverseFilter(tab)}
+                  className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
+                    universeFilter === tab
                       ? 'border-foreground bg-foreground text-background'
                       : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
                   }`}
                 >
-                  {page}
+                  {label}
                 </button>
               ))}
-              <button
-                onClick={() =>
-                  setUniversePage((page) => Math.min(paginatedUniverse.totalPages, page + 1))
-                }
-                disabled={paginatedUniverse.currentPage === paginatedUniverse.totalPages}
-                className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
-              >
-                Next
-              </button>
             </div>
+            <input
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              placeholder='Search token / symbol'
+              className='h-10 rounded-full border border-border bg-background px-4 text-sm outline-none transition focus:border-foreground/30'
+            />
           </div>
-        ) : null}
-      </section>
 
+          <p className='text-xs text-muted-foreground'>
+            {filteredUniverse.length === 0
+              ? `Showing 0 of ${totalTracked} tracked altcoins.`
+              : `Showing ${paginatedUniverse.start}-${paginatedUniverse.end} of ${filteredUniverse.length} matched altcoins${
+                  filteredUniverse.length === totalTracked ? '' : ` (${totalTracked} tracked)`
+                }.`}
+          </p>
+
+          <UniverseTable rows={paginatedUniverse.items} />
+
+          {paginatedUniverse.totalPages > 1 ? (
+            <div className='flex flex-col gap-3 rounded-2xl border border-border/70 bg-background/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between'>
+              <p className='text-xs text-muted-foreground'>
+                Page {paginatedUniverse.currentPage} of {paginatedUniverse.totalPages} · {UNIVERSE_PAGE_SIZE} rows per page
+              </p>
+              <div className='flex flex-wrap items-center gap-2'>
+                <button
+                  onClick={() => setUniversePage((page) => Math.max(1, page - 1))}
+                  disabled={paginatedUniverse.currentPage === 1}
+                  className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+                >
+                  Previous
+                </button>
+                {Array.from({ length: paginatedUniverse.totalPages }, (_, index) => index + 1).map((page) => (
+                  <button
+                    key={page}
+                    onClick={() => setUniversePage(page)}
+                    className={`size-9 rounded-full border text-xs transition-colors ${
+                      page === paginatedUniverse.currentPage
+                        ? 'border-foreground bg-foreground text-background'
+                        : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                    }`}
+                  >
+                    {page}
+                  </button>
+                ))}
+                <button
+                  onClick={() =>
+                    setUniversePage((page) => Math.min(paginatedUniverse.totalPages, page + 1))
+                  }
+                  disabled={paginatedUniverse.currentPage === paginatedUniverse.totalPages}
+                  className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          <FaqSection items={BREADTH_FAQ} />
+        </div>
+      ) : null}
+
+      {/* Tab: BTC Market Heat */}
+      {activeTab === 'heat' ? <BtcHeatTab /> : null}
+
+      {/* Footer */}
       <div className='border-t pt-4 text-xs text-muted-foreground space-y-1'>
-        <p>Data Sources: weekly local snapshot generated from Surf market ranking, Surf BTC pricing, Surf BTC history for focus names, CoinGecko BTC ratios, CoinMarketCap ranking cross-check, and Binance spot BTC pairs when available.</p>
+        <p>Data Sources: weekly local snapshot generated from Surf market ranking, Surf BTC pricing, Surf BTC history for focus names, CoinGecko BTC ratios, CoinMarketCap ranking cross-check, and Binance spot BTC pairs when available. BTC Market Heat data from Day1Global API.</p>
         <p>DYOR — This page is built for market observation and research workflow support, not investment advice.</p>
       </div>
     </section>
