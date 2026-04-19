@@ -42,6 +42,10 @@ test('package.json exposes a sync command for oscillator snapshots', () => {
   assert.equal(typeof packageJson.scripts['sync:oscillator'], 'string');
 });
 
+test('oscillator sync command enables ts stripping for ts module imports', () => {
+  assert.match(packageJson.scripts['sync:oscillator'], /--experimental-strip-types/);
+});
+
 test('oscillator sync script prefers surf-backed market data when available', () => {
   assert.match(syncScriptSource, /market-ranking/);
   assert.match(syncScriptSource, /exchange-price/);

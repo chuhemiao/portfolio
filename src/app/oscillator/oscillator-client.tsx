@@ -688,7 +688,7 @@ const BREADTH_FAQ: FaqItem[] = [
   },
   {
     q: 'What does Dual mean?',
-    a: 'Dual means the token is ranked in the top 300 on both CoinGecko and CoinMarketCap simultaneously. Higher overlap between the two sources generally indicates better data quality and liquidity.',
+    a: 'Dual means the token is ranked in the top 500 on both CoinGecko and CoinMarketCap simultaneously. Higher overlap between the two sources generally indicates better data quality and liquidity.',
   },
   {
     q: 'What is ALT/BTC and why does it matter?',
