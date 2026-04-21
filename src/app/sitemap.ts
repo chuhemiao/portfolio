@@ -13,11 +13,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
-  const routes = ['', '/blog', '/fund', '/stack', '/fear', '/research'].map((route) => ({
+  const routes = ['', '/blog', '/research', '/oscillator', '/fund', '/thoughts', '/stack'].map((route) => ({
     url: `${DATA.url}${route}`,
     lastModified: now,
     changeFrequency: 'weekly' as const,
-    priority: route === '' ? 1 : 0.9
+    priority: route === '' ? 1 : route === '/research' || route === '/oscillator' ? 0.95 : 0.85
   }));
 
   return [...routes, ...blogPosts];

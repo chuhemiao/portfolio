@@ -34,5 +34,23 @@ export const metadata: Metadata = {
 };
 
 export default function ResearchPage() {
-  return <ResearchClient />;
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: 'kkdemian Research Map',
+    description: 'Deep-dive investment research on 60+ crypto projects across exchanges, DeFi, L1/L2, ZK, AI/DePIN, RWA, and market structure.',
+    url: `${DATA.url}/research`,
+    author: { '@type': 'Person', name: DATA.name, url: DATA.url },
+    about: [
+      { '@type': 'Thing', name: 'Cryptocurrency Research' },
+      { '@type': 'Thing', name: 'DeFi Protocol Analysis' },
+      { '@type': 'Thing', name: 'Bitcoin Market Structure' }
+    ]
+  };
+  return (
+    <>
+      <script type='application/ld+json' suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <ResearchClient />
+    </>
+  );
 }

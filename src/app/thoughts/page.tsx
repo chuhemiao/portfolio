@@ -1,3 +1,4 @@
+import { DATA } from '@/data/resume';
 import BlurFade from '@/components/magicui/blur-fade';
 import ThoughtsList from '@/components/thoughts-list';
 import { promises as fs } from 'fs';
@@ -6,7 +7,26 @@ import path from 'path';
 
 export const metadata: Metadata = {
   title: 'Thoughts',
-  description: '我的碎碎念'
+  description: 'Short-form crypto market notes, observations, and fragments from kkdemian — synced from Telegram channel @kkdemian2050.',
+  alternates: {
+    canonical: `${DATA.url}/thoughts`
+  },
+  openGraph: {
+    title: `Thoughts | ${DATA.name}`,
+    description: 'Short-form crypto market notes and observations from kkdemian.',
+    url: `${DATA.url}/thoughts`,
+    siteName: DATA.name,
+    locale: 'en_US',
+    type: 'website',
+    images: [{ url: `${DATA.url}/og?title=${encodeURIComponent('Thoughts')}`, width: 1200, height: 630, alt: `${DATA.name} thoughts` }]
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Thoughts | ${DATA.name}`,
+    description: 'Short-form crypto market notes and observations from kkdemian.',
+    creator: '@0xkkdemian',
+    images: [`${DATA.url}/og?title=${encodeURIComponent('Thoughts')}`]
+  }
 };
 
 async function getThoughts() {
