@@ -1,0 +1,49 @@
+name: Weekly Research Generator
+
+on:
+  schedule:
+    - cron: '0 22 * * 1'
+  workflow_dispatch:
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Install Anthropic SDK if missing
+        run: |
+          if ! node -e "require('@anthropic-ai/sdk')" 2>/dev/null; then
+            pnpm add @anthropic-ai/sdk
+          fi
+
+      - name: Generate weekly research
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/generate-weekly-research.mjs
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/data/weekly-research.ts
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            DATE=$(date +%Y-%m-%d)
+            git commit -m "chore: weekly research ${DATE} [skip ci]"
+            git push
+          fi

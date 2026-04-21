@@ -25,7 +25,7 @@ const ACTION_STYLES: Record<string, string> = {
 
 type FocusFilterTab = 'all' | 'S' | 'A' | 'B' | 'F';
 type UniverseFilterTab = 'all' | 'research' | 'binance' | 'dual' | 'positive7d';
-type MainTab = 'focus' | 'breadth' | 'heat';
+type MainTab = 'focus' | 'breadth' | 'heat' | 'weekly';
 const UNIVERSE_PAGE_SIZE = 50;
 
 // ── BTC Heat API types ──────────────────────────────────────────────────────
@@ -715,6 +715,197 @@ const BTC_HEAT_FAQ: FaqItem[] = [
   },
 ];
 
+// ── Weekly Research ───────────────────────────────────────────────────────────
+
+import { WeeklyNewsItem, GeoItem, WeeklyReport, WEEKLY_REPORTS } from '@/data/weekly-research';
+
+const NEWS_CATEGORY_STYLE: Record<string, string> = {
+  加密: 'border-sky-500/30 bg-sky-500/10 text-sky-600',
+  宏观: 'border-violet-500/30 bg-violet-500/10 text-violet-600',
+  科技: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600',
+  地缘: 'border-rose-500/30 bg-rose-500/10 text-rose-600',
+  政策: 'border-amber-500/30 bg-amber-500/10 text-amber-600',
+};
+
+function SectionLabel({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div className='flex items-center gap-2 py-3 px-5 border-b border-border/50 bg-muted/20'>
+      <span className='text-sm'>{icon}</span>
+      <span className='text-xs font-semibold tracking-wider text-muted-foreground uppercase'>{label}</span>
+    </div>
+  );
+}
+
+function BulletList({ items, dot }: { items: string[]; dot: string }) {
+  return (
+    <ul className='space-y-2 px-5 py-4'>
+      {items.map((item, i) => (
+        <li key={i} className='flex items-start gap-2.5 text-sm text-muted-foreground leading-relaxed'>
+          <span className={`mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full ${dot}`} />
+          <span dangerouslySetInnerHTML={{ __html: item.replace(/\*\*(.+?)\*\*/g, '<strong class="text-foreground font-medium">$1</strong>') }} />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defaultOpen: boolean }) {
+  const [open, setOpen] = useState(defaultOpen);
+  return (
+    <div className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
+      {/* Header */}
+      <button
+        onClick={() => setOpen(!open)}
+        className='w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-muted/20 transition-colors'
+      >
+        <div className='flex items-center gap-3 min-w-0'>
+          <span className='shrink-0 rounded-full bg-amber-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-600'>
+            日报
+          </span>
+          <div className='min-w-0'>
+            <p className='text-[11px] font-medium tracking-widest text-muted-foreground uppercase leading-none mb-1'>
+              {report.dateRange}{report.generatedAt ? ` · ${report.generatedAt}` : ''}
+            </p>
+            <p className='text-sm font-semibold leading-snug tracking-tight truncate'>{report.headline}</p>
+          </div>
+        </div>
+        <span className='shrink-0 text-muted-foreground text-base leading-none'>{open ? '−' : '+'}</span>
+      </button>
+
+      {open ? (
+        <div className='border-t border-border/50 divide-y divide-border/40'>
+
+          {/* Core Judgment */}
+          {(report.coreMacro || report.coreCrypto || (report.coreActions && report.coreActions.length > 0)) ? (
+            <div>
+              <SectionLabel icon='🧠' label='今日核心判断' />
+              <div className='px-5 py-4 space-y-3'>
+                {report.coreMacro ? (
+                  <div className='space-y-1'>
+                    <p className='text-[10px] font-semibold uppercase tracking-widest text-violet-600'>宏观</p>
+                    <p className='text-sm text-muted-foreground leading-relaxed'>{report.coreMacro}</p>
+                  </div>
+                ) : null}
+                {report.coreCrypto ? (
+                  <div className='space-y-1'>
+                    <p className='text-[10px] font-semibold uppercase tracking-widest text-sky-600'>加密</p>
+                    <p className='text-sm text-muted-foreground leading-relaxed'>{report.coreCrypto}</p>
+                  </div>
+                ) : null}
+                {report.coreActions && report.coreActions.length > 0 ? (
+                  <div className='rounded-xl border border-amber-500/20 bg-amber-500/5 px-4 py-3 space-y-1.5'>
+                    <p className='text-[10px] font-semibold uppercase tracking-widest text-amber-600'>操作建议</p>
+                    <ul className='space-y-1.5'>
+                      {report.coreActions.map((action, i) => (
+                        <li key={i} className='flex items-start gap-2 text-sm text-muted-foreground leading-relaxed'>
+                          <span className='mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500/60' />
+                          {action}
+                        </li>
+                      ))}
+                    </ul>
+                    {report.disclaimer ? (
+                      <p className='text-[11px] text-muted-foreground/60 pt-1'>⚠️ {report.disclaimer}</p>
+                    ) : null}
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          ) : null}
+
+          {/* US Stocks */}
+          {report.usStocks && report.usStocks.length > 0 ? (
+            <div>
+              <SectionLabel icon='📊' label='美股标的动态' />
+              <BulletList items={report.usStocks} dot='bg-violet-500/60' />
+            </div>
+          ) : null}
+
+          {/* Crypto Assets */}
+          {report.cryptoAssets && report.cryptoAssets.length > 0 ? (
+            <div>
+              <SectionLabel icon='🪙' label='加密标的动态' />
+              <BulletList items={report.cryptoAssets} dot='bg-sky-500/60' />
+            </div>
+          ) : null}
+
+          {/* Geopolitics */}
+          {report.geopolitics && report.geopolitics.length > 0 ? (
+            <div>
+              <SectionLabel icon='🌍' label='地缘政治专题' />
+              <div className='divide-y divide-border/40'>
+                {report.geopolitics.map((geo, i) => (
+                  <div key={i} className='px-5 py-4 space-y-2'>
+                    <div>
+                      <span className='inline-block rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-rose-600'>
+                        {geo.title}
+                      </span>
+                      <p className='mt-1 text-xs font-medium text-muted-foreground'>{geo.subtitle}</p>
+                    </div>
+                    <p className='text-sm text-muted-foreground leading-relaxed'>{geo.content}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+          {/* Must Read */}
+          {report.mustRead && report.mustRead.length > 0 ? (
+            <div>
+              <SectionLabel icon='📰' label='推荐阅读' />
+              <div className='divide-y divide-border/30'>
+                {report.mustRead.map((news, i) => (
+                  <div key={i} className='px-5 py-3.5 space-y-1.5'>
+                    <div className='flex items-start justify-between gap-3'>
+                      <div className='flex items-center gap-2 flex-wrap'>
+                        <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wider ${NEWS_CATEGORY_STYLE[news.category] ?? 'border-border bg-muted/50 text-muted-foreground'}`}>
+                          {news.category}
+                        </span>
+                        <span className='text-sm font-medium leading-snug'>{news.title}</span>
+                      </div>
+                      <span className='shrink-0 text-[10px] text-muted-foreground/60 mt-0.5'>{news.source}</span>
+                    </div>
+                    <p className='text-xs text-muted-foreground leading-relaxed'>{news.summary}</p>
+                    {news.action ? (
+                      <p className='text-xs text-foreground/70 leading-relaxed'>
+                        <span className='text-amber-600 font-medium'>👉 </span>{news.action}
+                      </p>
+                    ) : null}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ) : null}
+
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function WeeklyResearchTab() {
+  return (
+    <div className='space-y-6'>
+      <div className='space-y-1'>
+        <h2 className='text-xl font-semibold tracking-tight'>Weekly Research</h2>
+        <p className='text-sm text-muted-foreground'>
+          加密货币、宏观经济与 AI 科技领域的研究更新，覆盖核心判断 · 美股 · 加密 · 地缘 · 推荐阅读。
+        </p>
+      </div>
+      {WEEKLY_REPORTS.length === 0 ? (
+        <p className='rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground'>
+          暂无周报内容。
+        </p>
+      ) : (
+        <div className='space-y-3'>
+          {WEEKLY_REPORTS.map((report, i) => (
+            <WeeklyReportCard key={report.id} report={report} defaultOpen={i === 0} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ── Tab pill ─────────────────────────────────────────────────────────────────
 
 function TabPill({
@@ -817,6 +1008,9 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
         </TabPill>
         <TabPill active={activeTab === 'heat'} onClick={() => setActiveTab('heat')}>
           BTC Market Heat
+        </TabPill>
+        <TabPill active={activeTab === 'weekly'} onClick={() => setActiveTab('weekly')}>
+          Weekly Research
         </TabPill>
       </div>
 
@@ -969,6 +1163,9 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
 
       {/* Tab: BTC Market Heat */}
       {activeTab === 'heat' ? <BtcHeatTab /> : null}
+
+      {/* Tab: Weekly Research */}
+      {activeTab === 'weekly' ? <WeeklyResearchTab /> : null}
 
       {/* Footer */}
       <div className='border-t pt-4 text-xs text-muted-foreground space-y-1'>
