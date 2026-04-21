@@ -780,9 +780,13 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
     <section className='space-y-8 pb-8'>
       {/* Header */}
       <div className='space-y-4'>
-        <div className='space-y-2'>
-          <h1 className='text-3xl font-semibold tracking-tight sm:text-4xl'>oscillator</h1>
-          <p className='max-w-3xl text-sm leading-6 text-muted-foreground sm:text-[15px]'>
+        <div className='space-y-4'>
+          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+            <span className='h-1.5 w-1.5 rounded-full bg-amber-500' />
+            Market monitor
+          </div>
+          <h1 className='text-4xl font-semibold tracking-[-0.06em] text-foreground sm:text-5xl'>oscillator</h1>
+          <p className='max-w-3xl text-[15px] leading-7 text-muted-foreground'>
             An altcoin strength monitor built in two layers: a focused oscillator watchlist for your highest-conviction names,
             and a broader market table covering the CoinGecko / CoinMarketCap top 500 with Binance BTC-pair context.
           </p>

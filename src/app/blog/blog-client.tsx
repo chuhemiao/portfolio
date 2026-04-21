@@ -110,22 +110,30 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   };
 
   return (
-    <section>
+    <section className='space-y-8'>
       <BlurFade delay={BLUR_FADE_DELAY}>
-        <h1 className='font-medium text-2xl mb-8 tracking-tighter'>blog</h1>
+        <div className='space-y-4'>
+          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+            <span className='h-1.5 w-1.5 rounded-full bg-sky-500' />
+            Writing
+          </div>
+          <h1 className='text-4xl font-semibold tracking-[-0.06em] text-foreground sm:text-5xl'>
+            Blog
+          </h1>
+        </div>
       </BlurFade>
 
       <BlurFade delay={BLUR_FADE_DELAY * 1.2}>
-        <div className='relative mb-6'>
+        <div className='relative max-w-xs'>
           <input
             type='text'
             placeholder='Search posts...'
             value={searchQuery}
             onChange={handleSearchChange}
-            className='w-full px-4 py-2 pl-9 rounded-lg text-sm bg-secondary text-secondary-foreground placeholder:text-muted-foreground border border-border focus:outline-none focus:ring-1 focus:ring-primary'
+            className='w-full rounded-full border border-border/70 bg-background/60 px-4 py-2 pl-9 text-[13px] text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm outline-none transition-all duration-200 focus:border-foreground/30 focus:bg-background/85'
           />
           <svg
-            className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground'
+            className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/60'
             fill='none'
             stroke='currentColor'
             viewBox='0 0 24 24'>
@@ -140,15 +148,15 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
       </BlurFade>
 
       <BlurFade delay={BLUR_FADE_DELAY * 1.5}>
-        <div className='flex flex-wrap gap-2 mb-8'>
+        <div className='flex flex-wrap gap-2'>
           {categories.map((category) => (
             <button
               key={category.key}
               onClick={() => handleCategoryChange(category.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
                 selectedCategory === category.key
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                  ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
+                  : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
               }`}>
               {category.label}
             </button>
@@ -189,28 +197,28 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
 
       {totalPages > 1 && (
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <div className='flex items-center justify-center gap-2 mt-8 pt-4 border-t'>
+          <div className='flex items-center justify-center gap-2 mt-8 pt-4 border-t border-border/60'>
             <button
               onClick={() => handlePageChange(currentPage - 1)}
               disabled={currentPage === 1}
-              className='px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-secondary text-secondary-foreground hover:bg-secondary/80'>
+              className='h-9 rounded-full border border-border/70 bg-background/60 px-4 text-xs font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-background/85 disabled:cursor-not-allowed disabled:opacity-40'>
               Previous
             </button>
 
             <div className='flex items-center gap-1'>
               {getPageNumbers().map((page, index) =>
                 page === 'ellipsis' ? (
-                  <span key={`ellipsis-${index}`} className='px-2 text-muted-foreground'>
+                  <span key={`ellipsis-${index}`} className='px-2 text-muted-foreground text-xs'>
                     ...
                   </span>
                 ) : (
                   <button
                     key={page}
                     onClick={() => handlePageChange(page)}
-                    className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                    className={`size-9 rounded-full border text-xs font-medium transition-all ${
                       currentPage === page
-                        ? 'bg-primary text-primary-foreground'
-                        : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
+                        ? 'border-foreground/80 bg-foreground text-background'
+                        : 'border-border/70 bg-background/60 text-muted-foreground hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
                     }`}>
                     {page}
                   </button>
@@ -221,12 +229,12 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
             <button
               onClick={() => handlePageChange(currentPage + 1)}
               disabled={currentPage === totalPages}
-              className='px-3 py-2 rounded-lg text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed bg-secondary text-secondary-foreground hover:bg-secondary/80'>
+              className='h-9 rounded-full border border-border/70 bg-background/60 px-4 text-xs font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-background/85 disabled:cursor-not-allowed disabled:opacity-40'>
               Next
             </button>
           </div>
 
-          <p className='text-center text-sm text-muted-foreground mt-4'>
+          <p className='text-center text-xs text-muted-foreground mt-3'>
             {startIndex + 1}-{Math.min(startIndex + POSTS_PER_PAGE, filteredPosts.length)} of {filteredPosts.length} posts
           </p>
         </BlurFade>
