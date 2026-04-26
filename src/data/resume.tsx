@@ -5,7 +5,8 @@ import {
   MessageSquareIcon,
   NotebookIcon,
   SearchIcon,
-  TrendingUpIcon
+  TrendingUpIcon,
+  RadioIcon
 } from 'lucide-react';
 
 export const DATA = {
@@ -38,7 +39,8 @@ export const DATA = {
     { href: '/fund', icon: TrendingUpIcon, label: 'Fund' },
     { href: '/research', icon: SearchIcon, label: 'Research' },
     { href: '/thoughts', icon: MessageSquareIcon, label: 'Thoughts' },
-    { href: '/oscillator', icon: ActivityIcon, label: 'Oscillator' }
+    { href: '/oscillator', icon: ActivityIcon, label: 'Oscillator' },
+    { href: '/watch', icon: RadioIcon, label: 'Watch' }
   ],
   contact: {
     email: 'Y2h1aGVtaWFvQGdtYWlsLmNvbQ==',
