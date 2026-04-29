@@ -4,9 +4,9 @@ import {
   HomeIcon,
   MessageSquareIcon,
   NotebookIcon,
+  RadioIcon,
   SearchIcon,
-  TrendingUpIcon,
-  RadioIcon
+  TrendingUpIcon
 } from 'lucide-react';
 
 export const DATA = {
@@ -15,7 +15,8 @@ export const DATA = {
   url: 'https://kkdemian.com',
   location: 'Web3',
   locationLink: '',
-  description: 'Web3 Product Engineer with 6+ years building DeFi, Solana, and ICP products. Crypto researcher covering BTC macro, altcoin oscillators, and market structure.',
+  description:
+    'Web3 Product Engineer with 6+ years building DeFi, Solana, and ICP products. Crypto researcher covering BTC macro, altcoin oscillators, and market structure.',
   summary:
     '6 years of Web3 product engineer, 4 years of Web3 startup experience, led the design and development of 10+ Web3 products (SOL, TON, ICP), obtained 10M level of financing, and led the team to obtain a cumulative total of $300,000. ICP, Tia, ADA, People, Degen Early Alpha.',
   avatarUrl: '/me.jpg',
@@ -147,7 +148,7 @@ export const DATA = {
   projects: [
     {
       title: 'Stablecoin Flow & Supply Dashboard',
-      href: 'https://usdc.kkdemian.com/',
+      href: 'https://usdt.kkdemian.com/',
       dates: 'Mar 2026 - Now',
       active: true,
       description:
@@ -163,7 +164,7 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://usdc.kkdemian.com/',
+          href: 'https://usdt.kkdemian.com/',
           icon: <Icons.globe className='size-3' />
         }
       ],
@@ -173,7 +174,7 @@ export const DATA = {
 
     {
       title: 'Fear Dashboard',
-      href: 'https://watch.kkdemian.com/',
+      href: 'https://fear.kkdemian.com/',
       dates: 'Mar 2026 - Now',
       active: true,
       description:
@@ -189,7 +190,7 @@ export const DATA = {
       links: [
         {
           type: 'Website',
-          href: 'https://watch.kkdemian.com/',
+          href: 'https://fear.kkdemian.com/',
           icon: <Icons.globe className='size-3' />
         }
       ],

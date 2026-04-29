@@ -165,14 +165,14 @@ export default function Page() {
     },
     {
       label: 'Fear',
-      href: 'https://watch.kkdemian.com/',
+      href: 'https://fear.kkdemian.com/',
       icon: ActivityIcon,
       description: 'Market regime dashboard for crypto risk and timing',
       external: true
     },
     {
       label: 'Watch',
-      href: 'https://usdc.kkdemian.com/',
+      href: 'https://usdt.kkdemian.com/',
       icon: TrendingUpIcon,
       description: 'Stablecoin flow and supply dashboard',
       external: true

@@ -40,8 +40,8 @@ ${DATA.summary}
 
 ## External Tools Built
 
-- [Stablecoin Watch](https://usdc.kkdemian.com/): USDC/USDT supply flow and stablecoin market dashboard
-- [Fear Dashboard](https://watch.kkdemian.com/): Crypto market regime, risk scoring, and cycle-timing dashboard
+- [Stablecoin Watch](https://usdt.kkdemian.com/): USDC/USDT supply flow and stablecoin market dashboard
+- [Fear Dashboard](https://fear.kkdemian.com/): Crypto market regime, risk scoring, and cycle-timing dashboard
 - [Crypto Master](https://book.kkdemian.com/): Web3 educational resource and research archive
 
 ## Recent Blog Posts
@@ -81,7 +81,7 @@ ${DATA.skills.join(', ')}
   return new Response(content, {
     headers: {
       'Content-Type': 'text/plain; charset=utf-8',
-      'Cache-Control': 's-maxage=86400, stale-while-revalidate=604800',
-    },
+      'Cache-Control': 's-maxage=86400, stale-while-revalidate=604800'
+    }
   });
 }
