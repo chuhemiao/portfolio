@@ -1,12 +1,15 @@
 import { getBlogPosts, getPost } from "@/data/blog";
 import { DATA } from "@/data/resume";
+import { TOPICS } from "@/data/topics";
 import { formatDate } from "@/lib/utils";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
+import Link from "next/link";
 import ScrollToTop from "@/components/blog/scroll-to-top";
 import TableOfContents from "@/components/blog/table-of-contents";
 import Mermaid from "@/components/mermaid";
+import { ArrowUpRightIcon, RssIcon, ArrowRightIcon } from "lucide-react";
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
   thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
@@ -125,9 +128,38 @@ export default async function Blog({
   const { slug } = await params;
   let post = await getPost(slug);
 
+
   if (!post) {
     notFound();
   }
+
+  // Related posts: same category, excluding current
+  const allPosts = await getBlogPosts();
+  const relatedPosts = allPosts
+    .filter(
+      (p) =>
+        p.slug !== slug &&
+        p.metadata.category &&
+        p.metadata.category === post!.metadata.category
+    )
+    .sort(
+      (a, b) =>
+        new Date(b.metadata.publishedAt).getTime() -
+        new Date(a.metadata.publishedAt).getTime()
+    )
+    .slice(0, 3);
+
+  // Related topics: match post keywords against topic matchKeywords
+  const postText = [
+    post.metadata.title,
+    post.metadata.summary ?? "",
+    post.metadata.category ?? "",
+  ]
+    .join(" ")
+    .toLowerCase();
+  const relatedTopics = TOPICS.filter((t) =>
+    t.matchKeywords.some((kw) => postText.includes(kw.toLowerCase()))
+  ).slice(0, 3);
 
   const ogImage = resolveOgImageUrl(post.metadata.image, post.metadata.title);
   const publishedAtIso = toIsoOrNow(post.metadata.publishedAt);
@@ -235,6 +267,86 @@ export default async function Blog({
               className="prose max-w-none break-words dark:prose-invert [overflow-wrap:anywhere] prose-pre:max-w-full prose-pre:overflow-x-auto prose-img:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: post.source }}
             ></article>
+
+            {/* Related Topics */}
+            {relatedTopics.length > 0 && (
+              <div className="mt-10 flex flex-wrap gap-2">
+                <span className="text-xs font-medium text-muted-foreground self-center">Related topics:</span>
+                {relatedTopics.map((t) => (
+                  <Link
+                    key={t.slug}
+                    href={`/topics/${t.slug}`}
+                    className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:border-foreground/20"
+                  >
+                    {t.emoji} {t.name}
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            {/* Subscribe CTA */}
+            <div className="mt-10 rounded-[1.5rem] border border-border/60 bg-background/76 p-6 backdrop-blur-sm">
+              <div className="flex items-center gap-2 mb-3">
+                <RssIcon className="size-4 text-muted-foreground" />
+                <span className="text-sm font-semibold text-foreground">Stay updated</span>
+              </div>
+              <p className="text-sm text-muted-foreground leading-6 mb-4">
+                Get weekly research updates, market signals, and listing intelligence — follow along on Telegram or X.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <Link
+                  href={DATA.contact.social.TelegramChannel.url}
+                  target="_blank"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/90 px-4 py-2 text-sm font-semibold text-foreground transition-all hover:border-foreground/15"
+                >
+                  <DATA.contact.social.TelegramChannel.icon className="size-3.5" />
+                  Follow on Telegram
+                </Link>
+                <Link
+                  href={DATA.contact.social.X.url}
+                  target="_blank"
+                  className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-foreground/15 hover:text-foreground"
+                >
+                  <DATA.contact.social.X.icon className="size-3.5" />
+                  Follow on X
+                </Link>
+              </div>
+            </div>
+
+            {/* Related Posts */}
+            {relatedPosts.length > 0 && (
+              <div className="mt-10">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-sm font-semibold text-foreground">More in {post.metadata.category}</span>
+                  <Link
+                    href={`/blog?category=${post.metadata.category}`}
+                    className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                  >
+                    See all <ArrowRightIcon className="size-3" />
+                  </Link>
+                </div>
+                <div className="space-y-3">
+                  {relatedPosts.map((p) => (
+                    <Link
+                      key={p.slug}
+                      href={`/blog/${p.slug}`}
+                      className="group flex items-start justify-between gap-3 rounded-[1.25rem] border border-border/60 bg-background/78 px-4 py-3.5 transition-all hover:border-foreground/15"
+                    >
+                      <div className="min-w-0">
+                        <div className="truncate text-sm font-semibold text-foreground">{p.metadata.title}</div>
+                        {p.metadata.summary && (
+                          <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{p.metadata.summary}</p>
+                        )}
+                        <div className="mt-1.5 text-[10px] text-muted-foreground">
+                          {new Date(p.metadata.publishedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                        </div>
+                      </div>
+                      <ArrowUpRightIcon className="mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -2,6 +2,7 @@ import { Icons } from '@/components/icons';
 import {
   ActivityIcon,
   HomeIcon,
+  LayoutGridIcon,
   MessageSquareIcon,
   NotebookIcon,
   RadioIcon,
@@ -39,6 +40,7 @@ export const DATA = {
     { href: '/blog', icon: NotebookIcon, label: 'Blog' },
     { href: '/fund', icon: TrendingUpIcon, label: 'Fund' },
     { href: '/research', icon: SearchIcon, label: 'Research' },
+    { href: '/topics', icon: LayoutGridIcon, label: 'Topics' },
     { href: '/thoughts', icon: MessageSquareIcon, label: 'Thoughts' },
     { href: '/oscillator', icon: ActivityIcon, label: 'Oscillator' },
     { href: '/watch', icon: RadioIcon, label: 'Watch' }

@@ -1742,18 +1742,24 @@ export default function ResearchClient() {
           {ALL_TYPES.filter((t) => {
             if (t === 'All') return true;
             return PROJECTS.some((p) => p.type === t);
-          }).map((type) => (
-            <button
-              key={type}
-              onClick={() => setActiveType(type)}
-              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
-                activeType === type
-                  ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                  : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
-              }`}>
-              {type}
-            </button>
-          ))}
+          }).map((type) => {
+            const count = type === 'All' ? PROJECTS.length : PROJECTS.filter((p) => p.type === type).length;
+            return (
+              <button
+                key={type}
+                onClick={() => setActiveType(type)}
+                className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+                  activeType === type
+                    ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
+                    : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                }`}>
+                {type}
+                <span className={`ml-1.5 text-[10px] ${activeType === type ? 'opacity-70' : 'opacity-50'}`}>
+                  {count}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4'>

@@ -3,7 +3,7 @@ import { DATA } from '@/data/resume';
 import { getOscillatorData } from '@/lib/oscillator-data';
 import type { Metadata } from 'next';
 
-export const revalidate = 604800;
+export const revalidate = 604800; // weekly
 
 export const metadata: Metadata = {
   title: 'Oscillator',

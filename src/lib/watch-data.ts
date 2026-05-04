@@ -23,6 +23,8 @@ export interface ListingCoin {
   priceUsdt: number | null;
   priceChange24h: number | null;
   volume24h: number | null;
+  marketCap: number | null;
+  fdv: number | null;
   // Per-exchange status
   binance: ExchangeListing;
   okx: ExchangeListing;
@@ -40,6 +42,9 @@ export interface ListingCoin {
   multiExchangeSpot: boolean;
   perpLed: boolean; // on perp somewhere but no Binance/CB spot
   noteworthy: string;
+  // Binance Alpha
+  binanceAlpha: boolean; // listed on Binance Alpha (pre-spot DEX program)
+  buySignal: boolean;    // (alpha || spot+perp) && mcap < $30M
 }
 
 export interface GlobalMarket {
@@ -190,6 +195,38 @@ async function getUpbitSet(): Promise<Set<string>> {
   return s;
 }
 
+async function getBinanceAlphaSet(): Promise<Set<string>> {
+  // Binance Alpha: pre-spot listing program, tokens trade on Binance Web3 Wallet DEX
+  // Alpha tokens have perp but no Binance spot listing
+  type Item = { symbol?: string; tokenSymbol?: string; baseAsset?: string; coinName?: string };
+  const s = new Set<string>();
+
+  // Primary endpoint
+  const d1 = await fetchJson<{ data: Item[] | { list: Item[] } | null }>(
+    'https://www.binance.com/bapi/defi/v1/public/alpha/token/list',
+    { revalidate: 1800 }
+  );
+  const raw1: Item[] = Array.isArray(d1?.data) ? d1!.data as Item[] : ((d1?.data as any)?.list ?? []);
+  for (const item of raw1) {
+    const sym = (item.symbol || item.tokenSymbol || item.baseAsset || item.coinName || '').toUpperCase().replace(/USDT$/, '');
+    if (sym) s.add(sym);
+  }
+
+  // Fallback: Alpha zone via CoinGecko category tag or Binance announcement API
+  if (s.size === 0) {
+    const d2 = await fetchJson<{ data: Item[] }>(
+      'https://www.binance.com/bapi/composite/v1/public/promo/cmc/cryptocurrency/list?category=ALPHA_ZONE',
+      { revalidate: 1800 }
+    );
+    for (const item of d2?.data ?? []) {
+      const sym = (item.symbol || item.tokenSymbol || '').toUpperCase();
+      if (sym) s.add(sym);
+    }
+  }
+
+  return s;
+}
+
 async function getHyperliquidSet(): Promise<Set<string>> {
   type Resp = { universe: Array<{ name: string }> };
   const d = await fetchJson<Resp>('https://api.hyperliquid.xyz/info', {
@@ -202,25 +239,54 @@ async function getHyperliquidSet(): Promise<Set<string>> {
   return s;
 }
 
+// ─── CoinGecko market cap / FDV fetcher ───────────────────────────────────────
+
+async function fetchCoinGeckoMarkets(): Promise<Map<string, { marketCap: number; fdv: number | null }>> {
+  type Item = { symbol: string; market_cap: number | null; fully_diluted_valuation: number | null };
+  const result = new Map<string, { marketCap: number; fdv: number | null }>();
+  const pages = [1, 2, 3];
+  await Promise.all(pages.map(async (page) => {
+    const d = await fetchJson<Item[]>(
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`,
+      { revalidate: 900 }
+    );
+    for (const item of d ?? []) {
+      const sym = item.symbol.toUpperCase();
+      if (!result.has(sym) && item.market_cap) {
+        result.set(sym, { marketCap: item.market_cap, fdv: item.fully_diluted_valuation ?? null });
+      }
+    }
+  }));
+  return result;
+}
+
 // ─── Price fetcher ────────────────────────────────────────────────────────────
 
 async function fetchBinancePrices(symbols: string[]): Promise<Map<string, { price: number; change: number; volume: number }>> {
   const result = new Map<string, { price: number; change: number; volume: number }>();
   if (!symbols.length) return result;
-  const pairs = symbols.map(s => `"${s}USDT"`).join(',');
-  type Item = { symbol: string; lastPrice: string; priceChangePercent: string; quoteVolume: string };
-  const d = await fetchJson<Item[]>(
-    `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`,
-    { revalidate: 300 }
-  );
-  for (const item of d ?? []) {
-    const base = item.symbol.replace('USDT', '');
-    result.set(base, {
-      price: parseFloat(item.lastPrice),
-      change: parseFloat(item.priceChangePercent),
-      volume: parseFloat(item.quoteVolume),
-    });
-  }
+
+  // Binance batch limit is 100 symbols
+  const CHUNK = 100;
+  type Item = { symbol: string; openPrice: string; lastPrice: string; quoteVolume: string };
+  const chunks: string[][] = [];
+  for (let i = 0; i < symbols.length; i += CHUNK) chunks.push(symbols.slice(i, i + CHUNK));
+
+  await Promise.all(chunks.map(async (chunk) => {
+    const pairs = chunk.map(s => `"${s}USDT"`).join(',');
+    const d = await fetchJson<Item[]>(
+      `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`,
+      { revalidate: 300 }
+    );
+    for (const item of d ?? []) {
+      const base = item.symbol.replace('USDT', '');
+      const open = parseFloat(item.openPrice);
+      const last = parseFloat(item.lastPrice);
+      const change = open > 0 ? ((last - open) / open) * 100 : 0;
+      result.set(base, { price: last, change, volume: parseFloat(item.quoteVolume) });
+    }
+  }));
+
   return result;
 }
 
@@ -258,8 +324,8 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
   // Fetch everything in parallel
   const [
     okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures,
-    bnbSpotSet, upbitSet, hlSet,
-    fngRaw, globalRaw,
+    bnbSpotSet, upbitSet, hlSet, bnbAlphaSet,
+    fngRaw, globalRaw, cgMarkets,
   ] = await Promise.all([
     fetchOkxSpot(since),
     fetchOkxSwap(since),
@@ -270,8 +336,10 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
     getBinanceSpotSet(),
     getUpbitSet(),
     getHyperliquidSet(),
+    getBinanceAlphaSet(),
     fetchJson<{ data: Array<{ value: string; value_classification: string }> }>('https://api.alternative.me/fng/?limit=1'),
     fetchJson<{ data: { total_market_cap: Record<string, number>; market_cap_percentage: Record<string, number>; market_cap_change_percentage_24h_usd: number; active_cryptocurrencies: number; markets: number } }>('https://api.coingecko.com/api/v3/global'),
+    fetchCoinGeckoMarkets(),
   ]);
 
   const fearGreed = fngRaw?.data?.[0]
@@ -386,6 +454,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
       .filter(k => c[k].perp).map(k => k);
 
     const px = prices.get(symbol);
+    const cg = cgMarkets.get(symbol);
     const anySpot = spotExchanges.length > 0;
     const anyPerp = perpExchanges.length > 0;
 
@@ -400,7 +469,16 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
     if (!c.binance.spot && spotExchanges.length >= 2) notes.push(`Not on Binance spot yet`);
     if (c.upbit.spot && spotExchanges.length <= 2) notes.push(`Upbit KRW — Korean premium risk`);
 
-    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? null, priceChange24h: px?.change ?? null, volume24h: px?.volume ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges };
+    const binanceAlpha = bnbAlphaSet.has(symbol);
+    const mcap = cg?.marketCap ?? null;
+    // Buy signal: (Alpha OR Binance Spot+Perp) AND mcap < $30M
+    const buySignal = (binanceAlpha || (c.binance.spot && c.binance.perp)) && mcap !== null && mcap < 30_000_000;
+
+    if (binanceAlpha && !notes.some(n => n.includes('Alpha'))) {
+      notes.unshift('Binance Alpha listed');
+    }
+
+    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? null, priceChange24h: px?.change ?? null, volume24h: px?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges };
     const signalRating = computeSignal(partial);
     const listingSequence = computeSequence(c.binance.spot, anySpot, anyPerp);
 
@@ -412,6 +490,8 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
       multiExchangeSpot,
       perpLed,
       noteworthy: notes.join(' · '),
+      binanceAlpha,
+      buySignal,
     });
   }
 

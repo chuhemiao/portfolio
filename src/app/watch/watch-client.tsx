@@ -7,8 +7,8 @@ import type {
   SignalRating,
   ListingSequence,
 } from '@/lib/watch-data';
-import BlurFade from '@/components/magicui/blur-fade';
 import { useState } from 'react';
+import { RadioIcon, ZapIcon, SearchIcon, TrendingUpIcon } from 'lucide-react';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 
@@ -49,8 +49,6 @@ const EXCHANGES = [
   { key: 'hyperliquid' as const, label: 'Hyperliquid', short: 'HL', note: 'Perp presence' },
 ] as const;
 
-type ExchangeKey = typeof EXCHANGES[number]['key'];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function fmtPrice(v: number | null) {
@@ -66,6 +64,19 @@ function fmtVol(v: number | null) {
   if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
   if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
   return `$${v.toFixed(0)}`;
+}
+
+function fmtMcap(v: number | null) {
+  if (v == null) return '—';
+  if (v >= 1e9) return `$${(v / 1e9).toFixed(2)}B`;
+  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
+  if (v >= 1e3) return `$${(v / 1e3).toFixed(0)}K`;
+  return `$${v.toFixed(0)}`;
+}
+
+function fmtRatio(mc: number | null, fdv: number | null) {
+  if (!mc || !fdv || fdv === 0) return '—';
+  return `${((mc / fdv) * 100).toFixed(0)}%`;
 }
 
 function fmtDate(ts: number | null) {
@@ -101,20 +112,18 @@ function PriceChange({ value }: { value: number | null }) {
   );
 }
 
-function ExchangeCell({ status, hasDate }: { status: ExchangeListing; hasDate?: boolean }) {
-  const hasSpot = status.spot;
-  const hasPerp = status.perp;
-  if (!hasSpot && !hasPerp) {
+function ExchangeCell({ status }: { status: ExchangeListing }) {
+  if (!status.spot && !status.perp) {
     return <span className='text-muted-foreground/30 text-xs select-none'>—</span>;
   }
   return (
     <div className='flex flex-col gap-0.5 items-center'>
-      {hasSpot && (
+      {status.spot && (
         <span className='text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 leading-none border border-emerald-500/20'>
           SPOT
         </span>
       )}
-      {hasPerp && (
+      {status.perp && (
         <span className='text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-600 dark:text-violet-400 leading-none border border-violet-500/20'>
           PERP
         </span>
@@ -123,31 +132,14 @@ function ExchangeCell({ status, hasDate }: { status: ExchangeListing; hasDate?: 
   );
 }
 
-function FearGauge({ value, label }: { value: number; label: string }) {
-  const color = value < 25 ? '#ef4444' : value < 45 ? '#f97316' : value < 55 ? '#eab308' : value < 75 ? '#22c55e' : '#10b981';
-  return (
-    <div className='flex items-center gap-3'>
-      <div className='relative size-12 flex-shrink-0'>
-        <svg viewBox='0 0 44 44' className='size-full -rotate-90'>
-          <circle cx='22' cy='22' r='18' fill='none' stroke='currentColor' strokeWidth='4' className='text-muted/30' />
-          <circle cx='22' cy='22' r='18' fill='none' stroke={color} strokeWidth='4' strokeDasharray={`${(value / 100) * 113} 113`} strokeLinecap='round' />
-        </svg>
-        <span className='absolute inset-0 flex items-center justify-center text-xs font-bold'>{value}</span>
-      </div>
-      <div>
-        <div className='text-sm font-semibold' style={{ color }}>{label}</div>
-        <div className='text-xs text-muted-foreground'>Fear & Greed</div>
-      </div>
-    </div>
-  );
-}
+// ─── Filter ───────────────────────────────────────────────────────────────────
 
-// ─── Filter & Sort ────────────────────────────────────────────────────────────
-
-type FilterTab = 'all' | 'spot' | 'perp_only' | 'full_stack' | 'notable';
+type FilterTab = 'all' | 'buy_signal' | 'alpha' | 'spot' | 'perp_only' | 'full_stack' | 'notable';
 
 function filterCoins(coins: ListingCoin[], tab: FilterTab): ListingCoin[] {
   switch (tab) {
+    case 'buy_signal': return coins.filter(c => c.buySignal);
+    case 'alpha': return coins.filter(c => c.binanceAlpha);
     case 'spot': return coins.filter(c => c.spotExchanges.length > 0);
     case 'perp_only': return coins.filter(c => c.perpWithoutSpot);
     case 'full_stack': return coins.filter(c => c.listingSequence === 'full_stack');
@@ -162,15 +154,20 @@ export default function WatchClient({ data }: { data: WatchData }) {
   const { fearGreed, global: g, listings, generatedAt, lookbackDays } = data;
   const [tab, setTab] = useState<FilterTab>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [sortBy, setSortBy] = useState<'signal' | 'date' | 'price'>('signal');
+  const [sortBy, setSortBy] = useState<'signal' | 'date' | 'mcap'>('signal');
+  const [search, setSearch] = useState('');
 
   const spotCount = listings.filter(c => c.spotExchanges.length > 0).length;
   const perpOnlyCount = listings.filter(c => c.perpWithoutSpot).length;
   const fullStackCount = listings.filter(c => c.listingSequence === 'full_stack').length;
   const notableCount = listings.filter(c => c.noteworthy.length > 0).length;
+  const buySignalCount = listings.filter(c => c.buySignal).length;
+  const alphaCount = listings.filter(c => c.binanceAlpha).length;
 
-  const TABS: { id: FilterTab; label: string; count: number }[] = [
+  const TABS: { id: FilterTab; label: string; count: number; highlight?: string }[] = [
     { id: 'all', label: 'All', count: listings.length },
+    { id: 'buy_signal', label: '买入信号', count: buySignalCount, highlight: 'emerald' },
+    { id: 'alpha', label: 'Alpha', count: alphaCount, highlight: 'violet' },
     { id: 'spot', label: 'Has Spot', count: spotCount },
     { id: 'full_stack', label: 'Spot+Perp', count: fullStackCount },
     { id: 'perp_only', label: 'Perp Only ⚠', count: perpOnlyCount },
@@ -178,126 +175,181 @@ export default function WatchClient({ data }: { data: WatchData }) {
   ];
 
   let filtered = filterCoins(listings, tab);
+  if (search.trim()) {
+    const q = search.trim().toLowerCase();
+    filtered = filtered.filter(c => c.symbol.toLowerCase().includes(q));
+  }
   if (sortBy === 'date') filtered = [...filtered].sort((a, b) => b.firstSeenAt - a.firstSeenAt);
-  else if (sortBy === 'price') filtered = [...filtered].sort((a, b) => (b.priceUsdt ?? 0) - (a.priceUsdt ?? 0));
+  else if (sortBy === 'mcap') filtered = [...filtered].sort((a, b) => (b.marketCap ?? 0) - (a.marketCap ?? 0));
+
+  const fearColor = fearGreed
+    ? fearGreed.value < 25 ? '#ef4444' : fearGreed.value < 45 ? '#f97316' : fearGreed.value < 55 ? '#eab308' : fearGreed.value < 75 ? '#22c55e' : '#10b981'
+    : '#eab308';
 
   return (
-    <div className='flex flex-col gap-8'>
+    <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
+      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
+      <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_8%_14%,rgba(14,165,233,0.14),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_8%_14%,rgba(56,189,248,0.16),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.14),transparent_22%)]' />
 
-      {/* Header */}
-      <BlurFade delay={0.04}>
-        <div className='flex flex-col gap-1.5'>
-          <h1 className='text-2xl font-bold tracking-tight'>Exchange Listing Watch</h1>
-          <p className='text-sm text-muted-foreground max-w-2xl'>
-            Coins listed on Binance, OKX, Bybit, Bitget, Coinbase, Upbit or Hyperliquid
-            in the past <strong>{lookbackDays} days</strong>. Data from exchange native APIs —
-            OKX listTime, Bybit launchTime, Bitget openTime, Coinbase new_at, Binance futures onboardDate.
-          </p>
+      <main className='relative mx-auto w-full max-w-6xl px-4 pb-28 pt-6 space-y-8 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+
+        {/* ── Hero ─────────────────────────────────────────────────── */}
+        <div className='space-y-4'>
+          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground backdrop-blur'>
+            <RadioIcon className='size-3' />
+            Listing Intelligence
+          </div>
+          <div className='space-y-2'>
+            <h1 className='text-3xl font-semibold tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl'>
+              Exchange Listing Watch
+            </h1>
+            <p className='max-w-2xl text-[15px] leading-7 text-muted-foreground'>
+              Coins listed on Binance, OKX, Bybit, Bitget, Coinbase, Upbit or Hyperliquid in the past{' '}
+              <strong className='text-foreground'>{lookbackDays} days</strong>. Data from exchange native APIs.
+            </p>
+          </div>
           <p className='text-[11px] text-muted-foreground/50'>
             Updated: {new Date(generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })} UTC
           </p>
         </div>
-      </BlurFade>
 
-      {/* Market Pulse */}
-      <BlurFade delay={0.07}>
+        {/* ── Market Pulse ─────────────────────────────────────────── */}
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
+          {/* Fear & Greed */}
           {fearGreed && (
-            <div className='rounded-xl border border-border bg-card p-4 col-span-2 sm:col-span-1'>
-              <FearGauge value={fearGreed.value} label={fearGreed.label} />
+            <div className='col-span-2 sm:col-span-1 rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+              <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>Fear &amp; Greed</p>
+              <div className='mt-3 flex items-center gap-3'>
+                <div className='relative size-12 flex-shrink-0'>
+                  <svg viewBox='0 0 44 44' className='size-full -rotate-90'>
+                    <circle cx='22' cy='22' r='18' fill='none' stroke='currentColor' strokeWidth='4' className='text-muted/30' />
+                    <circle cx='22' cy='22' r='18' fill='none' stroke={fearColor} strokeWidth='4' strokeDasharray={`${(fearGreed.value / 100) * 113} 113`} strokeLinecap='round' />
+                  </svg>
+                  <span className='absolute inset-0 flex items-center justify-center text-xs font-bold'>{fearGreed.value}</span>
+                </div>
+                <div>
+                  <p className='text-sm font-semibold' style={{ color: fearColor }}>{fearGreed.label}</p>
+                  <p className='text-[10px] text-muted-foreground'>Index</p>
+                </div>
+              </div>
             </div>
           )}
-          <div className='rounded-xl border border-border bg-card p-4 flex flex-col gap-1'>
-            <span className='text-[11px] font-medium text-muted-foreground uppercase tracking-wide'>Total MCap</span>
-            <span className='text-base font-bold tabular-nums'>
+          {/* Total MCap */}
+          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+            <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>Total MCap</p>
+            <p className='mt-2 text-xl font-semibold tracking-tight text-foreground'>
               {g?.totalMarketCapUsd ? `$${(g.totalMarketCapUsd / 1e12).toFixed(2)}T` : '—'}
-            </span>
+            </p>
             <PriceChange value={g?.marketCapChange24h ?? null} />
           </div>
-          <div className='rounded-xl border border-border bg-card p-4 flex flex-col gap-1'>
-            <span className='text-[11px] font-medium text-muted-foreground uppercase tracking-wide'>BTC Dom</span>
-            <span className='text-base font-bold tabular-nums'>
+          {/* BTC Dom */}
+          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+            <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>BTC Dom</p>
+            <p className='mt-2 text-xl font-semibold tracking-tight text-foreground'>
               {g?.btcDominance ? `${g.btcDominance.toFixed(1)}%` : '—'}
-            </span>
-            <span className='text-xs text-muted-foreground'>ETH {g?.ethDominance ? `${g.ethDominance.toFixed(1)}%` : '—'}</span>
+            </p>
+            <p className='text-xs text-muted-foreground'>ETH {g?.ethDominance ? `${g.ethDominance.toFixed(1)}%` : '—'}</p>
           </div>
-          <div className='rounded-xl border border-border bg-card p-4 flex flex-col gap-1'>
-            <span className='text-[11px] font-medium text-muted-foreground uppercase tracking-wide'>New Listings</span>
-            <span className='text-base font-bold tabular-nums text-emerald-500'>{listings.length}</span>
-            <span className='text-xs text-muted-foreground'>{lookbackDays}d window</span>
+          {/* New Listings */}
+          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+            <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>New Listings</p>
+            <p className='mt-2 text-xl font-semibold tracking-tight text-emerald-500'>{listings.length}</p>
+            <p className='text-xs text-muted-foreground'>{lookbackDays}d window</p>
           </div>
-          <div className='rounded-xl border border-border bg-card p-4 flex flex-col gap-1'>
-            <span className='text-[11px] font-medium text-muted-foreground uppercase tracking-wide'>Perp Only ⚠</span>
-            <span className='text-base font-bold tabular-nums text-red-500'>{perpOnlyCount}</span>
-            <span className='text-xs text-muted-foreground'>no spot anywhere</span>
+          {/* Perp Only */}
+          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+            <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>Perp Only ⚠</p>
+            <p className='mt-2 text-xl font-semibold tracking-tight text-red-500'>{perpOnlyCount}</p>
+            <p className='text-xs text-muted-foreground'>no spot anywhere</p>
           </div>
         </div>
-      </BlurFade>
 
-      {/* Signal legend */}
-      <BlurFade delay={0.09}>
-        <div className='flex flex-wrap gap-3'>
-          {(Object.keys(SIGNAL_CFG) as SignalRating[]).map(r => (
-            <div key={r} className='flex items-center gap-1.5'>
-              <SignalBadge rating={r} />
-              <span className='text-[11px] text-muted-foreground hidden sm:block'>{SIGNAL_CFG[r].desc}</span>
-            </div>
-          ))}
+        {/* ── Signal Legend ─────────────────────────────────────────── */}
+        <div className='rounded-[1.5rem] border border-border/60 bg-background/76 px-5 py-4 backdrop-blur-sm'>
+          <p className='mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>Signal Rating Guide</p>
+          <div className='flex flex-wrap gap-3'>
+            {(Object.keys(SIGNAL_CFG) as SignalRating[]).map(r => (
+              <div key={r} className='flex items-center gap-2'>
+                <SignalBadge rating={r} />
+                <span className='text-[11px] text-muted-foreground hidden sm:block'>{SIGNAL_CFG[r].desc}</span>
+              </div>
+            ))}
+          </div>
         </div>
-      </BlurFade>
 
-      {/* Table */}
-      <BlurFade delay={0.11}>
-        <div className='flex flex-col gap-3'>
-          {/* Controls row */}
+        {/* ── Table ─────────────────────────────────────────────────── */}
+        <div className='space-y-3'>
+          {/* Controls */}
           <div className='flex flex-wrap items-center gap-2 justify-between'>
-            <div className='flex flex-wrap gap-1'>
+            <div className='flex flex-wrap gap-1.5'>
               {TABS.map(t => (
                 <button
                   key={t.id}
                   onClick={() => setTab(t.id)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                     tab === t.id
-                      ? 'bg-primary text-primary-foreground border-primary'
-                      : 'bg-card border-border text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                      ? t.highlight === 'emerald'
+                        ? 'border-emerald-500 bg-emerald-500 text-white'
+                        : t.highlight === 'violet'
+                          ? 'border-violet-500 bg-violet-500 text-white'
+                          : 'border-foreground bg-foreground text-background'
+                      : t.highlight === 'emerald'
+                        ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500/60'
+                        : t.highlight === 'violet'
+                          ? 'border-violet-500/40 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:border-violet-500/60'
+                          : 'border-border/60 bg-background/70 text-muted-foreground hover:border-foreground/20 hover:text-foreground'
                   }`}>
-                  {t.label} <span className='opacity-60 ml-1'>{t.count}</span>
+                  {t.id === 'buy_signal' && <TrendingUpIcon className='inline size-3 mr-1' />}
+                  {t.label}
+                  <span className={`ml-1.5 text-[10px] ${tab === t.id ? 'opacity-70' : 'opacity-50'}`}>{t.count}</span>
                 </button>
               ))}
             </div>
-            <div className='flex gap-1'>
-              {(['signal', 'date', 'price'] as const).map(s => (
+            <div className='flex items-center gap-2'>
+              {/* Search */}
+              <div className='relative'>
+                <SearchIcon className='absolute left-2.5 top-1/2 -translate-y-1/2 size-3 text-muted-foreground/60' />
+                <input
+                  type='text'
+                  placeholder='Symbol…'
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className='pl-7 pr-3 py-1.5 rounded-full border border-border/60 bg-background/70 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/30 w-24 focus:w-32 transition-all'
+                />
+              </div>
+              {/* Sort */}
+              {(['signal', 'date', 'mcap'] as const).map(s => (
                 <button
                   key={s}
                   onClick={() => setSortBy(s)}
-                  className={`px-2.5 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
+                  className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                     sortBy === s
-                      ? 'bg-muted border-border text-foreground'
-                      : 'bg-card border-border text-muted-foreground hover:text-foreground'
+                      ? 'border-foreground/40 bg-muted text-foreground'
+                      : 'border-border/60 bg-background/70 text-muted-foreground hover:text-foreground'
                   }`}>
-                  {s === 'signal' ? 'Signal' : s === 'date' ? 'Newest' : 'Price'}
+                  {s === 'signal' ? 'Signal' : s === 'date' ? 'Newest' : 'MCap'}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className='rounded-xl border border-border bg-card overflow-hidden'>
+          <div className='overflow-hidden rounded-[1.5rem] border border-border/60 bg-background/78 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
             <div className='overflow-x-auto'>
-              <table className='w-full text-sm min-w-[980px]'>
+              <table className='w-full text-sm min-w-[1100px]'>
                 <thead>
-                  <tr className='border-b border-border bg-muted/30'>
-                    <th className='text-left px-4 py-2.5 font-medium text-muted-foreground text-xs w-[130px]'>Asset</th>
-                    <th className='text-right px-3 py-2.5 font-medium text-muted-foreground text-xs'>Price</th>
-                    <th className='text-right px-3 py-2.5 font-medium text-muted-foreground text-xs'>24h %</th>
-                    <th className='text-right px-3 py-2.5 font-medium text-muted-foreground text-xs'>Vol 24h</th>
+                  <tr className='border-b border-border/60 bg-muted/20'>
+                    <th className='text-left px-4 py-3 font-medium text-muted-foreground text-xs w-[130px]'>Asset</th>
+                    <th className='text-right px-3 py-3 font-medium text-muted-foreground text-xs'>MCap</th>
+                    <th className='text-right px-3 py-3 font-medium text-muted-foreground text-xs'>FDV</th>
+                    <th className='text-right px-3 py-3 font-medium text-muted-foreground text-xs' title='Circulating / FDV ratio'>MC/FDV</th>
                     {EXCHANGES.map(e => (
-                      <th key={e.key} className='text-center px-2 py-2.5 font-medium text-muted-foreground text-[11px] min-w-[52px]' title={e.note}>
+                      <th key={e.key} className='text-center px-2 py-3 font-medium text-muted-foreground text-[11px] min-w-[52px]' title={e.note}>
                         {e.short}
                       </th>
                     ))}
-                    <th className='text-left px-3 py-2.5 font-medium text-muted-foreground text-xs'>Type</th>
-                    <th className='text-center px-3 py-2.5 font-medium text-muted-foreground text-xs'>Sig</th>
-                    <th className='text-left px-3 py-2.5 font-medium text-muted-foreground text-xs'>First seen</th>
+                    <th className='text-left px-3 py-3 font-medium text-muted-foreground text-xs'>Type</th>
+                    <th className='text-center px-3 py-3 font-medium text-muted-foreground text-xs'>Sig</th>
+                    <th className='text-left px-3 py-3 font-medium text-muted-foreground text-xs'>First seen</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -311,7 +363,7 @@ export default function WatchClient({ data }: { data: WatchData }) {
                   ))}
                   {filtered.length === 0 && (
                     <tr>
-                      <td colSpan={13} className='px-4 py-10 text-center text-muted-foreground text-sm'>
+                      <td colSpan={14} className='px-4 py-10 text-center text-muted-foreground text-sm'>
                         No listings in this filter.
                       </td>
                     </tr>
@@ -325,29 +377,22 @@ export default function WatchClient({ data }: { data: WatchData }) {
             {filtered.length} of {listings.length} coins · Click any row to see full exchange matrix
           </p>
         </div>
-      </BlurFade>
 
-      {/* Pattern cards */}
-      {listings.length > 0 && (
-        <BlurFade delay={0.14}>
-          <PatternSummary listings={listings} />
-        </BlurFade>
-      )}
+        {/* ── Pattern Cards ──────────────────────────────────────────── */}
+        {listings.length > 0 && <PatternSummary listings={listings} />}
 
-      {/* Data sources */}
-      <BlurFade delay={0.16}>
-        <div className='rounded-xl border border-border bg-muted/20 p-4 text-[11px] text-muted-foreground/60 leading-relaxed'>
+        {/* ── Data Sources ───────────────────────────────────────────── */}
+        <div className='rounded-[1.5rem] border border-border/60 bg-background/60 p-5 text-[11px] text-muted-foreground/60 leading-relaxed backdrop-blur-sm'>
           <strong className='text-muted-foreground'>Data sources:</strong>{' '}
           OKX <code>/api/v5/public/instruments</code> (listTime) ·
           Bybit <code>/v5/market/instruments-info?category=linear</code> (launchTime) ·
           Bitget <code>/api/v2/spot/public/symbols</code> (openTime) ·
           Coinbase <code>/api/v3/brokerage/market/products</code> (new_at) ·
           Binance <code>/fapi/v1/exchangeInfo</code> (onboardDate) ·
-          Binance Spot / Upbit / Hyperliquid: presence-only (no listing date available).
+          Binance Spot / Upbit / Hyperliquid: presence-only.
           Prices from Binance 24hr mini-ticker. Fear &amp; Greed from alternative.me. Global from CoinGecko.
-          Does NOT include: Binance Alpha, Launchpool, Pre-market (require official announcement APIs).
         </div>
-      </BlurFade>
+      </main>
     </div>
   );
 }
@@ -364,14 +409,30 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
         }`}
         onClick={onToggle}>
         <td className='px-4 py-2.5'>
-          <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-1.5 flex-wrap'>
             <span className='font-semibold text-sm'>{coin.symbol}</span>
+            {coin.buySignal && (
+              <span className='inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/40 leading-none'>
+                <TrendingUpIcon className='size-2.5' />BUY
+              </span>
+            )}
+            {coin.binanceAlpha && (
+              <span className='text-[9px] font-bold px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-600 dark:text-violet-400 border border-violet-500/30 leading-none'>
+                α
+              </span>
+            )}
             {coin.perpWithoutSpot && <span className='text-[10px] text-red-500'>⚠</span>}
           </div>
         </td>
-        <td className='px-3 py-2.5 text-right font-mono text-xs tabular-nums'>{fmtPrice(coin.priceUsdt)}</td>
-        <td className='px-3 py-2.5 text-right'><PriceChange value={coin.priceChange24h} /></td>
-        <td className='px-3 py-2.5 text-right text-xs tabular-nums text-muted-foreground'>{fmtVol(coin.volume24h)}</td>
+        <td className='px-3 py-2.5 text-right text-xs tabular-nums text-muted-foreground'>{fmtMcap(coin.marketCap)}</td>
+        <td className='px-3 py-2.5 text-right text-xs tabular-nums text-muted-foreground'>{fmtMcap(coin.fdv)}</td>
+        <td className='px-3 py-2.5 text-right text-xs tabular-nums'>
+          {coin.marketCap && coin.fdv ? (
+            <span className={`font-medium ${(coin.marketCap / coin.fdv) >= 0.8 ? 'text-emerald-500' : (coin.marketCap / coin.fdv) >= 0.4 ? 'text-amber-500' : 'text-red-400'}`}>
+              {fmtRatio(coin.marketCap, coin.fdv)}
+            </span>
+          ) : <span className='text-muted-foreground/40'>—</span>}
+        </td>
         {EXCHANGES.map(e => (
           <td key={e.key} className='px-2 py-2.5 text-center'>
             <ExchangeCell status={coin[e.key]} />
@@ -383,10 +444,9 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
         <td className='px-3 py-2.5 text-center'><SignalBadge rating={coin.signalRating} /></td>
         <td className='px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap'>{fmtDate(coin.firstSeenAt)}</td>
       </tr>
-
       {expanded && (
         <tr className='border-b border-border/50 bg-muted/10'>
-          <td colSpan={13} className='px-4 py-4'>
+          <td colSpan={14} className='px-4 py-4'>
             <CoinDetail coin={coin} />
           </td>
         </tr>
@@ -394,8 +454,6 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
     </>
   );
 }
-
-// ─── Expanded detail ──────────────────────────────────────────────────────────
 
 function CoinDetail({ coin }: { coin: ListingCoin }) {
   return (
@@ -419,18 +477,14 @@ function CoinDetail({ coin }: { coin: ListingCoin }) {
                     <div>
                       <span className='text-emerald-600 dark:text-emerald-400 font-medium'>SPOT</span>
                       {s.spotListedAt && <span className='ml-2 text-muted-foreground'>{fmtDateFull(s.spotListedAt)}</span>}
-                      {s.spotPairs.length > 0 && (
-                        <span className='ml-2 text-muted-foreground/60'>{s.spotPairs.slice(0, 4).join(', ')}</span>
-                      )}
+                      {s.spotPairs.length > 0 && <span className='ml-2 text-muted-foreground/60'>{s.spotPairs.slice(0, 4).join(', ')}</span>}
                     </div>
                   )}
                   {s.perp && (
                     <div>
                       <span className='text-violet-600 dark:text-violet-400 font-medium'>PERP</span>
                       {s.perpListedAt && <span className='ml-2 text-muted-foreground'>{fmtDateFull(s.perpListedAt)}</span>}
-                      {s.perpPairs.length > 0 && (
-                        <span className='ml-2 text-muted-foreground/60'>{s.perpPairs.slice(0, 4).join(', ')}</span>
-                      )}
+                      {s.perpPairs.length > 0 && <span className='ml-2 text-muted-foreground/60'>{s.perpPairs.slice(0, 4).join(', ')}</span>}
                     </div>
                   )}
                 </div>
@@ -439,13 +493,15 @@ function CoinDetail({ coin }: { coin: ListingCoin }) {
           })}
         </div>
       </div>
-
       <div>
         <p className='font-semibold mb-2 text-muted-foreground uppercase tracking-wide text-[11px]'>Listing Summary</p>
         <div className='flex flex-col gap-1.5'>
           <Row label='Spot on' value={coin.spotExchanges.join(', ') || 'None'} />
           <Row label='Perp on' value={coin.perpExchanges.join(', ') || 'None'} />
           <Row label='Sequence' value={SEQ_LABEL[coin.listingSequence]} />
+          <Row label='Market Cap' value={fmtMcap(coin.marketCap)} />
+          <Row label='FDV' value={fmtMcap(coin.fdv)} />
+          <Row label='MC / FDV' value={fmtRatio(coin.marketCap, coin.fdv)} />
           <Row label='Perp without spot' value={coin.perpWithoutSpot ? 'YES ⚠ — high risk' : 'No'} />
           <Row label='Multi-ex spot' value={coin.multiExchangeSpot ? `Yes (${coin.spotExchanges.length} exchanges)` : 'No'} />
           <Row label='Perp-led discovery' value={coin.perpLed ? 'Yes — not on BNB/CB spot' : 'No'} />
@@ -455,7 +511,6 @@ function CoinDetail({ coin }: { coin: ListingCoin }) {
           <Row label='First seen' value={fmtDateFull(coin.firstSeenAt)} />
         </div>
       </div>
-
       {coin.noteworthy && (
         <div>
           <p className='font-semibold mb-2 text-muted-foreground uppercase tracking-wide text-[11px]'>Signal Notes</p>
@@ -484,58 +539,27 @@ function PatternSummary({ listings }: { listings: ListingCoin[] }) {
   const notable = listings.filter(c => c.noteworthy.length > 0 && !c.perpLed && !c.perpWithoutSpot && !c.multiExchangeSpot);
 
   return (
-    <div className='flex flex-col gap-4'>
-      <h2 className='text-base font-semibold'>Pattern Detectors</h2>
+    <div className='space-y-4'>
+      <div className='flex items-center gap-2'>
+        <ZapIcon className='size-4 text-muted-foreground' />
+        <h2 className='text-base font-semibold tracking-tight'>Pattern Detectors</h2>
+      </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
-        <PatternCard
-          title='Perp-led Discovery (S12)'
-          desc='Derivatives present, not on Binance/CB spot'
-          colorClass='text-violet-500'
-          borderClass='border-violet-500/30'
-          bgClass='bg-violet-500/5'
-          items={perpLed}
-          info='s/d'
-        />
-        <PatternCard
-          title='Derivatives Only ⚠ (Risk)'
-          desc='Perp traded, zero spot on any exchange'
-          colorClass='text-red-500'
-          borderClass='border-red-500/30'
-          bgClass='bg-red-500/5'
-          items={perpOnly}
-          info='s/d'
-        />
-        <PatternCard
-          title='Multi-Exchange Spot (S)'
-          desc='3+ exchanges with spot listing'
-          colorClass='text-emerald-500'
-          borderClass='border-emerald-500/30'
-          bgClass='bg-emerald-500/5'
-          items={multiEx}
-          info='count'
-        />
-        <PatternCard
-          title='Cross-Exchange Signals'
-          desc='Notable listing path patterns'
-          colorClass='text-amber-500'
-          borderClass='border-amber-500/30'
-          bgClass='bg-amber-500/5'
-          items={notable}
-          info='note'
-        />
+        <PatternCard title='Perp-led Discovery' desc='Derivatives present, not on Binance/CB spot' colorClass='text-violet-500' borderClass='border-violet-500/30' bgClass='bg-violet-500/5' items={perpLed} info='s/d' />
+        <PatternCard title='Derivatives Only ⚠' desc='Perp traded, zero spot on any exchange' colorClass='text-red-500' borderClass='border-red-500/30' bgClass='bg-red-500/5' items={perpOnly} info='s/d' />
+        <PatternCard title='Multi-Exchange Spot' desc='3+ exchanges with spot listing' colorClass='text-emerald-500' borderClass='border-emerald-500/30' bgClass='bg-emerald-500/5' items={multiEx} info='count' />
+        <PatternCard title='Cross-Exchange Signals' desc='Notable listing path patterns' colorClass='text-amber-500' borderClass='border-amber-500/30' bgClass='bg-amber-500/5' items={notable} info='note' />
       </div>
     </div>
   );
 }
 
-function PatternCard({
-  title, desc, colorClass, borderClass, bgClass, items, info,
-}: {
+function PatternCard({ title, desc, colorClass, borderClass, bgClass, items, info }: {
   title: string; desc: string; colorClass: string; borderClass: string; bgClass: string;
   items: ListingCoin[]; info: 's/d' | 'count' | 'note';
 }) {
   return (
-    <div className={`rounded-xl border ${borderClass} ${bgClass} p-4 flex flex-col gap-3`}>
+    <div className={`rounded-[1.35rem] border ${borderClass} ${bgClass} p-4 flex flex-col gap-3 backdrop-blur-sm`}>
       <div>
         <p className={`text-sm font-semibold ${colorClass}`}>{title}</p>
         <p className='text-xs text-muted-foreground mt-0.5'>{desc}</p>
@@ -555,9 +579,7 @@ function PatternCard({
             </div>
           ))
         )}
-        {items.length > 6 && (
-          <span className='text-[10px] text-muted-foreground'>+{items.length - 6} more</span>
-        )}
+        {items.length > 6 && <span className='text-[10px] text-muted-foreground'>+{items.length - 6} more</span>}
       </div>
     </div>
   );
