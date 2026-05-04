@@ -32,6 +32,53 @@ export interface WeeklyReport {
 
 export const WEEKLY_REPORTS: WeeklyReport[] = [
   {
+    id: '2026-05-04',
+    dateRange: 'May 4, 2026',
+    headline: 'BTC $78K 恐惧区间震荡、Western Union 发 Solana 稳定币、Powell 任期 5 月 15 日到期',
+    generatedAt: '05/04',
+    coreMacro:
+      '恐惧与贪婪指数 41（恐惧）。BTC 在 $76,800 附近承压，地缘风险升温（美伊谈判停滞 + 油价上涨）叠加 FOMC 决议前的观望情绪。美联储主席鲍威尔任期 5 月 15 日届满，司法部撤销刑事调查为 Kevin Warsh 出任铺路，联储政策不确定性短期压制风险资产。CLARITY 法案进入银行游说拉锯期，加密监管窗口窗口延后。',
+    coreCrypto:
+      'Aave rsETH 危机持续发酵：TokenLogic 提议从 4 月 19 日起暂停 AAVE 代币回购，社区投票 4 月 28 日启动；Avi Eisenberg 出狱后钱包重新活跃，否认威胁 Aave 协议；Compound 提议调拨 1,900–3,000 ETH（约 $4.4M–$6.9M）支持 DeFi United rsETH 恢复计划。Western Union 宣布下月在 Solana 上发行 USDPT 稳定币用于内部结算，并推出 Digital Asset Network 支持加密转法币兑换。BTC ETF 本周累计净流入 8.24 亿美元，MicroStrategy 增持 3,273 BTC。',
+    coreActions: [
+      'BTC $76K–$80K 宽幅震荡，Powell 任期悬念 + FOMC 双重压制，暂缓加仓等待方向确认。',
+      'Aave 持续规避：rsETH 坏账归因悬而未决，Eisenberg 钱包动向构成额外不确定性。',
+      'Western Union × Solana 是 RWA 稳定币落地里程碑，关注 Solana DeFi 生态（JUP/PYTH）受益程度。',
+      '关注 CLARITY 法案进展：银行游说若失败，稳定币赛道将迎来重大政策催化剂。',
+      'ARMA（比特币储备法案）重新提交，若推进将对 BTC 长期叙事构成利多，短期博弈价值有限。',
+    ],
+    disclaimer: '以上内容仅供参考，不构成任何投资建议，投资有风险，决策需谨慎。',
+    cryptoAssets: [
+      'BTC：现报 $78,383，ETF 本周净流入 $8.24 亿，MicroStrategy 增持 3,273 枚；$76K 为关键支撑，$80K 仍是阻力。',
+      'ETH：现报 $2,378，rsETH 坏账压制 DeFi 情绪，Standard Chartered 目标 $4,000 但警告可能先探 $1,400。',
+      'XRP：在 $1.41–$1.44 区间盘整，CLARITY 法案进程决定后续突破节奏；RLUSD 供应逼近 $1.6B。',
+      'AAVE：暂停回购提案悬而未决，Eisenberg 地址活跃增添负面情绪，短期继续规避。',
+    ],
+    mustRead: [
+      {
+        category: 'Macro',
+        title: 'Fed Chair Powell Term Ends May 15',
+        source: 'bitcoinsistemi',
+        summary: '司法部撤销刑事调查，Kevin Warsh 出任概率上升，但董事会留任问题仍存不确定性。',
+        action: '关注 5 月 15 日前后联储政策表态，影响美元与风险资产走势。',
+      },
+      {
+        category: 'Stablecoin',
+        title: 'Western Union Launching Solana USDPT Stablecoin',
+        source: 'bankless',
+        summary: 'Western Union 下月在 Solana 上发行 USDPT 用于内部结算，年内推出 USD Stable Card。',
+        action: 'RWA × Solana 叙事强化，关注 SOL 生态项目联动。',
+      },
+      {
+        category: 'DeFi',
+        title: 'Compound Proposes ETH Support for rsETH Recovery',
+        source: 'phemex',
+        summary: 'Compound 提议拨出 1,900–3,000 ETH 支持 DeFi United rsETH 恢复，条件为全额抵押恢复。',
+        action: '坏账处置进展跟踪，若顺利落地将降低 DeFi 系统性风险。',
+      },
+    ],
+  },
+  {
     id: '2026-04-21',
     dateRange: 'Apr 21, 2026',
     headline: '美伊谈判边缘、Strategy 狂增 BTC、Anthropic×AWS 百亿算力锁定',

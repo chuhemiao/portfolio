@@ -175,7 +175,8 @@ async function fetchBinanceFutures(since: number): Promise<RawInstrument[]> {
 async function getBinanceSpotSet(): Promise<Set<string>> {
   type Item = { baseAsset: string; quoteAsset: string; status: string };
   type Resp = { symbols: Item[] };
-  const d = await fetchJson<Resp>('https://api.binance.com/api/v3/exchangeInfo');
+  // exchangeInfo is ~22MB — skip Next.js cache to avoid the 2MB limit error
+  const d = await fetchJson<Resp>('https://api.binance.com/api/v3/exchangeInfo', { cache: 'no-store' });
   const s = new Set<string>();
   for (const sym of d?.symbols ?? []) {
     if (sym.status === 'TRADING') s.add(sym.baseAsset.toUpperCase());
@@ -196,33 +197,23 @@ async function getUpbitSet(): Promise<Set<string>> {
 }
 
 async function getBinanceAlphaSet(): Promise<Set<string>> {
-  // Binance Alpha: pre-spot listing program, tokens trade on Binance Web3 Wallet DEX
-  // Alpha tokens have perp but no Binance spot listing
-  type Item = { symbol?: string; tokenSymbol?: string; baseAsset?: string; coinName?: string };
+  // Binance Alpha: pre-spot DEX listing on Binance Web3 Wallet
+  // Data source: CoinGecko "binance-alpha-spotlight" category (covers all chains: BSC, ETH, SOL, Base, ARB, SUI, TRON)
+  // Old Binance BAPI endpoints (/bapi/defi/v1/public/alpha/token/list) are 404 as of 2026-05
+  type Item = { symbol: string };
   const s = new Set<string>();
 
-  // Primary endpoint
-  const d1 = await fetchJson<{ data: Item[] | { list: Item[] } | null }>(
-    'https://www.binance.com/bapi/defi/v1/public/alpha/token/list',
-    { revalidate: 1800 }
-  );
-  const raw1: Item[] = Array.isArray(d1?.data) ? d1!.data as Item[] : ((d1?.data as any)?.list ?? []);
-  for (const item of raw1) {
-    const sym = (item.symbol || item.tokenSymbol || item.baseAsset || item.coinName || '').toUpperCase().replace(/USDT$/, '');
-    if (sym) s.add(sym);
-  }
-
-  // Fallback: Alpha zone via CoinGecko category tag or Binance announcement API
-  if (s.size === 0) {
-    const d2 = await fetchJson<{ data: Item[] }>(
-      'https://www.binance.com/bapi/composite/v1/public/promo/cmc/cryptocurrency/list?category=ALPHA_ZONE',
+  // Fetch up to 2 pages (250 tokens) — CoinGecko free tier allows this without a key
+  await Promise.all([1, 2].map(async (page) => {
+    const d = await fetchJson<Item[]>(
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`,
       { revalidate: 1800 }
     );
-    for (const item of d2?.data ?? []) {
-      const sym = (item.symbol || item.tokenSymbol || '').toUpperCase();
+    for (const item of d ?? []) {
+      const sym = (item.symbol || '').toUpperCase();
       if (sym) s.add(sym);
     }
-  }
+  }));
 
   return s;
 }
@@ -359,6 +350,10 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
   const allRecent = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures];
   const symbolSet = new Set(allRecent.map(x => x.symbol));
 
+  // Include Binance Alpha-only tokens so they appear in the Alpha tab even if
+  // not yet listed on any CEX. Use current time as firstSeenAt placeholder.
+  for (const sym of bnbAlphaSet) symbolSet.add(sym);
+
   // Exclude stablecoins and noise
   const EXCLUDE = new Set(['USDT', 'USDC', 'BUSD', 'DAI', 'TUSD', 'FDUSD', 'USD1', 'USDE', 'USDС']);
   for (const sym of [...symbolSet]) {
@@ -478,7 +473,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
       notes.unshift('Binance Alpha listed');
     }
 
-    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? null, priceChange24h: px?.change ?? null, volume24h: px?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges };
+    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? null, priceChange24h: px?.change ?? null, volume24h: px?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges, binanceAlpha, buySignal };
     const signalRating = computeSignal(partial);
     const listingSequence = computeSequence(c.binance.spot, anySpot, anyPerp);
 
@@ -490,8 +485,6 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
       multiExchangeSpot,
       perpLed,
       noteworthy: notes.join(' · '),
-      binanceAlpha,
-      buySignal,
     });
   }
 

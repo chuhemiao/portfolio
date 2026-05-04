@@ -121,6 +121,36 @@ export const TOPICS: Topic[] = [
     relatedTypes: ['Lending', 'Yield'],
   },
   {
+    slug: 'robotics',
+    name: 'Robotics',
+    emoji: '🦾',
+    tagline: 'Physical AI, humanoid robots, and embodied intelligence',
+    description:
+      'Humanoid robots, autonomous systems, and the convergence of physical AI with crypto incentive layers. From Boston Dynamics to on-chain robot coordination networks.',
+    whyItMatters:
+      'Physical AI is the next trillion-dollar compute layer. As robots become economically productive agents, crypto rails will govern their ownership, payments, and task coordination.',
+    postCount: 6,
+    projectCount: 3,
+    accentColor: '#64748B',
+    matchKeywords: ['robot', 'robotics', 'humanoid', 'physical ai', 'embodied', 'autonomous', 'depin robot'],
+    relatedTypes: ['Robotics', 'AI'],
+  },
+  {
+    slug: 'quantum',
+    name: 'Quantum',
+    emoji: '⚛️',
+    tagline: 'Quantum computing, cryptography threats, and post-quantum security',
+    description:
+      'Quantum computing progress, the threat to current cryptographic standards (ECDSA, RSA), and the race to post-quantum cryptography across blockchain networks.',
+    whyItMatters:
+      "Quantum computers capable of breaking ECDSA would compromise every existing blockchain's key security model. Post-quantum migration is a long-lead infrastructure risk every serious crypto investor needs to understand.",
+    postCount: 4,
+    projectCount: 2,
+    accentColor: '#A855F7',
+    matchKeywords: ['quantum', 'post-quantum', 'cryptography', 'ecdsa', 'lattice', 'qkd', 'qubit'],
+    relatedTypes: ['Quantum', 'Security'],
+  },
+  {
     slug: 'market-structure',
     name: 'Market Structure',
     emoji: '🔭',

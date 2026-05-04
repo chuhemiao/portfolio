@@ -1,6 +1,7 @@
 import { getBlogPosts } from '@/data/blog';
 import { DATA } from '@/data/resume';
 import type { Metadata } from 'next';
+import { Suspense } from 'react';
 import BlogClient from './blog-client';
 
 export const metadata: Metadata = {
@@ -84,7 +85,9 @@ export default async function BlogPage() {
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
         />
-        <BlogClient posts={posts} />
+        <Suspense>
+          <BlogClient posts={posts} />
+        </Suspense>
       </div>
     </div>
   );
