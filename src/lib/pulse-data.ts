@@ -24,18 +24,21 @@ export interface FixtureItem {
   match: string;
   prediction?: string;
   polymarketOdds?: string;
+  link?: string;
 }
 
 export interface MarketDynamic {
   market: string;
   volumeChange?: string;
   reason?: string;
+  link?: string;
 }
 
 export interface ContentIdea {
   type: '蹭热点' | '数据驱动' | '悬念制造' | string;
   idea: string;
   example?: string;
+  link?: string;
 }
 
 export interface CompetitorActivity {
@@ -43,11 +46,13 @@ export interface CompetitorActivity {
   followers?: number;
   posts7d?: number;
   level?: 'high' | 'medium' | 'low' | string;
+  link?: string;
 }
 
 export interface CompetitorNarrative {
   handle: string;
   narrative: string;
+  link?: string;
 }
 
 export interface CompetitorPost {
@@ -62,6 +67,7 @@ export interface MindshareRank {
   rank: number;
   project: string;
   trend?: 'up' | 'down' | 'flat' | string;
+  link?: string;
 }
 
 export interface SimpleEntry {
@@ -111,6 +117,7 @@ export interface PulseData {
     sentiment: 'optimistic' | 'neutral' | 'pessimistic' | null;
     hotMeme: string;
     borrowable: string;
+    sourceLink?: string;
     topPosts: MemePost[];
   };
   risks: RiskItem[];

@@ -93,6 +93,20 @@ function Link({ href, children }: { href?: string; children: React.ReactNode }) 
   );
 }
 
+function XSource({ href, label = 'X source' }: { href?: string; label?: string }) {
+  if (!href) return null;
+  return (
+    <a
+      href={href}
+      target='_blank'
+      rel='noopener noreferrer'
+      className='inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground/70 hover:text-foreground transition-colors'>
+      <LinkIcon className='size-3' />
+      {label}
+    </a>
+  );
+}
+
 function Engagement({ likes, retweets }: { likes?: number; retweets?: number }) {
   if (likes == null && retweets == null) return null;
   return (
@@ -161,6 +175,9 @@ function WorldCupBlock({ data }: { data: PulseData['worldCup'] }) {
                       {i.impact && (
                         <span className='text-[11px] text-amber-500'> → {i.impact}</span>
                       )}
+                      <span className='ml-2'>
+                        <XSource href={i.link} />
+                      </span>
                     </li>
                   ))}
                 </ul>
@@ -191,6 +208,9 @@ function WorldCupBlock({ data }: { data: PulseData['worldCup'] }) {
                       {m.reason && (
                         <p className='text-xs text-muted-foreground/80 mt-0.5'>{m.reason}</p>
                       )}
+                      <div className='mt-1'>
+                        <XSource href={m.link} />
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -211,6 +231,9 @@ function WorldCupBlock({ data }: { data: PulseData['worldCup'] }) {
                           e.g. {c.example}
                         </p>
                       )}
+                      <div className='mt-1'>
+                        <XSource href={c.link} />
+                      </div>
                     </li>
                   ))}
                 </ul>
@@ -258,6 +281,7 @@ function FixtureRow({ item }: { item: FixtureItem }) {
           PM {item.polymarketOdds}
         </span>
       )}
+      <XSource href={item.link} />
     </li>
   );
 }
@@ -340,7 +364,9 @@ function CompetitorsBlock({ data }: { data: PulseData['competitors'] }) {
               <ul className='space-y-1.5'>
                 {activity.map((a, idx) => (
                   <li key={idx} className='flex items-center justify-between gap-2 text-sm'>
-                    <span className='font-medium'>@{a.handle}</span>
+                    <Link href={a.link}>
+                      <span className='font-medium'>@{a.handle}</span>
+                    </Link>
                     <span className='flex items-center gap-2 text-xs text-muted-foreground tabular-nums'>
                       {a.followers != null && <span>{a.followers.toLocaleString()} fans</span>}
                       {a.posts7d != null && <span>{a.posts7d} posts/7d</span>}
@@ -371,7 +397,9 @@ function CompetitorsBlock({ data }: { data: PulseData['competitors'] }) {
               <ul className='space-y-1.5'>
                 {narratives.map((n, idx) => (
                   <li key={idx} className='text-sm leading-snug'>
-                    <span className='font-medium'>@{n.handle}</span>
+                    <Link href={n.link}>
+                      <span className='font-medium'>@{n.handle}</span>
+                    </Link>
                     <span className='text-muted-foreground'> — {n.narrative}</span>
                   </li>
                 ))}
@@ -426,7 +454,10 @@ function MindshareRankRow({ item }: { item: MindshareRank }) {
       <span className='w-6 text-xs text-muted-foreground/60 tabular-nums text-right'>
         {item.rank}
       </span>
-      <span className='flex-1 font-medium'>{item.project}</span>
+      <Link href={item.link}>
+        <span className='flex-1 font-medium'>{item.project}</span>
+      </Link>
+      <span className='flex-1' />
       <TrendIcon trend={item.trend} />
     </li>
   );
@@ -474,6 +505,9 @@ function MemesBlock({ data }: { data: PulseData['memes'] }) {
                 <p className='text-sm text-muted-foreground'>{borrowable}</p>
               </div>
             )}
+            <div className='pt-2'>
+              <XSource href={data.sourceLink} />
+            </div>
           </div>
           <div className={CARD + ' p-4 space-y-2 lg:col-span-2'}>
             <p className={EYEBROW}>热门 meme 帖</p>
