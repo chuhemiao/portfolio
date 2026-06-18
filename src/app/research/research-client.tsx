@@ -1581,6 +1581,15 @@ const PROJECTS: ResearchProject[] = [
     initial: 'SR',
     logoUrl: "/research-logos/surf-research-memo-crypto-native-copilot-or-prompt-wrapper.png",
   },
+  {
+    name: 'Re Protocol',
+    description: 'Onchain access to regulated reinsurance yield via reUSD and reUSDe',
+    type: 'RWA',
+    slug: 're-protocol-reusd-insurance-yield',
+    color: '#8FA3BF',
+    initial: 'RE',
+    logoUrl: "/research-logos/re-protocol-reusd-insurance-yield.svg",
+  },
 ];
 
 const ALL_TYPES = [

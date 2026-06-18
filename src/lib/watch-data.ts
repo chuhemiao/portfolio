@@ -1,3 +1,6 @@
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
+
 export type SignalRating = 'S' | 'A' | 'B' | 'C' | 'D' | 'R';
 export type ListingType = 'spot' | 'perp' | 'both' | 'none';
 export type ListingSequence =
@@ -64,18 +67,80 @@ export interface WatchData {
   lookbackDays: number;
 }
 
+const FETCH_TIMEOUT_MS = 12000;
+const SURF_BIN_DIR = `${process.env.HOME ?? ''}/.local/bin`;
+const SURF_CANDIDATES = [
+  process.env.SURF_BIN,
+  `${SURF_BIN_DIR}/surf`,
+  'surf',
+].filter(Boolean) as string[];
+
+const execFileAsync = promisify(execFile);
+let surfCommandPromise: Promise<string | null> | null = null;
+
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
 async function fetchJson<T>(url: string, opts?: RequestInit & { revalidate?: number }): Promise<T | null> {
   const { revalidate = 900, ...init } = opts ?? {};
+  const next = init.cache === 'no-store' ? undefined : { revalidate };
   try {
     const res = await fetch(url, {
       ...init,
-      next: { revalidate },
+      ...(next ? { next } : {}),
+      signal: init.signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: { Accept: 'application/json', ...init.headers },
     });
     if (!res.ok) return null;
     return res.json() as Promise<T>;
+  } catch {
+    return null;
+  }
+}
+
+async function resolveSurfCommand(): Promise<string | null> {
+  if (surfCommandPromise) return surfCommandPromise;
+
+  surfCommandPromise = (async () => {
+    for (const candidate of SURF_CANDIDATES) {
+      try {
+        await execFileAsync(candidate, ['version'], {
+          env: {
+            ...process.env,
+            PATH: `${SURF_BIN_DIR}:${process.env.PATH ?? ''}`,
+          },
+          timeout: FETCH_TIMEOUT_MS,
+        });
+        return candidate;
+      } catch {
+        continue;
+      }
+    }
+
+    return null;
+  })();
+
+  return surfCommandPromise;
+}
+
+async function runSurfJson<T>(command: string, args: string[] = []): Promise<T | null> {
+  const surf = await resolveSurfCommand();
+  if (!surf) return null;
+
+  try {
+    const { stdout } = await execFileAsync(
+      surf,
+      [command, ...args, '-o', 'json', '-f', 'body.data'],
+      {
+        env: {
+          ...process.env,
+          PATH: `${SURF_BIN_DIR}:${process.env.PATH ?? ''}`,
+        },
+        timeout: FETCH_TIMEOUT_MS,
+        maxBuffer: 1024 * 1024 * 16,
+      }
+    );
+
+    return JSON.parse(stdout) as T;
   } catch {
     return null;
   }
@@ -88,6 +153,35 @@ interface RawInstrument {
   pair: string;       // full pair, e.g. CHIP-USDT
   type: 'spot' | 'perp';
   listedAt: number;   // ms timestamp
+}
+
+type ExchangeKey = 'binance' | 'okx' | 'bybit' | 'bitget' | 'coinbase' | 'upbit' | 'hyperliquid';
+
+interface SurfInstrument extends RawInstrument {
+  exchange: ExchangeKey;
+}
+
+interface SurfListingEvent {
+  base_symbol?: string;
+  effective_at?: number;
+  exchange_name?: string;
+  product?: string;
+  trading_pair?: string;
+}
+
+interface SurfMarketCoin {
+  symbol?: string;
+  price_usd?: number | null;
+  market_cap_usd?: number | null;
+  fdv?: number | null;
+  volume_24h_usd?: number | null;
+  change_24h_pct?: number | null;
+}
+
+interface SurfExchangeMarket {
+  active?: boolean;
+  base?: string;
+  pair?: string;
 }
 
 async function fetchOkxSpot(since: number): Promise<RawInstrument[]> {
@@ -230,6 +324,139 @@ async function getHyperliquidSet(): Promise<Set<string>> {
   return s;
 }
 
+// ─── Surf fallbacks ───────────────────────────────────────────────────────────
+
+function ymd(value: number | string | Date): string {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
+function normalizeSurfExchange(value: string | undefined): ExchangeKey | 'binance_alpha' | null {
+  const exchange = String(value ?? '').toUpperCase();
+  if (exchange === 'BINANCE') return 'binance';
+  if (exchange === 'BINANCE ALPHA') return 'binance_alpha';
+  if (exchange === 'OKX') return 'okx';
+  if (exchange === 'BYBIT') return 'bybit';
+  if (exchange === 'BITGET') return 'bitget';
+  if (exchange === 'COINBASE') return 'coinbase';
+  if (exchange === 'UPBIT') return 'upbit';
+  if (exchange === 'HYPERLIQUID') return 'hyperliquid';
+  return null;
+}
+
+function normalizeSurfListings(events: SurfListingEvent[]): { instruments: SurfInstrument[]; alpha: Set<string> } {
+  const instruments: SurfInstrument[] = [];
+  const alpha = new Set<string>();
+
+  for (const event of events) {
+    const symbol = String(event.base_symbol ?? '').toUpperCase();
+    const exchange = normalizeSurfExchange(event.exchange_name);
+    const pair = String(event.trading_pair ?? '').replace('/', '-');
+    const product = String(event.product ?? '').toUpperCase();
+    const listedAt = event.effective_at ? event.effective_at * 1000 : Date.now();
+
+    if (!symbol || !exchange || !pair) continue;
+
+    if (exchange === 'binance_alpha') {
+      alpha.add(symbol);
+      continue;
+    }
+
+    if (product.includes('PERP')) {
+      instruments.push({ symbol, pair, type: 'perp', listedAt, exchange });
+    } else if (product.includes('SPOT')) {
+      instruments.push({ symbol, pair, type: 'spot', listedAt, exchange });
+    }
+  }
+
+  return { instruments, alpha };
+}
+
+async function fetchSurfListingEvents(since: number, generatedAt: string): Promise<SurfListingEvent[]> {
+  const from = ymd(since);
+  const to = ymd(generatedAt);
+  const result: SurfListingEvent[] = [];
+
+  for (let offset = 0; offset < 500; offset += 100) {
+    const page = await runSurfJson<SurfListingEvent[]>('listing', [
+      '--from',
+      from,
+      '--to',
+      to,
+      '--limit',
+      '100',
+      '--offset',
+      String(offset),
+    ]);
+
+    if (!page?.length) break;
+    result.push(...page);
+    if (page.length < 100) break;
+  }
+
+  return result;
+}
+
+async function fetchSurfMarketMap(): Promise<Map<string, { price: number | null; change: number | null; volume: number | null; marketCap: number | null; fdv: number | null }>> {
+  const pages = await Promise.all([0, 100, 200, 300, 400].map((offset) =>
+    runSurfJson<SurfMarketCoin[]>('market-ranking', [
+      '--sort-by',
+      'market_cap',
+      '--limit',
+      '100',
+      '--offset',
+      String(offset),
+    ])
+  ));
+  const result = new Map<string, { price: number | null; change: number | null; volume: number | null; marketCap: number | null; fdv: number | null }>();
+
+  for (const coin of pages.flatMap((page) => page ?? [])) {
+    const symbol = String(coin.symbol ?? '').toUpperCase();
+    if (!symbol || result.has(symbol)) continue;
+    result.set(symbol, {
+      price: coin.price_usd ?? null,
+      change: coin.change_24h_pct ?? null,
+      volume: coin.volume_24h_usd ?? null,
+      marketCap: coin.market_cap_usd ?? null,
+      fdv: coin.fdv ?? null,
+    });
+  }
+
+  return result;
+}
+
+async function fetchSurfFearGreed(): Promise<{ value: number; label: string } | null> {
+  type Item = { value: number; classification: string };
+  const now = Date.now();
+  const rows = await runSurfJson<Item[]>('market-fear-greed', [
+    '--from',
+    ymd(now - 2 * 24 * 3600 * 1000),
+    '--to',
+    ymd(now),
+  ]);
+  const latest = rows?.[0];
+  return latest ? { value: latest.value, label: latest.classification } : null;
+}
+
+async function getSurfExchangeSet(exchange: string, type: 'spot' | 'perp'): Promise<Set<string>> {
+  const rows = await runSurfJson<SurfExchangeMarket[]>('exchange-markets', [
+    '--exchange',
+    exchange,
+    '--type',
+    type,
+    '--limit',
+    '5000',
+  ]);
+  const s = new Set<string>();
+
+  for (const market of rows ?? []) {
+    if (market.active === false) continue;
+    const base = String(market.base ?? '').toUpperCase();
+    if (base) s.add(base);
+  }
+
+  return s;
+}
+
 // ─── CoinGecko market cap / FDV fetcher ───────────────────────────────────────
 
 async function fetchCoinGeckoMarkets(): Promise<Map<string, { marketCap: number; fdv: number | null }>> {
@@ -312,30 +539,51 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
   const generatedAt = new Date().toISOString();
   const since = Date.now() - lookbackDays * 24 * 3600 * 1000;
 
-  // Fetch everything in parallel
   const [
-    okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures,
-    bnbSpotSet, upbitSet, hlSet, bnbAlphaSet,
-    fngRaw, globalRaw, cgMarkets,
+    [
+      okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures,
+      bnbSpotSet, upbitSet, hlSet, bnbAlphaSet,
+      fngRaw, globalRaw, cgMarkets,
+    ],
+    [
+      surfEvents, surfMarketMap, surfFearGreed,
+      surfBinanceSpotSet, surfUpbitSet, surfHlSet,
+    ],
   ] = await Promise.all([
-    fetchOkxSpot(since),
-    fetchOkxSwap(since),
-    fetchBybitLinear(since),
-    fetchBitgetSpot(since),
-    fetchCoinbaseSpot(since),
-    fetchBinanceFutures(since),
-    getBinanceSpotSet(),
-    getUpbitSet(),
-    getHyperliquidSet(),
-    getBinanceAlphaSet(),
-    fetchJson<{ data: Array<{ value: string; value_classification: string }> }>('https://api.alternative.me/fng/?limit=1'),
-    fetchJson<{ data: { total_market_cap: Record<string, number>; market_cap_percentage: Record<string, number>; market_cap_change_percentage_24h_usd: number; active_cryptocurrencies: number; markets: number } }>('https://api.coingecko.com/api/v3/global'),
-    fetchCoinGeckoMarkets(),
+    Promise.all([
+      fetchOkxSpot(since),
+      fetchOkxSwap(since),
+      fetchBybitLinear(since),
+      fetchBitgetSpot(since),
+      fetchCoinbaseSpot(since),
+      fetchBinanceFutures(since),
+      getBinanceSpotSet(),
+      getUpbitSet(),
+      getHyperliquidSet(),
+      getBinanceAlphaSet(),
+      fetchJson<{ data: Array<{ value: string; value_classification: string }> }>('https://api.alternative.me/fng/?limit=1'),
+      fetchJson<{ data: { total_market_cap: Record<string, number>; market_cap_percentage: Record<string, number>; market_cap_change_percentage_24h_usd: number; active_cryptocurrencies: number; markets: number } }>('https://api.coingecko.com/api/v3/global'),
+      fetchCoinGeckoMarkets(),
+    ]),
+    Promise.all([
+      fetchSurfListingEvents(since, generatedAt),
+      fetchSurfMarketMap(),
+      fetchSurfFearGreed(),
+      getSurfExchangeSet('binance', 'spot'),
+      getSurfExchangeSet('upbit', 'spot'),
+      getSurfExchangeSet('hyperliquid', 'perp'),
+    ]),
   ]);
+
+  const surfListings = normalizeSurfListings(surfEvents);
+  for (const sym of surfBinanceSpotSet) bnbSpotSet.add(sym);
+  for (const sym of surfUpbitSet) upbitSet.add(sym);
+  for (const sym of surfHlSet) hlSet.add(sym);
+  for (const sym of surfListings.alpha) bnbAlphaSet.add(sym);
 
   const fearGreed = fngRaw?.data?.[0]
     ? { value: parseInt(fngRaw.data[0].value, 10), label: fngRaw.data[0].value_classification }
-    : null;
+    : surfFearGreed;
 
   const global: GlobalMarket = {
     totalMarketCapUsd: globalRaw?.data?.total_market_cap?.usd ?? null,
@@ -347,7 +595,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
   };
 
   // Collect all unique symbols from timed sources
-  const allRecent = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures];
+  const allRecent = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures, ...surfListings.instruments];
   const symbolSet = new Set(allRecent.map(x => x.symbol));
 
   // Include Binance Alpha-only tokens so they appear in the Alpha tab even if
@@ -427,6 +675,21 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
     c.binance.perpPairs.push(inst.pair);
     if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
   }
+  for (const inst of surfListings.instruments) {
+    if (!symbolSet.has(inst.symbol)) continue;
+    const c = getOrCreate(inst.symbol);
+    const listing = c[inst.exchange];
+    if (inst.type === 'spot') {
+      listing.spot = true;
+      listing.spotListedAt = listing.spotListedAt ? Math.min(listing.spotListedAt, inst.listedAt) : inst.listedAt;
+      if (!listing.spotPairs.includes(inst.pair)) listing.spotPairs.push(inst.pair);
+    } else {
+      listing.perp = true;
+      listing.perpListedAt = listing.perpListedAt ? Math.min(listing.perpListedAt, inst.listedAt) : inst.listedAt;
+      if (!listing.perpPairs.includes(inst.pair)) listing.perpPairs.push(inst.pair);
+    }
+    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
+  }
 
   // Apply presence-only data
   for (const [sym, c] of coinMap) {
@@ -450,6 +713,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
 
     const px = prices.get(symbol);
     const cg = cgMarkets.get(symbol);
+    const surfMarket = surfMarketMap.get(symbol);
     const anySpot = spotExchanges.length > 0;
     const anyPerp = perpExchanges.length > 0;
 
@@ -465,7 +729,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
     if (c.upbit.spot && spotExchanges.length <= 2) notes.push(`Upbit KRW — Korean premium risk`);
 
     const binanceAlpha = bnbAlphaSet.has(symbol);
-    const mcap = cg?.marketCap ?? null;
+    const mcap = cg?.marketCap ?? surfMarket?.marketCap ?? null;
     // Buy signal: (Alpha OR Binance Spot+Perp) AND mcap < $30M
     const buySignal = (binanceAlpha || (c.binance.spot && c.binance.perp)) && mcap !== null && mcap < 30_000_000;
 
@@ -473,7 +737,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
       notes.unshift('Binance Alpha listed');
     }
 
-    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? null, priceChange24h: px?.change ?? null, volume24h: px?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges, binanceAlpha, buySignal };
+    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? surfMarket?.price ?? null, priceChange24h: px?.change ?? surfMarket?.change ?? null, volume24h: px?.volume ?? surfMarket?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? surfMarket?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges, binanceAlpha, buySignal };
     const signalRating = computeSignal(partial);
     const listingSequence = computeSequence(c.binance.spot, anySpot, anyPerp);
 

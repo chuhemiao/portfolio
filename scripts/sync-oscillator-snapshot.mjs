@@ -564,6 +564,71 @@ function applySurfTokenInfoOverlay(sourceRows, surfTokenInfoMap) {
   });
 }
 
+function parseSnapshotFile(text) {
+  const start = text.indexOf('=');
+  const end = text.lastIndexOf(';');
+  if (start === -1 || end === -1 || end <= start) return null;
+
+  return JSON.parse(text.slice(start + 1, end).trim());
+}
+
+function hasRankMetadata(snapshot) {
+  return (snapshot?.data?.summary?.dualRankedCount ?? 0) > 0;
+}
+
+async function readRankFallbackSnapshot() {
+  try {
+    const current = parseSnapshotFile(await fs.readFile(SNAPSHOT_PATH, 'utf8'));
+    if (hasRankMetadata(current)) return current;
+  } catch {}
+
+  try {
+    const { stdout } = await execFileAsync(
+      'git',
+      ['show', 'HEAD:src/data/oscillator-manual-snapshot.ts'],
+      {
+        cwd: path.resolve(__dirname, '..'),
+        timeout: FETCH_TIMEOUT_MS,
+        maxBuffer: 1024 * 1024 * 16,
+      }
+    );
+    const fromGit = parseSnapshotFile(stdout);
+    return hasRankMetadata(fromGit) ? fromGit : null;
+  } catch {
+    return null;
+  }
+}
+
+async function applyRankMetadataFallback(sourceRows) {
+  const snapshot = await readRankFallbackSnapshot();
+  const previousUniverse = snapshot?.data?.universe;
+  if (!Array.isArray(previousUniverse) || previousUniverse.length === 0) {
+    return sourceRows;
+  }
+
+  const previousBySymbol = new Map(
+    previousUniverse.map((row) => [String(row.symbol ?? '').toUpperCase(), row])
+  );
+
+  return sourceRows.map((row) => {
+    const previous = previousBySymbol.get(row.symbol);
+    if (!previous) return row;
+
+    const coingeckoRank = row.coingeckoRank ?? previous.coingeckoRank ?? null;
+    const coinmarketcapRank = row.coinmarketcapRank ?? previous.coinmarketcapRank ?? null;
+    const id =
+      row.id === row.symbol.toLowerCase() && previous.id ? previous.id : row.id;
+
+    return {
+      ...row,
+      id,
+      coingeckoRank,
+      coinmarketcapRank,
+      dualTop300: row.dualTop300 || Boolean(previous.dualTop300),
+    };
+  });
+}
+
 function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak) {
   if (!isVeteran) {
     if (aboveFiveYearLow === null) {
@@ -859,7 +924,9 @@ async function buildSnapshotData() {
     surfRanking
   );
   const surfTokenInfoMap = await fetchSurfTokenInfoMap(rankedRows);
-  const sourceRows = applySurfTokenInfoOverlay(rankedRows, surfTokenInfoMap);
+  const sourceRows = await applyRankMetadataFallback(
+    applySurfTokenInfoOverlay(rankedRows, surfTokenInfoMap)
+  );
 
   const binanceTickers = await fetchBinanceBtcTickers(
     sourceRows.map((coin) => coin.symbol)

@@ -1,0 +1,274 @@
+---
+title: 'Re Protocol: Onchain Reinsurance Yield and the reUSD Capital Stack'
+publishedAt: '2026-06-18'
+summary: 'Re Protocol is one of the most differentiated RWA yield experiments in crypto: it routes stablecoin capital into regulated collateralized reinsurance exposure and issues reUSD and reUSDe as senior and junior yield-bearing assets. Current public metrics show meaningful scale, including $466.6M app TVL, $187.4M deposits, a $409M underwriting portfolio, and roughly $167.5M reUSD market value, but the investment case depends less on headline APY than on underwriting quality, liquidity buffers, daily attestations, KYC constraints, and whether insurance risk can stay genuinely uncorrelated under stress.'
+slug: 're-protocol-reusd-insurance-yield'
+category: 'research'
+---
+
+## TL;DR
+
+## Executive Summary
+
+Re Protocol is not a normal stablecoin, lending vault, or basis-trade wrapper. It is an RWA insurance-yield protocol that channels onchain stablecoin capital into real-world collateralized reinsurance programs, then tokenizes the capital stack through **reUSD** and **reUSDe**. reUSD is the senior, lower-spread Basis-Plus token; reUSDe is the junior Insurance Alpha token that earns a higher spread but absorbs losses before reUSD after the reinsurer's equity is exhausted. [Re Docs](https://docs.re.xyz/getting-started-with-re/introduction-to-the-re-protocol.md) [ICL Overview](https://docs.re.xyz/insurance-capital-layers/insurance-capital-layer-icl-overview.md)
+
+The core thesis is compelling: reinsurance is a large, historically institutional, low-correlation market, and Re has found a crypto-native packaging format for premium-backed yield. As of the June 18, 2026 app snapshot, Re reports **$466.6M TVL**, **$187.4M total deposits**, and a **$409M underwriting portfolio**. The Re site also shows the insurance portfolio spread across commercial auto, small business commercial, workers compensation, homeowners, and personal auto programs. [Re App](https://app.re.xyz/) [Re](https://re.xyz/home) DefiLlama separately tracks Re as an RWA protocol with about **$257-258M protocol TVL** across Ethereum, Base, Arbitrum, and Avalanche, while the reUSD token price feed shows about **$1.0834** per reUSD; using the reported circulating supply around 154.6M implies roughly **$167.5M** in reUSD market value. [DefiLlama](https://defillama.com/protocol/re) [DefiLlama Price](https://coins.llama.fi/prices/current/ethereum:0x5086bf358635b81d8c47c66d1c8b9e567db70c72)
+
+Verdict: **High-quality watchlist / selective exposure, not risk-free stablecoin collateral.** Re has stronger institutional shape than most RWA yield wrappers because it combines Cover Re, surplus notes, §114 trust structures, daily Chainlink/The Network Firm attestations, Fireblocks custody, Certora/Hacken audits, and a capital waterfall. But it also introduces the exact risks DeFi users are least good at pricing: underwriting loss development, legal enforceability, actuarial release timing, offchain custody, KYC eligibility, and liquidity mismatch between daily onchain tokens and quarterly/contractual reinsurance capital.
+
+## Research Question and Investment Relevance
+
+The useful question is not "does reUSD have yield?" It does. The better question is: **can Re turn insurance premium cash flow into a transparent, liquid, and adequately protected onchain asset without hiding catastrophe, liquidity, or legal risk behind a stablecoin-like ticker?**
+
+This matters because stablecoin yield has split into three broad models:
+
+| Model | Example | Yield Source | Main Risk |
+| --- | --- | --- | --- |
+| T-bill / money market | USYC, BUIDL-like wrappers | Treasury yield | Custody, access, rate compression |
+| Crypto basis / funding | USDe, sUSDe-like assets | Perp funding and staking | Exchange, funding regime, depeg stress |
+| Private credit / insurance RWA | Re, OnRe, credit vaults | Premiums, credit spreads, underwriting | Loss development, legal structure, liquidity |
+
+Re belongs in the third bucket. Its differentiation is that insurance risk is theoretically less correlated to crypto beta than perp funding or DeFi leverage. That makes Re attractive as a portfolio diversifier. The cost is higher due-diligence complexity: users must understand the real-world insurance waterfall, not just APY.
+
+## Project Overview
+
+Re positions itself as an internet capital market for insurance risk: onchain users deposit accepted stable assets into Insurance Capital Layers (ICLs), receive yield-accruing ERC-20 tokens, and indirectly provide capital to regulated reinsurance agreements. The protocol currently works with **Cover Re**, described in the docs as a Cayman-based licensed reinsurer and the initial Cell Manager / reinsurance partner. [Re Docs](https://docs.re.xyz/protocol/cells-cell-managers-and-risk-pools.md)
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Re Protocol / Re.xyz |
+| Core Assets | reUSD, reUSDe, upcoming RE governance token |
+| Sector | RWA, Insurance Yield, Tokenized Reinsurance |
+| Core User | Non-U.S. KYCed stablecoin capital providers seeking insurance premium-backed yield |
+| Chains | Ethereum, Base, Arbitrum, Avalanche; reUSD also listed in docs on BNB Chain, Ink, Katana |
+| Primary Partner | Cover Re SPC / CoverRe.com |
+| Current Stage | Live protocol with app, DeFi integrations, audits, points program, and upcoming governance token |
+
+The product is structurally closer to a tokenized insurance capital note than a stablecoin. reUSD trades like a yield-bearing NAV token whose price rises as yield accrues. That is why a price above $1 is not a depeg in the normal stablecoin sense. It is more like "principal plus accrued yield," subject to liquidity and loss conditions.
+
+## Architecture and Capital Flow
+
+Re's operating architecture has five important layers:
+
+1. Users deposit admitted stable assets such as USDC, USDe, or sUSDe into an ICL smart contract.
+2. The ICL mints reUSD or reUSDe, binding one yield token to one capital layer.
+3. Idle funds are swept daily into Fireblocks custody vaults, reducing idle smart-contract exposure.
+4. When a licensed reinsurer draws capital, the ICL lends under a legally binding Surplus Note, and funds may move into §114 trust structures or operating accounts.
+5. Offchain balances, trust balances, and custody balances are attested daily by The Network Firm and published through Chainlink. [ICL Overview](https://docs.re.xyz/insurance-capital-layers/insurance-capital-layer-icl-overview.md) [How Re Works](https://docs.re.xyz/protocol/how-the-re-protocol-works.md)
+
+The key design decision is that Re does not simply promise a yield rate from a black-box RWA fund. It attempts to mirror reinsurance capital movement onchain through surplus-note events, daily attestations, Chainlink feeds, and transparent contract addresses. This is directionally stronger than most RWA wrappers, but it does not make the system trustless. Users still rely on a legal entity, a licensed reinsurer, custody providers, auditors, oracle operators, and actuarial release decisions.
+
+| Component | Role | Risk |
+| --- | --- | --- |
+| ICL smart contracts | Token mint/redeem and capital-layer accounting | Smart contract, upgrade, access control |
+| Fireblocks custody | Holds idle assets after daily sweeps | Custody, policy, operational risk |
+| Surplus Notes | Legal bridge from protocol capital to reinsurer capital | Enforceability, ranking, counterparty risk |
+| §114 Trust | Regulatory collateral structure for reinsurance obligations | Bank/custodian, legal, release timing |
+| The Network Firm + Chainlink | Daily reserve and offchain balance attestations | Attestation completeness, oracle/config risk |
+| Cover Re / Cell Manager | Origination, underwriting, and risk-pool management | Underwriting, claims, governance concentration |
+
+## reUSD and reUSDe Token Design
+
+The capital stack is the whole product. Re's documents define three loss-absorbing layers:
+
+| Layer | Position | Loss Role | Return Role |
+| --- | --- | --- | --- |
+| Reinsurance company equity | Most junior | First-loss capital | Keeps partner aligned |
+| reUSDe | Junior protocol tranche | Absorbs losses after reinsurer equity | Earns blended base yield + 850 bps spread |
+| reUSD | Senior protocol tranche | Impacted last | Earns blended base yield + 250 bps spread |
+
+reUSD is the lower-risk Basis-Plus token. It earns a blended rate based on off-protocol capital earning SOFR and onchain capital capturing a 7-day trailing sUSDe basis-trade rate, plus a 250 bps spread. It also targets instant redemptions while capacity exists, with a documented smooth-buffer framework. [What is reUSD](https://docs.re.xyz/insurance-capital-layers/what-is-reusd.md)
+
+reUSDe is the junior Insurance Alpha token. It earns a higher spread, but its redemption path is quarterly and it sits below reUSD in the capital stack. That spread is not "free yield"; it is compensation for absorbing losses earlier and tolerating worse liquidity. [What is reUSDe](https://docs.re.xyz/insurance-capital-layers/what-is-reusde.md)
+
+The naming risk is material. reUSD sounds like a stablecoin, but the economics are not equivalent to USDC or USDT. A more accurate description is **senior tokenized reinsurance capital with yield-accruing NAV and conditional liquidity**.
+
+## Market Data and Current Scale
+
+Re's public metrics now show real traction, but the data sources use different definitions and should not be merged blindly.
+
+| Metric | Value | As Of / Source | Interpretation |
+| --- | ---: | --- | --- |
+| App TVL | $466.6M | June 18, 2026 UTC, [Re App](https://app.re.xyz/) | Broad app/protocol headline TVL |
+| Total Deposits | $187.4M | June 18, 2026 UTC, [Re App](https://app.re.xyz/) | User deposit metric displayed by app |
+| Underwriting Portfolio | $409M | June 2026, [Re](https://re.xyz/home) | Insurance portfolio exposure / written premium view |
+| DeFiLlama TVL | ~$257-258M | June 18, 2026, [DefiLlama](https://defillama.com/protocol/re) | Onchain tracked protocol TVL |
+| reUSD Price | ~$1.0834 | June 18, 2026, [DefiLlama Price](https://coins.llama.fi/prices/current/ethereum:0x5086bf358635b81d8c47c66d1c8b9e567db70c72) | Yield-accrued token price, not plain $1 peg |
+| reUSD Market Value | ~$167.5M | Price x ~154.6M supply | Approximation from current token price and supply snapshot |
+| App DeFi Opportunities | >$190M across Pendle, Fluid, Morpho, Curve, etc. | June 18, 2026, [Re App](https://app.re.xyz/) | Re assets are actively composable beyond direct minting |
+
+The official site breaks the $409M portfolio into program-business categories:
+
+| Line of Business | Allocation | Premium / Portfolio Value | Risk Framing |
+| --- | ---: | ---: | --- |
+| Small Business Commercial | 39% | ~$157.3M | Low volatility |
+| Commercial Auto | 35% | ~$143.5M | Low volatility |
+| Workers Compensation | 15% | ~$61.7M | Low volatility |
+| Homeowners Insurance | 10% | ~$41.4M | More climate/event sensitivity than short-tail commercial risk |
+| Personal Auto | 1% | ~$5.0M | Small exposure |
+
+This portfolio composition is positive versus a catastrophe-heavy insurance book. Short-duration, non-cat, program business should be easier to model than hurricane/wildfire exposure. Still, "low volatility" is not the same as "no loss." Insurance books fail when correlation, claims inflation, legal trends, or reserving assumptions break.
+
+## Yield Source and Sustainability
+
+Re's yield comes from two blended sources:
+
+1. **Off-protocol deployed capital** earning a SOFR-like risk-free rate through regulated collateral and reinsurance capital deployment.
+2. **Onchain idle capital** earning the 7-day trailing sUSDe basis-trade rate.
+
+The protocol then adds tranche-specific spreads: **+250 bps for reUSD** and **+850 bps for reUSDe**. [How Re Works](https://docs.re.xyz/protocol/how-the-re-protocol-works.md)
+
+This creates a more complex but potentially more durable yield stack than pure DeFi incentives:
+
+| Yield Component | Quality | Sustainability Risk |
+| --- | --- | --- |
+| SOFR / T-bill-like return | High | Rate compression if policy rates fall |
+| sUSDe / basis return | Medium | Crypto funding can compress or invert |
+| Insurance premium spread | Potentially high | Depends on underwriting quality and loss experience |
+| Points / DeFi multipliers | Reflexive | Incentive farming can inflate TVL and disappear |
+
+The best version of Re is a stable premium-backed yield asset with modest DeFi composability layered on top. The risky version is users treating points-boosted DeFi positions as safe collateral while underpricing reinsurance losses and redemption windows.
+
+## Liquidity and Redemption Risk
+
+Liquidity is the main non-obvious risk. Re documents say reUSD can redeem instantly while the instant buffer is available. The reUSD page describes an actuarially determined smooth buffer with at least 50% of reUSD deposits targeted for instant liquidity. If the buffer is exhausted, reUSD enters scheduled queue/window behavior. reUSDe is always quarterly. [reUSD Docs](https://docs.re.xyz/insurance-capital-layers/what-is-reusd.md) [Redemption Docs](https://docs.re.xyz/protocol/redemption-process-and-liquidity.md)
+
+| Token | Normal Exit | Stress Exit | Main Liquidity Source |
+| --- | --- | --- | --- |
+| reUSD | Instant redemption while buffer remains | Queue / quarterly window after buffer depletion | Idle onchain cash, cash sweep, matured trust assets |
+| reUSDe | Quarterly window | Pro-rata quarterly fill, rollover if underfunded | Idle balance, actuarially released surplus |
+| DEX LP positions | Swap / LP withdrawal | Market depth dependent | Curve, Pendle, Morpho, Fluid, partner markets |
+
+The correct mental model is not "bank account liquidity." It is "structured product liquidity with an onchain buffer." If confidence drops, DeFi secondary liquidity may clear at a discount before the protocol's slower legal and actuarial redemption machinery catches up.
+
+## Risk Management, Audits, and Controls
+
+Re has a stronger control stack than the average RWA project:
+
+- Certora latest audit dated September 26, 2025; previous Hacken audits. [Security Docs](https://docs.re.xyz/security-and-audits.md) [Certora](https://www.certora.com/reports/re-core)
+- UUPS upgradeable contracts with Governance MPC 3-of-5 and documented 48-hour timelock.
+- Role-separated MPC controllers for oracle config, redemption config, access management, and custodian management.
+- KYC/AML through SumSub and Chainalysis.
+- Daily offchain balance verification by The Network Firm and publication via Chainlink.
+- Fireblocks custody and daily sweeps.
+- Emergency pause and recovery wallet mechanisms. [Smart Contract Addresses](https://docs.re.xyz/protocol/smart-contract-addresses.md)
+
+This is a credible institutional architecture. It is also highly permissioned. That tradeoff is appropriate for regulated reinsurance, but users should not mistake it for fully decentralized DeFi. Re is more like a regulated RWA protocol with DeFi rails.
+
+| Control | Strength | Residual Risk |
+| --- | --- | --- |
+| Certora / Hacken audits | Positive | Does not cover all legal/offchain failures |
+| Chainlink + The Network Firm attestations | Stronger transparency than most RWA wrappers | Attestations are not liquidation rights |
+| Fireblocks custody | Institutional-grade operations | Custody and policy risk remains |
+| MPC role separation | Better than single admin | Governance key risk still exists |
+| KYC/AML | Required for legal access | U.S. and restricted users excluded; transfer/redemption friction |
+| Emergency pause | Useful for hacks | Can freeze user operations under stress |
+
+## Governance and Token Roadmap
+
+Re currently has centralized expert-led governance, with docs describing a future transition to DAO governance. [Governance Docs](https://docs.re.xyz/protocol/governance-model.md) On May 26, 2026, the Resilience Foundation announced an upcoming **RE governance token** as an ERC-20 governance instrument for the insurance capital market, with a multi-billion-dollar commercial pipeline referenced in the announcement. [RE Governance Token](https://re.xyz/insights/re-governance-token)
+
+The governance token is a catalyst, but it also introduces reflexivity:
+
+- Positive: governance token can align Cell Managers, capital providers, and ecosystem partners.
+- Negative: points, multipliers, and TGE expectations can pull in yield farmers who do not understand insurance risk.
+- Key unknown: token value accrual is not yet proven; governance does not automatically mean cash-flow capture.
+
+The current points program rewards wallets that hold eligible Re assets with strategy-specific multipliers. The app snapshot shows large point-weighted opportunities across Pendle YT/LPs, Fluid collateral, Morpho, Curve, and Beefy. [Re Points](https://docs.re.xyz/protocol/re-points.md) That supports distribution, but also makes it harder to separate organic insurance-yield demand from token-farming demand.
+
+## Distribution and DeFi Composability
+
+Re is not isolated. reUSD and reUSDe already appear in:
+
+- Pendle YT / LP markets.
+- Fluid reUSD collateral and LP strategies.
+- Morpho collateral markets.
+- Curve liquidity pools.
+- Beefy and other LP wrappers.
+- Base, Avalanche, Arbitrum, Ethereum, plus additional listed deployments for BNB Chain, Ink, and Katana. [Integration Docs](https://docs.re.xyz/integration-with-the-defi-ecosystem.md) [Contracts](https://docs.re.xyz/protocol/smart-contract-addresses.md)
+
+Coinbase Ventures also made a strategic investment announced June 17, 2026, with Re noting that reUSD is already live on Coinbase's Base network. [Coinbase Ventures](https://re.xyz/insights/coinbase-invests)
+
+Distribution matters because RWA yield assets win when they become usable collateral. But composability cuts both ways. Once reUSD is looped through lending, LP, Pendle, and points strategies, the system starts inheriting DeFi liquidation and reflexivity risk on top of the original insurance risk.
+
+## Competitive Landscape
+
+Re is most directly comparable to other onchain RWA yield and insurance-risk platforms, not to USDT/USDC.
+
+| Project | Sector | TVL / Scale Snapshot | Differentiation | Main Risk |
+| --- | --- | ---: | --- | --- |
+| Re | RWA reinsurance yield | ~$257-258M DefiLlama TVL; $466.6M app TVL | Structured senior/junior reinsurance exposure, Cover Re, daily attestations | Underwriting, liquidity buffer, legal/custody |
+| OnRe | RWA reinsurance yield | ~$190.8M DefiLlama TVL | Solana-focused reinsurance access | Similar insurance risk, younger distribution |
+| Ethena / USDe | Crypto synthetic dollar | Multi-billion scale | Deep liquidity, basis-trade yield, broad DeFi integration | Funding regime, CEX/counterparty risk |
+| Maple / private credit RWAs | RWA credit | Larger credit-market history | Onchain credit origination | Borrower default / credit cycle |
+| T-bill wrappers | Treasury RWA | Large institutional adoption | Simpler collateral and yield | Lower spread, access restrictions |
+
+Re's edge is category novelty plus real insurance premium linkage. Its weakness is that most crypto users can understand T-bills and perp funding faster than reinsurance loss waterfalls. Education and transparency are not side features; they are core product requirements.
+
+## Catalysts
+
+| Catalyst | Timing | Impact |
+| --- | --- | --- |
+| RE governance token TGE | Announced May 2026, "coming soon" | Could expand mindshare and liquidity, but may increase farming reflexivity |
+| Coinbase Ventures strategic investment | Announced June 17, 2026 | Validates Base distribution and institutional interest |
+| Portfolio scaling toward/above $500M app TVL | Current app TVL $466.6M | Signals capital-market scale if underwriting remains clean |
+| Transparency dashboard maturity | Ongoing | Critical for monitoring buffer, reserves, surplus notes, and redemptions |
+| New Cell Managers / risk pools | Future DAO transition | Diversifies Cover Re concentration but adds underwriting complexity |
+| More DeFi collateral integrations | Ongoing | Improves utility, but increases liquidation/looping risk |
+
+## Risk Matrix
+
+| Risk | Rating | Why It Matters | Monitoring |
+| --- | --- | --- | --- |
+| Underwriting / claims risk | High | Insurance losses can hit reUSDe and eventually reUSD if equity and junior layers are exhausted | Loss ratio, reserve adequacy, adverse development |
+| Liquidity mismatch | High | Daily token liquidity sits on top of slower reinsurance/trust asset release | Instant buffer utilization, queue size, Curve/Pendle discounts |
+| Offchain proof / legal enforceability | Medium-High | Attestations prove balances but do not remove legal/custody complexity | The Network Firm reports, trust-account disclosures, surplus-note events |
+| KYC / jurisdiction restriction | Medium-High | U.S. and restricted jurisdictions cannot participate directly; KYC changes can cancel requests | Docs, app eligibility, regulatory updates |
+| Governance / admin key risk | Medium | MPC and timelocks help, but the system is not immutable | Upgrade queue, controller address changes, pause events |
+| DeFi composability risk | Medium | LPs, lending, Pendle YTs, and points can create reflexive leverage | Borrow utilization, pool depth, liquidation events |
+| Yield compression | Medium | SOFR or basis-trade compression can reduce attractiveness | SOFR, sUSDe APY, insurance spread stability |
+| Token farming risk | Medium | Points/TGE expectations may inflate TVL above organic demand | TVL after TGE, retention after multipliers change |
+| Catastrophe / correlation risk | Low-Medium today | Current book claims low-volatility lines, but insurance correlations can change | Exposure mix, geography, disaster/event concentration |
+
+## Valuation and Importance Framework
+
+There is no clean equity valuation from reUSD alone because reUSD is a yield token, not the upcoming RE governance token. The right framework is:
+
+1. **Asset-value lens:** reUSD market value reflects yield-accruing senior capital. At ~$167.5M implied market value and ~$1.0834 NAV-like price, it is already a meaningful RWA asset.
+2. **Protocol-scale lens:** DefiLlama tracks about $257-258M TVL, while the app reports $466.6M headline TVL and $187.4M deposits. Differences likely reflect portfolio/app accounting versus DeFi TVL definitions.
+3. **Strategic-option lens:** If RE governance captures a slice of underwriting, treasury, Cell Manager, or protocol fee economics, the governance token could become a proxy for onchain insurance capital markets. That accrual is not yet proven.
+
+Re's real importance is not current APY. It is whether it can create a repeatable capital market for insurance risk with transparent collateral, risk pools, and secondary liquidity. If successful, Re is closer to a new asset class primitive than a single yield vault.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | 12-24M Outcome | Confirmation Metrics |
+| --- | ---: | --- | --- |
+| Bull | 30% | Re becomes the leading onchain insurance-risk market; app TVL exceeds $1B, multiple Cell Managers launch, RE governance token accrues credible fee/governance value | Clean loss ratios, stable redemption buffer, TVL retention post-TGE, daily attestations remain timely |
+| Base | 50% | Re remains a strong RWA watchlist asset with $300M-$700M app TVL, useful reUSD liquidity, and moderate DeFi integration | TVL stable, no major redemption queues, portfolio grows without reaching for risky lines |
+| Bear | 20% | A claims/liquidity/legal event reveals that reUSD liquidity was overestimated; reUSDe discounts heavily, reUSD exits queue, RE token launches into skepticism | Buffer exhaustion, Curve/Pendle discount >3-5%, delayed attestations, loss development above expectations |
+
+## Monitoring Dashboard
+
+| Category | Metric | Current | Bull Threshold | Bear Threshold | Source |
+| --- | --- | ---: | ---: | ---: | --- |
+| Scale | App TVL | $466.6M | >$750M sustained | <$250M after TGE | [Re App](https://app.re.xyz/) |
+| Deposits | Total Deposits | $187.4M | >$300M | <$125M | [Re App](https://app.re.xyz/) |
+| Portfolio | Underwriting Portfolio | $409M | >$750M with stable loss data | Growth via higher-risk lines | [Re](https://re.xyz/home) |
+| Token | reUSD Price | ~$1.0834 | Smooth NAV growth | Discount or abnormal step change | [DefiLlama Price](https://coins.llama.fi/prices/current/ethereum:0x5086bf358635b81d8c47c66d1c8b9e567db70c72) |
+| DeFi TVL | DefiLlama TVL | ~$257-258M | >$400M | <$150M | [DefiLlama](https://defillama.com/protocol/re) |
+| Liquidity | Instant buffer / redemption capacity | Not fully public in static snapshot | >50% deposits available | Buffer <10%, queues expand | [Transparency](https://app.re.xyz/transparency) |
+| Insurance | Loss ratio / claims development | Not fully public in static snapshot | Stable below priced assumptions | Adverse reserve development | Re transparency / updates |
+| Operations | Daily attestations | Claimed daily | Timely, complete | Missed/delayed attestations | [Security Docs](https://docs.re.xyz/security-and-audits.md) |
+| Governance | RE token launch | Announced, pre-TGE | Clear value accrual | Pure points/farming narrative | [RE Token](https://re.xyz/insights/re-governance-token) |
+| Distribution | Base / DeFi integrations | Coinbase Ventures + Base live | More quality collateral venues | Overlooping / depeg-liquidation events | [Coinbase Ventures](https://re.xyz/insights/coinbase-invests) |
+
+## Final Investment View
+
+**Rating: High-quality RWA watchlist / selective exposure. Confidence: medium.**
+
+Re is one of the more serious attempts to bring real-world insurance risk onchain. The project has credible ingredients: a regulated reinsurance partner, meaningful portfolio scale, daily attestation architecture, institutional custody, reputable audits, Coinbase Ventures signaling, and a differentiated yield source that is not simply "crypto leverage pays crypto users."
+
+The caution is equally clear. reUSD should not be marketed or mentally modeled as a risk-free dollar. It is a senior structured token backed by a legal, actuarial, and operational stack. reUSDe is even more explicitly a risk-bearing junior token. Both are attractive only if users accept that the yield is payment for bearing real insurance, liquidity, and offchain execution risk.
+
+Bottom line: **Re is investable as an RWA/insurance-yield primitive, but the underwriting dashboard matters more than the APY.** The cleanest next diligence step is monitoring transparency data: instant buffer, redemption queues, surplus-note balances, trust attestations, loss ratios, and post-TGE TVL retention. If these stay clean while TVL compounds beyond $500M-$1B, Re can become a core onchain RWA category leader. If liquidity queues or attestations wobble, the market will reprice it quickly.
