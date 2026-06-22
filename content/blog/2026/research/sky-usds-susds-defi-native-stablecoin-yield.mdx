@@ -1,0 +1,194 @@
+---
+title: 'Sky USDS: DeFi-Native Dollar, Savings Rate Engine, and the Post-DAI Stablecoin Stack'
+publishedAt: '2026-06-22'
+summary: 'USDS is the native stablecoin of Sky Protocol, the post-MakerDAO dollar stack that converts DAI-era collateral, Peg Stability Modules, Spark, and Sky Savings Rate demand into a larger DeFi-native stablecoin system. As of June 22, 2026, CoinGecko shows USDS around rank #12 with roughly $10.33B market cap, $10.33B supply, and about $38M daily volume, while DefiLlama tracks Sky Dollar around $8.16B across Ethereum, Base, OP Mainnet, Unichain, Arbitrum, Solana, and Avalanche. Verdict: selective exposure / high-quality watchlist for DeFi-native dollar infrastructure. USDS is systemically important, but the investment question is whether sUSDS yield and Sky Agent capital allocation can grow without over-centralizing collateral, governance, and rate risk.'
+slug: 'sky-usds-susds-defi-native-stablecoin-yield'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** USDS is a selective exposure / high-quality watchlist theme for DeFi-native dollar infrastructure.
+- **Why it matters:** USDS is the post-DAI stablecoin base for Sky, while sUSDS wraps the Sky Savings Rate into one of the largest onchain yield products.
+- **What still needs proof:** Sky needs to keep USDS liquid, credibly collateralized, and governance-resilient while sUSDS and Sky Agents scale yield demand.
+
+## Executive Summary
+
+USDS is the native stablecoin of Sky Protocol, the post-MakerDAO dollar system that builds on the DAI operating history while shifting the center of gravity toward USDS, sUSDS, Sky Agents, Spark, and the Sky Savings Rate. Sky's own explainer says USDS is issued through the protocol, governed by SKY token holders, backed by onchain-verifiable Protocol Collateral, and supported by a Peg Stability Module that holds the peg in both directions at 1:1. It also states that USDS does not generate yield by itself; it is the entry point to sUSDS and the Sky Savings Rate. [Sky USDS explainer](https://sky.money/blog/what-is-usds)
+
+As of the June 22, 2026 market snapshot, CoinGecko shows USDS around **rank #12**, with price near **$0.9998**, market cap / FDV around **$10.33B**, circulating supply around **10.33B USDS**, and about **$38M** in 24-hour volume. CoinMarketCap shows a similar supply and market cap around **$10.32B**, with about **$45.9M** in 24-hour volume. DefiLlama tracks **Sky Dollar** supply around **$8.16B**, down from about **$8.86B** one month ago, with most supply on Ethereum. [CoinGecko](https://www.coingecko.com/en/coins/usds) [CoinMarketCap](https://coinmarketcap.com/currencies/usds/) [DefiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?includePrices=true)
+
+The supply discrepancy matters. CoinGecko and CoinMarketCap present USDS market supply around $10.3B, while DefiLlama's Sky Dollar dashboard currently tracks about $8.16B on listed chains. The difference likely reflects data-source methodology, wrapped/savings variants, and how each provider handles migrated DAI / USDS components. The right conclusion is not to pick one number blindly; it is to monitor both live market cap and chain-specific stablecoin circulation.
+
+Verdict: **Selective exposure / high-quality watchlist.** USDS is one of the most important DeFi-native dollars because it combines old MakerDAO credibility, onchain collateral transparency, PSM liquidity, Spark integrations, and sUSDS yield. The risk is that it is also one of the most governance-dependent dollar systems in crypto: collateral mix, savings rate, agent allocation, buybacks, and risk parameters are all policy choices.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Can USDS become the default DeFi-native savings dollar after DAI, or will yield demand increase governance, collateral, and centralization risk faster than the market appreciates?**
+
+This matters because stablecoins are no longer one market. USDS competes across several categories:
+
+| Category | Examples | Core Use | USDS Readthrough |
+| --- | --- | --- | --- |
+| Fiat-backed payment stablecoins | USDT, USDC, PYUSD, RLUSD | Trading, payments, settlement | USDS has more DeFi-native mechanics but less simple issuer clarity |
+| Crypto / RWA-backed DeFi dollars | DAI, USDS, USDD | Collateralized borrowing, DeFi liquidity | USDS is the main post-DAI scaled example |
+| Yield-bearing stablecoin wrappers | sUSDS, sDAI, sUSDe, USDY / rUSDY | Savings and collateral | sUSDS is the key yield wrapper for USDS |
+| Tokenized Treasuries / money funds | BUIDL, USYC, OUSG, USDY | Cash management | USDS competes indirectly through savings yield |
+
+USDS is not just a token. It is the cash layer of a protocol economy. Sky Agents borrow and deploy USDS through governance-approved strategies; those returns help fund protocol revenue and calibrate the Sky Savings Rate. That makes USDS more reflexive than fiat-backed stablecoins: supply growth, savings rate, collateral strategy, and governance policy are intertwined.
+
+## Project Overview
+
+Sky Protocol is the rebranded and expanded MakerDAO system. The existing DAI base, vault architecture, PSM mechanics, and governance process were not thrown away; they were reorganized around a new token stack: USDS, sUSDS, SKY, Spark, and the broader Sky Agent framework.
+
+| Field | Current Assessment |
+| --- | --- |
+| Asset | USDS / Sky Dollar |
+| Sector | DeFi stablecoin, collateralized dollar, yield-bearing savings stack |
+| Protocol | Sky Protocol, formerly MakerDAO |
+| Governance | SKY token holders |
+| Peg target | $1.00 |
+| Yield wrapper | sUSDS, the ERC-4626 tokenized implementation of the Sky Savings Rate |
+| Main mechanics | Protocol collateral, Peg Stability Modules, Sky Savings Rate, Spark integrations |
+| Current market cap | About $10.3B on CoinGecko / CoinMarketCap |
+| DefiLlama Sky Dollar supply | About $8.16B |
+| sUSDS yield | About 3.6% on DefiLlama / Sky-lending pools |
+
+Sky's USDS explainer says every USDS is backed by Protocol Collateral worth more than USDS in circulation and that collateral is verifiable onchain. It also says USDS can convert 1:1 from common stablecoins like USDT and USDC through the protocol interface. [Sky USDS explainer](https://sky.money/blog/what-is-usds)
+
+The architecture differs from a simple fiat issuer. A fiat stablecoin user asks whether the issuer holds cash and Treasuries. A USDS user must ask a broader set of questions: what collateral backs the system, what assets sit in the PSM, what governance can change, what rates are paid, how Spark deploys capital, and whether emergency controls remain credible.
+
+## USDS, sUSDS, and the Sky Savings Rate
+
+The USDS stack has three different user-facing assets or states:
+
+| Asset | Function | User Meaning |
+| --- | --- | --- |
+| USDS | Stablecoin base asset | Dollar transfer, collateral, DeFi liquidity |
+| sUSDS | Savings USDS | ERC-4626 vault token representing access to the Sky Savings Rate |
+| stUSDS | Staked USDS | Additional staked / structured version used in Sky and Spark products |
+
+Sky's developer docs describe sUSDS as a tokenized implementation of the Sky Savings Rate for USDS, fully compliant with the ERC-4626 standard. It enables share-to-asset conversion and follows upgradeable proxy patterns. [Sky sUSDS docs](https://developers.sky.money/protocol/tokens/susds/)
+
+Spark's documentation also describes Savings USDS as an ERC-4626 savings vault linked to the Sky Savings Rate, while noting that savings vault tokens are transferable, integrable into other DeFi protocols, and continue to accrue yield wherever held. [Spark Savings](https://docs.spark.fi/products/spark-savings)
+
+As of the current DefiLlama yields snapshot, the largest visible sUSDS pool is `sky-lending` on Ethereum with about **$5.90B** TVL and about **3.6%** APY. Arbitrum and Base also show large savings deployments, and Spark / Morpho / Curve / Solana liquidity routes add additional integrations. [DefiLlama yields](https://yields.llama.fi/pools)
+
+This is the strongest bull case for USDS: it is not only a stablecoin, but also a savings distribution system.
+
+The caution is that savings rates are policy variables. Sky.money's interface disclaimer is explicit that rates and protocol parameters are determined through decentralized governance and can change or be eliminated. Users should not treat the Sky Savings Rate as a guaranteed bank deposit yield. [Sky sUSDS](https://sky.money/susds)
+
+## Market Data and Chain Distribution
+
+| Metric | June 22, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | #12 |
+| CoinGecko market cap / FDV | ~$10.33B |
+| CoinMarketCap market cap / FDV | ~$10.32B |
+| 24h volume | ~$38M-$46M reported range |
+| CoinGecko supply | ~10.33B USDS |
+| DefiLlama Sky Dollar supply | ~$8.16B |
+| DefiLlama one-month supply trend | Down from ~$8.86B |
+| Main yield product | sUSDS, about 3.6% APY on major Sky-lending pools |
+
+DefiLlama's Sky Dollar chain view is heavily Ethereum-weighted:
+
+| Chain | Sky Dollar Supply | Interpretation |
+| --- | ---: | --- |
+| Ethereum | ~$7.66B | Core protocol base and sUSDS center of gravity |
+| Base | ~$148M | L2 distribution and app integration |
+| OP Mainnet | ~$100M | L2 liquidity route |
+| Unichain | ~$100M | New DeFi venue / liquidity expansion |
+| Arbitrum | ~$99.7M | L2 DeFi collateral and savings route |
+| Solana | ~$49.5M | Non-EVM expansion, still small |
+| Avalanche | De minimis | Long-tail deployment |
+
+The current supply trend is not purely bullish. DefiLlama shows Sky Dollar down from about **$8.86B** a month ago to about **$8.16B** now, with Ethereum supply driving most of the change. The system remains very large, but the direction should be monitored because yield-bearing stablecoin demand can be rate-sensitive.
+
+## Competitive Landscape
+
+USDS competes against both simple stablecoins and yield-bearing alternatives.
+
+| Asset | Role | Core Edge | USDS Readthrough |
+| --- | --- | --- | --- |
+| USDT | Global liquidity dollar | CEX depth and emerging-market payment rails | USDS cannot match payment liquidity |
+| USDC | Regulated DeFi and institutional dollar | Compliance and DeFi depth | USDS competes in DeFi but with more governance complexity |
+| DAI | Legacy Maker stablecoin | Long operating history and broad integrations | USDS is the migration path, but DAI remains visible |
+| USDe / sUSDe | Synthetic dollar yield | Higher crypto-native yield | USDS has less basis complexity but lower yield |
+| USDY / rUSDY | Tokenized Treasury yield | RWA-backed cash management | USDS is more DeFi-native and governance-controlled |
+| PYUSD / RLUSD | Regulated PayFi / enterprise dollars | App and institutional distribution | USDS is less issuer-simple but more onchain-native |
+
+The closest internal comparison is DAI. DAI was the decentralized dollar ideal. USDS is the pragmatic scaled version: more integrated with savings, Spark, PSMs, agents, and governance-directed capital allocation. That can make USDS more useful, but it also makes the risk model less pure.
+
+## Value Accrual and Business Model
+
+USDS itself is not an equity token. Holding USDS should preserve dollar value, not deliver upside. The economic value accrues through the Sky ecosystem:
+
+- USDS supply creates demand for protocol collateral and liquidity.
+- sUSDS attracts users into the Sky Savings Rate.
+- Spark deploys assets into lending and liquidity products.
+- Protocol surplus can support SKY buybacks, reserves, staking rewards, or other governance-directed actions.
+- SKY holders govern parameters and indirectly control the economic policy.
+
+For investors, the readthrough is mostly to SKY and to DeFi stablecoin infrastructure. The stronger USDS is, the more credible Sky's revenue base becomes. But USDS growth can also increase risk if collateral policy, rates, or agent allocations become too aggressive.
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Governance risk | High | SKY holders can alter rates, collateral, PSM settings, and surplus allocation | Governance proposals, delegate concentration, emergency actions |
+| Collateral mix risk | High | USDS depends on protocol collateral quality, including crypto and PSM assets | Collateral composition, PSM concentration, RWA exposure |
+| Rate risk | Medium-High | sUSDS demand may be sensitive to the Sky Savings Rate | SSR changes, sUSDS TVL flows, competing stablecoin yields |
+| Centralization risk | Medium-High | PSMs and real-world collateral can dilute decentralization | USDC / fiat-backed collateral share, custodial dependencies |
+| Liquidity risk | Medium | USDS is large but less liquid than USDT/USDC globally | CEX listings, Curve/Uniswap liquidity, redemption stress |
+| Data methodology risk | Medium | CG/CMC and DefiLlama supply numbers differ materially | Market cap vs chain supply dashboards |
+| Smart contract risk | Medium | USDS, sUSDS, Spark, and bridges increase surface area | Audits, bug bounty, bridge events, upgrade actions |
+| Regulatory risk | Medium | Stablecoin and DeFi policy can affect Sky interfaces and agent activity | U.S./EU stablecoin rules, frontend availability, jurisdiction blocks |
+
+The core risk is policy complexity. USDS is transparent, but transparency does not remove governance risk. Users can see the system, but the system can still make bad choices.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | USDS Implication |
+| --- | ---: | --- | --- |
+| Bull | 30% | USDS becomes the dominant DeFi-native savings dollar, sUSDS retains sticky TVL, Spark scales capital allocation, and collateral remains conservative | $15B+ supply, stronger SKY economics, deeper DeFi integrations |
+| Base | 50% | USDS remains a top DeFi stablecoin with strong sUSDS demand but does not displace USDT/USDC as payment money | $8B-$12B supply, stable 3%-4% savings range, broad DeFi usage |
+| Bear | 20% | Rate cuts, collateral concerns, or governance controversy reduce demand | Supply falls below $6B, sUSDS outflows, DAI/USDC alternatives gain share |
+
+The bear case is not necessarily a depeg. It is a confidence and demand compression. A governance-controlled stablecoin can survive but lose relevance if users decide the risk-adjusted yield is no longer worth the complexity.
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| CoinGecko USDS market cap | ~$10.33B | Sustained growth above $12B, then $15B | Below $8B |
+| DefiLlama Sky Dollar supply | ~$8.16B | Returns above $9B with multi-chain growth | Below $7B |
+| sUSDS Ethereum TVL | ~$5.90B | Sticky or growing despite rate moves | Large outflow after SSR cut |
+| Sky Savings Rate | ~3.6% on major pools | Competitive versus USDC/USDT lending and RWA products | Below peers without compensating safety advantage |
+| Ethereum concentration | Very high | L2 and Solana growth with real liquidity | Supply remains centralized on one chain |
+| PSM / collateral health | Onchain-verifiable | Conservative collateral mix and no stress | Rising centralized collateral or governance stress |
+| Governance cadence | Active | Clear risk process and transparent parameter changes | Sudden rate/collateral changes without consensus |
+
+## Verdict
+
+USDS is **selective exposure / high-quality watchlist** for DeFi-native dollar infrastructure.
+
+The bull thesis is strong: Sky has nearly a decade of MakerDAO operating history, a large stablecoin base, onchain collateral visibility, sUSDS as a massive savings product, Spark as a distribution layer, and governance-controlled economic policy. USDS is not a random new stablecoin; it is the successor stack to one of DeFi's most important monetary systems.
+
+The caution is that USDS is not the same as a regulated fiat-backed dollar. It is a governance-managed, collateralized, rate-driven DeFi system. That creates transparency and composability, but also policy, collateral, and smart contract risk. The product is strongest when users understand it as DeFi-native money, not as a bank deposit or a risk-free Treasury wrapper.
+
+My current view: **USDS is a core protocol to monitor, but not a risk-free stablecoin substitute.** It becomes more compelling if sUSDS remains sticky through rate cycles, Sky Agent allocations perform transparently, and collateral composition stays conservative. It becomes less compelling if yield demand depends on aggressive rates, supply contracts, or governance decisions increase centralized collateral and execution risk.
+
+## Selected Sources
+
+- [Sky: What is USDS?](https://sky.money/blog/what-is-usds)
+- [Sky sUSDS product page](https://sky.money/susds)
+- [Sky Protocol USDS docs](https://developers.sky.money/protocol/tokens/usds/)
+- [Sky Protocol sUSDS docs](https://developers.sky.money/protocol/tokens/susds/)
+- [Spark Savings docs](https://docs.spark.fi/products/spark-savings)
+- [CoinGecko USDS](https://www.coingecko.com/en/coins/usds)
+- [CoinMarketCap USDS](https://coinmarketcap.com/currencies/usds/)
+- [DefiLlama stablecoin data](https://stablecoins.llama.fi/stablecoins?includePrices=true)
+- [DefiLlama yields](https://yields.llama.fi/pools)
