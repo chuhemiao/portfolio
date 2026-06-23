@@ -1,0 +1,255 @@
+---
+title: 'SkyAI SKYAI: MCP Data Infrastructure, Agent Tooling, and the Value-Capture Gap'
+publishedAt: '2026-06-22'
+summary: 'SkyAI is a BNB Chain AI-infrastructure token positioned around MCP extensions, aggregated onchain data services, LLM-readable blockchain tools, and a playground for AI-assisted onchain workflows. The market has already priced in a large narrative premium: CoinGecko shows SKYAI around $0.346, roughly $346M market cap / FDV, almost fully circulating 1B supply, rank around #127, and a 59% drawdown from its May 2026 all-time high; CoinMarketCap shows a similar price with about $22.5M 24h volume and rank around #98. The useful question is whether SKYAI can convert MCP tooling into real developer usage, data-market revenue, or token demand. Current evidence supports a high-risk AI infrastructure watchlist, not a fundamentals-backed investment: product narrative is clear, liquidity is real, token supply is mostly live, but public proof of revenue, usage, security audits, durable developer adoption, and token value capture remains thin.'
+slug: 'skyai-skyai-mcp-onchain-data-agent-infrastructure-value-capture-gap'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** SKYAI is a high-risk AI infrastructure watchlist asset, not a fundamentals-backed investment yet.
+- **What it is:** a BNB Chain token attached to SkyAI, an AI x blockchain project positioning around MCP, aggregated onchain data, LLM-friendly tools, and an AI playground.
+- **Why it matters:** the Model Context Protocol theme is real. If AI agents need structured onchain data, prompts, tools, transaction builders, and wallet-aware execution boundaries, there is a credible product category here.
+- **What is missing:** public revenue, usage, developer retention, API/data demand, security audits, clear token utility, and evidence that SKYAI captures value from the tools.
+
+## Executive Summary
+
+SkyAI is an AI-infrastructure project whose official site frames the product as **"Extended MCP and aggregated on-chain data services"** and a bridge between AI and blockchain. CoinGecko describes it as an all-in-one AI ecosystem powered by MCP, designed to integrate intelligent solutions across industries. The token trades on BNB Chain under contract `0x92aa03137385F18539301349dcfC9EbC923fFb10`. [SkyAI](https://skyai.pro/) [CoinGecko](https://www.coingecko.com/en/coins/skyai)
+
+The market is already treating SKYAI as a top-150 token. As of the June 22, 2026 snapshot, CoinGecko shows SKYAI around **$0.346**, market cap / FDV around **$346M**, 24h volume around **$14.7M**, circulating supply around **998.4M** out of **1B** max supply, and market cap rank around **#127**. CoinMarketCap shows a similar price around **$0.3466**, 24h volume around **$22.5M**, market cap around **$346.6M**, 1B circulating / max supply, and rank around **#98**. [CoinGecko](https://www.coingecko.com/en/coins/skyai) [CoinMarketCap](https://coinmarketcap.com/currencies/skyai/)
+
+The product narrative is coherent: MCP can let LLMs fetch onchain data, use aggregated data, discover tools, build transactions, verify signatures, and interact with blockchain applications. The official frontend bundle lists scenarios such as real-time chain data analysis, onchain operations with LLM assistance, wallet ownership proof, behavior monitoring, MCP oracles, IDE plugins, and an MCP marketplace. [SkyAI](https://skyai.pro/) [SkyAI Playground](https://playground.skyai.pro/)
+
+But the investability question is harsher than the narrative. A project can be in the right category and still have weak token economics. I found no public GitHub repository listed by CoinGecko, no whitepaper link in the CoinGecko metadata, no visible protocol revenue dashboard, no published developer usage dashboard, and no audit source strong enough to underwrite the stack. The largest visible DEX pool has real liquidity, but most secondary pools are tiny. [Dexscreener](https://api.dexscreener.com/latest/dex/tokens/0x92aa03137385f18539301349dcfc9ebc923ffb10)
+
+Verdict: **high-risk AI infrastructure watchlist.** SKYAI is worth tracking because MCP-native blockchain tooling is a real design space. It is not yet a fundamentals-backed investment because the token value-capture path is not proven.
+
+## Research Question and Investment Relevance
+
+The key question is:
+
+**Can SkyAI convert MCP-based onchain data and agent tooling into durable token demand, or is SKYAI mostly an AI narrative asset with weak value capture?**
+
+This matters because the AI x crypto category is splitting into several very different models:
+
+| Model | Examples | Demand Driver | Main Risk |
+| --- | --- | --- | --- |
+| AI agent launchpads | Virtuals, ai16z-style ecosystems | agent speculation and agent commerce | weak real revenue |
+| Compute / inference networks | Render, Akash, io.net-style networks | GPU supply and inference demand | supply-side incentives vs real customers |
+| Data / indexing / oracle AI | The Graph, Pyth-adjacent, SkyAI-style MCP data | structured data demand from apps and agents | commoditization and unclear token capture |
+| Consumer AI tokens | chatbots, companions, mini-apps | attention and distribution | low retention and low switching cost |
+| AI trading / tooling | terminals, agents, signal tools | trader workflow | monetization and trust |
+
+SkyAI belongs closest to the third bucket: AI-readable blockchain data and tool infrastructure. The category is credible. The open question is whether SkyAI has a moat.
+
+## Project Overview
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | SkyAI |
+| Token | SKYAI |
+| Chain | BNB Chain |
+| Contract | `0x92aa03137385F18539301349dcfC9EbC923fFb10` |
+| Category | AI infrastructure, MCP, onchain data services |
+| Official site | `skyai.pro` |
+| Playground | `playground.skyai.pro` |
+| Max supply | 1B SKYAI |
+| Circulating supply | almost fully circulating |
+| Core user | AI agents, developers, data providers, onchain app builders |
+
+SkyAI's official homepage describes the product as an AI-to-blockchain bridge with extended MCP and aggregated onchain data services. Its frontend text says the project provides a protocol extension for AI-enhanced blockchain ecosystems, a platform for blockchain MCP service, a cross-chain dataset and data MCP service, and a development kit for blockchain development. [SkyAI](https://skyai.pro/)
+
+The practical product surface appears to be:
+
+- an MCP extension compatible with Anthropic's MCP direction;
+- onchain data resources;
+- aggregated dataset resources;
+- ABI / metadata formatted resources;
+- chain-based prompt formats;
+- dynamic tool discovery;
+- onchain data query tools;
+- transaction builders;
+- signature and verification tools;
+- DID tools;
+- user / wallet / DID guided operation boundaries.
+
+That is a sensible product map. The concern is that much of it is still presented as roadmap or frontend narrative rather than observable usage.
+
+## Product Thesis: MCP as Agent Infrastructure
+
+The bullish version of SkyAI starts with a real problem. LLMs are weak at live blockchain state unless they have structured data sources and safe tools. MCP creates a standard pattern for connecting models to external context, tools, and data. For crypto, that can mean:
+
+| Need | SkyAI-Style Product Surface |
+| --- | --- |
+| Read onchain state | chain data MCP services |
+| Interpret contracts | ABI / metadata resources |
+| Build transactions | transaction builders |
+| Verify ownership | signature and verification tools |
+| Monitor risk | customized behavior monitoring and warnings |
+| Feed agents | aggregated datasets and dynamic prompts |
+| Let third parties publish data | MCP server marketplace |
+
+The official site explicitly says MCP lets LLMs fetch onchain data and aggregate data in real time, which can unlock autonomous decision-making. It also lists scenarios such as LLM-assisted onchain operations, account ownership proof, onchain behavior monitoring, and better data interaction for agents. [SkyAI](https://skyai.pro/)
+
+This is directionally useful. The same design space matters for:
+
+- AI trading assistants;
+- wallet copilots;
+- security monitors;
+- agentic payment systems;
+- smart contract IDE tooling;
+- data marketplaces;
+- app-specific onchain analytics.
+
+The problem is not the idea. The problem is proof. A $300M+ FDV needs more than a good category.
+
+## Roadmap and Execution Signals
+
+The official frontend exposes a 2025 roadmap:
+
+| Timeline | Roadmap Item |
+| --- | --- |
+| May 2025 | Release Extended MCP; launch Playground MVP |
+| Q2 2025 | Support ETH and Base, with BSC and Solana already supported; enable SKYAI data MCP service |
+| Q3 2025 | Release IDE plugins for Cursor and Cline; release official LLM client MCP server for Claude |
+| Q4 2025 | MCP Marketplace; more official tools and services |
+
+This roadmap is useful because it gives falsifiable milestones. The next layer of diligence should ask:
+
+- Is the playground live and usable by external developers?
+- Are ETH, Base, BSC, and Solana actually supported with reliable indexed data?
+- Are Cursor / Cline plugins released, maintained, and used?
+- Is the Claude MCP server public and installable?
+- Does the MCP marketplace have third-party data providers?
+- Is there paid usage, API metering, or token-gated demand?
+
+The public market data says SKYAI has attention. The public product evidence needs to catch up.
+
+## Token and Market Data
+
+SKYAI is a BNB Chain token with 1B max supply and almost all supply circulating. That is a positive relative to low-float AI tokens: the headline FDV is not hiding a massive future unlock overhang.
+
+| Metric | June 22, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | Around #127 |
+| CoinMarketCap rank | Around #98 |
+| Price | ~$0.346 |
+| Market cap | ~$346M |
+| FDV | ~$346M |
+| 24h volume | ~$14.7M on CoinGecko / ~$22.5M on CoinMarketCap |
+| Circulating supply | ~998M-1B SKYAI |
+| Max supply | 1B SKYAI |
+| Drawdown from ATH | about -59% from May 6, 2026 ATH |
+
+The token has already had a large cycle. CoinGecko shows an ATH around **$0.854** on May 6, 2026 and current price roughly **59%** below that level. It is still up dramatically from its October 2025 lows, which means SKYAI is not a forgotten microcap; it is a live narrative token that already repriced hard. [CoinGecko](https://www.coingecko.com/en/coins/skyai)
+
+## Liquidity and Holder Structure
+
+DEX liquidity is concentrated on BNB Chain. Dexscreener shows the main PancakeSwap SKYAI/WBNB v2 pool at around **$13.4M** liquidity and roughly **$4.5M** 24h volume, with price around **$0.346**. Other visible pools are much smaller: a SKYAI/USDT PancakeSwap v3 pool around **$70K** liquidity and low volume, plus a long tail of tiny pools. [Dexscreener](https://api.dexscreener.com/latest/dex/tokens/0x92aa03137385f18539301349dcfc9ebc923ffb10)
+
+That liquidity is real, but it is narrow relative to market cap. The main route is effectively one dominant pool, not broad multi-chain or multi-venue depth.
+
+GoPlus reports several useful token-security facts for the BNB Chain contract:
+
+| Check | GoPlus Signal |
+| --- | --- |
+| Open source | yes |
+| Proxy | no |
+| Mintable | no |
+| Buy / sell tax | 0 / 0 |
+| Owner | zero address |
+| Holder count | about 60K |
+| Main LP | largely sent to dead address |
+
+Those are cleaner than many BNB Chain narrative tokens. The concentration side is less clean: GoPlus shows the largest holder at about **38.4%** of supply and the second at about **14.7%**, with addresses not clearly labeled in the API output. They may be treasury, exchange, custody, or distribution wallets, but until labeled, this remains a concentration risk. [GoPlus token security](https://api.gopluslabs.io/api/v1/token_security/56?contract_addresses=0x92aa03137385F18539301349dcfC9EbC923fFb10)
+
+## Value Capture
+
+The biggest open question is not "can SkyAI build useful tools?" It is:
+
+**Why should SKYAI accrue value if those tools are useful?**
+
+The current public materials do not make a rigorous token-economic case. A strong value-capture model would show one or more of the following:
+
+- SKYAI required to pay for data queries;
+- SKYAI staked by MCP server providers;
+- fees routed to token holders, stakers, burners, or treasury;
+- marketplace payments denominated in SKYAI;
+- governance over data-market parameters;
+- slashing or reputation for bad data providers;
+- usage-based buyback or fee sink.
+
+Without those mechanics, SKYAI is mainly an attention asset attached to an AI-infrastructure roadmap. That can still trade well in a strong AI cycle, but it is not the same as owning a claim on protocol cash flows.
+
+The almost fully circulating supply helps because future unlock risk looks lower. But low unlock risk does not solve weak value capture.
+
+## Competitive Landscape
+
+SkyAI is not competing with a single project. It competes with several layers:
+
+| Category | Competitors / Comps | SkyAI Position |
+| --- | --- | --- |
+| Indexing and data APIs | The Graph, Covalent-style APIs, Dune, Flipside | SkyAI is more AI/MCP-native but less proven |
+| Oracle / market data | Pyth, Chainlink, RedStone | SkyAI is broader agent tooling, not just price feeds |
+| AI agent infra | Virtuals, agent launchpads, AI workflow tools | SkyAI is less agent-tokenization-focused |
+| Developer tooling | Cursor plugins, wallet SDKs, RPC/indexing providers | SkyAI needs developer adoption to matter |
+| Data marketplaces | Ocean-style data networks, MCP marketplaces | SkyAI's marketplace is still an execution question |
+
+The bull thesis is that MCP becomes the standard interface for AI agents and SkyAI becomes a crypto-native MCP data layer. The bear thesis is that MCP servers become easy to build, data access commoditizes, and higher-quality incumbents absorb the demand before SKYAI develops a moat.
+
+## Risk Matrix
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Product proof risk | High | frontend narrative is clearer than observable usage | public playground usage, docs, install stats, active developers |
+| Token value-capture risk | High | useful tools do not automatically create token demand | fees, staking, burns, paid query volume |
+| Concentration risk | High | top wallets hold large visible supply shares | labeled holders, exchange/treasury disclosures, transfers |
+| Liquidity concentration | Medium-High | most DEX depth is in one BNB Chain pool | pool liquidity, CEX depth, slippage |
+| AI narrative cyclicality | High | AI tokens reprice quickly when attention fades | volume, social interest, ATH drawdown |
+| Security / audit risk | Medium | public audit evidence is not obvious from primary sources | published audits, bug bounty, contract changes |
+| Competition risk | High | MCP and data APIs can be copied by better-funded teams | third-party MCP providers, developer mindshare |
+| BNB Chain ecosystem risk | Medium | liquidity and users are BNB-chain-centric | multi-chain expansion execution |
+
+The cleanest risk-reward improvement would be public usage data. A dashboard showing query volume, paying users, connected MCP servers, marketplace GMV, or token-denominated fees would materially improve the thesis.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | Token Readthrough |
+| --- | ---: | --- | --- |
+| Bull | 25% | SkyAI ships usable MCP tooling, gets real developer adoption, releases marketplace, and routes meaningful query / marketplace fees through SKYAI | selective exposure becomes more defensible |
+| Base | 45% | SkyAI remains a visible BNB Chain AI narrative token with real liquidity but limited proof of usage or value capture | watchlist only; trade narrative, not fundamentals |
+| Bear | 30% | MCP tooling is commoditized, usage stays thin, concentration wallets sell, and AI attention rotates elsewhere | avoid / structurally weak |
+
+The market cap already assumes success. The evidence base still looks early.
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Market cap / FDV | ~$346M / ~$346M | grows with usage, not only volume | FDV stays high while usage absent |
+| Main DEX liquidity | ~$13.4M | >$30M across multiple stable and BNB pools | liquidity drops below $5M |
+| 24h volume | ~$15-22M | volume paired with product launches | volume fades after narrative spikes |
+| Supply float | almost fully circulating | no major holder sell pressure | top wallets distribute aggressively |
+| Developer adoption | not proven publicly | public plugin installs, MCP server usage, docs activity | stale roadmap / no usage dashboard |
+| Token utility | unclear | query fees, staking, marketplace payments | no explicit token sink |
+| Product milestones | 2025 roadmap listed | live ETH/Base/Solana/BSC tools, Claude server, marketplace | milestones remain marketing-only |
+
+## Verdict
+
+SKYAI is a **high-risk AI infrastructure watchlist asset**, not a fundamentals-backed investment yet.
+
+The positive case is real enough to track. MCP is a serious interface pattern for AI systems, and crypto needs structured data, wallet-aware tools, transaction builders, contract interpretation, and agent-safe execution boundaries. SkyAI has a coherent product narrative, a live playground surface, a clear 2025 roadmap, strong BNB Chain liquidity for its category, and nearly full circulating supply.
+
+The caution is stronger. A $300M+ token needs proof of usage and value capture. Public materials do not yet show revenue, query volume, paying developers, marketplace demand, audit depth, or a clear reason SKYAI must accrue value from the MCP stack. The largest holders also deserve monitoring.
+
+My current view: **watchlist, but do not underwrite it as a durable AI infrastructure asset until the token economics and usage data are visible.** The thesis improves if SkyAI publishes live MCP server metrics, developer adoption, paid data-query volume, marketplace revenue, and a clear fee or staking mechanism tied to SKYAI.
+
+## Selected Sources
+
+- [SkyAI official site](https://skyai.pro/)
+- [SkyAI playground](https://playground.skyai.pro/)
+- [CoinGecko SkyAI](https://www.coingecko.com/en/coins/skyai)
+- [CoinMarketCap SkyAI](https://coinmarketcap.com/currencies/skyai/)
+- [Dexscreener SKYAI pools](https://api.dexscreener.com/latest/dex/tokens/0x92aa03137385f18539301349dcfc9ebc923ffb10)
+- [GoPlus token security API](https://api.gopluslabs.io/api/v1/token_security/56?contract_addresses=0x92aa03137385F18539301349dcfC9EbC923fFb10)

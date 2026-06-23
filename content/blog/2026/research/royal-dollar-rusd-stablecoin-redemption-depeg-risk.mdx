@@ -1,0 +1,209 @@
+---
+title: 'Royal Dollar RUSD: Reserve Claims, Redemption Friction, and Stablecoin Depeg Risk'
+publishedAt: '2026-06-23'
+summary: 'Royal Dollar (RUSD) is a USD-referenced stable-value token issued by RIB Digital and marketed for settlement, treasury operations, OTC trading, exchange liquidity, and institutional workflows across Ethereum, BNB Smart Chain, and TRON. The issuer-facing story is reserve-heavy: official pages describe RUSD as real-value-backed, supported by transparency reporting, approved-counterparty mint/redeem workflows, compliance controls, and a CertiK assessment with no critical or major issues in scope. The market-facing story is much weaker: as of the June 23, 2026 research snapshot, CoinGecko API data showed RUSD near $0.30, down roughly 70% in 24 hours, with a $74.9M market cap, $1.50B FDV, 250M circulating supply, 5B total supply, and an AscendEX RUSD/USDT market at 0.30 with an 86% spread, while the near-$1 RUSD/USD and RUSD-denominated pairs were marked anomalous. Verdict: pass for now / stablecoin stress watchlist until redemption at par, reserve attestations, exchange market quality, and non-anomalous liquidity can be independently verified.'
+slug: 'royal-dollar-rusd-stablecoin-redemption-depeg-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Pass for now / stablecoin stress watchlist.
+- **Why it matters:** RUSD appears in the top-ranked market universe because reported supply is large, but a USD stable-value token trading around **$0.30** on the main non-anomalous CoinGecko ticker is a risk signal, not a bargain.
+- **What would change the view:** Verifiable par redemption, current independent reserve attestations, non-anomalous exchange markets near $1 with tight spreads, and transparent onchain supply reconciliation.
+
+## Executive Summary
+
+Royal Dollar (RUSD) is a USD-referenced stable-value token in the RCOINS family. The official RCOINS site describes RUSD, REUR, RXAU, and RXAG as real-value-backed digital currencies built on RIB Digital and the RCCG ecosystem, with proof-of-reserve reporting and RxBridge settlement. The RUSD product page says the asset is designed for USD-denominated settlement, treasury operations, exchange liquidity, OTC trading, and institutional workflows, with deployments on Ethereum, BNB Smart Chain, and TRON. [RCOINS](https://www.rcoins.digital/) [RUSD](https://www.rcoins.digital/RUSD.html)
+
+The problem is that stablecoins are not underwritten by the claim alone. They are underwritten by **redeemability, reserve quality, issuer controls, market depth, and behavior under stress**. On the current market snapshot, RUSD is failing the market-quality test. CoinGecko API data on June 22-23, 2026 showed RUSD around **$0.2999**, down about **70%** in 24 hours, with market cap about **$74.9M**, FDV about **$1.50B**, circulating supply **250M**, total supply **5B**, and reported 24h volume around **$15.6M**. Its main non-anomalous ticker was AscendEX RUSD/USDT at **0.30** with an **86% bid-ask spread**; CoinGecko marked the near-$1 RUSD/USD, REUR/RUSD, BTC/RUSD, and ETH/RUSD markets as anomalies. [CoinGecko](https://www.coingecko.com/en/coins/royal-dollar)
+
+That creates a hard contradiction: the official presentation frames RUSD as a USD-stable settlement asset, while the visible market structure says at least one major data source is pricing it as a deeply impaired dollar claim. DEX Screener's token query for the Ethereum contract returned no active pairs in the snapshot, so there is no obvious DEX arbitrage venue to validate or repair the peg. [Dexscreener API](https://api.dexscreener.com/latest/dex/tokens/0x44bB433d29fe966992A9C812da7f252C9c53F285)
+
+Verdict: **Pass for now / stablecoin stress watchlist.** RUSD could still be an issuer-controlled institutional settlement token with a recoverable market-data dislocation. But until public redemption at par, reserves, independent attestations, and market liquidity all line up, it should not be treated like USDT, USDC, PYUSD, or even a normal RWA cash wrapper.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Is RUSD a credible reserved stable-value token with temporary exchange-data stress, or an issuer-centric stablecoin whose redemption and liquidity rails are too opaque for portfolio use?**
+
+This matters because stablecoin market caps can be misleading. A token can report hundreds of millions of circulating supply and billions of total supply while actual exit liquidity is narrow. For a stablecoin, a top-200 or top-500 rank is not a positive signal if the price is below par, spreads are wide, and the working redemption path is not obvious.
+
+RUSD belongs in a different diligence bucket than speculative tokens:
+
+| Question | Why It Matters For RUSD |
+| --- | --- |
+| Can holders redeem 1 RUSD for 1 USD? | This is the core of a fiat-referenced token. |
+| Who can redeem? | Official materials reference authorized participants and approved counterparties, not necessarily open retail redemption. |
+| What are the reserves? | The site references cash, segregated accounts, liquid cash-equivalent instruments, and reserve reporting, but live independent attestations need to be easy to verify. |
+| Where is real liquidity? | The visible CoinGecko market is concentrated on AscendEX, with anomalies and an 86% spread on the RUSD/USDT pair. |
+| Are contract controls acceptable? | Stablecoins require mint/burn and compliance controls, but admin control is also a trust dependency. |
+
+## Project Overview
+
+RUSD is part of the RCOINS product family, alongside REUR, RXAU, and RXAG. The RCOINS site positions the family as asset-backed digital currencies issued by RIB.Digital inside the RCCG ecosystem, with real-time proof-of-reserve and instant settlement through the R-Bridge or RxBridge environment. [RCOINS](https://www.rcoins.digital/)
+
+The RUSD page defines the product more narrowly: it is a **USD-referenced stable-value token** for settlement, treasury operations, institutional financial workflows, exchange liquidity, cross-border treasury movement, invoice settlement, OTC trading, and market operations. The key parameters page lists the reference asset as the United States Dollar, target value as **1.00 USD subject to conditions**, and networks as Ethereum, BNB Smart Chain, and TRON. [RUSD](https://www.rcoins.digital/RUSD.html)
+
+| Item | RUSD Snapshot |
+| --- | --- |
+| Product | USD-referenced stable-value token |
+| Issuer / operator | RIB Digital, per official pages and whitepaper metadata |
+| Sector | Stablecoin / institutional settlement |
+| Networks | Ethereum, BNB Smart Chain, TRON |
+| Ethereum / BNB contract | `0x44bB433d29fe966992A9C812da7f252C9c53F285` |
+| TRON contract | `TUvns399UpycBBpVsCVJLCjXFBjzHrNUR1` |
+| Reference target | 1.00 USD, subject to conditions |
+| Main visible market | AscendEX, based on CoinGecko tickers |
+
+The project therefore has a plausible institutional settlement narrative. The question is whether the public proof surface is strong enough to support the market cap.
+
+## Stablecoin Design and Redemption Surface
+
+Official RUSD materials emphasize controlled access rather than permissionless retail issuance. The RUSD page says access is through approved trading venues and institutional channels, including ROYDEX. It also says RUSD issuance and redemption follow structured processes intended to align circulating supply with reserves, and that minting and redemption are conducted through authorized participants and approved counterparties subject to onboarding and compliance checks. [RUSD](https://www.rcoins.digital/RUSD.html)
+
+That is not automatically bad. Many regulated stablecoins rely on issuer-mediated mint/redeem processes. The underwriting issue is that **restricted redemption makes secondary-market stress more dangerous**. If the only holders able to redeem at par are approved counterparties, then ordinary market participants cannot easily arbitrage a $0.30 RUSD/USDT price back to $1. In that structure, a deep discount can persist even if an issuer claims reserves are sufficient.
+
+The reserve framework also needs close parsing. The RUSD page says reserves may include cash held in segregated accounts with regulated financial institutions and liquid cash-equivalent instruments. It also says the issuance model applies a structural reserve buffer such as **100:90** to support stability. That language is weaker than a clean "every circulating token is redeemable 1:1 by every holder at any time" promise. [RUSD](https://www.rcoins.digital/RUSD.html)
+
+For portfolio purposes, that means RUSD should be treated as an issuer-mediated claim, not as open DeFi cash.
+
+## Current Market Data and Depeg Signal
+
+The strongest bearish evidence is the market data.
+
+As of the June 22-23, 2026 CoinGecko API snapshot:
+
+| Metric | Snapshot |
+| --- | ---: |
+| Price | ~$0.2999 |
+| 24h change | ~-70.0% |
+| Market cap | ~$74.9M |
+| FDV | ~$1.50B |
+| Circulating supply | 250M RUSD |
+| Total supply | 5B RUSD |
+| CoinGecko rank | ~#329 after the drawdown |
+| 24h reported volume | ~$15.6M |
+
+[CoinGecko](https://www.coingecko.com/en/coins/royal-dollar)
+
+The ticker composition is more important than the headline market cap:
+
+| Market | Pair | Last | Reported USD Volume | Spread / Status |
+| --- | --- | ---: | ---: | --- |
+| AscendEX | RUSD/USDT | ~$0.30 | ~$15.6M | ~86% spread, not marked anomaly |
+| AscendEX | RUSD/USD | ~$0.9999 | ~$20.9M | Marked anomaly |
+| AscendEX | REUR/RUSD | Implies ~$0.9999 | ~$7.1M | Marked anomaly |
+| AscendEX | BTC/RUSD | Implies ~$0.9999 | ~$11.3M | Marked anomaly |
+| AscendEX | ETH/RUSD | Implies ~$0.9999 | ~$7.1M | Marked anomaly |
+
+This is a bad pattern for a stablecoin. A healthy stablecoin can have temporary dislocations, but a 70% discount on a non-anomalous USDT pair combined with anomalous par-priced pairs suggests one of three things:
+
+1. The USDT pair is reflecting genuine redemption doubt.
+2. The exchange market is structurally broken or illiquid.
+3. The market-data aggregation is mixing incompatible markets and should not be used for valuation.
+
+All three are negative for investability. If the price is real, the peg is impaired. If the price is bad data, the project needs cleaner market infrastructure before it can be underwritten. If the market is illiquid, reported supply and volume are not enough.
+
+DEX liquidity does not solve the question. A DEX Screener token query for the Ethereum contract returned no active pairs in the snapshot. That means the visible public market is exchange-led and concentrated, with no obvious onchain pool to test price discovery. [Dexscreener API](https://api.dexscreener.com/latest/dex/tokens/0x44bB433d29fe966992A9C812da7f252C9c53F285)
+
+## Reserve Reporting and Proof Surface
+
+RUSD's official page says the token is designed around structured transparency principles that combine onchain data with issuer-level reporting. It says circulating supply is observable on public blockchains, while disclosures may include reserve reporting, snapshots, and verification workflows. It also links to a transparency and reserves overview. [RUSD](https://www.rcoins.digital/RUSD.html) [RIB Transparency](https://rib.digital/transparency?product=RUSD)
+
+The RIB transparency dashboard, viewed as an issuer-reported snapshot, displayed figures around **5B RUSD issued supply**, **250M current circulation**, **$17.39B offchain reserves**, and **348% reserve coverage**. That is a very strong headline coverage ratio. But it does not by itself remove the market risk because:
+
+1. The dashboard is issuer-reported unless paired with current third-party attestations.
+2. Reserve coverage needs asset-level detail, custodian identity, legal claim structure, and reconciliation frequency.
+3. Redemption eligibility matters as much as reserve size.
+4. A market trading at $0.30 is direct evidence that at least some holders are not treating RUSD as immediately redeemable at $1.
+
+The CertiK-linked report metadata says the assessment was conducted on **April 22, 2026**, found no critical or major vulnerabilities within the reviewed scope, and that findings primarily related to administrative and governance controls intentionally implemented as part of the protocol design. That helps the smart-contract risk picture, but it does not prove reserve quality, liquidity, bank custody, or redemption performance. [CertiK assessment link](https://book.royalcc.world/books/RUSD_CertiK_Audit_Report/)
+
+## Contract and Control Risk
+
+RUSD uses the same contract address on Ethereum and BNB Smart Chain and has a TRON deployment. CoinGecko lists those platform mappings, and the official RUSD page links to Etherscan, BscScan, and TronScan for the deployments. [CoinGecko](https://www.coingecko.com/en/coins/royal-dollar) [Etherscan](https://etherscan.io/token/0x44bB433d29fe966992A9C812da7f252C9c53F285) [BscScan](https://bscscan.com/token/0x44bB433d29fe966992A9C812da7f252C9c53F285) [TronScan](https://tronscan.org/#/token20/TUvns399UpycBBpVsCVJLCjXFBjzHrNUR1)
+
+For a fiat-backed stablecoin, admin controls are expected: minting, burning, blacklisting, pausing, compliance monitoring, and authorized participant management are common. But those controls create a centralized trust stack:
+
+| Control Area | Why It Matters |
+| --- | --- |
+| Mint/burn authority | Determines whether supply can be expanded or retired correctly. |
+| Redemption operator | Determines who can convert tokens back to dollars. |
+| Compliance controls | Can freeze or restrict addresses. |
+| Cross-chain issuance | Requires reconciliation across Ethereum, BNB Chain, and TRON. |
+| Reserve reporting | Must match onchain supply with offchain assets. |
+
+The CertiK note that administrative and governance controls are intentional should be read as a scope statement, not a risk elimination. If a stablecoin depends on admin controls, investors must underwrite the operator.
+
+## Competitive Landscape
+
+RUSD competes less with speculative tokens and more with fiat-backed stablecoins and institutional settlement dollars.
+
+| Asset | Current Role | RUSD Comparison |
+| --- | --- | --- |
+| USDT | Deepest offshore exchange and emerging-market dollar liquidity | RUSD has far weaker public liquidity and exchange breadth. |
+| USDC | Regulated DeFi and institutional stablecoin standard | RUSD lacks comparable attestations, integrations, and DeFi depth. |
+| PYUSD | PayPal/Paxos PayFi stablecoin | PYUSD has stronger consumer/merchant distribution and clearer regulated issuer profile. |
+| RLUSD / USDG | Regulated challenger stablecoins | RUSD is more opaque from a public-market underwriting perspective. |
+| Tokenized cash / T-bill products | Yield-bearing cash wrappers | RUSD is not positioned as a yield token and should not be valued by yield. |
+
+The differentiator RUSD wants is institutional settlement infrastructure tied to RIB Digital, Royal platforms, ROYDEX, and RxBridge. That can be relevant if the ecosystem produces real OTC, treasury, or bank-platform flows. But today the public evidence is dominated by market stress.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | Research Implication |
+| --- | ---: | --- | --- |
+| Recovery | 20% | RUSD/USDT returns near $1, anomalous tickers normalize, issuer publishes fresh attestations and redemption evidence | Moves from pass to watchlist |
+| Controlled institutional token | 35% | RUSD remains mostly inside approved counterparties and affiliated venues, with limited public liquidity | Useful as a closed settlement rail, not portfolio cash |
+| Persistent depeg / data impairment | 35% | Public markets stay broken, spread remains wide, no credible public redemption proof emerges | Avoid |
+| Severe failure | 10% | Redemption, reserve, or issuer-control issues become explicit | Avoid and monitor contagion only |
+
+The base case is not that RUSD is necessarily insolvent. The base case is that **public evidence is too weak and market quality is too poor** for a stablecoin allocation.
+
+## Risks and Mitigants
+
+| Risk | Severity | Why It Matters | Mitigant / Monitor |
+| --- | --- | --- | --- |
+| Peg break | High | RUSD trades far below $1 on the key non-anomalous CoinGecko ticker | RUSD/USDT returns to $0.995-$1.005 with tight spread |
+| Redemption opacity | High | Authorized-counterparty redemption may not help ordinary holders | Public redemption policy, fees, settlement time, eligible parties |
+| Reserve verification | High | Issuer dashboard needs independent attestation and asset detail | Current attestation, custodian details, reconciled onchain supply |
+| Exchange concentration | High | Visible trading is concentrated on AscendEX | Multiple quality venues with non-anomalous par markets |
+| Admin control | Medium | Stablecoin controls are necessary but centralized | Audit scope, multisig/admin disclosure, incident history |
+| Cross-chain reconciliation | Medium | Ethereum, BNB Chain, and TRON deployments require supply controls | Chain-by-chain supply dashboard and bridge/mint rules |
+| Market-data quality | Medium | Anomalous tickers make rank and market cap unreliable | Clean data across CoinGecko, CMC, exchange order books |
+
+## Monitoring Dashboard
+
+| Metric | Current Level | Bull Trigger | Bear Trigger |
+| --- | --- | --- | --- |
+| RUSD/USDT price | ~$0.30 on CoinGecko snapshot | Back near $1 for at least 7 days | Stays below $0.95 |
+| RUSD/USDT spread | ~86% | Below 0.5% on quality venues | Above 5% |
+| Non-anomalous par markets | Not enough | Multiple non-anomalous pairs near $1 | Par pairs remain marked anomaly |
+| Public DEX liquidity | DEX Screener token query returned no pairs | Meaningful verified pools | No onchain price discovery |
+| Reserve proof | Issuer-reported dashboard plus linked docs | Fresh third-party attestation | Dashboard without independent verification |
+| Redemption path | Approved counterparties / institutional channels | Clear public redemption terms | Redemption limited or unclear |
+
+## Verdict
+
+RUSD is a **pass for now / stablecoin stress watchlist**.
+
+The project has an institutional settlement narrative and a reserve-heavy presentation. Official materials describe a USD-referenced token, multi-chain deployments, transparency reporting, approved-counterparty mint/redemption, compliance controls, and a CertiK-reviewed smart-contract scope. Those are all relevant ingredients.
+
+But the market evidence dominates the conclusion. A stablecoin that shows a **$0.30** market price, **70%** 24h drawdown, **86%** spread on a USDT pair, anomalous par-priced tickers, and no visible DEX market should not be treated as a reliable dollar asset. The correct posture is not "cheap stablecoin"; it is "redemption and market-structure risk until proven otherwise."
+
+My current view: **do not use RUSD as portfolio cash, collateral, or treasury reserve.** Revisit only if RUSD restores clean par pricing, publishes independently verifiable reserve and redemption data, and shows durable non-anomalous liquidity outside a single exchange surface.
+
+## Selected Sources
+
+- [RCOINS official site](https://www.rcoins.digital/)
+- [RUSD product page](https://www.rcoins.digital/RUSD.html)
+- [RIB transparency dashboard](https://rib.digital/transparency?product=RUSD)
+- [RUSD CertiK assessment link](https://book.royalcc.world/books/RUSD_CertiK_Audit_Report/)
+- [RUSD whitepaper link](https://book.royalcc.world/books/RUSD_Whitepaper/)
+- [CoinGecko Royal Dollar](https://www.coingecko.com/en/coins/royal-dollar)
+- [CoinMarketCap Royal Dollar](https://coinmarketcap.com/currencies/royal-dollar/)
+- [Etherscan RUSD contract](https://etherscan.io/token/0x44bB433d29fe966992A9C812da7f252C9c53F285)
+- [BscScan RUSD contract](https://bscscan.com/token/0x44bB433d29fe966992A9C812da7f252C9c53F285)
+- [TronScan RUSD contract](https://tronscan.org/#/token20/TUvns399UpycBBpVsCVJLCjXFBjzHrNUR1)

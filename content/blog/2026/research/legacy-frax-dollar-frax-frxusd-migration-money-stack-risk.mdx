@@ -1,0 +1,201 @@
+---
+title: 'Legacy Frax Dollar FRAX: frxUSD Migration, Fraxtal Money Stack, and Stablecoin Liquidity Risk'
+publishedAt: '2026-06-23'
+summary: 'Legacy Frax Dollar (FRAX / LFRAX) is no longer the clean way to underwrite the Frax thesis. As of the June 23, 2026 snapshot, CoinGecko shows Legacy Frax Dollar around $0.9906, rank #149, roughly $239.5M market cap / FDV, only about $195K 24h volume, and 241.7M circulating / total supply, while DefiLlama tracks legacy FRAX supply around $186.3M and newer fiat-backed frxUSD supply around $114.8M. The investable question is whether Frax can convert an older algorithmic/AMO stablecoin base into a fully collateralized frxUSD + sfrxUSD + Fraxtal + FRAX(prev. FXS) money stack without leaving holders in a shallow-liquidity legacy asset. Verdict: high-quality DeFi stablecoin watchlist, but Legacy FRAX itself is a migration-and-liquidity risk asset rather than a core dollar reserve.'
+slug: 'legacy-frax-dollar-frax-frxusd-migration-money-stack-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** high-quality Frax ecosystem watchlist, but Legacy Frax Dollar is not a core stablecoin allocation.
+- **Why it matters:** Frax is rebuilding from the old FRAX algorithmic / AMO dollar into a broader frxUSD, sfrxUSD, Fraxtal, FXB, frxETH, Fraxlend, and FRAX(prev. FXS) money stack.
+- **Main risk:** the token CoinGecko still ranks as **Legacy Frax Dollar** has low visible trading volume, a persistent sub-dollar price, and a confusing relationship with the newer frxUSD product.
+
+## Executive Summary
+
+Legacy Frax Dollar is a deceptively hard asset to underwrite. The old shorthand was simple: FRAX was the partially algorithmic stablecoin of Frax Finance. The current reality is messier. Frax now presents **frxUSD** as its fiat-redeemable, fully collateralized stablecoin, while docs describe **FRAX (prev. FXS)** as the scarce commodity / gas asset of Fraxtal. Legacy Frax Dollar still exists, still ranks inside CoinGecko's top 200, and still anchors products such as FXB bonds, but it is no longer the cleanest expression of the Frax stablecoin strategy. [Frax frxUSD docs](https://docs.frax.com/frxusd) [Frax Protocol docs](https://docs.frax.com/protocol)
+
+As of the June 23, 2026 market snapshot, CoinGecko lists **Legacy Frax Dollar** at about **$0.9906**, rank **#149**, roughly **$239.5M** market cap / FDV, about **$195K** 24h volume, and **241.7M** circulating / total supply. CoinGecko still maps the Ethereum contract to `0x853d955acef822db058eb8505911ed77f175b99e`, with additional legacy deployments across Polygon zkEVM, Moonbeam, Boba, Aurora, Fantom, Polygon PoS, BNB Chain, Arbitrum, Optimism, Avalanche, and others. [CoinGecko Legacy Frax Dollar](https://www.coingecko.com/en/coins/frax)
+
+DefiLlama's stablecoin dataset shows the same transition more clearly. It tracks legacy **FRAX** as an **algorithmic** USD stablecoin with about **$186.3M** circulating value and a price around **$0.9901**, while newer **Frax USD (FRXUSD)** is tagged **fiat-backed** with about **$114.8M** circulating value and a price around **$0.9995**. Ethereum remains the largest legacy FRAX chain at about **$163.3M** and the largest frxUSD chain at about **$103.7M**. [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+Verdict: **high-quality watchlist, but Legacy FRAX itself is a migration-and-liquidity risk asset.** The Frax ecosystem is still one of DeFi's more ambitious money stacks. The problem is not technical ambition; it is underwriting precision. A user holding the legacy dollar is exposed to peg liquidity, migration UX, DAO/custodian design, and market confusion, while the upside of the Frax ecosystem likely accrues more to frxUSD adoption, sfrxUSD balances, Fraxtal activity, and FRAX(prev. FXS) economics than to a stable asset that should trade at $1.
+
+## Research Question and Investment Relevance
+
+The relevant question is:
+
+**Is Legacy Frax Dollar still a credible DeFi dollar, or is it mostly a transitional asset inside Frax's move toward frxUSD and Fraxtal-native money?**
+
+This matters because Frax is not a single-token project anymore:
+
+| Layer | Asset / Product | Current Role | Investor Question |
+| --- | --- | --- | --- |
+| Legacy dollar | FRAX / LFRAX | older USD stablecoin and FXB denomination | peg, liquidity, and migration risk |
+| New dollar | frxUSD | fiat-redeemable, fully collateralized stablecoin | reserve quality, mint/redeem, supply growth |
+| Yield dollar | sfrxUSD | ERC4626-like yield vault for frxUSD | yield source and risk-adjusted sustainability |
+| L2 money layer | Fraxtal | OP Stack modular L2 with incentives | real apps and durable activity |
+| Commodity token | FRAX (prev. FXS) | Fraxtal gas / scarce asset / veFRAX security | fee capture, emissions, and burn economics |
+| Subprotocols | Fraxlend, Fraxswap, frxETH, FXB | credit, liquidity, LST, bond tooling | whether usage survives beyond internal liquidity |
+
+For a stablecoin investor, the clean asset is increasingly frxUSD. For a DeFi equity-style investor, the relevant asset is increasingly FRAX(prev. FXS). Legacy FRAX sits between those theses, which is why it deserves caution.
+
+## Project Overview
+
+Frax describes the current ecosystem as issuing **frxUSD, FPI, and frxETH**, plus subprotocols including Fraxswap, BAMM, Fraxlend, AMOs / protocol-owned liquidity, Fraxtal, FXBs, sfrxUSD, and FRAX(prev. FXS). The docs call **frxUSD** a USD-pegged asset, **FPI** a consumer-goods-index stablecoin, and **frxETH** a liquid ETH staking derivative. [Frax Protocol docs](https://docs.frax.com/protocol)
+
+| Field | Current Assessment |
+| --- | --- |
+| CoinGecko asset | Legacy Frax Dollar |
+| Ticker | FRAX / LFRAX in newer docs context |
+| Sector | DeFi stablecoin / money stack |
+| Legacy FRAX supply | ~$186.3M on DefiLlama stablecoin API |
+| CoinGecko supply | ~241.7M circulating / total |
+| New frxUSD supply | ~$114.8M on DefiLlama |
+| Core chain | Ethereum for both legacy FRAX and frxUSD |
+| Current ecosystem products | frxUSD, sfrxUSD, Fraxtal, Fraxlend, Fraxswap, frxETH, FXB |
+| Key risk | users may mistake legacy FRAX exposure for new frxUSD exposure |
+
+The most important official distinction is frxUSD. Frax docs say **Frax USD (frxUSD)** is a fiat-redeemable, fully collateralized stablecoin, backed 1:1 by permitted cash-equivalent reserves such as tokenized U.S. Treasury funds including BUIDL, USTB, JTRSY, WTGXX, and AUSD, with collateral management delegated to Frax Inc by the Frax DAO. [frxUSD protocol docs](https://docs.frax.com/protocol/assets/frxusd/frxusd)
+
+That is not the same thing as the older FRAX mechanism. DefiLlama still labels legacy FRAX as algorithmic, while frxUSD is labeled fiat-backed. This difference should drive position sizing and risk treatment. [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+## frxUSD Migration and Custodian Model
+
+frxUSD is the strategic pivot. Frax docs say frxUSD is live on **20+ blockchain networks**, mintable and redeemable 1:1 through FraxNet using USDC, USDB, and tokenized treasury assets such as BUIDL, USTB, and WTGXX. The same docs advertise **4.1% APY** from Treasury yields, subject to treasury backing performance. [frxUSD docs](https://docs.frax.com/frxusd)
+
+The custodian model is explicit. A real-world entity can become an **enshrined custodian** with a cap that lets it mint and burn frxUSD 1:1 against reserves it holds. Frax docs note that any user can interact with frxUSDCustodian contracts, but the underlying reserve token may have whitelist requirements. They also state frxUSD is redeemable for any custodian asset on demand while there is no guarantee that it is redeemable from a specific custodian if that custodian's asset supply has already been redeemed. [frxUSD protocol docs](https://docs.frax.com/protocol/assets/frxusd/frxusd)
+
+This design is stronger than the old algorithmic-stablecoin perception, but it is not trustless money. It adds:
+
+| Layer | Benefit | Risk |
+| --- | --- | --- |
+| Tokenized Treasuries | high-quality collateral and transparent RWA rails | whitelist, transfer, and fund-level constraints |
+| Frax Inc delegation | professional compliance and reserve management | legal and operational dependency |
+| Enshrined custodians | multi-provider mint/redeem architecture | specific custodian liquidity can be exhausted |
+| Frax DAO | protocol ownership and parameter control | governance complexity |
+| FraxNet / cross-chain | broader access | bridge and messaging risk |
+
+The bull case is that Frax becomes a crypto-native distribution layer for tokenized Treasury-backed dollars. The bear case is that legacy FRAX holders remain in a lower-liquidity old asset while new institutional users prefer frxUSD directly.
+
+## sfrxUSD, FXBs, and the Yield Stack
+
+The yield layer is meaningful but must not be treated as risk-free.
+
+Frax docs describe **sfrxUSD** as an ERC4626-like yielding stablecoin, fully redeemable for frxUSD at an increasing rate. Its benchmark yield strategy can allocate toward carry-trade strategies, DeFi AMOs, or short-dated U.S. Treasury / IORB-style RWA strategies, depending on the best available risk-adjusted yield. [sfrxUSD docs](https://docs.frax.com/protocol/assets/frxusd/sfrxusd)
+
+Frax also uses **FXBs** as zero-coupon bond-like tokens. The docs are unusually explicit: FXBs are debt tokens denominated in Legacy Frax Dollar, not a claim on any other collateral, real-world asset, Treasury bill, or offchain asset. They only convert to Legacy Frax Dollar at maturity through their smart contracts. FXBs help remove circulating Legacy Frax Dollar and stabilize the peg by locking FRAX until maturity. [FXB docs](https://docs.frax.com/protocol/assets/frxusd/fxb)
+
+That makes FXB a useful stabilizer but also reinforces the thesis: the legacy dollar is becoming part of a liability-management system. It is not the same as holding a fresh fiat-backed frxUSD token with a direct reserve model.
+
+## Traction and Financial Metrics
+
+The Frax stack still has real DeFi footprint.
+
+| Metric | June 23, 2026 Snapshot | Source |
+| --- | ---: | --- |
+| Legacy Frax Dollar CoinGecko rank | #149 | CoinGecko |
+| Legacy FRAX CoinGecko market cap / FDV | ~$239.5M / ~$239.5M | CoinGecko |
+| Legacy FRAX CoinGecko 24h volume | ~$195K | CoinGecko |
+| Legacy FRAX DefiLlama supply | ~$186.3M | DefiLlama stablecoins |
+| frxUSD DefiLlama supply | ~$114.8M | DefiLlama stablecoins |
+| Frax Finance protocol TVL | ~$281.1M | DefiLlama protocol |
+| Frax Ether TVL | ~$98.0M | DefiLlama protocol |
+| Fraxlend TVL | ~$20.2M | DefiLlama protocol |
+| Frax Finance fees | ~$128.0K 7d / ~$653.8K 30d / ~$12.6M 1y | DefiLlama fees |
+| Frax Finance revenue | ~$4.5K 7d / ~$26.7K 30d / ~$814K 1y | DefiLlama fees |
+| frxUSD yield fees | ~$78.2K 7d / ~$354.4K 30d / ~$3.0M 1y | DefiLlama fees |
+
+DefiLlama's protocol pages also expose a useful methodology caveat. The Fraxtal **protocol** page classified as `Chain` shows about **$164.6M** TVL, while the broader DefiLlama chain TVL endpoint showed Fraxtal around **$19.9M**. I would not average those. I would treat the discrepancy as a reminder that Fraxtal's "TVL" can mean different things depending on whether the source counts chain-level DeFi deposits, bridge assets, internal protocol accounting, or app liquidity. [DefiLlama Fraxtal protocol](https://defillama.com/protocol/fraxtal) [DefiLlama Chains](https://defillama.com/chains)
+
+The liquidity picture is thinner than the market-cap rank suggests. Dexscreener shows the main Ethereum Curve FRAX/USDC pool around **$5.1M** liquidity and **$34K** 24h volume, Fraxswap FRAX/WETH around **$556K** liquidity and **$12K** 24h volume, and Uniswap FRAX/USDC around **$1.5M** liquidity and about **$2K** 24h volume. That is not disaster liquidity, but it is not a deep reserve dollar either. [Dexscreener FRAX](https://dexscreener.com/search?q=0x853d955acef822db058eb8505911ed77f175b99e)
+
+## FRAX(prev. FXS): Different Asset, Different Thesis
+
+Do not confuse Legacy Frax Dollar with **FRAX (prev. FXS)**.
+
+Frax docs say the former FXS token can be upgraded 1:1 to native FRAX on Fraxtal and that this asset is the scarce commodity asset of the Fraxtal blockchain, the native gas token after the North Star hardfork, and not itself a governance token. They also describe a Frax Burn Engine that burns a portion of FRAX tokens and a tail-emission schedule that starts at 8% annual inflation under FIP-428. [FRAX(prev. FXS) docs](https://docs.frax.com/protocol/frax/overview)
+
+CoinGecko lists **Frax (prev. FXS)** separately under `frax-share`, at about **$0.259**, rank **#733**, roughly **$24.3M** market cap, **$25.8M** FDV, about **$744K** 24h volume, and **93.6M / 99.7M** circulating / total supply. [CoinGecko Frax prev. FXS](https://www.coingecko.com/en/coins/frax-share)
+
+This matters for value accrual:
+
+- Legacy FRAX should behave like a stable dollar, so upside is capped and downside is peg / liquidity / migration risk.
+- frxUSD can grow supply and fee/yield flows, but it is still designed to stay around $1.
+- FRAX(prev. FXS) is where commodity, gas, burn, emissions, veFRAX, and ecosystem value-capture questions live.
+
+For portfolio work, Legacy Frax Dollar and FRAX(prev. FXS) should eventually be tracked as separate research assets.
+
+## Security and Contract Risk
+
+GoPlus shows the Ethereum legacy FRAX token as open-source, non-proxy, 0% buy/sell tax, non-honeypot, and with about **9,924** Ethereum holders. It also flags `is_mintable=1`, which is not automatically suspicious for a stablecoin but is central to the risk model: monetary assets depend on mint/burn permissions, governance, AMOs, and issuer/custodian controls. [GoPlus](https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=0x853d955acef822db058eb8505911ed77f175b99e)
+
+Frax's system complexity is the bigger issue. Legacy FRAX, frxUSD, sfrxUSD, FXBs, FraxNet custodians, Fraxlend, Fraxswap, AMOs, Fraxtal incentives, and FRAX(prev. FXS) all have different risk surfaces. The docs list audits for frxUSD-related components, including July 2025 Zellic work on frxUSD, frxUSDCustodian, FraxNetDeposit, and RWARedemptionCoordinator. [frxUSD docs](https://docs.frax.com/frxusd)
+
+That is a professional setup, but not a simple one. The more Frax becomes a bridge between RWAs, DeFi AMOs, L2 gas, and stablecoin liquidity, the more operational and governance discipline matter.
+
+## Competitive Landscape
+
+| Asset | Model | Approx. Supply | Readthrough for Frax |
+| --- | --- | ---: | --- |
+| USDT | fiat-backed offshore liquidity dollar | ~$186.2B | impossible to match on exchange liquidity |
+| USDC | regulated fiat-backed dollar | ~$74.6B | strongest U.S.-compliant benchmark |
+| USDS | crypto/RWA-backed Maker/Sky dollar | ~$8.2B | closest DeFi money-stack comp |
+| PYUSD | PayFi app dollar | ~$2.76B | stronger consumer / merchant distribution |
+| GHO | Aave-native stablecoin | ~$598M | lending distribution comp |
+| Legacy FRAX | algorithmic / AMO legacy dollar | ~$186M | credible history, weak current liquidity |
+| frxUSD | fiat-backed Frax dollar | ~$115M | cleaner current Frax stablecoin thesis |
+
+Frax's edge is not scale. It is composability: stablecoin, yield vault, bonds, LST, lending, AMM, and L2 in one ecosystem. The downside is that users must understand which layer they are buying. In a risk-off market, simple redeemable dollars usually win.
+
+## Risk Matrix
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Legacy peg risk | High | FRAX trades below $1 and has shallow visible volume | FRAX price, Curve liquidity, redemption routes |
+| Migration confusion | High | users may conflate legacy FRAX, frxUSD, and FRAX(prev. FXS) | docs, exchange labels, wallet UX |
+| Liquidity risk | High | CoinGecko volume is low relative to market cap | CEX depth, Curve FRAX/USDC, Fraxswap |
+| Custodian / RWA risk | Medium-High | frxUSD relies on enshrined custodians and tokenized Treasury assets | custodian caps, reserve reports, whitelist issues |
+| Governance risk | Medium-High | DAO and Frax Inc delegation shape collateral, compliance, AMOs, and strategy | FIPs, contracts, admin changes |
+| Yield risk | Medium | sfrxUSD can allocate across carry trade, AMO, and RWA strategies | APY source, drawdowns, strategy caps |
+| Data methodology risk | Medium | TVL and supply sources use different definitions | compare CoinGecko, DefiLlama, app dashboards |
+| FRAX(prev. FXS) dilution risk | Medium | commodity token has tail emissions | burn engine, gas demand, net issuance |
+
+## Monitoring Dashboard
+
+| Metric | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Legacy FRAX price | ~$0.990 | returns near $0.998-$1.002 | persistent <$0.99 |
+| Legacy FRAX CoinGecko volume | ~$195K 24h | >$5M daily organic volume | <$100K with widening spreads |
+| Legacy FRAX DefiLlama supply | ~$186M | orderly decline via migration / FXBs | disorderly shrink or peg stress |
+| frxUSD supply | ~$115M | >$500M with reserve transparency | stagnates below $150M |
+| Frax Finance TVL | ~$281M | >$750M | <$150M |
+| Frax Finance 30d fees | ~$654K | >$2M | <$250K |
+| frxUSD 30d yield fees | ~$354K | >$1M with durable APY | APY falls without adoption |
+| FRAX(prev. FXS) market cap | ~$24M | gas/burn demand supports rerating | emissions exceed real usage |
+
+## Verdict
+
+Legacy Frax Dollar is a **high-quality watchlist asset for understanding the Frax ecosystem, but not a core dollar reserve allocation**.
+
+The bull case is that Frax is one of the few DeFi teams still building a full-stack monetary system: fiat-backed frxUSD, yielding sfrxUSD, FXB bonds, Fraxtal, frxETH, lending, AMM liquidity, and a commodity-style gas token. That is strategically interesting and much more ambitious than another isolated stablecoin.
+
+The caution is that Legacy FRAX itself is the wrong place to express most of that upside. It trades below $1, shows low public volume, and sits in a transition zone between the old algorithmic/AMO model and the new frxUSD / Fraxtal architecture. For stablecoin reserves, I would prefer frxUSD after verifying mint/redeem access and reserve transparency. For ecosystem upside, I would separately underwrite FRAX(prev. FXS), Fraxtal gas demand, burns, emissions, and veFRAX.
+
+My current view: **watchlist / selective exposure only.** Legacy FRAX becomes more attractive if it tightens to peg, liquidity deepens, migration paths become unambiguous, and frxUSD grows without creating new custodian concentration risk. Until then, treat it as a legacy liability-management asset inside an otherwise serious DeFi money stack.
+
+## Selected Sources
+
+- [Frax docs: frxUSD](https://docs.frax.com/frxusd)
+- [Frax docs: Protocol overview](https://docs.frax.com/protocol)
+- [Frax docs: frxUSD protocol model](https://docs.frax.com/protocol/assets/frxusd/frxusd)
+- [Frax docs: sfrxUSD](https://docs.frax.com/protocol/assets/frxusd/sfrxusd)
+- [Frax docs: FXB](https://docs.frax.com/protocol/assets/frxusd/fxb)
+- [Frax docs: FRAX (prev. FXS)](https://docs.frax.com/protocol/frax/overview)
+- [CoinGecko Legacy Frax Dollar](https://www.coingecko.com/en/coins/frax)
+- [CoinGecko Frax (prev. FXS)](https://www.coingecko.com/en/coins/frax-share)
+- [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+- [DefiLlama Frax Finance](https://defillama.com/protocol/frax-finance)
+- [DefiLlama Fees: Frax Finance](https://defillama.com/fees/frax-finance)
+- [Dexscreener FRAX](https://dexscreener.com/search?q=0x853d955acef822db058eb8505911ed77f175b99e)

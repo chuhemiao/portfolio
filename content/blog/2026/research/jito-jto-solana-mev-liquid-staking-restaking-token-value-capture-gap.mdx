@@ -1,0 +1,220 @@
+---
+title: 'Jito JTO: Solana MEV, Liquid Staking, Restaking, and the Token Value-Capture Gap'
+publishedAt: '2026-06-23'
+summary: 'Jito is one of Solana’s highest-quality infrastructure protocols: it combines JitoSOL liquid staking, MEV block-engine/tip distribution, and an emerging restaking stack, with about $725M-$730M TVL, roughly $5.8M-$6.1M in 30-day tracked fees, and JTO trading around $0.65 with about $313M market cap and $645M FDV. The underwriting case is strong at the protocol layer but less direct at the token layer: JTO governs Jito Network and can steer treasury, fees, and protocol parameters, yet it is not a simple claim on all JitoSOL yield or Solana MEV. Verdict: high-quality Solana infrastructure watchlist / selective exposure, with value-capture evidence and unlock/liquidity risk as the main constraints.'
+slug: 'jito-jto-solana-mev-liquid-staking-restaking-token-value-capture-gap'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Jito is a high-quality Solana infrastructure watchlist asset; JTO exposure should stay selective until token value capture is more explicit.
+- **Why it matters:** Jito sits at the intersection of Solana staking liquidity, MEV execution, validator rewards, and restaking. That is real infrastructure, not just narrative.
+- **Main tension:** Protocol quality is high, but JTO is primarily a governance asset today. The hard question is how much of JitoSOL fees, MEV tips, restaking economics, and treasury value ultimately accrues to JTO holders.
+
+## Executive Summary
+
+Jito is one of the most important pieces of Solana infrastructure. It started with MEV-aware validator infrastructure and JitoSOL liquid staking, then expanded into MEV tip distribution, DAO governance, and restaking. The result is a protocol that touches several of Solana's most valuable activity streams: validators, stakers, searchers, liquid staking users, DeFi collateral, and new restaking operators.
+
+As of the June 23, 2026 research snapshot, CoinGecko shows JTO around **$0.65**, with about **$313M** market cap, **$645M** FDV, **486M** circulating supply, **1B** total supply, roughly **$52M** 24h volume, and about **$725M** TVL. DefiLlama shows Jito around **$730M** TVL on Solana, while its fee dashboards show roughly **$1.25M** 7-day fees, **$5.8M** 30-day fees, and about **$292M** 365-day fees for the parent Jito fee line. [CoinGecko](https://www.coingecko.com/en/coins/jito) [DefiLlama Jito](https://defillama.com/protocol/jito) [DefiLlama Fees](https://defillama.com/fees/protocol/jito)
+
+The valuation surface looks cleaner than many governance tokens: market cap / TVL is roughly **0.43x**, FDV / TVL is roughly **0.89x**, and the float is already close to half the 1B supply. But the token is still down about **89%** from its December 2023 all-time high, and the value-accrual mechanism is not the same as owning Jito Labs equity, JitoSOL revenue, or Solana MEV itself. [CoinGecko](https://www.coingecko.com/en/coins/jito)
+
+My verdict: **high-quality watchlist / selective exposure.** Jito is strategically important and economically real, but JTO should be underwritten as a governance-and-fee-option asset, not a direct cash-flow token. The thesis strengthens if the DAO formalizes durable fee routing, JitoSOL share grows, restaking becomes economically meaningful, and JTO governance begins to control a larger, measurable portion of protocol economics.
+
+## Research Question and Investment Relevance
+
+The useful research question is:
+
+**Is JTO a clean way to own Solana’s liquid staking and MEV infrastructure, or is it a high-quality governance token with an unresolved value-capture discount?**
+
+This matters because Solana is structurally more activity-sensitive than many L1s. High-frequency trading, priority fees, validator competition, and low-latency execution are not peripheral to Solana; they are central to the chain’s product-market fit. Jito is one of the main interfaces into that activity.
+
+The investment relevance is therefore not only JTO’s market cap. It is whether Jito can become the default economic coordination layer for:
+
+| Layer | Jito Product | Investment Question |
+| --- | --- | --- |
+| Staking | JitoSOL liquid staking | Can Jito keep LST share and fee quality as Solana staking matures? |
+| MEV | Jito-Solana, Block Engine, tip programs | Can Jito keep monetizing MEV without creating centralization risk? |
+| DAO | JTO governance | Can governance convert protocol importance into durable token value? |
+| Restaking | Jito Restaking / NCNs / vaults | Can restaking create new fee streams without importing slash / operator risk? |
+
+Jito is not a small app sitting on Solana. It is closer to core market-structure infrastructure. That makes it worth a full memo.
+
+## Project Overview
+
+Jito's core stack has four pieces:
+
+| Component | What It Does | Why It Matters |
+| --- | --- | --- |
+| Jito-Solana | MEV-aware Solana validator client and infrastructure | Improves bundle execution, MEV capture, and validator reward routing |
+| JitoSOL | Liquid staking token for SOL | Converts staked SOL into DeFi-usable collateral while sharing staking and MEV economics |
+| MEV tip distribution | Programs for collecting and distributing MEV tips to validators and stakers | Turns Solana MEV into a trackable reward stream |
+| Jito Restaking | Vault / NCN / operator framework | Extends Jito from staking into shared security and offchain service markets |
+
+The Jito Foundation documentation frames MEV as unavoidable in financial markets and focuses on reducing negative externalities, preventing validator centralization, and distributing rewards across the ecosystem. Its Jito-Solana docs also describe bundles, relayers, block engines, and MEV tips as explicit features of the client architecture. [Jito MEV Priorities](https://jito-foundation.gitbook.io/mev/solana-mev/jitos-mev-priorities.md) [Jito-Solana Features](https://jito-foundation.gitbook.io/mev/jito-solana/features.md)
+
+The technical point is simple: Jito is not just an LST brand. It operates in Solana's execution path. Searchers can pay tips for better execution, validators can route MEV tips through distribution accounts, and stakers can receive pro-rata MEV claims after epoch-level accounting. [Tip Payment Program](https://jito-foundation.gitbook.io/mev/mev-payment-and-distribution/tip-payment-program.md) [Tip Distribution Program](https://jito-foundation.gitbook.io/mev/mev-payment-and-distribution/tip-distribution-program.md)
+
+## JitoSOL, MEV, and the Economic Engine
+
+JitoSOL is the visible user-facing product, but the economic engine is broader than liquid staking.
+
+The Jito stack monetizes or routes value from:
+
+1. Staking rewards on delegated SOL.
+2. MEV tips paid by users and searchers.
+3. Liquid staking fees.
+4. Potential DAO-controlled fees and treasury flows.
+5. Future restaking fees from NCNs, vaults, and operators.
+
+DefiLlama separates Jito into several tracked lines. In the current snapshot, Jito Liquid Staking has about **$725M** TVL, Jito Restaking is still much smaller at roughly **$16M** TVL, and Jito MEV Tips are tracked as a separate MEV category. [DefiLlama Jito](https://defillama.com/protocol/jito)
+
+The fee picture is meaningful:
+
+| Fee Line | 7d Fees | 30d Fees | 365d Fees | Interpretation |
+| --- | ---: | ---: | ---: | --- |
+| Jito parent fee line | ~$1.25M | ~$5.8M | ~$292M | Broad Jito fee footprint |
+| Jito Liquid Staking | ~$638K | ~$3.2M | ~$118M | JitoSOL-related fee flow |
+| Jito MEV Tips | live fee methodology | tracked by DefiLlama | tracked by DefiLlama | MEV tips paid by users/searchers |
+
+There is a methodology nuance. The Jito Foundation docs historically describe a **5%** fee on MEV tips through the Block Engine, while DefiLlama's Jito MEV Tips methodology says Jito collects **4%** as revenue and distributes most MEV rewards to validators/stakers/searchers. I treat DefiLlama's fee totals as gross protocol activity signals, not as direct JTO-holder revenue. [Jito-Solana Features](https://jito-foundation.gitbook.io/mev/jito-solana/features.md) [DefiLlama Jito MEV Tips](https://defillama.com/fees/protocol/jito-mev-tips)
+
+That distinction is the memo's core. Jito has real fee flow. JTO does not automatically receive all of it.
+
+## JTO Tokenomics and Governance
+
+JTO is the governance token for Jito Network. The official governance-token page gives JTO holders authority over protocol and DAO decisions, including treasury, fee parameters, and ecosystem direction. Total supply is **1B JTO**. [Jito Governance Token](https://www.jito.network/docs/governance/the-jito-governance-token-jto/)
+
+The important allocation shape is:
+
+| Allocation Bucket | Share | Investor Readthrough |
+| --- | ---: | --- |
+| Community growth | ~34.3% | largest public/ecosystem bucket, includes initial airdrop and community incentives |
+| Ecosystem development | ~25.0% | DAO/protocol growth budget |
+| Core contributors | ~24.5% | team/contributor alignment and vesting pressure |
+| Investors | ~16.2% | venture overhang but smaller than contributor bucket |
+| Total supply | 1B JTO | no need to model inflation beyond unlock / treasury movement |
+
+As of the current CoinGecko snapshot, about **486M JTO** is circulating, or roughly **48.6%** of total supply. That means the token is not a tiny-float launch anymore, but it is not fully de-risked either. The remaining supply matters because contributors, investors, treasury allocations, incentives, and governance-controlled distributions can still affect float and market structure. [CoinGecko](https://www.coingecko.com/en/coins/jito)
+
+JTO's value-accrual model is best understood as an option on governance-controlled economics:
+
+| Economic Stream | Does Jito Generate It? | Is It Directly Captured By JTO Today? |
+| --- | --- | --- |
+| Staking rewards | yes, via delegated SOL / JitoSOL | no, primarily goes to stakers / JitoSOL economics |
+| MEV tips | yes, through Block Engine / tip distribution | partly protocol-controlled, but not a simple holder dividend |
+| LST fees | yes | governance can matter, but cash-flow claim is indirect |
+| DAO treasury | yes | JTO governs allocation |
+| Restaking fees | emerging | upside optionality, not mature cash flow |
+
+This is not necessarily bad. Many high-quality infrastructure tokens start as governance claims and become more valuable as governance controls more real cash flows. But the burden of proof is on Jito DAO to turn protocol importance into token-level economics without harming neutrality or validator adoption.
+
+## Restaking: Real Option, Not Main Underwriting Pillar Yet
+
+Jito Restaking is strategically interesting because it can turn Jito from an LST/MEV protocol into a shared-security marketplace. The architecture introduces vaults, operators, and NCNs, or Node Consensus Networks. In practice, this lets services source economic security from restaked assets and coordinate operators through Jito’s framework. [Jito Restaking Docs](https://www.jito.network/docs/restaking/)
+
+The current size is still small compared with JitoSOL. DefiLlama shows Jito Restaking at roughly **$16M** TVL versus more than **$725M** in Jito Liquid Staking. That is enough to prove the product exists, not enough to make restaking the base-case valuation driver. [DefiLlama Jito](https://defillama.com/protocol/jito)
+
+The correct underwriting stance is:
+
+- **Bullish option:** Restaking gives Jito a second major Solana infrastructure market beyond LSTs and MEV.
+- **Base case:** Restaking remains early, with limited TVL and unclear fee durability.
+- **Risk case:** Restaking imports operator, slashing, governance, and service-quality risks before revenue is material.
+
+For now, restaking should be treated as upside optionality, not the reason to buy JTO at current FDV.
+
+## Market Structure and Liquidity
+
+JTO's market cap and FDV look reasonable against protocol TVL, but spot liquidity deserves caution.
+
+| Metric | Snapshot |
+| --- | ---: |
+| Price | ~$0.65 |
+| Market cap | ~$313M |
+| FDV | ~$645M |
+| Circulating supply | ~486M JTO |
+| Total supply | 1B JTO |
+| Market cap / TVL | ~0.43x |
+| FDV / TVL | ~0.89x |
+| Drawdown from ATH | ~89% |
+
+Dexscreener shows the largest visible Solana pool as an Orca **JTO/JitoSOL** pool with about **$1.4M** liquidity and roughly **$525K** 24h volume. Other visible JTO pools on Orca, Raydium, and Meteora are far smaller. That does not mean JTO is illiquid overall; centralized exchange volume is clearly larger. But it does mean onchain DEX depth is small relative to market cap and protocol TVL. [Dexscreener JTO](https://dexscreener.com/solana/g2fie1yn9n9zjx5e1e2lxxmnhvb1h3hcuhlpfkj98sma)
+
+This matters for execution. A protocol can be systemically important while its token still trades with thin onchain depth, CEX concentration, and unlock sensitivity.
+
+## Competitive Landscape
+
+Jito competes across categories rather than against one direct peer.
+
+| Competitor / Category | Strength | Jito Advantage | Jito Risk |
+| --- | --- | --- | --- |
+| Marinade / mSOL | early Solana LST, broad DeFi history | stronger MEV-native positioning | LST share can fragment |
+| Sanctum / LST routing | liquid staking distribution and LST marketplace | Jito has stronger MEV infrastructure | distribution can commoditize LSTs |
+| Lido stETH | Ethereum LST network effect | Jito is Solana-native and MEV-specific | stETH shows how hard LST moats can become |
+| EigenLayer | restaking category leader on Ethereum | Jito can be Solana’s native restaking stack | restaking economics may be weaker on Solana |
+| Solana validators without Jito | direct staking / client diversity | Jito improves MEV capture and transparency | validator centralization concerns can limit adoption |
+
+The strongest bull case is that Jito becomes the Solana equivalent of a combined LST, MEV, and restaking market-structure layer. The strongest bear case is that those functions remain valuable, but JTO captures only governance influence while most economic surplus goes to validators, stakers, searchers, and applications.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | JTO Readthrough |
+| --- | ---: | --- | --- |
+| Bull | 30% | Solana activity rebounds, JitoSOL share grows, DAO fee routing becomes explicit, and restaking becomes a real fee market | JTO rerates toward core Solana infra governance premium |
+| Base | 50% | Jito remains critical infrastructure with healthy TVL and fees, but JTO value capture stays indirect | selective exposure; valuation tracks Solana beta and governance progress |
+| Bear | 20% | Solana activity weakens, LST share fragments, restaking underwhelms, and unlocks / CEX liquidity pressure the token | JTO trades like a high-beta governance token despite protocol quality |
+
+The key point: the protocol can keep winning while the token only partially wins. That is the value-capture gap.
+
+## Risk Matrix
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Token value capture | High | JTO governance does not equal automatic revenue ownership | DAO proposals, fee routing, treasury flows |
+| Solana activity beta | High | MEV and staking economics depend on Solana throughput, trading activity, and SOL price | Solana DEX volume, priority fees, validator revenue |
+| Validator centralization risk | Medium-High | MEV infrastructure can concentrate power if not transparent and open | Jito-Solana adoption share, alternative clients, validator distribution |
+| Unlock / float risk | Medium | ~48.6% circulating means remaining supply still matters | unlock schedules, treasury grants, contributor/investor movement |
+| Onchain liquidity | Medium | visible DEX depth is small relative to market cap | pool liquidity, CEX share, slippage |
+| Restaking risk | Medium | NCNs / vaults can add slashing, operator, and governance complexity | restaking TVL, incidents, service quality, fee generation |
+| Smart contract / client risk | Medium | Jito touches validator and staking infrastructure | audits, release reviews, incident history |
+
+Jito does have an audit posture. The Foundation documentation lists ongoing OtterSec reviews for major releases plus Neodyme and Halborn materials. That reduces, but does not eliminate, protocol and client risk. [Jito Audits](https://jito-foundation.gitbook.io/mev/resources/audits.md)
+
+## Monitoring Dashboard
+
+| Metric | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Jito TVL | ~$730M | sustained >$1.5B | <$500M with Solana recovery |
+| Jito Liquid Staking TVL | ~$725M | durable LST share growth | share loss to competing LSTs |
+| Jito Restaking TVL | ~$16M | >$250M with real NCN demand | stagnant TVL / incentive-only growth |
+| 30d fees | ~$5.8M parent fee line | >$15M without one-off spikes | <$2M while Solana volume remains healthy |
+| JTO float | ~48.6% circulating | unlock absorption with stable liquidity | unlock-driven sell pressure |
+| DEX liquidity | ~$1.4M largest visible pool | deeper multi-pool liquidity | thinner liquidity / CEX dependence |
+| DAO economics | indirect today | explicit, sustainable fee routing | governance remains symbolic |
+
+## Verdict
+
+Jito is a **high-quality Solana infrastructure watchlist / selective exposure** asset.
+
+The protocol case is strong. Jito has real TVL, real fee flow, real MEV relevance, a credible JitoSOL product, and a plausible restaking path. It is one of the few Solana projects where the word "infrastructure" is earned.
+
+The token case is more nuanced. JTO is not a direct claim on all Solana MEV, all JitoSOL yield, or all validator economics. It is a governance asset over an increasingly important protocol. That can be valuable, but the market should discount it until DAO-controlled economics become more visible and durable.
+
+My current view: **JTO belongs on the high-quality watchlist, but position sizing should respect the value-capture gap.** It becomes more compelling if Jito DAO formalizes sustainable fee routing, JitoSOL returns to clear growth, restaking TVL becomes meaningful without excessive incentives, and JTO absorbs future unlocks without liquidity deterioration.
+
+## Selected Sources
+
+- [Jito governance token documentation](https://www.jito.network/docs/governance/the-jito-governance-token-jto/)
+- [Jito MEV priorities](https://jito-foundation.gitbook.io/mev/solana-mev/jitos-mev-priorities.md)
+- [Jito-Solana features](https://jito-foundation.gitbook.io/mev/jito-solana/features.md)
+- [Jito tip payment program](https://jito-foundation.gitbook.io/mev/mev-payment-and-distribution/tip-payment-program.md)
+- [Jito tip distribution program](https://jito-foundation.gitbook.io/mev/mev-payment-and-distribution/tip-distribution-program.md)
+- [Jito audits](https://jito-foundation.gitbook.io/mev/resources/audits.md)
+- [Jito Restaking documentation](https://www.jito.network/docs/restaking/)
+- [CoinGecko JTO](https://www.coingecko.com/en/coins/jito)
+- [CoinMarketCap Jito](https://coinmarketcap.com/currencies/jito/)
+- [DefiLlama Jito](https://defillama.com/protocol/jito)
+- [DefiLlama Jito fees](https://defillama.com/fees/protocol/jito)
+- [DefiLlama Jito MEV Tips fees](https://defillama.com/fees/protocol/jito-mev-tips)
+- [Dexscreener JTO/JitoSOL](https://dexscreener.com/solana/g2fie1yn9n9zjx5e1e2lxxmnhvb1h3hcuhlpfkj98sma)

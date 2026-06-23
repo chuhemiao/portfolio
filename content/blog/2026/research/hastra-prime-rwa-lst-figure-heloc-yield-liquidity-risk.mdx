@@ -1,0 +1,197 @@
+---
+title: 'Hastra PRIME: Figure HELOC Yield, RWA Liquid Staking, and the Liquidity-Risk Test'
+publishedAt: '2026-06-23'
+summary: "Hastra PRIME is a new RWA credit wrapper that brings Figure's Democratized Prime / HELOC-linked yield into Solana and Ethereum DeFi rails. As of the June 23, 2026 snapshot, CoinGecko shows PRIME around $1.04, rank #118, roughly $390M market cap / FDV, about 374M circulating tokens, and about $3.37M 24h volume; RWA.xyz shows $392.7M total asset value, $1.00 NAV, 1,856 holders, 1,226 monthly active addresses, and $6.17B trailing 30d transfer volume as of June 22, 2026. Verdict: high-quality RWA credit watchlist / selective exposure, but not core collateral yet because the thesis depends on Figure loan-performance transparency, legal and redemption mechanics, issuer/admin controls, and durable third-party liquidity outside promoted pools."
+slug: 'hastra-prime-rwa-lst-figure-heloc-yield-liquidity-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Hastra PRIME is a high-quality RWA credit watchlist asset, not a core DeFi collateral asset yet.
+- **Why it matters:** It packages Figure's real-world credit yield into Solana and Ethereum rails, giving RWA credit a more composable distribution path than a closed Figure-only account.
+- **What still needs proof:** PRIME needs clearer public pool reporting, redemption mechanics, loan-performance transparency, audit coverage, and durable liquidity that survives beyond early distribution.
+
+## Executive Summary
+
+Hastra PRIME is best understood as an RWA credit wrapper, not a normal governance token. CoinGecko describes Hastra as a decentralized protocol on Solana that tokenizes access to Figure's loan portfolio, with **wYLDS** as a wrapped version of Figure's SEC-registered yielding dollar product and **PRIME** as a liquid-staking-style token earning yield from Figure's Democratized Prime HELOC lending pools. [CoinGecko](https://www.coingecko.com/en/coins/hastra-prime)
+
+The asset is interesting because the underlying story is unusually concrete for an RWA token: Figure is an operating consumer-credit and capital-markets platform, Democratized Prime exposes lenders to yield backed by real-world assets such as Figure HELOCs, and PRIME makes that exposure tradable and composable on Solana and Ethereum. Figure Markets describes Democratized Prime as a decentralized lending marketplace with hourly lending pools, Dutch auction rate discovery, and loans backed by crypto or real-world assets. [Figure Markets Earn](https://www.figuremarkets.com/markets/democratized-prime/earn/)
+
+As of the June 23, 2026 market snapshot, CoinGecko shows PRIME at about **$1.04**, market cap rank **#118**, roughly **$390M** market cap / FDV, about **374M** circulating tokens, and about **$3.37M** in 24h volume. RWA.xyz's PRIME page shows about **$392.7M** total asset value, **$1.00** NAV, **1,856** holders, **1,226** monthly active addresses, **75,289** monthly transfers, and **$6.17B** trailing 30-day transfer volume, with support on **Solana and Ethereum** as of its June 22, 2026 asset snapshot. [CoinGecko](https://www.coingecko.com/en/coins/hastra-prime) [RWA.xyz PRIME](https://app.rwa.xyz/assets/PRIME)
+
+Verdict: **High-quality RWA credit watchlist / selective exposure.** PRIME is one of the more credible attempts to connect real consumer-credit yield with DeFi composability. But the current investable case still requires caution. DefiLlama does not have a dedicated Hastra PRIME protocol page, public docs from Hastra itself are thin, and the key economics depend on Figure / Democratized Prime legal structure, collateral reporting, repo mechanics, and liquidity support. I would track PRIME closely, but I would not yet treat it as a generic stablecoin, risk-free yield token, or deep DeFi collateral asset.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Can Hastra PRIME turn Figure HELOC-linked yield into a transparent, liquid, composable RWA primitive, or is it mainly a branded wrapper around a still-opaque private-credit exposure?**
+
+This matters because the RWA market is splitting into several different instruments that all look dollar-like on a dashboard but carry very different risks:
+
+| Asset Type | Examples | Economic Claim | Core Risk |
+| --- | --- | --- | --- |
+| Fiat-backed stablecoin | USDC, PYUSD, RLUSD | redeemable issuer liability | reserve / issuer / freeze risk |
+| Tokenized Treasury fund | BUIDL, USYC, USTB, OUSG | fund/NAV exposure | transfer restrictions and fund access |
+| Yield-bearing dollar | YLDS, USDY, sUSDS | yield-bearing note or protocol dollar | issuer, strategy, or mechanism risk |
+| Tokenized credit / lending pool | PRIME, FIGR_HELOC-like assets | private-credit or repo-linked exposure | loan performance, structure, liquidity |
+
+PRIME belongs in the fourth bucket. It should be analyzed like credit-market infrastructure that happens to have DeFi rails, not like a liquid L1 token or a cash stablecoin.
+
+## Project Overview
+
+Hastra is a young RWA protocol built around Figure-linked assets. The public market data currently presents two main Hastra assets:
+
+1. **wYLDS:** a wrapped version of Figure's YLDS yield-bearing dollar instrument.
+2. **PRIME:** a tokenized / liquid-staking-style exposure tied to Figure Democratized Prime HELOC lending pools.
+
+| Field | Current Assessment |
+| --- | --- |
+| Asset | Hastra PRIME |
+| Ticker | PRIME |
+| Sector | RWA credit, yield token, liquid-staking-style wrapper |
+| Primary chains | Solana and Ethereum |
+| Solana mint | `3b8X44fLF9ooXaUm3hhSgjpmVs6rZZ3pPoGnGahc3Uu7` |
+| Ethereum contract | `0x19ebb35279a16207ec4ba82799cc64715065f7f6` |
+| Underlying theme | Figure Democratized Prime / HELOC-linked lending yield |
+| Current CoinGecko market cap | About $390M |
+| Current RWA.xyz TAV | About $392.7M |
+| Main user | RWA investors, Solana DeFi users, wallets, credit-yield allocators |
+| Main risk | Credit, legal structure, redemption, transparency, and liquidity |
+
+Hastra's own website is currently sparse, which matters. The thesis leans heavily on Figure and market-data sources rather than a rich Hastra documentation set. That is not fatal, but it means diligence should focus on Figure Markets legal terms, RWA.xyz asset reporting, onchain contracts, and observable liquidity rather than marketing copy alone. [Hastra](https://hastra.io/)
+
+## Figure and Democratized Prime: The Underlying Yield Engine
+
+The strongest part of the PRIME thesis is Figure. Figure's main site describes the company as a blockchain and AI-powered finance platform with HELOC, refinance, crypto-backed loan, Figure Markets, Democratized Prime, and YLDS products. It also claims more than **$25B** in equity unlocked and **253K+** households served through Figure's platform. [Figure](https://www.figure.com/)
+
+Figure Markets describes Democratized Prime as a marketplace that directly connects crypto with borrowers seeking liquidity against their assets. The earn product lets lenders choose pools, set lending rates, and participate in hourly lending periods, with a real-time Dutch auction engine matching offers against borrower-acceptable rates. The page advertises variable yield up to **9%**, and says pools can be backed by real-world assets such as Figure HELOCs or crypto-backed loans. [Figure Markets Earn](https://www.figuremarkets.com/markets/democratized-prime/earn/)
+
+The HELOC+ Addendum is the key document for risk. It says the HELOC+ Pool is structured as a repurchase agreement. Figure Lending LLC is the repo seller, Demo Prime Trust 2 acts as administrative agent for repo buyers, and each one-hour settlement period grants a first-priority perfected security interest in designated HELOC collateral. The security interest is recorded through Figure's DART digital lien registry on Provenance, and the collateral is generally secured by second mortgages on residential properties. [HELOC+ Addendum](https://www.figuremarkets.com/disclosures/democratized-prime-terms-heloc-plus-addendum/)
+
+That is a serious structure, but it is not simple. The yield source is not "staking rewards" in the crypto-native sense. It is credit/repo economics tied to loans and collateral. The relevant risks are borrower repayment, collateral value, servicing, liquidation, pool LTV, legal enforceability, operational controls, and whether the onchain wrapper exposes enough of that information to outside DeFi users.
+
+## Token and Capital Stack
+
+PRIME should not be treated as a stablecoin even if it trades close to $1.00. RWA.xyz currently shows a **$1.00 NAV**, while CoinGecko and DEX prices are around **$1.04**. That spread may reflect yield expectation, liquidity conditions, or market microstructure. It should not be read as a guaranteed peg. [RWA.xyz PRIME](https://app.rwa.xyz/assets/PRIME) [CoinGecko](https://www.coingecko.com/en/coins/hastra-prime)
+
+| Layer | What It Is | Investor Question |
+| --- | --- | --- |
+| Underlying loans | HELOC / credit exposure originated or financed through Figure-related rails | What is the collateral pool, FICO / LTV / delinquency profile, geography, and servicing history? |
+| Repo / lending pool | Democratized Prime / HELOC+ pool structure | Who has the claim, what happens under default, and how quickly can collateral be liquidated? |
+| PRIME wrapper | Solana / Ethereum RWA token representing exposure | How does redemption work, what controls exist, and what are the transfer restrictions? |
+| DeFi liquidity | Orca, Raydium, Uniswap, Manifest, Hydration routes | Can a holder exit at NAV-size scale under stress? |
+
+The capital-stack question is not answered by market cap alone. If PRIME represents a claim on a Figure-linked lending product, the important diligence items are pool disclosures, legal documents, redemption path, collateral schedule, and the operating reliability of the Figure / Hastra / chain infrastructure.
+
+## Traction and Market Data
+
+PRIME already has enough scale to deserve a report.
+
+| Metric | Current Snapshot |
+| --- | ---: |
+| CoinGecko rank | #118 |
+| CoinGecko price | ~$1.04 |
+| CoinGecko market cap / FDV | ~$390M / ~$390M |
+| CoinGecko 24h volume | ~$3.37M |
+| CoinGecko circulating / total supply | ~374.1M / ~374.1M |
+| RWA.xyz total asset value | ~$392.7M |
+| RWA.xyz NAV | $1.00 |
+| RWA.xyz holders | 1,856 |
+| RWA.xyz monthly active addresses | 1,226 |
+| RWA.xyz monthly transfer count | 75,289 |
+| RWA.xyz 30d transfer volume | ~$6.17B |
+
+The RWA.xyz numbers are strong for a new asset, but they need interpretation. High transfer volume can come from app-level mechanics, wrapper flows, rebalancing, or active DeFi use. It is not the same as organic end-user payment demand or freely tradable depth. [RWA.xyz PRIME](https://app.rwa.xyz/assets/PRIME)
+
+Liquidity is meaningful but concentrated. CoinGecko's top markets include Manifest, Orca, Ethereum Uniswap V3, Raydium, and Hydration. Contract-specific Dexscreener data shows the Ethereum Uniswap **PRIME/USDC** pool at roughly **$9.0M** liquidity and about **$969K** 24h volume. On Solana, the cleanest visible PRIME/PYUSD Orca pool shows about **$11.0M** liquidity and roughly **$2.14M** 24h volume. [Dexscreener Ethereum](https://dexscreener.com/ethereum/0x5b70a1582135bd04e39ca94a6a56fc3a828e3115) [Dexscreener Solana](https://dexscreener.com/solana/9r9nmgdrdllwwjc9rarjarozznxixqbepgfrj6sfskpq)
+
+There is also ticker noise. Dexscreener search for "PRIME" returns multiple unrelated assets. I only treat markets tied to the CoinGecko-listed Hastra PRIME Solana mint or Ethereum contract as relevant.
+
+## Security and Contract Observations
+
+GoPlus shows the Ethereum PRIME contract as an open-source proxy token with **0%** buy/sell tax, about **97** Ethereum holders, and high holder concentration because the largest addresses are contracts and pools. This is not automatically bad; bridge/wrapper contracts can dominate early cross-chain supply. But it confirms that Ethereum PRIME is not a broad retail holder base yet. [GoPlus](https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=0x19ebb35279a16207ec4ba82799cc64715065f7f6)
+
+| Security Item | Current Signal | Readthrough |
+| --- | --- | --- |
+| Ethereum source | Open-source proxy token | better than opaque contract, but upgrade/admin controls matter |
+| Taxes | 0% buy/sell tax | no obvious transfer-tax trap |
+| Holders | ~97 on Ethereum; RWA.xyz 1,856 aggregate wallets | main user base appears cross-chain / app-led |
+| Concentration | top Ethereum addresses mostly contracts/pools | expected for wrapper liquidity, still a monitoring item |
+| DefiLlama | no dedicated protocol page found | public TVL/fees cannot be independently tracked there yet |
+
+The absence of a DefiLlama protocol page matters. For DeFi integrations, I would prefer a dedicated dashboard that breaks out TVL, chain balances, pool composition, fees, redemptions, and issuer flows. Until then, RWA.xyz, CoinGecko, DEX data, and official Figure legal pages are the best public proxies.
+
+## Competitive Landscape
+
+PRIME competes less with USDC and more with yield-bearing RWA instruments.
+
+| Asset | Category | Edge | PRIME Readthrough |
+| --- | --- | --- | --- |
+| YLDS | SEC-registered yield-bearing dollar | clearer registered-security wrapper | PRIME may be more DeFi-composable but depends on Figure credit rails |
+| FIGR_HELOC | tokenized Figure HELOC credit | direct tokenized credit exposure | PRIME is a more liquid / DeFi-facing wrapper around related yield themes |
+| USDY / OUSG / USTB | tokenized Treasury / note products | cleaner Treasury collateral | PRIME offers credit yield, with higher structure and credit complexity |
+| BUIDL / USYC | institutional tokenized funds | strong institutional brand / collateral use | PRIME is more retail/DeFi-native but less institutionally battle-tested |
+| USDC / PYUSD | payment stablecoins | deep payments and redemption rails | PRIME should not be treated as cash collateral |
+| Morpho / Euler RWA collateral markets | lending infra | broader collateral routing | PRIME needs listed integrations with controlled risk parameters |
+
+The key distinction is yield source. Treasury RWAs expose investors to short-duration government collateral. PRIME exposes them to a credit/repo structure linked to HELOC or Democratized Prime pools. That can be attractive if the yield compensates investors for credit and liquidity risk. It is dangerous if users treat it like a cash-equivalent stablecoin.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | PRIME Implication |
+| --- | ---: | --- | --- |
+| Bull | 30% | Figure continues scaling HELOC / Democratized Prime, Hastra publishes stronger dashboards, PRIME becomes accepted collateral in high-quality Solana/Ethereum venues | PRIME grows beyond $1B TAV with deeper third-party liquidity |
+| Base | 50% | PRIME remains a credible RWA yield asset with strong early transfer volume but limited transparency and concentrated liquidity | $300M-$700M TAV, useful but not core collateral |
+| Bear | 20% | Yield drops, redemptions or legal mechanics disappoint, Figure credit data weakens, or liquidity proves incentive-led | PRIME trades at a discount to NAV and integrations pull back |
+
+The bear case does not require fraud or a credit crisis. A much simpler failure mode is enough: the product remains too opaque for conservative DeFi collateral teams, while yield-sensitive users leave when net returns fall.
+
+## Risk Matrix
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Credit / collateral risk | High | Underlying economics depend on HELOC / lending-pool performance | delinquency, LTV, FICO, geography, realized losses |
+| Legal-structure risk | High | Repo, trust, security interest, DART, and redemption rights are complex | latest Figure terms, pool addenda, legal opinions |
+| Transparency risk | High | Hastra docs are thin and DefiLlama does not track a dedicated protocol page | dashboards, audits, pool composition disclosures |
+| Liquidity risk | Medium-High | DEX depth exists but is concentrated and may not cover large stress exits | pool liquidity, slippage, redemption queue, CEX listings |
+| Admin / proxy risk | Medium | Ethereum token is proxy-based and wrapper controls matter | upgrade events, roles, bridge/mint/burn permissions |
+| Chain / bridge risk | Medium | Asset spans Solana and Ethereum | chain incidents, cross-chain supply reconciliation |
+| Incentive risk | Medium | early RWA launches can show strong volume before durable users arrive | active addresses, retention, non-incentive flows |
+| Regulatory risk | Medium | tokenized private credit, securities, and lending rules can shift | Figure / Hastra availability and terms changes |
+
+## Monitoring Dashboard
+
+| Metric | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| RWA.xyz TAV | ~$392.7M | Sustained >$750M, then >$1B | <$250M after initial rollout |
+| Holders | 1,856 | >5,000 with low concentration | flat holders with high churn |
+| Monthly active addresses | 1,226 | >3,000 organic active addresses | falls below 500 |
+| 30d transfer volume | ~$6.17B | high volume plus diverse venues | high volume only from internal flows |
+| Ethereum Uniswap liquidity | ~$9M | >$25M across multiple clean pools | <$3M or large discount to NAV |
+| Solana PRIME/PYUSD liquidity | ~$11M | deeper USDC/PYUSD pools with real volume | liquidity disappears after incentives |
+| Figure pool transparency | limited public Hastra docs | loan-level or pool-level dashboards | no additional disclosure |
+| NAV / market price | NAV $1.00, market ~$1.04 | tight spread with redemption clarity | persistent discount or stress spread |
+
+## Verdict
+
+Hastra PRIME is a **high-quality RWA credit watchlist / selective exposure**, not a core reserve asset yet.
+
+The bull thesis is strong enough to take seriously. Figure has a real lending and capital-markets operating base. Democratized Prime gives a defined source of yield. Hastra brings that exposure into Solana and Ethereum, where it can be traded, routed, and potentially used as collateral. RWA.xyz already shows meaningful asset value, holders, active addresses, and transfer activity.
+
+The caution is just as important. PRIME is not a stablecoin, not a Treasury fund share, and not a simple staking token. It is an exposure to credit/repo mechanics wrapped into DeFi rails. The current public source stack still has gaps: Hastra docs are light, DefiLlama does not expose protocol-level TVL or fees, Ethereum holders are still very concentrated, and the legal/redeemability path needs more public explanation for non-Figure users.
+
+My current view: **PRIME belongs on the RWA credit watchlist, but I would size it like a venture-style structured-credit experiment rather than cash collateral.** It becomes more investable if Hastra publishes a full documentation set, Figure/Hastra expose pool-level performance dashboards, redemption paths are easy to verify, and liquidity deepens across independent venues without a persistent premium or discount to NAV.
+
+## Selected Sources
+
+- [Hastra](https://hastra.io/)
+- [CoinGecko Hastra PRIME](https://www.coingecko.com/en/coins/hastra-prime)
+- [RWA.xyz PRIME](https://app.rwa.xyz/assets/PRIME)
+- [Figure](https://www.figure.com/)
+- [Figure Markets Democratized Prime Earn](https://www.figuremarkets.com/markets/democratized-prime/earn/)
+- [Figure Markets HELOC+ Addendum](https://www.figuremarkets.com/disclosures/democratized-prime-terms-heloc-plus-addendum/)
+- [Dexscreener Ethereum PRIME/USDC](https://dexscreener.com/ethereum/0x5b70a1582135bd04e39ca94a6a56fc3a828e3115)
+- [Dexscreener Solana PRIME/PYUSD](https://dexscreener.com/solana/9r9nmgdrdllwwjc9rarjarozznxixqbepgfrj6sfskpq)
+- [GoPlus Ethereum PRIME token security](https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=0x19ebb35279a16207ec4ba82799cc64715065f7f6)

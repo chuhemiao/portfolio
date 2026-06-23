@@ -1,0 +1,229 @@
+---
+title: 'Stable STABLE: USDT-Native Payments L1 and the Token Value-Capture Gap'
+publishedAt: '2026-06-22'
+summary: 'Stable (STABLE) is a USDT0-native payments Layer 1 built around a simple thesis: make stablecoin settlement feel like normal dollar payments by using USDT0 for both gas and transfers, with EVM compatibility, sub-second block times, gas waiver support, invoice and pay-per-call flows, and agentic x402 settlement. As of June 22, 2026, STABLE trades around $0.0356 with roughly $848M market cap, $3.56B FDV, 23.83B circulating supply, 100B max supply, and $17-19M 24h volume. The product idea is strong, but STABLE is not a stablecoin and not yet a proven cash-flow token: it is a governance / validator / fee-distribution asset with 50% team plus investor/advisor allocation, long vesting, thin visible DEX liquidity, and value capture that depends on real USDT payment volume moving onto Stable Mainnet.'
+slug: 'stable-stable-usdt-native-payments-l1-token-value-capture-gap'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Stable is a high-quality PayFi / payments-L1 watchlist, but STABLE token exposure is still selective and high-risk.
+- **Why it matters:** Stable attacks a real payment UX problem: users and agents should not need volatile gas tokens to move stablecoins.
+- **What still needs proof:** Stable needs observable USDT0 payment volume, sticky merchant or API settlement, validator fee distribution, and unlock absorption before STABLE can justify a multi-billion-dollar FDV.
+
+## Executive Summary
+
+Stable is a payments Layer 1 optimized for USDT0 settlement. Its core design choice is simple and powerful: **USDT0 is both the gas token and the payment asset**. That removes the "hold ETH/SOL/BNB just to move dollars" friction that still blocks stablecoin UX for merchants, consumers, and autonomous agents.
+
+As of the June 22, 2026 market snapshot, CoinGecko shows STABLE at about **$0.0356**, roughly **$847.7M** market cap, about **$3.56B** FDV, roughly **$17.2M** 24-hour volume, **23.83B** circulating supply, and **100B** total / max supply. CoinMarketCap shows a similar price and market cap around **$848.7M**, rank around **#62**, roughly **$19.1M** 24-hour volume, **23.83B** circulating supply, and **100B** total supply. [CoinGecko](https://www.coingecko.com/en/coins/stable) [CoinMarketCap](https://coinmarketcap.com/currencies/stable/)
+
+The product is more interesting than a normal L1 clone. Stable docs describe a chain with **USDT0-native gas**, **EVM compatibility**, **sub-cent fees**, **sub-second settlement**, P2P payments, invoice settlement, recurring subscriptions, pay-per-call APIs, off-ramp partners, and agentic payment flows. Mainnet configuration lists **chain ID 988**, **USDT0** as gas token, **STABLE** as governance token, and about **0.7 second** block time. [Docs](https://docs.stable.xyz/) [Mainnet information](https://docs.stable.xyz/en/reference/mainnet-information)
+
+Verdict: **High-quality PayFi infrastructure watchlist, selective STABLE exposure only.** Stable has a clean wedge in USDT settlement and agentic payments. But STABLE is not the gas token. Its value accrual depends on validator election, governance, staking, and fee distribution mechanics becoming economically meaningful.
+
+## Research Question and Investment Relevance
+
+The key question is:
+
+**Can Stable turn USDT's distribution into a payments-native L1 with real fee flow to STABLE stakers, or will STABLE remain a high-FDV governance token around a useful but low-margin settlement network?**
+
+Stable matters because stablecoin settlement is one of crypto's few proven product-market fits. USDT is the largest stablecoin by circulation and global usage, but users still encounter fragmented gas, bridging, exchange withdrawal, wallet, and off-ramp friction. Stable is trying to turn USDT into a native app-platform asset.
+
+| Layer | Current Winners | Stable's Wedge | Main Risk |
+| --- | --- | --- | --- |
+| Stablecoin issuer | Tether, Circle, Paxos, Ripple | Stable is not the issuer; it is the payment rail | issuer dependency |
+| Payment chain | Tron, Solana, Base, BNB Chain | USDT0 as native gas and settlement asset | adoption and liquidity |
+| PayFi / agent rail | x402, wallets, MCP tools, off-ramps | single USDT0 balance for payment and fees | early usage still unproven |
+| Token asset | STABLE | governance, validators, staking, gas-fee distribution eligibility | weak or delayed fee capture |
+
+Stable should be analyzed as PayFi infrastructure, not as a stablecoin.
+
+## Project Overview
+
+Stable is an EVM-compatible Layer 1 built for stablecoin payments. The docs describe it as a network where USDT0 is the native gas token and ERC-20, with single-slot finality, sub-second block times, and no separate gas asset required. [Docs](https://docs.stable.xyz/en)
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Stable |
+| Token | STABLE |
+| Sector | PayFi, payments L1, stablecoin infrastructure |
+| Chain ID | 988 |
+| Gas token | USDT0 |
+| Governance token | STABLE |
+| Block time | ~0.7 seconds |
+| EVM status | EVM-equivalent / EVM-compatible |
+| Core users | wallets, payment apps, merchants, API providers, agents, remittance and payout partners |
+| Market cap | ~$848M |
+| FDV | ~$3.56B |
+
+Stable is not trying to maximize general-purpose blockspace demand. It is narrowing the design around stablecoin movement:
+
+1. P2P transfers.
+2. Recurring subscriptions.
+3. Invoice settlement.
+4. Pay-per-call APIs.
+5. Cross-border payouts.
+6. Agentic payments through x402 / MCP-style flows.
+
+That focus is the bull case. It also makes traction easier to test: either Stable captures stablecoin payment volume or it does not.
+
+## Architecture and Product Wedge
+
+Stable's strongest product decision is fee denomination. The docs state that USDT0 is the gas token and payment token, so a user or agent can hold one asset and spend it for both transfers and network fees. This matters because payment users care about dollar cost, not abstract gas tokens. [Agent settlement](https://docs.stable.xyz/en/explanation/agent-settlement)
+
+### USDT0 as Gas
+
+The gas pricing docs describe a single-component fee model. `maxPriorityFeePerGas` is set to zero, priority tips are ignored, and fees are denominated in USDT0. The docs give an example where a native USDT0 transfer costs about **0.0000021 USDT0** when base fee is 1 gwei. [Gas pricing](https://docs.stable.xyz/en/reference/gas-pricing-api)
+
+This is a real UX improvement versus chains where users must hold a separate volatile asset for gas.
+
+### Gas Waiver
+
+Stable also supports gas-waived end-user transactions. The docs describe a governance-approved waiver mechanism where authorized addresses can submit wrapper transactions with `gasPrice = 0`, allowing the end user to sign an inner transaction without managing gas. This is important for consumer apps, wallets, and merchant payment flows. [Gas waiver](https://docs.stable.xyz/en/reference/gas-waiver-api)
+
+The risk is centralization and policy control. Waiver addresses are governance-approved, target allowlists matter, and the UX benefit comes with an additional operational layer.
+
+### Agentic Payments
+
+Stable's agent settlement docs are unusually explicit. Agents can hold USDT0, pay for HTTP resources, and settle onchain in the same request cycle. The docs position x402 as the payment standard, Stable as the settlement layer, and facilitators as the verification / transaction submission layer. [Agent settlement](https://docs.stable.xyz/en/explanation/agent-settlement)
+
+This connects directly to current AI-agent infrastructure themes: pay-per-call APIs, MCP tools, agent-to-agent commerce, autonomous procurement, and usage-based billing.
+
+## Tokenomics and Value Capture
+
+STABLE is not the gas token. That is the central investment point.
+
+The tokenomics docs define STABLE as the governance token of Stable Mainnet. It secures the network through delegated proof of stake, governs upgrades, and entitles stakers to a share of USDT0 gas revenue distributed by validators. [Tokenomics](https://docs.stable.xyz/en/reference/tokenomics)
+
+| Tokenomics Item | Detail |
+| --- | ---: |
+| Symbol | STABLE |
+| Total supply | 100,000,000,000 |
+| Standard | ERC-20 on Stable Mainnet EVM |
+| Investors & advisors | 25% |
+| Team | 25% |
+| Ecosystem & community | 40% |
+| Genesis distribution | 10% |
+| Launch circulating supply, market pages | ~23.83B |
+
+The allocation is not light. Team plus investors/advisors equal **50%** of total supply. The docs say these allocations follow a four-year linear vesting model with a one-year cliff. Ecosystem/community is **40%**, with **8%** unlocked at mainnet launch and the remaining **32%** vesting linearly over three years. Genesis distribution is **10%** and fully unlocked at launch. [Tokenomics](https://docs.stable.xyz/en/reference/tokenomics)
+
+STABLE utility is listed as:
+
+- electing validators;
+- voting on protocol upgrades;
+- handling governance proposals;
+- serving as a credential to receive gas fee distribution from validators.
+
+That creates a plausible value-capture path, but only if network usage produces meaningful USDT0 gas fees and validators actually distribute those fees to STABLE stakers at scale.
+
+## Market Data and Liquidity
+
+The market is already pricing substantial success. At roughly **$848M** market cap and **$3.56B** FDV, STABLE is not a cheap pre-product experiment. It is a high-expectation token. [CoinGecko](https://www.coingecko.com/en/coins/stable) [CoinMarketCap](https://coinmarketcap.com/currencies/stable/)
+
+| Metric | Current Snapshot |
+| --- | ---: |
+| CoinGecko rank | ~#77 |
+| CoinMarketCap rank | ~#62 |
+| Price | ~$0.0356 |
+| Market cap | ~$848M |
+| FDV | ~$3.56B |
+| 24h volume | ~$17-19M |
+| Circulating supply | ~23.83B |
+| Max supply | 100B |
+| FDV / market cap | ~4.2x |
+
+Liquidity is mixed. CoinGecko shows the largest visible venues as LBank, HTX, PancakeSwap V3 on BSC, CoinW, BitMart, Hotcoin, Bithumb, Bybit, Gate, Bitget, and MEXC. That is decent exchange coverage, but not yet blue-chip depth. [CoinGecko](https://www.coingecko.com/en/coins/stable)
+
+Onchain DEX liquidity looks thin relative to market cap. Dexscreener shows the BSC STABLE/USDT PancakeSwap pool at roughly **$980K** liquidity and about **$1.95M** 24-hour volume, with smaller Uniswap-on-BSC pools far below that. [Dexscreener](https://dexscreener.com/bsc/0xeaa6c7292ed954ca9dd72e769568d057b0525c9a)
+
+That gap matters. A payment-infrastructure token with an $800M+ market cap and $3B+ FDV should eventually show deeper native-chain and cross-chain liquidity.
+
+## Traction Signals and Evidence Gaps
+
+The strongest objective traction signal I could verify directly is that Stable Mainnet is live. The public RPC responded with block number **29,024,192** during this research snapshot, and the docs list current mainnet version **v1.3.1**. [Mainnet information](https://docs.stable.xyz/en/reference/mainnet-information)
+
+The weaker part is economic traction. The docs are rich, but public dashboards need to show:
+
+- daily USDT0 transfer count and volume;
+- merchant / invoice / subscription settlement volume;
+- x402 / pay-per-call transaction counts;
+- active wallets and retention;
+- gas fees paid in USDT0;
+- validator fee distribution to STABLE stakers;
+- off-ramp payout volume.
+
+Without those metrics, STABLE is still being valued more on narrative and future payment adoption than on proven fee density.
+
+## Competitive Landscape
+
+Stable competes with multiple layers at once.
+
+| Competitor | Category | Edge | Stable Comparison |
+| --- | --- | --- | --- |
+| Tron | USDT settlement chain | dominant USDT transfer network | Stable has better UX design, far less proven volume |
+| Solana | low-cost payments and consumer apps | speed, wallets, liquidity | Stable is USDT-specialized, Solana is broader |
+| Base | compliant L2 / app distribution | Coinbase and app ecosystem | Stable has USDT-native gas, Base has stronger users |
+| Plasma | Bitcoin-secured / stablecoin-focused chain | PayFi narrative and liquidity programs | Stable is live with USDT0 gas focus |
+| Tempo | payment-oriented chain | institutional payment design | Stable is more USDT-specific |
+| USDC / PYUSD rails | regulated PayFi assets | issuer distribution | Stable relies on USDT distribution rather than issuer control |
+
+The most relevant comparison is Tron. Tron won because USDT users cared about cheap, available transfers. Stable is trying to build a more app-native and developer-friendly version of that stablecoin rail. The challenge is that Tron already has enormous network effects.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | STABLE Implication |
+| --- | ---: | --- | --- |
+| Bull | 25% | Stable becomes a meaningful USDT payment and agent-settlement chain; gas fees grow; validators distribute meaningful USDT0 to stakers | STABLE can sustain a premium L1 / PayFi valuation |
+| Base | 50% | Mainnet works and attracts integrations, but payment volume remains modest and incentives drive much of early activity | token trades as a narrative L1 with value-capture questions |
+| Bear | 25% | USDT users stay on Tron, Solana, exchanges, or existing rails; unlocks arrive before fee revenue scales | FDV compresses and STABLE underperforms PayFi peers |
+
+The base case is not failure. It is a useful chain with a token that outruns near-term economics.
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Token value-capture risk | High | USDT0 is gas; STABLE captures only through governance, staking, validators, and fee distribution | actual USDT0 fees distributed to STABLE stakers |
+| Unlock / allocation risk | High | team plus investors/advisors are 50% of supply | vesting schedule, exchange deposits, circulating supply |
+| Adoption risk | High | payment chains need real users, not only integrations | transfer volume, active wallets, merchant settlement |
+| Tether / USDT dependency | Medium-High | the chain's thesis depends on USDT0 availability and Tether ecosystem support | bridge flows, USDT0 supply, issuer relationship |
+| Liquidity risk | Medium-High | visible DEX liquidity is thin versus market cap / FDV | DEX depth, CEX concentration, spreads |
+| Governance / waiver centralization | Medium | gas waiver relies on governance-approved waiver addresses and allowlists | waiver policies, target lists, failures |
+| Bridge / OFT risk | Medium | STABLE and USDT0 movement depends on OFT / LayerZero-style infrastructure | bridge incidents, DVN configuration, supply accounting |
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Market cap | ~$848M | grows with observable fee revenue | remains high while usage is opaque |
+| FDV | ~$3.56B | FDV/market cap gap narrows through real demand | unlocks expand circulating supply faster than usage |
+| Mainnet activity | block height ~29.0M observed | rising daily transfers and USDT0 volume | low transfers despite incentives |
+| Gas fees | not yet clearly disclosed in dashboards | meaningful USDT0 fees to validators / stakers | fees too small to support token value |
+| DEX liquidity | top visible pool ~$980K | top pools >$10M and native-chain depth | liquidity stays shallow |
+| Agent payments | docs support x402 / MCP flows | live paid API / agent volume | remains developer-demo narrative |
+| Off-ramp network | docs mention Africa and Middle East payout reach | disclosed payout partners and volumes | limited corridor usage |
+
+## Verdict
+
+Stable is a **high-quality PayFi / payments-L1 watchlist**, but STABLE token exposure remains selective.
+
+The product thesis is strong. USDT0-native gas, EVM compatibility, sub-cent fees, gas waiver, invoice settlement, x402, and agentic payments all attack real frictions. Stable is one of the cleaner attempts to make stablecoin payments feel like ordinary dollar settlement.
+
+The token thesis is less complete. STABLE is not the gas asset. The token has governance, validator election, staking, and fee-distribution utility, but the size of that fee stream is not yet proven. The market is already pricing a large outcome at roughly $3.56B FDV, while visible DEX liquidity is still shallow.
+
+My current view: **Stable is strategically important, but STABLE needs proof of payment volume and fee distribution before it becomes high-conviction token exposure.** It becomes more compelling if USDT0 transfer volume, merchant payouts, x402 payments, and USDT0 fee distributions become transparent and material. It becomes less attractive if unlocks arrive before usage and liquidity deepen.
+
+## Selected Sources
+
+- [Stable official site](https://www.stable.xyz/)
+- [Stable docs](https://docs.stable.xyz/)
+- [Stable mainnet information](https://docs.stable.xyz/en/reference/mainnet-information)
+- [Stable tokenomics](https://docs.stable.xyz/en/reference/tokenomics)
+- [Stable gas pricing reference](https://docs.stable.xyz/en/reference/gas-pricing-api)
+- [Stable gas waiver protocol](https://docs.stable.xyz/en/reference/gas-waiver-api)
+- [Stable agent settlement](https://docs.stable.xyz/en/explanation/agent-settlement)
+- [CoinGecko Stable](https://www.coingecko.com/en/coins/stable)
+- [CoinMarketCap Stable](https://coinmarketcap.com/currencies/stable/)
+- [Dexscreener STABLE/USDT pool](https://dexscreener.com/bsc/0xeaa6c7292ed954ca9dd72e769568d057b0525c9a)

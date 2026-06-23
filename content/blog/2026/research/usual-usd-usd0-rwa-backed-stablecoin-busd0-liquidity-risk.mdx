@@ -1,0 +1,217 @@
+---
+title: 'Usual USD USD0: RWA-Backed Stablecoin, bUSD0 Bond Flywheel, and Liquidity Risk'
+publishedAt: '2026-06-23'
+summary: 'Usual USD (USD0) is the Usual Protocol fiat-backed / RWA-backed stablecoin, using tokenized Treasury collateral and a community-owned issuer model where USUAL, USUALx, sUSD0, and bUSD0 turn reserve yield into governance, savings, and bond-like products. As of June 23, 2026, CoinGecko shows USD0 around rank #95, price near $0.999, market cap / FDV around $553M, and 24h volume around $824K, while DefiLlama tracks about $553M circulating as a fiat-backed peggedUSD asset. The key nuance is that most visible USD0 is absorbed by bUSD0: GoPlus shows the Ethereum bUSD0 contract holding about 95% of USD0 supply, and CoinGecko shows bUSD0 trading around $0.964 with roughly $508M FDV. My view is selective RWA-stablecoin watchlist, not core reserve collateral: USD0 has a strong onchain Treasury narrative, but real liquidity, bUSD0 discount, governance resets, and redemption-path complexity need continuous monitoring.'
+slug: 'usual-usd-usd0-rwa-backed-stablecoin-busd0-liquidity-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Usual USD (USD0) is a selective RWA-stablecoin watchlist, not core reserve collateral.
+- **Why it matters:** Usual tries to turn the stablecoin issuer into a community-owned onchain RWA balance sheet: USD0 is the dollar, bUSD0 is the bond product, sUSD0 is the savings wrapper, and USUAL/USUALx route value and governance back to participants.
+- **The key risk:** USD0 itself trades near peg, but much of the system's value is locked into bUSD0, a fixed-maturity bond token that currently trades below par and depends on USUAL emissions, redemption design, and secondary liquidity.
+- **What would upgrade the view:** Deeper USD0/USDC liquidity, a stable bUSD0 discount curve, transparent reserve dashboards, durable USUAL revenue distribution, and clean redemption behavior under stress.
+
+## Executive Summary
+
+Usual USD (USD0) is the core stablecoin of Usual Protocol. The official documentation describes USD0 as a permissionless, fully collateralized stablecoin backed by tokenized U.S. Treasury Bills and repurchase agreements. Usual positions the protocol as a community-owned stablecoin issuer that routes protocol value to USUAL holders, USUALx lockers, and the DAO treasury rather than retaining reserve yield in a corporate issuer. [Usual overview](https://docs.usual.money/start-here/readme.md) [USD0 docs](https://docs.usual.money/usual-products/usd0-stablecoin/usd0.md)
+
+The product is best understood as a stack:
+
+| Layer | Product | What It Does | Main Risk |
+| --- | --- | --- | --- |
+| Stablecoin | USD0 | RWA-backed USD stablecoin | Redemption, collateral, liquidity |
+| Savings | sUSD0 | ERC-4626 vault where USD0 yield accrues through exchange rate | DAO yield allocation and wrapper liquidity |
+| Bond | bUSD0 | Fixed-maturity bonded USD0, formerly USD0++ | Lock-up, discount, USUAL coupon, rt-bUSD0 liquidity |
+| Governance / value capture | USUAL / USUALx | Governance, staking emissions, revenue switch | Token inflation, revenue durability, lock-up behavior |
+
+As of the June 23, 2026 snapshot, CoinGecko shows USD0 around **rank #95**, **$0.999** price, about **$553M** market cap / FDV, **$824K** 24h volume, and about **553.6M** circulating supply. DefiLlama tracks Usual USD at about **$553.1M** circulating, mostly on Ethereum, and classifies it as a fiat-backed peggedUSD asset. [CoinGecko USD0](https://www.coingecko.com/en/coins/usual-usd) [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+The important nuance is bUSD0. CoinGecko shows Bond USD0 around **$0.964**, about **$508M** FDV, and **526.9M** total supply. GoPlus shows the Ethereum USD0 token has about **553.5M** total supply and that the bUSD0 contract holds roughly **526.8M USD0**, or about **95%** of the observed Ethereum USD0 supply in that API snapshot. [CoinGecko bUSD0](https://www.coingecko.com/en/coins/usd0-liquid-bond) [GoPlus USD0](https://gopluslabs.io/token-security/1/0x73a15fed60bf67631dc6cd7bc5b6e8da8190acf5)
+
+That makes Usual different from a simple stablecoin. The headline asset is USD0, but the economic engine is the conversion of USD0 into bUSD0, USUAL emissions, sUSD0 savings, and USUALx revenue distribution. My current view: **selective watchlist, not core reserve collateral.** USD0 is one of the more interesting RWA-backed stablecoin designs, but the bond flywheel and liquidity structure need to prove themselves across stress.
+
+## Research Question and Investment Relevance
+
+The core research question:
+
+**Can Usual turn tokenized Treasury collateral into a durable community-owned stablecoin issuer, or does the model depend too heavily on bUSD0 lock-up, USUAL emissions, and thin secondary liquidity?**
+
+USD0 matters because the stablecoin market is splitting into several models:
+
+| Model | Examples | Value Capture | Main Weakness |
+| --- | --- | --- | --- |
+| Corporate fiat-backed stablecoins | USDT, USDC, PYUSD, RLUSD | Issuer captures reserve spread | Centralized issuer and bank/regulatory risk |
+| DeFi-native credit stablecoins | GHO, crvUSD, DAI / USDS | Protocol borrow revenue and governance | Collateral and peg-management complexity |
+| Synthetic dollars | USDe, USDf | Basis / strategy yield | CEX, custodian, strategy and redemption risk |
+| RWA-backed community issuers | USD0, USYC-style wrappers | Treasury yield plus governance / revenue share | Access, liquidity, governance, product complexity |
+
+Usual is not only issuing a stablecoin. It is trying to tokenize the stablecoin issuer economics. That is more ambitious than just backing a dollar with T-bills, and it also creates more moving parts.
+
+## Project Overview
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Usual Protocol |
+| Stablecoin | Usual USD / USD0 |
+| Bond token | bUSD0, formerly USD0++ |
+| Savings token | sUSD0 |
+| Governance token | USUAL |
+| Staking token | USUALx |
+| Sector | RWA-backed stablecoin, tokenized Treasury, stablecoin issuer economics |
+| Primary chain | Ethereum |
+| Other listed chains | Arbitrum, Base, BNB Chain |
+| Ethereum USD0 contract | `0x73A15FeD60Bf67631dC6cd7Bc5B6e8da8190aCF5` |
+| Ethereum bUSD0 contract | `0x35D8949372D46B7a3D5A56006AE77B215fc69bC0` |
+| Ethereum sUSD0 contract | `0xd861bE82dEe3223CFBEd160791f6550b0704D406` |
+| Core underwriting question | Can USD0 grow without relying on unstable bond discounts and token incentives? |
+
+The docs say Usual was founded in France in 2022 and raised $17M across seed and Series A rounds, with investors including Binance Labs, Kraken Ventures, Galaxy Digital, IOSG Ventures, and OKX Ventures. The same official overview describes USD0 and USUAL as deployed across Ethereum, Arbitrum, Base, and BNB Chain, with Chainlink CCIP and LayerZero used for cross-chain infrastructure. [Usual overview](https://docs.usual.money/start-here/readme.md)
+
+## USD0 Mechanics: RWA Collateral and Mint/Redeem Paths
+
+USD0 is documented as a fiat-backed stablecoin model implemented through Usual Collateral Bridge Infrastructure (UCBI). UCBI connects permissioned RWA tokenizers with permissionless DeFi users. Permissioned users can deposit and redeem tokenized RWA collateral directly, while permissionless users can mint indirectly through USDC and collateral-provider matching. [USD0 docs](https://docs.usual.money/usual-products/usd0-stablecoin/usd0.md)
+
+Official docs list the main USD0 collateral design as follows:
+
+| Component | Documentation Claim | Investment Readthrough |
+| --- | --- | --- |
+| Primary collateral | Tokenized Treasury Bills and repos | Lower credit/duration risk than volatile crypto collateral |
+| Primary provider | Hashnote USYC | Provider and tokenizer concentration matters |
+| Duration target | Portfolio average below 0.33 years | Limits rate sensitivity but does not remove redemption/liquidity risk |
+| Insurance fund | 0.33%-5.33% of USD0 supply in risk docs / USD0 docs | Helpful buffer, but needs observable balance and governance history |
+| Direct redemption | USD0 can be redeemed for underlying tokenized collateral at par | Practical access depends on permissions and collateral rails |
+| Indirect minting | USDC users rely on collateral providers / SwapperEngine | Permissionless UX depends on institutional CP liquidity |
+
+The official RWA collateral page says accepted collateral must be fully collateralized, low risk, transparent, and liquid, with portfolio duration below 0.33 years and redemption or sale within a maximum of 5 business days. It also says collateral is restricted to U.S. Treasuries, quasi-government debt, or cash, with corporate debt prohibited. [RWA collateral docs](https://docs.usual.money/usual-products/usd0-stablecoin/usd0/rwa-collateral.md)
+
+Hashnote USYC is identified as the first and primary collateral partner. The docs describe USYC as a short-duration yield fund using reverse repos and U.S. government securities, with BNY Mellon custody, Cohen and Co as auditor, NAV Consulting as fund administrator, and T+0 to T+1 settlement into USDC or PYUSD. [RWA collateral docs](https://docs.usual.money/usual-products/usd0-stablecoin/usd0/rwa-collateral.md)
+
+This is a serious collateral story. But it should still be analyzed like an RWA cash-management product: tokenizer risk, fund administrator risk, custody risk, settlement timing, governance controls, and redemption queues matter.
+
+## bUSD0: The Bond Product Is the Real Flywheel
+
+bUSD0 is the bonded, yield-bearing form of USD0. The docs say bUSD0 was formerly USD0++ and was redesigned under UIP-12 in November 2025, introducing rt-bUSD0 as a separate early-exit right. The current bUSD0 series matures on **June 11, 2028**. At maturity, **1 bUSD0 redeems for 1 USD0** without rt-bUSD0. Before maturity, users can redeem at par only by recombining **1 bUSD0 + 1 rt-bUSD0**. [bUSD0 docs](https://docs.usual.money/usual-products/yield-products/usd-products/bond-usd0.md)
+
+That design cleanly separates principal, yield, and liquidity:
+
+| Token | Economic Meaning | Yield | Liquidity |
+| --- | --- | --- | --- |
+| USD0 | Stablecoin claim | No native bond coupon | Redeem / sell near $1 |
+| bUSD0 | Locked USD0 principal to maturity | Daily USUAL coupon unless in USL/UZR | Trades below or near par |
+| rt-bUSD0 | Early-exit right | No | Needed for pre-maturity par redemption |
+
+The current market confirms this is not just theoretical. CoinGecko shows bUSD0 around **$0.964**, and Dexscreener shows the main visible Ethereum bUSD0/USD0 Uniswap and Curve pools with roughly **$3.7M** liquidity each. bUSD0's discount is not a USD0 depeg; it is the market pricing of a June 2028 bond-like token, early-exit optionality, USUAL coupon risk, and liquidity risk. [CoinGecko bUSD0](https://www.coingecko.com/en/coins/usd0-liquid-bond) [Dexscreener bUSD0/USD0 Uniswap](https://dexscreener.com/ethereum/0xabfca96716cf2911bbb50a4cdbcbaffa2ef8ecda) [Dexscreener bUSD0/USD0 Curve](https://dexscreener.com/ethereum/0x1d08e7adc263cfc70b1babe6dc5bb339c16eec52)
+
+This is why the asset should not be underwritten as "RWA-backed stablecoin = low risk." USD0 is the stablecoin; bUSD0 is a structured bond product whose market price can be below par until maturity.
+
+## sUSD0 and USUALx: Real Yield, Token Yield, and Revenue Routing
+
+sUSD0 is the savings wrapper. The docs define it as a non-rebasing ERC-4626 vault where USD0 deposits receive sUSD0 shares and yield accrues through a rising exchange rate. Yield comes from the underlying collateral stack, and distribution parameters are adjustable by USUAL governance. [sUSD0 docs](https://docs.usual.money/usual-products/yield-products/usd-products/usd0-savings.md)
+
+USUALx is the staking token. Users stake USUAL to receive USUALx; the USUALx-to-USUAL exchange rate appreciates as staking emissions accrue. The docs say USUALx holders receive 22% of all daily USUAL emissions, and basic staking has no mandatory lock-up, but unstaking currently carries a 10% fee distributed among remaining stakers, insiders, and DAO/protocol recipients. [USUALx docs](https://docs.usual.money/usual-products/usual-governance-token/usual-staking-usdusualx.md)
+
+The Revenue Distribution Module adds a second layer: only locked USUALx receives weekly USD0 revenue distributions through the Revenue Switch. The docs describe protocol revenue sources as T-bill collateral yield, protocol fees, and Fira lending fees, then route **30% to USUALx stakers** and **70% to the DAO treasury**. [Revenue distribution docs](https://docs.usual.money/usual-products/usual-governance-token/usual-locking-module.md)
+
+That is conceptually strong: Usual is trying to make USUAL a governance token with real cash-flow linkage. But it also creates a valuation trap. USUAL itself is down sharply from its all-time high: CoinGecko shows USUAL around **$0.010**, about **$18M** market cap, **$2.65M** 24h volume, roughly **1.79B** circulating supply, and **3B** max supply. Token value capture still needs proof beyond the stablecoin supply number. [CoinGecko USUAL](https://www.coingecko.com/en/coins/usual)
+
+## Market Data and Liquidity
+
+| Metric | June 23, 2026 Snapshot |
+| --- | ---: |
+| USD0 CoinGecko rank | #95 |
+| USD0 price | ~$0.999 |
+| USD0 market cap / FDV | ~$553M |
+| USD0 24h volume | ~$824K |
+| USD0 circulating / total supply | ~553.6M |
+| DefiLlama circulating value | ~$553.1M |
+| DefiLlama chains | Ethereum, Arbitrum |
+| bUSD0 price | ~$0.964 |
+| bUSD0 FDV / total supply | ~$508M / ~526.9M |
+| USUAL market cap / FDV | ~$18M / ~$18.6M |
+
+Onchain liquidity is thinner than the headline supply. Dexscreener shows the largest visible Ethereum bUSD0/USD0 pools around **$3.7M** each, with the Uniswap pool doing about **$740K** 24h volume and the Curve pool about **$30K**. The main visible USD0/USDC pool on Uniswap has about **$2.0M** liquidity and **$44K** 24h volume; the Curve USD0/USDC pool has about **$616K** liquidity and **$9.9K** 24h volume. Arbitrum USD0/USDC liquidity is much smaller, around **$96K** with negligible visible volume. [Dexscreener USD0/USDC](https://dexscreener.com/ethereum/0x4e665157291dbcb25152ebb01061e4012f58add2) [Dexscreener Arbitrum USD0/USDC](https://dexscreener.com/arbitrum/0xe6d854fb3a16e549e62425c4f3ab9b704d9af008)
+
+GoPlus shows the Ethereum USD0 token as open-source and proxy-based, with no buy or sell tax and about **123,813** holders. It also shows the bUSD0 token as open-source and proxy-based, with about **3,053** holders. Upgradeability is normal for an evolving stablecoin protocol, but it belongs in the risk model. [GoPlus USD0](https://gopluslabs.io/token-security/1/0x73a15fed60bf67631dc6cd7bc5b6e8da8190acf5) [GoPlus bUSD0](https://gopluslabs.io/token-security/1/0x35d8949372d46b7a3d5a56006ae77b215fc69bc0)
+
+The market-structure conclusion is simple: USD0 has a credible $550M supply base, but visible secondary liquidity is not deep enough to treat it as core cash. The product is still more of an RWA DeFi strategy ecosystem than a universally liquid settlement dollar.
+
+## Competitive Landscape
+
+| Asset | Category | Edge | USD0 Comparison |
+| --- | --- | --- | --- |
+| USDC | Regulated fiat-backed stablecoin | Deep liquidity, institutional trust, simple redemption | USD0 has more onchain reserve transparency but much less distribution |
+| USDT | Global liquidity dollar | CEX, emerging-market, and settlement network effects | USD0 cannot match liquidity or acceptance |
+| PYUSD | Regulated PayFi stablecoin | PayPal/Venmo distribution and payment rails | USD0 has a DeFi/RWA issuer-economics angle |
+| GHO | Aave-native DeFi stablecoin | Aave collateral and borrow demand | USD0 is RWA-backed, not Aave credit-backed |
+| USDf / USDe | Synthetic dollars | Yield and capital efficiency | USD0 has less strategy/CEX risk but has bond/liquidity complexity |
+| USYC / USTB / BUIDL | Tokenized Treasury products | Direct fund/collateral exposure | USD0 abstracts the RWA into a stablecoin and governance ecosystem |
+
+USD0's strongest wedge is not payments. It is the conversion of tokenized Treasury yield into DeFi-native stablecoin products plus governance economics.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | USD0 Implication |
+| --- | ---: | --- | --- |
+| Bull | 25% | USD0 supply grows above $1B, sUSD0 becomes sticky, bUSD0 discount narrows predictably, and USUALx revenue distributions become visible and durable | Usual becomes a top-tier RWA-stablecoin issuer model |
+| Base | 50% | USD0 remains useful but niche, most supply stays tied to bUSD0 and strategy users, liquidity grows slowly | Selective RWA stablecoin watchlist |
+| Bear | 25% | bUSD0 discount widens, USUAL emissions lose value, liquidity remains thin, or redemption/collateral-provider friction appears | Avoid as reserve collateral; treat only as high-risk structured stablecoin exposure |
+
+The current base case is constructive but cautious. The protocol has a differentiated design, but the market is already pricing bUSD0 below par and USUAL far below prior highs.
+
+## Risks and Mitigants
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| bUSD0 discount risk | High | Most USD0 appears economically tied to bUSD0, which trades below par before 2028 maturity | bUSD0/USD0 price, rt-bUSD0 liquidity, floor changes |
+| Secondary liquidity risk | High | Visible USD0/USDC liquidity is small versus supply | Uniswap/Curve liquidity, volume, slippage |
+| Redemption-path complexity | High | Permissioned RWA rails and CP matching make redemption more complex than USDC | Direct/indirect redemption times, CP incentives |
+| USUAL emissions risk | High | bUSD0 yield depends partly on USUAL coupon value | USUAL price, emissions, revenue switch payouts |
+| Collateral-provider risk | Medium-High | Primary collateral relies heavily on institutional tokenizers like Hashnote USYC | Collateral composition, custody, audits, provider changes |
+| Governance risk | Medium-High | DAO can change floor price, emissions, collateral, and parameters | UIP votes, emergency actions, risk parameter changes |
+| Smart-contract/admin risk | Medium | USD0 and bUSD0 are proxy-based in GoPlus output | Upgrade history, audits, multisig/governance controls |
+| Documentation drift | Medium | Risk-policy docs include update caveats in some markdown pages | Prefer live dashboards and governance records over static docs |
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| USD0 circulating supply | ~$553M | Above $1B with deeper liquidity | Supply flat while incentives continue |
+| USD0 peg | ~$0.999 | Holds $0.998-$1.002 under stress | Persistent below $0.995 |
+| bUSD0 price | ~$0.964 | Discount narrows or follows rational yield curve | Discount widens toward floor / low liquidity |
+| bUSD0 supply | ~526.9M total | Healthy maturity curve and strong rt-bUSD0 market | Concentrated maturity/refinancing stress |
+| Main USD0/USDC liquidity | ~$2.0M Uniswap, ~$616K Curve | Multiple $10M+ pools with real turnover | Thin pools versus headline supply |
+| USUAL price / market cap | ~$0.010 / ~$18M | Revenue distributions support durable demand | Continued emissions-driven sell pressure |
+| Revenue Switch | Weekly USD0 distributions per docs | Transparent, growing payout history | Payout opacity or declining real revenue |
+| Collateral dashboard | Docs claim real-time onchain backing | Multi-provider, auditable reserves | Provider concentration or stale reporting |
+
+## Verdict
+
+Usual USD (USD0) is a **selective RWA-stablecoin watchlist**, not core reserve collateral.
+
+The bull case is compelling: USD0 uses tokenized Treasury collateral, onchain reserve logic, a multi-collateral roadmap, bUSD0/sUSD0 yield products, and a governance token that is explicitly designed to capture protocol economics. That is a more imaginative stablecoin issuer model than simply wrapping T-bills and keeping the spread.
+
+The caution is equally important. Most observed USD0 appears locked into bUSD0, bUSD0 trades at a discount, visible USD0/USDC liquidity is shallow relative to supply, and USUAL has suffered heavy price compression. The protocol can still be useful and innovative, but the risk is not just reserve quality. It is **product-structure risk**: lock-ups, floor-price governance, rt-bUSD0 market depth, emissions, and redemption-path complexity.
+
+My current conclusion: **watchlist, not cash.** USD0 becomes more compelling if the protocol proves that its RWA backing can support deep liquid stablecoin usage while bUSD0 and USUALx become sustainable cash-flow products instead of incentive-driven wrappers.
+
+## Selected Sources
+
+- [Usual overview](https://docs.usual.money/start-here/readme.md)
+- [USD0 documentation](https://docs.usual.money/usual-products/usd0-stablecoin/usd0.md)
+- [RWA collateral documentation](https://docs.usual.money/usual-products/usd0-stablecoin/usd0/rwa-collateral.md)
+- [bUSD0 documentation](https://docs.usual.money/usual-products/yield-products/usd-products/bond-usd0.md)
+- [bUSD0 factsheet](https://docs.usual.money/resources-and-ecosystem/fact-sheets/usual-products/busd0.md)
+- [sUSD0 documentation](https://docs.usual.money/usual-products/yield-products/usd-products/usd0-savings.md)
+- [USUALx staking documentation](https://docs.usual.money/usual-products/usual-governance-token/usual-staking-usdusualx.md)
+- [Usual Revenue Distribution](https://docs.usual.money/usual-products/usual-governance-token/usual-locking-module.md)
+- [Usual liquidity risk policy](https://docs.usual.money/resources-and-ecosystem/risk-policy/third-party-risk/liquidity-risk.md)
+- [CoinGecko USD0](https://www.coingecko.com/en/coins/usual-usd)
+- [CoinGecko bUSD0](https://www.coingecko.com/en/coins/usd0-liquid-bond)
+- [CoinGecko USUAL](https://www.coingecko.com/en/coins/usual)
+- [DefiLlama stablecoins](https://defillama.com/stablecoins)
+- [Dexscreener bUSD0/USD0 Uniswap](https://dexscreener.com/ethereum/0xabfca96716cf2911bbb50a4cdbcbaffa2ef8ecda)
+- [Dexscreener USD0/USDC Uniswap](https://dexscreener.com/ethereum/0x4e665157291dbcb25152ebb01061e4012f58add2)
+- [GoPlus USD0 token security](https://gopluslabs.io/token-security/1/0x73a15fed60bf67631dc6cd7bc5b6e8da8190acf5)
+- [GoPlus bUSD0 token security](https://gopluslabs.io/token-security/1/0x35d8949372d46b7a3d5a56006ae77b215fc69bc0)

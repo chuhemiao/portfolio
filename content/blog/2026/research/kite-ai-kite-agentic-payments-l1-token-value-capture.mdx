@@ -1,0 +1,232 @@
+---
+title: 'Kite AI KITE: Agentic Payments L1, Agent Passport, and the Token Value-Capture Test'
+publishedAt: '2026-06-22'
+summary: 'Kite AI (KITE) is an agentic-payments Layer 1 and Agent Passport stack for autonomous AI agents: identity, delegated payment authority, stablecoin settlement, x402-compatible service payments, and EVM-compatible execution. As of the June 22, 2026 market snapshot, KITE sits around top-120 by CoinGecko, with roughly $385M market cap, about $1.65B FDV, 2.33B circulating KITE, 10B max supply, and about $17M 24h volume. The investment case is a speculative AI/payment-infrastructure watchlist: Kite has a sharp product wedge and credible token-design hooks, but the token still needs public proof of real agent-payment volume, protocol revenue, module traction, and security transparency before it deserves high-conviction exposure.'
+slug: 'kite-ai-kite-agentic-payments-l1-token-value-capture'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** KITE is a speculative AI/payment-infrastructure watchlist asset, not high-conviction token exposure yet.
+- **Why it matters:** Kite is one of the cleaner attempts to turn the agent economy into payment infrastructure: identity, scoped budgets, stablecoin-native fees, x402-compatible settlement, and a purpose-built EVM L1.
+- **What still needs proof:** Real usage. The core question is whether autonomous agents will actually create recurring paid service transactions that flow through Kite, generate protocol commissions, and convert into meaningful KITE demand.
+
+## Executive Summary
+
+Kite AI is building agentic payment infrastructure around two connected products: **Kite Chain**, an EVM-compatible Proof-of-Stake Layer 1, and **Kite Agent Passport**, a wallet, identity, and delegated-spending system for AI agents. The product thesis is strong: as agents start buying APIs, data, model calls, actions, and human services, they need identity, spending limits, receipts, payment rails, and dispute-friendly audit trails. Kite packages that into a blockchain plus platform layer. [Kite website](https://gokite.ai/) [Kite docs](https://docs.gokite.ai/)
+
+As of the June 22, 2026 market snapshot, CoinGecko shows KITE at roughly **$0.165**, about **$385M** market cap, about **$1.65B** FDV, about **$17M** 24h volume, **2.33B** circulating supply, and **10B** max supply. The local oscillator snapshot maps the same project around CoinGecko rank **#112** and CoinMarketCap rank **#104**, while the direct CoinGecko coin endpoint reports market-cap rank around **#120**. That spread is normal for fast-moving live data, but the main point is stable: KITE is already a several-hundred-million-dollar AI/L1 token with a multi-billion FDV and less than one quarter of supply circulating. [CoinGecko](https://www.coingecko.com/en/coins/kite-2) [CoinMarketCap](https://coinmarketcap.com/currencies/kite/)
+
+The official docs frame Kite around the **SPACE** framework: stablecoin-native settlement, programmable constraints, agent-first authentication, compliance-ready audit trails, and economically viable micropayments. Architecturally, Kite combines an EVM-compatible base chain, platform APIs, a programmable trust layer, and an ecosystem/service marketplace layer. [Introduction and Mission](https://docs.gokite.ai/get-started/introduction-and-mission.md) [Architecture](https://docs.gokite.ai/get-started/architecture-and-design-pillars.md)
+
+Verdict: **Speculative venture-style watchlist.** Kite has a real narrative wedge at the intersection of AI agents, stablecoin payments, and x402-style service monetization. But token exposure depends on execution evidence that is not yet strong enough in public data: live agent-payment volume, protocol fees, commission conversion into KITE, module revenue, active agents, service-provider retention, and publicly available audit artifacts.
+
+## Research Question and Investment Relevance
+
+The useful question is not "is Kite an AI token?" It is:
+
+**Can Kite turn agentic-payment infrastructure into recurring transaction revenue that creates durable KITE demand, or will KITE remain an access/incentive token attached to a compelling but early narrative?**
+
+That matters because agent payments are becoming a crowded design space:
+
+| Model | Examples | Core Wedge | Main Risk |
+| --- | --- | --- | --- |
+| Payment headers / web-native payments | x402, Coinbase ecosystem | Simple HTTP-native payment primitive | App-level adoption and wallet UX |
+| Consumer / merchant PayFi stablecoins | PYUSD, USDC, RLUSD | Distribution and regulated dollar rails | Closed-loop or issuer dependence |
+| AI agent platforms | Agent marketplaces, coding agents, MCP tools | Distribution through workflows | Monetization may stay offchain |
+| Agentic payment L1 | Kite | Identity, delegation, settlement, modules, token economics | Usage may not require a new L1 |
+
+Kite is trying to own the agentic-payment L1 layer rather than only the wallet or API layer. That is ambitious. The upside is a network where service usage, modules, validators, staking, and stablecoin settlement all reinforce one token economy. The risk is that most agent payments could route through simpler HTTP payment standards, wallets, or existing chains without needing KITE.
+
+## Project Overview
+
+Kite describes itself as "the payments layer for the agent economy." The public website says Kite Mainnet is live and positions the system as infrastructure that gives autonomous agents verifiable trust and a purpose-built chain for transactions, coordination, and operation at scale. [Kite website](https://gokite.ai/)
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Kite AI |
+| Token | KITE |
+| Sector | AI, agent payments, L1, PayFi infrastructure |
+| Chain | KiteAI Mainnet, EVM-compatible L1 |
+| Mainnet chain ID | 2366 |
+| Testnet chain ID | 2368 |
+| External token address | `0x904567252D8F48555b7447c67dCA23F0372E16be` on Ethereum, BSC, and Avalanche |
+| Core product | Kite Agent Passport, Kite Chain, service/payment infrastructure |
+| Token supply | 10B max supply |
+| Current market state | Live token, listed across CEX and DEX venues |
+
+The docs define Kite as "agentic payment infrastructure" where Agent Passport gives AI agents identity, delegated payment authority, and onchain settlement. Agent Passport lets a user approve a session with budget and time limits; then the agent can make payments within those constraints until the session expires or the budget is depleted. [Kite Agent Passport](https://docs.gokite.ai/kite-agent-passport.md)
+
+This design targets a real product problem. If an AI agent is allowed to spend money, the user needs:
+
+1. Identity: which agent acted?
+2. Authorization: what was the agent allowed to do?
+3. Budgeting: what is the maximum loss?
+4. Receipts: what did the agent buy?
+5. Settlement: how did the merchant get paid?
+6. Liability and auditability: who can prove what happened?
+
+Kite's answer is not just "give the model a wallet." It is a hierarchy of user authority, agent authority, and session authority, backed by spending controls and onchain settlement.
+
+## Architecture and Product Wedge
+
+Kite's architecture has four layers:
+
+| Layer | What It Does | Investment Relevance |
+| --- | --- | --- |
+| Base L1 | EVM-compatible chain optimized for agent transaction patterns | Gives Kite control over fees, settlement, staking, and token utility |
+| Platform APIs | Identity, authorization, payments, session-key management | Makes the chain usable by agents and developers |
+| Programmable trust | Passport, x402, SLAs, reputation, A2A/MCP/OAuth/AP2 compatibility | Differentiates Kite from generic L1s |
+| Ecosystem layer | Application marketplace and agent/service discovery | Determines whether real transaction demand appears |
+
+The most interesting design choices are:
+
+- **Stablecoin-native fees:** docs mention predictable costs in USDC and pyUSD, reducing gas-token volatility for agent workflows. [Architecture](https://docs.gokite.ai/get-started/architecture-and-design-pillars.md)
+- **State channels for micropayments:** docs describe state-channel payments targeting per-message or per-request pricing, including an example of **$0.000001 per message**. [Architecture](https://docs.gokite.ai/get-started/architecture-and-design-pillars.md)
+- **Agent-first identity:** Kite separates user, agent, and session authority, with delegated spending rules and session expiration. [Introduction and Mission](https://docs.gokite.ai/get-started/introduction-and-mission.md)
+- **Protocol compatibility:** Kite explicitly references A2A, AP2, MCP, OAuth 2.1, and x402 compatibility. [Architecture](https://docs.gokite.ai/get-started/architecture-and-design-pillars.md)
+
+That is a credible product thesis. Agent payments probably need delegated authority and small-ticket settlement. But the architecture is only valuable if agents and service providers adopt it. If most activity stays inside centralized coding-agent marketplaces or generic wallet flows, Kite's L1 token capture will be weaker.
+
+## KITE Tokenomics and Value Capture
+
+KITE has a capped total supply of **10B**. The docs describe an allocation of **48% ecosystem and community**, **12% investors**, **20% modules**, and **20% team, advisors, and early contributors**. [Tokenomics](https://docs.gokite.ai/kite-chain/tokenomics.md)
+
+| Allocation | Share | Interpretation |
+| --- | ---: | --- |
+| Ecosystem and community | 48% | Large incentive and adoption pool |
+| Investors | 12% | Moderate VC allocation |
+| Modules | 20% | Token supply tied to module/service ecosystem buildout |
+| Team, advisors, early contributors | 20% | Meaningful insider/long-term vesting exposure |
+
+The docs separate KITE utility into two phases.
+
+**Phase 1 utility:**
+
+- Module owners lock KITE into permanent liquidity pools paired with module tokens.
+- Builders and service providers hold KITE for ecosystem access and eligibility.
+- Incentives distribute KITE to users and businesses that add value to the ecosystem.
+
+**Phase 2 utility:**
+
+- AI service commissions can be collected and converted into KITE.
+- Staking secures the network.
+- Governance controls upgrades, incentives, and module requirements.
+
+This is the core token-capture test. If AI service transactions grow and commissions are converted into KITE, the token can connect to real revenue. If not, KITE risks behaving like a launch/access/incentive token whose demand depends mostly on speculation and ecosystem subsidies.
+
+One tokenomic design detail is unusual: modules, validators, and delegators accumulate rewards in a "piggy bank" and can claim/sell, but doing so permanently voids future emissions to that address. That can encourage long-term alignment, but it also makes behavior hard to model until real participants face the claim-versus-future-rewards tradeoff. [Tokenomics](https://docs.gokite.ai/kite-chain/tokenomics.md)
+
+## Market Data and Liquidity
+
+KITE is live on external chains and exchange venues, but liquidity quality is mixed.
+
+| Metric | June 22, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko market-cap rank | Around #120 direct endpoint, around #112 in local oscillator snapshot |
+| CoinMarketCap rank | Around #104 in local oscillator snapshot |
+| Price | Roughly $0.165 to $0.186 across near-time snapshots |
+| Market cap | Roughly $385M to $435M |
+| FDV | Roughly $1.65B to $1.86B |
+| 24h volume | Roughly $17M |
+| Circulating supply | About 2.33B KITE |
+| Max supply | 10B KITE |
+
+CoinGecko lists KITE trading across Binance, OKX, Gate, Bitget, KuCoin, LBank, Toobit, Coinbase, and PancakeSwap Infinity CLMM. The official external token address is the same on Ethereum, BSC, and Avalanche: `0x904567252D8F48555b7447c67dCA23F0372E16be`. [CoinGecko](https://www.coingecko.com/en/coins/kite-2) [Contracts](https://docs.gokite.ai/kite-chain/3-developing/smart-contracts-list.md)
+
+Onchain liquidity is thinner than the headline valuation. Dexscreener shows the main official-address Ethereum Uniswap KITE/USDC pool around **$1.0M** liquidity and roughly **$159K** 24h volume, while official-address pools on Avalanche and older PancakeSwap routes show negligible liquidity. CoinGecko separately reports PancakeSwap Infinity CLMM volume above $1M, so the clean read is: centralized venue liquidity matters much more than visible official-address DEX depth today. [Dexscreener](https://dexscreener.com/ethereum/0x3cff303d771452876849de7f0e6a21060886a74ae29fb27d5f3388197c249b19)
+
+There is also same-symbol data noise. Searches for "KITE" surface non-official pools on other chains with implausible liquidity. For sizing, use the official contract from Kite docs and cross-check against CoinGecko/CoinMarketCap, not any pool with the same symbol.
+
+## Network and Contract Footprint
+
+Kite Mainnet is documented with:
+
+- Chain name: KiteAI Mainnet
+- Chain ID: `2366`
+- RPC: `https://rpc.gokite.ai/`
+- Explorer: `https://kitescan.ai/`
+- LayerZero chain ID: `2366`
+- LayerZero endpoint ID: `30406`
+
+The mainnet contract list includes validator staking, reward vaults, liquid staking vault contracts, wrapped KITE, bridged USDC.e, USDT, WETH, Algebra DEX contracts, LayerZero bridge contracts, and Lucid bridge contracts. The staking reward calculator is documented with a current fixed APR of **2.5%**. [Network Information](https://docs.gokite.ai/kite-chain/1-getting-started/network-information.md) [Contracts](https://docs.gokite.ai/kite-chain/3-developing/smart-contracts-list.md)
+
+That is more concrete than a pre-token AI narrative. Kite has live network configuration, contracts, tokens, bridge plumbing, and developer docs. The missing piece is not "does anything exist?" It is "how much economically meaningful activity is happening?"
+
+## Competitive Landscape
+
+Kite competes across multiple layers, not one narrow category.
+
+| Competitor / Category | Core Edge | Kite Differentiation | Kite Risk |
+| --- | --- | --- | --- |
+| Coinbase x402 / wallet payments | Simple HTTP-native payment standard and distribution | Kite adds agent identity, scoped sessions, L1 settlement, and modules | x402 adoption may not need Kite |
+| PayPal / PYUSD PayFi | Consumer, merchant, and stablecoin distribution | Kite is agent-native and developer-focused | PayPal has stronger payments distribution |
+| Base / Solana / general L1s | Existing liquidity and developer ecosystems | Kite optimizes specifically for agent transactions | Existing chains may absorb the same use cases |
+| NEAR AI / agent infrastructure | AI-native ecosystem and chain abstraction | Kite focuses directly on payments and delegated spending | AI demand may route through broader AI ecosystems |
+| Agent frameworks / MCP tools | Workflow distribution | Kite can monetize agent-service payments | Frameworks may keep payments offchain or use generic rails |
+| Stripe / Tempo / bank stablecoin rails | Payments compliance and enterprise trust | Kite targets autonomous agents rather than merchants only | Enterprise payment rails can out-distribute crypto-native L1s |
+
+Kite's best path is not to beat every chain on throughput or every payment company on distribution. It needs to become the default rail for a specific job: agents paying services with user-approved budgets, receipts, and programmable constraints.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | Token Readthrough |
+| --- | ---: | --- | --- |
+| Bull | 25% | Agent Passport becomes a real service-payment primitive; modules generate recurring commissions; protocol converts stablecoin revenue into KITE demand; staking and module locks reduce liquid float | KITE earns a premium as an AI payment-infra token |
+| Base | 50% | Kite builds a real developer ecosystem but usage remains early; KITE is useful for access, incentives, staking, and speculation, with limited measurable revenue | Watchlist, but valuation stays sensitive to narrative cycles and unlocks |
+| Bear | 25% | Agents do not need a dedicated L1; payments route through x402, wallets, PayPal/USDC rails, or centralized platforms; token utility remains mostly incentive-driven | KITE de-rates toward generic AI/L1 beta |
+
+The most important falsifiable signal is not testnet activity or social attention. It is recurring **paid agent-service volume** with visible service providers, repeat usage, and protocol economics.
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Real demand risk | High | Agent payments are plausible, but not yet proven at scale | Active agents, paid sessions, repeat buyers, service-provider revenue |
+| Token value-capture risk | High | Service payments could happen without meaningful KITE demand | Commission conversion, module KITE locks, staking demand |
+| FDV / unlock risk | High | Only about 2.33B of 10B supply is circulating | Circulating supply growth, vesting, emissions, market liquidity |
+| Competition risk | High | x402, PayPal, Base, Solana, Stripe/Tempo, and agent platforms can capture the payment layer | Integration share and developer mindshare |
+| Liquidity risk | Medium | Visible DEX liquidity is shallow relative to FDV | CEX depth, official-address DEX liquidity, slippage |
+| Security and audit transparency | Medium-High | Docs mention audits and Halborn, but public audit artifacts appear incomplete | Published audit reports, bug bounties, incident history |
+| Centralization / platform dependency | Medium | Passport APIs, relayers, bridges, and modules may depend on centralized services | Open-source coverage, failover, decentralization roadmap |
+| Same-symbol data risk | Medium | KITE searches surface unrelated pools and bogus-looking liquidity | Official contract verification |
+
+The security docs say Kite uses shift-left security, independent assurance, Halborn-style audits, multi-sig controls, and 24/7 monitoring. They also say audit reports and pen-test summaries will be published on demand. For institutional sizing, "on demand" is not the same as public audit transparency. [Security](https://docs.gokite.ai/kite-chain/6-reference.md)
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Paid agent sessions | Not enough public data | Public dashboard with recurring paid usage | Activity mostly demos, faucet, or incentives |
+| AI service commissions | Tokenomics describes future mechanism | Visible protocol revenue converted into KITE | No measurable commission flow |
+| Module traction | Tokenomics module model documented | Multiple modules with real service revenue | Modules are mostly liquidity/incentive shells |
+| Circulating supply | About 2.33B / 10B | Float growth absorbed by real usage | Unlocks/emissions overwhelm demand |
+| DEX liquidity | Main visible official Ethereum pool around $1M | Deeper official-address liquidity across major chains | Same-symbol noise dominates discovery |
+| Security disclosures | Security approach documented | Public audit reports and bounty scope | No audit artifacts, bridge or contract incident |
+| Protocol integrations | x402, A2A, AP2, MCP compatibility claimed | Third-party services using Kite in production | Compatibility remains mostly positioning |
+
+## Verdict
+
+KITE belongs on the **speculative AI/payment-infrastructure watchlist**, not in the high-conviction bucket yet.
+
+The positive case is clear. Kite is aimed at a real emerging problem: autonomous agents need controlled spending, identity, receipts, service discovery, and low-cost settlement. The product architecture is coherent, the mainnet and contracts are documented, and the tokenomics tries to connect real AI-service usage back into KITE through commissions, staking, governance, module locks, and incentives.
+
+The caution is equally clear. KITE already trades at a large FDV relative to public proof of usage. The strongest parts of the thesis depend on future behavior: agents paying services repeatedly, service providers choosing Kite, commissions being converted into KITE, and module liquidity locks creating durable demand rather than temporary incentive loops.
+
+My current view: **Kite is one of the more interesting agentic-payment infrastructure projects to monitor, but the token needs evidence before it earns conviction.** It becomes more compelling if Kite publishes agent-payment volume, protocol revenue, active service-provider metrics, public audit artifacts, and clear unlock/emission schedules. It weakens if usage remains mostly narrative-driven while circulating supply expands toward the 10B cap.
+
+## Selected Sources
+
+- [Kite website](https://gokite.ai/)
+- [Kite developer docs](https://docs.gokite.ai/)
+- [Introduction and Mission](https://docs.gokite.ai/get-started/introduction-and-mission.md)
+- [Architecture and Design Pillars](https://docs.gokite.ai/get-started/architecture-and-design-pillars.md)
+- [Kite Agent Passport](https://docs.gokite.ai/kite-agent-passport.md)
+- [Kite Tokenomics](https://docs.gokite.ai/kite-chain/tokenomics.md)
+- [Kite Network Information](https://docs.gokite.ai/kite-chain/1-getting-started/network-information.md)
+- [Kite Mainnet Contracts List](https://docs.gokite.ai/kite-chain/3-developing/smart-contracts-list.md)
+- [Security at Kite](https://docs.gokite.ai/kite-chain/6-reference.md)
+- [CoinGecko KITE](https://www.coingecko.com/en/coins/kite-2)
+- [CoinMarketCap KITE](https://coinmarketcap.com/currencies/kite/)
+- [Dexscreener official Ethereum KITE/USDC pool](https://dexscreener.com/ethereum/0x3cff303d771452876849de7f0e6a21060886a74ae29fb27d5f3388197c249b19)

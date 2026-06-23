@@ -1,0 +1,208 @@
+---
+title: 'GHO: Aave-Native Stablecoin, sGHO Yield, and DAO Revenue Risk'
+publishedAt: '2026-06-23'
+summary: 'GHO is the Aave-native overcollateralized stablecoin, minted through governance-approved facilitators and increasingly paired with sGHO as a native ERC-4626 savings vault. As of June 23, 2026, CoinGecko shows GHO around rank #91, price near $0.998, market cap / FDV around $598M, and 24h volume around $3.5M; DefiLlama tracks about $598M circulating as a crypto-backed peggedUSD asset. AaveScan shows Ethereum V3 GHO at roughly 135.1M supplied, 92.9M borrowed, 3.75% borrow APR, and 68.76% utilization, while Base, Arbitrum, and Avalanche markets remain much smaller. My view is high-quality DeFi-native stablecoin watchlist / selective integration asset, not a core reserve dollar yet: Aave gives GHO credible collateral, governance, and distribution, but secondary liquidity, facilitator governance, peg tools, and sGHO subsidy economics must keep proving durability.'
+slug: 'gho-aave-native-stablecoin-sgho-yield-dao-revenue-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** GHO is a high-quality DeFi-native stablecoin watchlist and selective integration asset, not a core reserve stablecoin.
+- **Why it matters:** GHO converts Aave's collateral base and governance credibility into a native dollar that can create DAO revenue, borrowing demand, and DeFi composability.
+- **Main risk:** GHO still depends on Aave governance, facilitator caps, peg modules, liquidity incentives, and borrower demand. It is structurally stronger than many crypto-backed dollars, but it is not USDC/USDT-like settlement money.
+- **What would upgrade the view:** Sustained growth above $1B supply, deeper non-incentivized stable pools, durable sGHO deposits without excessive subsidy, and multi-chain usage that is not just mercenary liquidity.
+
+## Executive Summary
+
+GHO is Aave's native overcollateralized stablecoin. Users mint GHO by supplying eligible collateral into Aave and borrowing GHO against that collateral. Unlike a normal supplied reserve, GHO is created by approved facilitator contracts, each with governance-defined minting capacity. The Aave documentation describes GHO as an ERC-20 token on Ethereum with a facilitator model, bucket capacities, bucket levels, and governance-controlled roles for adding facilitators and setting caps. [Aave GHO docs](https://aave.com/docs/ecosystem/gho)
+
+That design makes GHO economically interesting. Aave is not just hosting another stablecoin market; it is issuing a native liability against its own lending system. If GHO scales, the Aave DAO can capture borrow revenue, direct liquidity strategy, and deepen its role as DeFi credit infrastructure. If it fails, the failure mode is not just price drift: it would weaken Aave's stablecoin credibility and expose the DAO to governance, liquidity, and peg-management risk.
+
+As of the June 23, 2026 snapshot, CoinGecko shows GHO around **rank #91**, **$0.998** price, about **$598M** market cap / FDV, roughly **$3.5M** 24h volume, and about **599M** circulating / total supply. DefiLlama tracks GHO as a crypto-backed peggedUSD asset at about **$597.8M** circulating, up from roughly **$582.9M** one month earlier. [CoinGecko](https://www.coingecko.com/en/coins/gho) [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+The product now has two layers. **GHO** is the stablecoin. **sGHO** is Aave's native ERC-4626 savings vault for GHO on Ethereum mainnet. Aave says GHO deposited into sGHO earns fixed APR through an on-chain yield index, with no cooldown, no slashing risk, and no rehypothecation of deposited funds. That is a cleaner design than many black-box yield wrappers, but investors still need to ask where the rate comes from and whether it is sustainable as a DAO-level incentive. [sGHO docs](https://aave.com/docs/aave-v3/guides/sgho)
+
+My view: **high-quality watchlist / selective integration asset.** GHO is one of the most credible DeFi-native dollars because it inherits Aave's collateral engine, risk providers, governance process, and distribution. But it is not yet a core reserve dollar. The main underwriting question is whether GHO can grow beyond Aave-native leverage into a broadly useful stablecoin with deep liquidity, stable peg behavior, and sustainable sGHO economics.
+
+## Research Question and Investment Relevance
+
+The core research question:
+
+**Can GHO become Aave's durable DeFi-native dollar and DAO revenue engine, or will it remain a useful but capped internal borrowing instrument?**
+
+This matters for three reasons:
+
+1. **Aave revenue:** GHO borrow interest can accrue economic value to the DAO rather than to external stablecoin lenders.
+2. **Collateral strategy:** Aave can turn its deep collateral base into native stablecoin demand without relying only on USDC, USDT, DAI, or USDe markets.
+3. **Stablecoin map:** GHO sits between fiat-backed dollars, crypto-backed stablecoins, and protocol-native credit. It is not a payment stablecoin first; it is DeFi balance-sheet infrastructure.
+
+| Stablecoin Type | Examples | Primary Edge | Main Risk |
+| --- | --- | --- | --- |
+| Fiat-backed payment dollars | USDT, USDC, PYUSD, RLUSD | Reserves, redemption, payment distribution | Issuer, bank, regulatory, freeze risk |
+| DeFi-native crypto-backed dollars | GHO, DAI / USDS, crvUSD, LUSD | Onchain collateral and protocol integration | Liquidations, governance, oracle, peg risk |
+| Synthetic dollars | USDe, USDf | Basis / hedged crypto carry and yield | CEX, custodian, funding, strategy risk |
+| Tokenized cash / RWA products | BUIDL, USYC, USDY, USTB | Treasury or fund exposure | Access, duration, legal wrapper, liquidity |
+
+GHO is most valuable if it becomes the Aave-native unit of account for borrowing, liquidity, and savings. It is less valuable if it remains a small, subsidized stablecoin whose peg depends heavily on governance intervention.
+
+## Project Overview
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | GHO |
+| Issuer / governance | Aave DAO |
+| Sector | DeFi-native stablecoin |
+| Peg | USD-referenced |
+| Mechanism | Overcollateralized borrowing through governance-approved facilitators |
+| Savings layer | sGHO ERC-4626 vault on Ethereum |
+| Ethereum GHO contract | `0x40D16FC0246aD3160Ccc09B8D0D3A2cD28aE6C2f` |
+| sGHO contract | `0xE1753F2e00940cC31213dd92013cF019DFE4ca1d` |
+| Key users | Aave borrowers, DeFi liquidity providers, stablecoin yield users |
+| Core risk | Peg, liquidity, governance parameter, facilitator, and incentive sustainability |
+
+Aave's documentation says all GHO tokens originate on Ethereum mainnet and that access on other networks uses cross-chain messaging. Chainlink CCIP has been approved by Aave Governance as the bridge for moving GHO between networks. The process locks or burns on the source chain and releases or mints on the destination chain after message validation. [Aave GHO cross-chain docs](https://aave.com/docs/ecosystem/gho)
+
+That cross-chain model is credible because it is governance-approved and standardized, but it adds bridge and messaging dependencies. Multi-chain GHO is useful only if it produces real borrow, payment, or liquidity demand rather than fragmented incentive pools.
+
+## How GHO Is Minted: Facilitators and Buckets
+
+The most important design detail is the **facilitator model**.
+
+A facilitator is a governance-approved contract that can mint and burn GHO. Each facilitator has:
+
+| Parameter | Meaning |
+| --- | --- |
+| Facilitator label | Human-readable identifier |
+| Bucket capacity | Maximum GHO that facilitator can mint |
+| Bucket level | Current GHO minted by that facilitator |
+
+The Aave V3 Ethereum market is a primary facilitator. Users supply approved collateral, then borrow GHO in a process similar to borrowing any other Aave reserve. The difference is that GHO is minted rather than borrowed from supplier liquidity. Available GHO depends on facilitator cap and collateralization requirements, not on supplied liquidity in the normal reserve sense. [Aave GHO docs](https://aave.com/docs/ecosystem/gho)
+
+This is a good design for Aave because it keeps issuance inside governance-defined limits. It is also a risk surface:
+
+- If caps are too low, GHO cannot scale.
+- If caps are too high, supply can grow faster than liquidity and peg infrastructure.
+- If governance adjusts rates too slowly, the peg can drift.
+- If governance adjusts rates too aggressively, borrower demand can collapse.
+
+## Peg Architecture: GSM, Liquidity Committee, and GHO Stewards
+
+GHO does not rely on one simple redemption promise. It uses a mix of collateralized borrowing, market arbitrage, liquidity incentives, and governance-operated peg tools.
+
+The Aave docs describe the **GHO Stability Module (GSM)** as a conversion system between GHO and governance-approved tokens. GSM instances can use fixed or dynamic price strategies, fee strategies, exposure caps, conversion freezes, oracle price bounds, and last-resort liquidation roles for exogenous tokens. [Aave GHO docs](https://aave.com/docs/ecosystem/gho)
+
+Aave also created a GHO Liquidity Committee, later integrated into the Aave Liquidity Committee, to coordinate GHO liquidity strategy. The docs point to TokenLogic's GHO analytics platform for liquidity committee targets and performance. [Aave GHO docs](https://aave.com/docs/ecosystem/gho) [TokenLogic GHO Analytics](https://aave.tokenlogic.xyz/liquidity-committee)
+
+The **GHO Stewards** are especially important. Aave says the Stewards can adjust GHO borrow cap, borrow rate, GSM exposure cap, GSM bucket capacity, GSM price strategy, GSM fee strategy, and GSM price ranges within predefined governance thresholds. If the trailing 30-day average GHO price stays outside **$0.995-$1.005**, Stewards can adjust the borrow rate by up to **500 bps per 2-day period**, up to **25% APR**. [Aave GHO docs](https://aave.com/docs/ecosystem/gho)
+
+This is a pragmatic control system. It is also a reminder that GHO peg stability is partly governance-operated, not purely automatic.
+
+## sGHO: Savings Layer or Subsidy Layer?
+
+sGHO is the new strategic layer. Aave describes it as a native ERC-4626 vault for GHO on Ethereum mainnet. Deposited GHO earns fixed APR through an on-chain yield index, and the value accrues into the GHO value of sGHO shares. The docs also state there is no cooldown, no slashing risk, and no rehypothecation. [sGHO docs](https://aave.com/docs/aave-v3/guides/sgho)
+
+That is attractive for users because it gives GHO a built-in savings product, similar in positioning to sUSDS for Sky or sUSDe for Ethena, but with a different risk profile.
+
+| Product | Yield Source Readthrough | Main Question |
+| --- | --- | --- |
+| sGHO | Aave DAO / protocol-governed fixed APR via vault index | Is the rate covered by durable GHO revenue or strategic subsidy? |
+| sUSDS | Sky savings rate and Maker/Sky balance-sheet policy | Is the rate sustainable through cycle and collateral mix changes? |
+| sUSDe | Ethena strategy yield from hedged crypto / basis engine | What happens when funding compresses or stress hits venues? |
+| sUSDf | Falcon strategy-backed synthetic dollar yield | How transparent and stress-tested are strategy/custody risks? |
+
+sGHO is cleaner than strategy-backed yield because deposited funds are not rehypothecated according to the docs. But "cleaner" does not mean free. The investment question moves from counterparty strategy risk to **DAO economics**: how much yield can Aave pay, for how long, and with what effect on AAVE/GHO governance incentives?
+
+## Market Data and Usage Snapshot
+
+| Metric | June 23, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | #91 |
+| Price | ~$0.998 |
+| Market cap / FDV | ~$598M |
+| 24h volume | ~$3.5M |
+| Circulating / total supply | ~599M GHO |
+| DefiLlama circulating value | ~$597.8M |
+| DefiLlama 30d prior circulating value | ~$582.9M |
+| DefiLlama peg mechanism | Crypto-backed peggedUSD |
+
+The stablecoin supply base is meaningful, but the Aave-native borrowing surface is smaller than the total supply suggests. AaveScan's Ethereum V3 GHO page shows about **135.1M GHO supplied**, **92.9M GHO borrowed**, **3.75% borrow APR**, and **68.76% utilization**. AaveScan also shows smaller markets on Base, Arbitrum, and Avalanche: Base around **1.77M supplied / 1.57M borrowed**, Arbitrum around **852.6K supplied / 734K borrowed**, and Avalanche around **1.73M supplied / 1.56M borrowed**. [AaveScan Ethereum GHO](https://aavescan.com/ethereum-v3/gho) [AaveScan Base GHO](https://aavescan.com/base-v3/gho) [AaveScan Arbitrum GHO](https://aavescan.com/arbitrum-v3/gho) [AaveScan Avalanche GHO](https://aavescan.com/avalanche-v3/gho)
+
+Visible DEX liquidity is real but still modest for a nearly $600M stablecoin. Dexscreener shows the largest visible Ethereum GHO/USDC Uniswap pool around **$3.0M** liquidity and roughly **$317K** 24h volume, and a Curve GHO/crvUSD pool around **$1.8M** liquidity and roughly **$420K** 24h volume. CoinGecko's ticker view also shows GHO trading on Uniswap, Curve, Fluid, Balancer, Velodrome, and other venues. [Dexscreener GHO/USDC](https://dexscreener.com/ethereum/0xb3ec039dd452a0c23404fec0bcaf6a6e4e1111469f2bfe7b7b5f41a0e366c03c) [Dexscreener GHO/crvUSD](https://dexscreener.com/ethereum/0x635ef0056a597d13863b73825cca297236578595) [CoinGecko](https://www.coingecko.com/en/coins/gho)
+
+GoPlus shows the Ethereum GHO token as open-source, non-proxy, with no buy or sell tax, not flagged as a honeypot, and with about **7,873** holders in the API snapshot. It also flags the token as mintable, which is expected for a stablecoin with facilitator-controlled issuance rather than a fixed-supply asset. [GoPlus GHO](https://gopluslabs.io/token-security/1/0x40d16fc0246ad3160ccc09b8d0d3a2cd28ae6c2f)
+
+## Competitive Landscape
+
+| Asset | Category | Current Edge | GHO Readthrough |
+| --- | --- | --- | --- |
+| USDC | Fiat-backed regulated dollar | Reserve clarity, institutional trust, deep DeFi integrations | GHO cannot match redemption credibility or payment distribution |
+| USDT | Fiat-backed liquidity dollar | Deepest global crypto liquidity | GHO is structurally more DeFi-native but much smaller |
+| USDS / DAI | DeFi-native stablecoin | Long operating history and savings-rate reflexivity | GHO has Aave distribution but less market history |
+| crvUSD | DeFi-native lending stablecoin | Curve-native liquidity and LLAMMA design | GHO has a larger lending protocol behind it |
+| USDe | Synthetic dollar | Strong yield narrative and large supply | GHO has less CEX strategy risk but less yield-led demand |
+| PYUSD / RLUSD | Regulated PayFi / enterprise stablecoins | Distribution through payment or enterprise rails | GHO is not primarily a payment stablecoin |
+
+GHO's best wedge is not becoming the next retail payment dollar. The stronger wedge is becoming the native dollar for Aave credit, liquidation, DeFi leverage, and DAO-controlled stablecoin liquidity.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | GHO Implication |
+| --- | ---: | --- | --- |
+| Bull | 25% | Supply grows above $1B, sGHO becomes sticky, Aave V4 / multi-chain adoption expands, and GHO pools deepen without excessive incentives | GHO becomes the leading DeFi-native stablecoin after Sky/DAI lineage |
+| Base | 55% | GHO keeps growing gradually inside Aave, but liquidity and external integrations remain narrower than USDC/USDT/USDS | High-quality watchlist and selective integration asset |
+| Bear | 20% | Peg volatility, weak borrower demand, expensive incentives, or governance delays limit adoption | GHO remains a capped internal Aave borrowing product |
+
+The base case is constructive but not euphoric. GHO has the institutional-quality DeFi sponsor most stablecoins lack. It still needs distribution proof outside Aave-native loops.
+
+## Risks and Mitigants
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Peg risk | High | GHO relies on borrower rates, GSM, liquidity, and market arbitrage | 30d average price, discount duration, pool imbalance |
+| Governance parameter risk | High | Facilitator caps and rates are governance controlled | GHO Steward actions, governance proposals, cap utilization |
+| Liquidity risk | High | Visible DEX depth is small relative to supply | Top pool liquidity, volume, slippage, incentive dependence |
+| sGHO subsidy risk | Medium-High | Fixed APR may be strategic rather than organically funded | sGHO deposits, rate changes, DAO budget, net GHO revenue |
+| Collateral / liquidation risk | Medium-High | Aave collateral volatility can affect borrower behavior and liquidations | Health factor distribution, liquidations, collateral composition |
+| Cross-chain / CCIP risk | Medium | Multi-chain GHO depends on message validation and bridge contracts | CCIP incidents, paused transfers, chain-specific liquidity |
+| Regulatory risk | Medium | DeFi-native stablecoins may face changing stablecoin rules | Aave front-end policy, jurisdictional restrictions, governance response |
+| Smart-contract risk | Medium | Facilitators, GSM, CCIP pools, and sGHO vault expand surface area | Audits, bug bounties, upgrades, incident reports |
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Circulating supply | ~$598M | Above $1B with stable peg and deep pools | Supply growth while liquidity stagnates |
+| Peg | ~$0.998 | Sustained $0.998-$1.002 | Persistent below $0.995 |
+| Ethereum Aave GHO borrowed | ~92.9M | Above 200M with healthy utilization | Borrow demand falls despite incentives |
+| Ethereum Aave GHO borrow APR | ~3.75% | Competitive and stable versus USDC/USDT borrow | Sharp rate hikes needed to defend peg |
+| Aave V3 Ethereum GHO utilization | ~68.76% | Healthy utilization with controlled caps | Very low utilization or cap exhaustion |
+| DEX liquidity | ~$3.0M top Uniswap pool, ~$1.8M Curve GHO/crvUSD | Multiple deep $10M+ pools with real volume | Liquidity remains incentive-led and shallow |
+| sGHO | Native ERC-4626 savings vault live | Sticky deposits at sustainable rate | Rate cuts trigger exits or subsidy burden rises |
+| Governance | GHO Stewards active within thresholds | Transparent, timely parameter changes | Slow response to peg or liquidity stress |
+
+## Verdict
+
+GHO is a **high-quality DeFi-native stablecoin watchlist / selective integration asset**, not a core reserve stablecoin yet.
+
+The bullish case is unusually credible. GHO has Aave's collateral engine, risk infrastructure, governance, liquidity committee process, Chainlink CCIP expansion, GSM peg tooling, and the new sGHO savings layer. That is a serious foundation.
+
+The cautious case is also clear. GHO is still far smaller and less liquid than USDT, USDC, and USDS/DAI. Its secondary liquidity is modest relative to supply, and the system depends on governance-operated parameters. sGHO improves product-market fit, but it creates a new question: whether Aave can fund savings demand sustainably rather than simply buying stablecoin growth.
+
+My current conclusion: **integrate selectively, monitor aggressively, do not treat as cash.** GHO becomes more compelling if supply crosses $1B with tight peg behavior, Aave-native borrowing grows materially, sGHO deposits prove sticky through rate changes, and external liquidity expands without perpetual incentive dependence.
+
+## Selected Sources
+
+- [Aave GHO documentation](https://aave.com/docs/ecosystem/gho)
+- [Aave Savings GHO documentation](https://aave.com/docs/aave-v3/guides/sgho)
+- [Aave addresses](https://aave.com/docs/resources/addresses)
+- [TokenLogic GHO Analytics](https://aave.tokenlogic.xyz/liquidity-committee)
+- [CoinGecko GHO](https://www.coingecko.com/en/coins/gho)
+- [DefiLlama stablecoins](https://defillama.com/stablecoins)
+- [AaveScan Ethereum GHO](https://aavescan.com/ethereum-v3/gho)
+- [AaveScan Base GHO](https://aavescan.com/base-v3/gho)
+- [AaveScan Arbitrum GHO](https://aavescan.com/arbitrum-v3/gho)
+- [AaveScan Avalanche GHO](https://aavescan.com/avalanche-v3/gho)
+- [Dexscreener GHO/USDC](https://dexscreener.com/ethereum/0xb3ec039dd452a0c23404fec0bcaf6a6e4e1111469f2bfe7b7b5f41a0e366c03c)
+- [Dexscreener GHO/crvUSD](https://dexscreener.com/ethereum/0x635ef0056a597d13863b73825cca297236578595)
+- [GoPlus GHO token security](https://gopluslabs.io/token-security/1/0x40d16fc0246ad3160ccc09b8d0d3a2cd28ae6c2f)

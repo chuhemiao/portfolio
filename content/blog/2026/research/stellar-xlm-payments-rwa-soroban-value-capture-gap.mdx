@@ -1,0 +1,208 @@
+---
+title: 'Stellar: Payment Rails, Tokenized Assets, Soroban, and the XLM Value-Capture Gap'
+publishedAt: '2026-06-22'
+summary: 'Stellar (XLM) is one of the most credible payment and tokenized-asset public networks: it combines low-cost settlement, anchor/on-off-ramp infrastructure, MoneyGram cash access, Circle USDC and CCTP support, Franklin Templeton BENJI-style RWA distribution, and Soroban smart contracts. As of the June 22, 2026 snapshot, XLM trades near $0.209 with CoinGecko rank #16, roughly $7.09B market cap, $10.48B FDV, $172.7M 24h volume, about 33.82B circulating XLM, and roughly 50.0B total supply. DefiLlama shows about $233M Stellar TVL, roughly $120M 30d DEX volume, and about $757K 30d fees. Verdict: high-quality payments/RWA watchlist, but not a high-conviction token until XLM value capture rises beyond low fees, base reserves, and broad ecosystem optionality.'
+slug: 'stellar-xlm-payments-rwa-soroban-value-capture-gap'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Stellar is a high-quality payments/RWA watchlist, but not yet a high-conviction XLM token position.
+- **Why it matters:** Stellar has a rare mix of public-chain settlement, anchors, MoneyGram cash access, USDC rails, tokenized funds, and smart contracts.
+- **What still needs proof:** XLM must capture more value from the network's usefulness. Low fees are good for payments, but they also make tokenholder economics harder to underwrite.
+
+## Executive Summary
+
+Stellar is a public blockchain optimized for payments, asset issuance, on/off-ramps, and low-cost settlement. The official positioning is not subtle: Stellar is built for payments and asset tokenization, with an ecosystem of anchors, wallets, fintechs, and cash-to-crypto ramps designed to connect digital assets with real-world financial access. [Stellar Intro](https://stellar.org/learn/intro-to-stellar)
+
+That makes Stellar strategically relevant again in a market moving toward stablecoin payments, tokenized Treasuries, bank-grade settlement, and real-world asset distribution. The MoneyGram integration is the cleanest example: Stellar's official MoneyGram Ramps page says wallets and applications can let users deposit or withdraw cash via Stellar USDC, with MoneyGram presence in more than **180 countries**. The 2026 partnership extension says MoneyGram and SDF have built the world's largest cash on/off-ramp for digital assets and are expanding stablecoin-backed balances in Latin America, starting with Colombia and El Salvador. [MoneyGram Ramps](https://stellar.org/products-and-tools/moneygram) [MoneyGram Partnership Extension](https://stellar.org/press/moneygram-and-stellar-extend-partnership-to-scale-real-world-stablecoin-utility-globally)
+
+The RWA proof point is also unusually strong. Franklin Templeton and SDF marked five years of BENJI, the Franklin OnChain U.S. Government Money Fund, describing it as the first U.S.-registered money market fund to use a public blockchain as its system of record. The release says BENJI represented more than **$650M** as of April 2026 and is the second-largest tokenized RWA on Stellar by value. [Franklin Templeton BENJI](https://stellar.org/press/franklin-templeton-stellar-development-foundation-mark-five-years-of-benji-the-first-u-s-registered-tokenized-money-market-fund)
+
+As of the June 22, 2026 market snapshot, CoinGecko shows XLM around **$0.209**, rank **#16**, with about **$7.09B** market cap, **$10.48B** FDV, **$172.7M** 24h volume, about **33.82B** circulating XLM, and about **50.0B** total supply. The Stellar Dashboard independently shows about **50.0B total XLM**, **33.82B circulating**, and **15.91B XLM** under the SDF mandate bucket. [CoinGecko](https://www.coingecko.com/en/coins/stellar) [Stellar Dashboard](https://dashboard.stellar.org/)
+
+The chain is not just a narrative asset. DefiLlama shows Stellar at about **$233M TVL**, with about **$1.52M** 24h DEX volume, roughly **$120M** 30d DEX volume, about **$115.9K** 24h fees, and about **$756.9K** 30d fees. Those numbers are meaningful for a payments/RWA chain, though still small versus leading DeFi ecosystems. [DefiLlama Stellar](https://defillama.com/chain/Stellar) [DefiLlama Stellar DEX](https://defillama.com/dexs/chain/Stellar) [DefiLlama Stellar Fees](https://defillama.com/fees/chain/Stellar)
+
+My current view: **Stellar is one of the best real-world payments/RWA networks to monitor, but XLM still has a value-capture problem.** The network can be useful while the token accrues value slowly, because Stellar is intentionally low-fee and designed for access. XLM becomes more compelling if Soroban app activity, RWA issuance, anchor volume, USDC/CCTP flow, and base-reserve demand translate into durable onchain fees and locked balance growth.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Does Stellar's payments and tokenized-asset utility create enough direct economic demand for XLM, or is XLM mostly a liquidity and anti-spam token for a useful public financial network?**
+
+This matters because Stellar is not trying to be another high-throughput meme chain. It sits at the intersection of:
+
+| Market | Stellar Relevance | XLM Question |
+| --- | --- | --- |
+| Stablecoin payments | USDC, MoneyGram ramps, anchors, cross-border transfers | Does payment volume create material XLM demand? |
+| RWA / tokenized funds | BENJI, tokenized Treasuries, issuer controls | Does asset issuance create reserve/fee capture? |
+| Financial inclusion | Cash-to-digital rails and low-cost transfers | Can access-driven usage scale without subsidies? |
+| Smart contracts | Soroban, Rust/Wasm, SAC, CCTP | Can app activity move beyond payment rails? |
+| Institutional settlement | Compliance-friendly asset controls | Will institutions choose public Stellar over private/bank rails? |
+
+Stellar is useful because it solves a specific job: move and issue financial assets cheaply across borders. The token investment case is harder: payments chains often optimize fees down, while token investors need capture up.
+
+## Project Overview
+
+Stellar launched as a public network for fast, low-cost value transfer. XLM, the network's native asset, is not an issuer-backed stablecoin. It is the asset used to pay transaction fees, fund rent, and cover minimum balance requirements. Stellar docs state that lumens are the only token that does not require an issuer or trustline. [Stellar Docs - Lumens](https://developers.stellar.org/docs/learn/fundamentals/lumens)
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Stellar |
+| Token | XLM |
+| Sector | Payments, RWA, stablecoin rails, tokenized assets, L1 |
+| Core network role | Low-cost value transfer and asset issuance |
+| Smart contracts | Soroban, Rust/Wasm contracts |
+| Asset model | Native issued assets plus Stellar Asset Contract for Soroban |
+| Key distribution | MoneyGram, anchors, wallets, USDC, institutional issuers |
+| Market value | About $7.09B market cap, $10.48B FDV |
+| Chain metrics | About $233M TVL, $120M 30d DEX volume, $757K 30d fees |
+
+The network is built around real-world financial workflows: remittances, disbursements, cash on/off-ramps, institutional asset issuance, and multi-asset settlement. That is a clearer identity than many general-purpose L1s.
+
+## Architecture: SCP, Assets, and Soroban
+
+Stellar's core consensus mechanism is the **Stellar Consensus Protocol (SCP)**. Instead of proof-of-work mining or proof-of-stake bonding as the central economic security primitive, SCP uses a federated model where nodes choose quorum sets and thresholds, and agreement emerges through overlapping quorum slices. This is useful for a payments network because it keeps consensus lightweight and institution-friendly, but it also means Stellar is not secured by XLM staking in the same way as PoS chains. [Stellar Docs - SCP](https://developers.stellar.org/docs/learn/fundamentals/stellar-consensus-protocol)
+
+The asset model is a major strength. Stellar has long supported issued assets with trustlines, issuer controls, and compliance-friendly behavior. Soroban adds smart contracts, and the **Stellar Asset Contract (SAC)** lets issued assets work inside smart contracts while preserving key issuer authorization semantics. That matters for regulated assets: issuers can use controls that are familiar to compliance teams while still entering programmable workflows. [Stellar Asset Contract](https://developers.stellar.org/docs/tokens/stellar-asset-contract)
+
+Soroban is Stellar's smart contract platform. Stellar docs describe contracts as Rust programs compiled to WebAssembly. This gives Stellar a more general application surface than the original payments-only model, while keeping the network's financial-asset identity. [Soroban Overview](https://developers.stellar.org/docs/build/smart-contracts/overview)
+
+Circle's CCTP support adds another practical layer: Stellar docs include cross-chain USDC transfers with CCTP, making Stellar part of the broader USDC interoperability map. [CCTP on Stellar](https://developers.stellar.org/docs/tokens/cross-chain-transfers)
+
+## XLM Token Economics and Supply
+
+XLM has three direct network roles:
+
+1. Transaction fees.
+2. Rent/resource fees for smart contract activity.
+3. Minimum balance requirements through base reserves.
+
+The base reserve is currently **0.5 XLM**, and a Stellar account must maintain at least two base reserves, currently **1 XLM**, to exist. Additional subentries increase the minimum balance requirement. This gives XLM a built-in anti-spam and state-cost role. [Stellar Docs - Lumens](https://developers.stellar.org/docs/learn/fundamentals/lumens)
+
+Supply is more nuanced than a simple max-supply story. The Stellar Dashboard shows:
+
+| Supply Item | Dashboard Snapshot |
+| --- | ---: |
+| Original supply | 100.0B XLM |
+| Inflation lumens | 5.44B XLM |
+| Burned lumens | 55.44B XLM |
+| Total supply | 50.00B XLM |
+| Circulating supply | 33.82B XLM |
+| SDF mandate | 15.91B XLM |
+
+The dashboard snapshot matters because market dashboards and legacy token fields can differ. CoinGecko shows about **33.82B** circulating XLM and about **50.0B** total supply, which lines up with the dashboard. [Stellar Dashboard](https://dashboard.stellar.org/) [CoinGecko](https://www.coingecko.com/en/coins/stellar)
+
+The investment problem is not supply clarity. It is value capture. Fees are intentionally low, which is great for users but limits direct fee-based token demand. Base reserves create some structural XLM demand, but not enough on their own to justify a $7B+ market cap. The upside case needs app, asset, and payment growth to make XLM a scarce settlement and state resource rather than just a cheap anti-spam token.
+
+## Payments and Ramps: MoneyGram as the Distribution Proof Point
+
+MoneyGram is Stellar's strongest payment distribution proof point. The official MoneyGram Ramps product page says one integration lets wallets or apps help users deposit or withdraw cash from digital wallets through Stellar USDC without needing a bank account, using MoneyGram's presence in more than **180 countries**. [MoneyGram Ramps](https://stellar.org/products-and-tools/moneygram)
+
+The 2026 partnership extension is more important than a static integration. It says MoneyGram and SDF have delivered the world's largest cash on/off-ramp for digital assets, the MoneyGram Ramps API, and a stablecoin balance inside the MoneyGram app. The release also says the stablecoin balance went live in Colombia and expanded to El Salvador, with additional Central and South American markets planned. [MoneyGram Partnership Extension](https://stellar.org/press/moneygram-and-stellar-extend-partnership-to-scale-real-world-stablecoin-utility-globally)
+
+This is exactly the kind of distribution most crypto payment networks lack. The bear read is that MoneyGram adoption may accrue more to USDC, Crossmint, and MoneyGram than to XLM. The bull read is that more wallets, anchors, and cash-out flows create more Stellar accounts, trustlines, transactions, and minimum-balance demand over time.
+
+## RWA and Tokenized Assets: BENJI and Institutional Issuance
+
+Stellar's RWA credibility is not theoretical. Franklin Templeton's BENJI / Franklin OnChain U.S. Government Money Fund is one of the cleanest examples of a regulated financial product using a public blockchain as record infrastructure.
+
+Franklin Templeton and SDF say BENJI was the first U.S.-registered money market fund to use a public blockchain as the system of record, launched on Stellar in 2021, and represented more than **$650M** as of April 2026. The same release says BENJI offers peer-to-peer share transferability and daily onchain dividend distribution. [Franklin Templeton BENJI](https://stellar.org/press/franklin-templeton-stellar-development-foundation-mark-five-years-of-benji-the-first-u-s-registered-tokenized-money-market-fund)
+
+That is a different level of RWA proof than a typical partnership announcement. It shows that Stellar's compliance-friendly asset model can support real institutional products. But again, the key question is XLM capture. A tokenized fund can be strategically important for Stellar while still producing limited XLM fees if transaction costs remain tiny.
+
+## Traction and Market Metrics
+
+| Metric | June 22, 2026 Snapshot | Interpretation |
+| --- | ---: | --- |
+| CoinGecko rank | #16 | Large-cap crypto asset |
+| XLM price | ~$0.209 | Below 2018 ATH, still highly liquid |
+| Market cap | ~$7.09B | Premium for payments/RWA optionality |
+| FDV | ~$10.48B | SDF mandate and non-circulating supply matter |
+| 24h volume | ~$172.7M | Strong exchange liquidity |
+| Circulating supply | ~33.82B XLM | Dashboard-aligned |
+| Total supply | ~50.00B XLM | After historical burn |
+| DefiLlama TVL | ~$233M | Meaningful, but not top-tier DeFi scale |
+| 24h DEX volume | ~$1.52M | Active but modest |
+| 30d DEX volume | ~$120M | Concentrated around Stellar-native liquidity venues |
+| 24h fees | ~$115.9K | Better than many enterprise chains |
+| 30d fees | ~$756.9K | Useful, but still small versus market cap |
+
+DefiLlama's stablecoin endpoint currently shows no tracked Stellar stablecoin supply in the queried dataset, despite official USDC/MoneyGram/CCTP support. I treat that as a data-coverage mismatch rather than evidence that Stellar lacks USDC. The practical approach is to monitor both Stellar official payment rails and independent DeFi/stablecoin dashboards separately.
+
+## Competitive Landscape
+
+| Competitor | Core Edge | Stellar Readthrough |
+| --- | --- | --- |
+| XRP Ledger / Ripple | Enterprise payments and bank distribution | Similar payment identity, but Stellar is more open-anchor and RWA oriented |
+| Tron | Dominant USDT payment rail | Stellar has stronger compliance/RWA story but weaker stablecoin volume |
+| Solana | Consumer apps, payments, DeFi, USDC velocity | Solana has stronger crypto-native liquidity; Stellar has stronger cash-ramp/RWA specificity |
+| Ethereum / Base / Arbitrum | Deep DeFi, stablecoins, institutional tokenization | Stellar loses on liquidity depth but wins on low-cost financial access UX |
+| Circle Arc / Canton | Institutional stablecoin and settlement networks | Could compete for regulated asset issuance and institutional settlement |
+| XDC / VeChain | Enterprise/RWA narratives | Stellar has more visible payment/RWA proof points and stronger liquidity |
+
+Stellar's moat is not raw throughput or speculative activity. It is the combination of low-cost public settlement, anchors, compliance-friendly assets, USDC access, and real-world cash endpoints.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | XLM Readthrough |
+| --- | ---: | --- | --- |
+| Bull | 30% | MoneyGram ramps scale, BENJI/RWA issuance grows, Soroban apps gain traction, and CCTP makes Stellar a meaningful USDC corridor | XLM demand rises through accounts, reserves, fees, and network scarcity |
+| Base | 50% | Stellar remains a useful payments/RWA network, but fee capture stays low and most economic value accrues to issuers, anchors, and apps | XLM remains liquid large-cap infrastructure beta |
+| Bear | 20% | Stablecoin flows concentrate on Tron/Solana/L2s, tokenized assets choose private or Ethereum-based rails, and Soroban fails to attract developers | XLM trades mostly on legacy brand and payment optionality |
+
+The base case is not failure. It is a useful network with a token that captures less economics than the network creates.
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Value-capture risk | High | Low fees and issuer-led assets may not accrue much to XLM | Fees, reserves, rent, XLM locked in accounts/contracts |
+| Competition risk | High | USDT/Tron, USDC/Solana, L2s, Arc, and bank rails all target payments | Stablecoin flows, MoneyGram adoption, CCTP volume |
+| SDF supply / mandate risk | Medium-High | SDF-controlled supply creates governance and overhang questions | Dashboard supply buckets, mandate spending, disclosures |
+| DeFi depth risk | Medium | TVL is meaningful but small versus leading ecosystems | TVL, DEX volume, lending, Soroban app growth |
+| Data coverage risk | Medium | Stablecoin/RWA dashboards may disagree on Stellar activity | Cross-check official, DefiLlama, RWA.xyz, Circle, explorer data |
+| Regulatory risk | Medium | Payments and tokenized funds need compliance-heavy partners | MoneyGram markets, BENJI rules, issuer controls |
+| Developer risk | Medium | Soroban must attract builders beyond grants and pilots | Contract count, fees, app retention, active devs |
+| Network model risk | Medium | SCP is trust-based and not PoS-economic security | Validator topology, quorum set health, outages |
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| Market cap / FDV | ~$7.09B / ~$10.48B | Growth with fee and reserve expansion | Valuation rises without usage growth |
+| TVL | ~$233M | Sustained >$500M, then >$1B | Falls below $100M |
+| 30d DEX volume | ~$120M | Sustained >$500M monthly | Stays thin despite Soroban growth |
+| 30d fees | ~$757K | Multi-million monthly fees | Fees stagnate below valuation support |
+| MoneyGram ramps | 180+ country reach, LatAm stablecoin rollout | More active markets and reported volumes | App balances remain limited pilots |
+| RWA issuance | BENJI >$650M as of Apr 2026 | More tokenized funds and broader transferability | RWA issuance migrates to other rails |
+| Soroban adoption | Live smart contract platform | More apps, SAC usage, CCTP-driven flows | Developer activity fails to compound |
+| XLM reserve demand | 0.5 XLM base reserve, 1 XLM account minimum | Account/state growth locks more XLM | Usage grows without meaningful XLM lockup |
+
+## Verdict
+
+Stellar is a **high-quality watchlist / selective exposure** for payments, RWA, and real-world stablecoin infrastructure.
+
+The bull case is strong because Stellar has actual distribution. MoneyGram is a real cash bridge. Franklin Templeton's BENJI is a real tokenized fund proof point. USDC/CCTP gives the network stablecoin interoperability. Soroban gives Stellar a programmable app layer. Compared with many enterprise-chain narratives, Stellar has more observable usage and more credible institutional examples.
+
+The caution is equally important: **XLM is not the same as Stellar network utility.** Stellar can be useful precisely because it is cheap, compliance-friendly, and low-friction. That can cap direct token value capture. Fees and base reserves matter, but a $7B+ market cap needs evidence that payment, RWA, and Soroban growth will create large recurring XLM demand.
+
+My current view: **watch closely, size selectively.** XLM becomes more compelling if Stellar grows beyond payment rails into high-retention Soroban apps, larger RWA issuance, deeper USDC/CCTP liquidity, and materially higher fee/reserve demand. Until then, Stellar is one of the cleanest real-world financial networks in crypto, but XLM is still a value-capture gap asset.
+
+## Selected Sources
+
+- [Stellar Intro](https://stellar.org/learn/intro-to-stellar)
+- [Stellar Docs - Lumens](https://developers.stellar.org/docs/learn/fundamentals/lumens)
+- [Stellar Docs - Stellar Consensus Protocol](https://developers.stellar.org/docs/learn/fundamentals/stellar-consensus-protocol)
+- [Stellar Docs - Soroban smart contracts](https://developers.stellar.org/docs/build/smart-contracts/overview)
+- [Stellar Docs - Stellar Asset Contract](https://developers.stellar.org/docs/tokens/stellar-asset-contract)
+- [Stellar Docs - CCTP cross-chain USDC](https://developers.stellar.org/docs/tokens/cross-chain-transfers)
+- [MoneyGram Ramps](https://stellar.org/products-and-tools/moneygram)
+- [MoneyGram and Stellar partnership extension](https://stellar.org/press/moneygram-and-stellar-extend-partnership-to-scale-real-world-stablecoin-utility-globally)
+- [Franklin Templeton BENJI on Stellar](https://stellar.org/press/franklin-templeton-stellar-development-foundation-mark-five-years-of-benji-the-first-u-s-registered-tokenized-money-market-fund)
+- [Stellar Dashboard](https://dashboard.stellar.org/)
+- [CoinGecko XLM](https://www.coingecko.com/en/coins/stellar)
+- [CoinMarketCap XLM](https://coinmarketcap.com/currencies/stellar/)
+- [DefiLlama Stellar](https://defillama.com/chain/Stellar)

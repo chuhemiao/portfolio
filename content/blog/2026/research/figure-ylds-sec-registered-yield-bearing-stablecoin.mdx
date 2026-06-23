@@ -1,0 +1,204 @@
+---
+title: 'YLDS: SEC-Registered Yield-Bearing Stablecoin and the Permissioned Dollar Tradeoff'
+publishedAt: '2026-06-22'
+summary: 'YLDS is a Figure Certificate Company-issued SEC-registered, yield-bearing dollar instrument: a transferable face-amount certificate issued on Provenance, distributed through Figure Markets, and increasingly visible across stablecoin and RWA dashboards. As of June 22, 2026, CoinGecko shows YLDS around $1.00, rank #93, roughly $575M market cap / FDV, about $4.2M 24h volume, and 575M circulating tokens; DefiLlama tracks about $571M circulating across Solana, Ethereum, Provenance, and Stellar, making it roughly the #19 USD stablecoin by supply; RWA.xyz shows about $564M total asset value, 3,645 holders, 634 monthly active addresses, and $3.08B 30d transfer volume. Verdict: high-quality RWA / yield-bearing dollar watchlist, but not a risk-free stablecoin or permissionless DeFi dollar, because value depends on FCC credit, securities compliance, transfer-agent controls, redemption rails, and wrapper/liquidity risk.'
+slug: 'figure-ylds-sec-registered-yield-bearing-stablecoin'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** YLDS is a high-quality RWA / yield-bearing dollar watchlist asset, not a core cash stablecoin yet.
+- **Why it matters:** It is one of the cleanest attempts to combine a dollar-denominated onchain asset, SEC-registered security wrapper, and stablecoin-like transfer UX.
+- **What still needs proof:** YLDS needs deeper third-party liquidity, clearer cross-chain accounting, durable holder growth, and transparent current-term disclosure before it can sit beside USDC, PYUSD, USDY, or USYC in institutional portfolios.
+
+## Executive Summary
+
+YLDS is a yield-bearing dollar instrument issued by Figure Certificate Company (FCC), a Figure group subsidiary. It is marketed as an SEC-registered yield-bearing stablecoin, but the more precise description is more interesting: YLDS represents digital Figure Transferable Certificates, which are unsecured face-amount certificates and interest-bearing debt obligations of FCC. The product tries to make a securities-law wrapper feel like a transferable dollar stablecoin. [YLDS](https://www.ylds.com/) [SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+
+As of the June 22, 2026 snapshot, CoinGecko shows YLDS at about **$0.9997**, rank **#93**, roughly **$575M** market cap / FDV, about **575M** circulating YLDS, and about **$4.2M** in 24h volume. DefiLlama tracks about **$571M** circulating supply across **Solana, Ethereum, Provenance, and Stellar**, with the largest visible balances on Solana at about **$223M**, Ethereum at about **$175M**, Provenance at about **$148M**, and Stellar at about **$25M**. That places YLDS around **#19** among USD-pegged stablecoins by DefiLlama supply. [CoinGecko](https://www.coingecko.com/en/coins/ylds) [DefiLlama stablecoins](https://defillama.com/stablecoins)
+
+RWA.xyz gives a slightly lower but richer asset-level view: about **$564.3M** total asset value, about **$564.2M** circulating market value, **3,645** holders, **634** monthly active addresses, and about **$3.08B** trailing 30-day transfer volume. It also identifies Figure Certificate Company as issuer and Figure as the tokenization platform. [RWA.xyz YLDS](https://app.rwa.xyz/assets/YLDS)
+
+The investment conclusion is deliberately two-sided. YLDS is one of the more serious RWA dollars because it has a registered-security framework, issuer disclosures, KYC-enabled redemption, onchain transfer rails, and a real Figure / Provenance distribution surface. But it is not equivalent to a cash deposit, a Treasury fund share, or a permissionless stablecoin. The key risk is that YLDS carries FCC credit and operational risk while still depending on regulated transfer, redemption, chain support, and secondary-market liquidity.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Can YLDS become the default yield-bearing onchain dollar for regulated cash management, or is it a compliant but narrowly permissioned product that remains secondary to USDC, PYUSD, USYC, USDY, and tokenized Treasury funds?**
+
+This matters because the stablecoin market is splitting into four different categories:
+
+| Category | Examples | Main Job | Key Risk |
+| --- | --- | --- | --- |
+| Payment stablecoins | USDT, USDC, PYUSD, RLUSD | transfer, settlement, exchange liquidity | issuer / reserve / regulatory risk |
+| Yield-bearing stablecoins | YLDS, USDY, sUSDS, USDe | dollar yield plus crypto UX | legal wrapper and yield-source risk |
+| Tokenized funds | BUIDL, USYC, USTB, OUSG | institutional collateral and cash management | access, NAV, liquidity, transfer restrictions |
+| Synthetic / protocol dollars | USDe, GHO, crvUSD | DeFi-native leverage or credit | mechanism, oracle, collateral, governance |
+
+YLDS sits between the second and third buckets. It wants stablecoin-like usability, but its legal substrate is closer to a registered fixed-income security. That distinction is the whole thesis.
+
+## Project Overview
+
+Figure Certificate Company is a face-amount certificate company registered with the SEC under the Investment Company Act of 1940. The February 2025 prospectus describes Figure Certificates as interest-bearing debt securities and says FCC's obligations are unsecured and backed solely by FCC assets. Figure Transferable Certificates are digital representations of those certificates that can move through peer-to-peer transactions and registered ATS transactions on Provenance. [SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+
+| Field | Current Assessment |
+| --- | --- |
+| Product | YLDS |
+| Issuer | Figure Certificate Company |
+| Parent ecosystem | Figure Markets / Figure Technology Solutions |
+| Sector | RWA, yield-bearing dollar, registered security, stablecoin-like cash management |
+| Legal wrapper | Figure Transferable Certificate / face-amount certificate |
+| Core chain | Provenance issuance; RWA.xyz also lists Stellar support; DefiLlama tracks Solana and Ethereum balances |
+| Main user | KYC'd holders, wallets, custodians, fintechs, chains, and institutions seeking compliant dollar yield |
+| Yield source | FCC asset portfolio / overnight-rate-linked certificate economics |
+| Key constraint | Not a bank deposit, not FDIC insured, and not permissionless in the same sense as crypto-native stablecoins |
+
+The official YLDS site frames the product bluntly: "not a stablecoin, a security that acts like one." It says YLDS is an SEC-registered fixed-income debt security that transfers peer-to-peer onchain, with interest paid in kind on the first business day of the month or optionally in U.S. dollars. [YLDS](https://www.ylds.com/)
+
+## Product Design: A Security That Behaves Like A Stablecoin
+
+The product design has three layers.
+
+First, the legal instrument is the anchor. YLDS certificates are face-amount certificates, with each certificate having a face amount of **$0.01**. References to a dollar peg mean that **100 certificates correspond to $1.00**, not that each individual certificate is one dollar. FCC says it seeks to preserve the $0.01 certificate value and pay interest, but does not guarantee that outcome. [YLDS disclosures](https://www.ylds.com/) [SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+
+Second, the transfer layer makes the product crypto-native enough to matter. The SEC prospectus says the ownership and transfer of Figure Certificates are authenticated and recorded on Provenance. It also says the Provenance digital asset standard lets FCC enforce transfer restrictions. In other words, YLDS can move onchain, but it is not a bearer asset that ignores securities compliance. [SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+
+Third, the distribution layer is Figure Markets. KYC'd holders can redeem through Figure Markets or the Figure Markets mobile app, and RWA.xyz describes primary-market subscriptions and redemptions as instant through FCC-controlled channels. That gives YLDS a stronger redemption path than many long-tail stablecoins, but it also makes Figure/FCC operational reliability central to the product. [YLDS](https://www.ylds.com/) [RWA.xyz YLDS](https://app.rwa.xyz/assets/YLDS)
+
+## Yield, Reserves, and Capital Stack
+
+YLDS should be analyzed as a yield-bearing debt security, not a risk-free bank balance.
+
+The current YLDS website says the yield is variable and based on **SOFR minus 35 basis points**. The SEC prospectus dated February 20, 2025 describes the interest rate for Figure Transferable Certificates as **SOFR less 50 basis points**. I treat the website as the current product disclosure and the prospectus as the formal historical filing, but this discrepancy is exactly why investors should verify the latest operative prospectus and terms before sizing the product. [YLDS](https://www.ylds.com/) [SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+
+The official disclosures also say reserves are managed by Figure Investment Advisors, a registered investment adviser. The site states that YLDS certificates are unsecured obligations backed solely by FCC assets and that FCC's portfolio may include debt securities exposed to credit, interest-rate, prepayment, and extension risk. [YLDS disclosures](https://www.ylds.com/)
+
+That creates a different capital stack from the most common stablecoin models:
+
+| Asset | Wrapper | Yield Source | User Claim |
+| --- | --- | --- | --- |
+| USDC / PYUSD | issuer-backed payment stablecoin | reserve portfolio retained or partly subsidized | redeemable issuer liability |
+| USYC / BUIDL / USTB | tokenized fund / security | fund assets | fund interest / share-like claim |
+| USDY | tokenized note / RWA dollar | Treasury / cash-note economics | note-like exposure |
+| YLDS | face-amount certificate / debt security | FCC portfolio, overnight-rate-linked economics | unsecured FCC obligation |
+
+YLDS is more regulated than a purely offshore stablecoin and more transferable than many private tokenized funds. But it is also more issuer-dependent than a simple tokenized Treasury fund where assets, NAV, service providers, and fund mechanics are cleanly observable on one dashboard.
+
+## Traction and Market Data
+
+The market data is meaningful for a product that is still early in mainstream adoption.
+
+| Metric | June 22, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | #93 |
+| CoinGecko market cap / FDV | ~$575M |
+| CoinGecko 24h volume | ~$4.2M |
+| CoinGecko circulating supply | ~575M YLDS |
+| DefiLlama circulating supply | ~$571M |
+| DefiLlama USD stablecoin rank | ~#19 |
+| RWA.xyz total asset value | ~$564.3M |
+| RWA.xyz holders | 3,645 |
+| RWA.xyz monthly active addresses | 634 |
+| RWA.xyz trailing 30d transfer volume | ~$3.08B |
+
+The chain data needs careful reading. DefiLlama currently tracks YLDS balances across **Solana, Ethereum, Provenance, and Stellar**. RWA.xyz's public FAQ says YLDS is supported on **Provenance and Stellar** as of June 22, 2026, while the developer page says Provenance and Stellar are live permissioned forms. My read is that Provenance/Stellar are the official product rails, while Solana/Ethereum balances likely reflect wrapped, bridged, or integration-specific accounting that should be monitored separately. [DefiLlama stablecoins](https://defillama.com/stablecoins) [RWA.xyz YLDS](https://app.rwa.xyz/assets/YLDS) [YLDS developers](https://www.ylds.com/developers-and-ecosystems/)
+
+| Chain | DefiLlama Circulating YLDS | Interpretation |
+| --- | ---: | --- |
+| Solana | ~$223M | likely wrapper / ecosystem distribution to verify |
+| Ethereum | ~$175M | likely wrapper / integration balance to verify |
+| Provenance | ~$148M | core issuance and transfer rail |
+| Stellar | ~$25M | payment and settlement expansion rail |
+
+The positive signal is growth. DefiLlama shows YLDS supply up from about **$538M** one month earlier to about **$571M**. RWA.xyz shows 30-day total asset value up about **5.3%** and holders up about **6.4%**. The caution is that transfer volume can be dominated by institutional flows, bridging, or internal movement, so it is not automatically evidence of broad retail payment adoption.
+
+## Competitive Landscape
+
+YLDS competes with both stablecoins and tokenized cash products.
+
+| Product | Main Edge | Where YLDS Wins | Where YLDS Loses |
+| --- | --- | --- | --- |
+| USDC | liquidity, DeFi integrations, payment rails | yield and security wrapper | much weaker liquidity and integrations |
+| PYUSD | PayPal/Venmo merchant distribution | explicit yield and registered-security framing | weaker consumer distribution |
+| USYC | Circle-native tokenized money market collateral | more stablecoin-like UX | less institutional collateral depth |
+| USTB | Superstate tokenized Treasury fund with Aave use | broader retail-like accessibility narrative | less fund-share simplicity |
+| USDY | Ondo distribution and multi-chain RWA dollar | SEC-registered face-amount certificate angle | USDY has broader RWA brand recognition |
+| GHO / USDe | DeFi-native demand | lower mechanism complexity | less permissionless composability |
+
+YLDS's real wedge is not that it is the highest-yielding dollar product. The wedge is legal and UX convergence: a registered fixed-income instrument that can move more like a stablecoin.
+
+## Value Accrual and Business Model
+
+There is no governance token or equity-like claim here. Holding YLDS gives exposure to the certificate economics, not ownership in Figure, FCC, Provenance, or the reserve manager.
+
+The economic value likely accrues through:
+
+- spread between FCC's asset portfolio and certificate interest obligations;
+- Figure Markets wallet, exchange, and on/off-ramp engagement;
+- custody, transfer-agent, compliance, and platform services around YLDS;
+- ecosystem integrations that make YLDS a default yield-bearing settlement asset;
+- Provenance and Figure adjacency if YLDS deepens the broader RWA stack.
+
+That is strategically valuable for Figure. For a YLDS holder, the question is simpler: does the incremental yield compensate for credit, compliance, redemption, liquidity, and operational risk versus holding USDC, PYUSD, USYC, USDY, USTB, or short-term Treasuries directly?
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Issuer credit risk | High | YLDS is an unsecured FCC obligation, not a bank deposit or Treasury fund share | FCC reports, reserve coverage, portfolio composition |
+| Legal wrapper complexity | High | Stablecoin UX can obscure securities-product risk | latest prospectus, terms, eligibility rules |
+| Yield-term discrepancy | Medium-High | Current website says SOFR minus 35 bps, older SEC prospectus says SOFR less 50 bps for transferable certificates | updated prospectus and product terms |
+| Transfer restrictions | Medium-High | Onchain transfer still depends on KYC, transfer agent, and eligibility | wallet allowlists, rejection rates, partner support |
+| Redemption dependency | Medium-High | Practical redemption depends on Figure/FCC-controlled channels | redemption uptime, fees, delays, support incidents |
+| Cross-chain wrapper risk | Medium | DefiLlama tracks Solana/Ethereum balances beyond the official Provenance/Stellar framing | wrapper contracts, issuer endorsement, bridge disclosures |
+| Liquidity risk | Medium | CG volume is modest relative to market cap and public market depth may remain thin | CEX/DEX depth, ATS activity, spreads |
+| Regulatory risk | Medium | Securities and stablecoin regimes can evolve and constrain integrations | SEC filings, state/federal stablecoin rules |
+| Competition risk | Medium | USDC, PYUSD, USDY, USYC, USTB, and bank tokens all target compliant dollar use cases | supply share, integrations, collateral usage |
+
+The most important analytical mistake would be to treat YLDS like a normal fully redeemable payment stablecoin. The product can be valuable precisely because it is a regulated security wrapper, but that same wrapper introduces constraints that DeFi-native users may not want.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | Supply / Adoption Implication |
+| --- | ---: | --- | --- |
+| Bull | 30% | Figure makes YLDS a default yield-bearing settlement asset across Provenance, Stellar, wallets, fintechs, and selected DeFi venues | $1.5B-$3B+ supply, more holders, recurring transfer volume |
+| Base | 50% | YLDS remains a credible niche RWA dollar with strong Figure ecosystem usage but limited permissionless liquidity | $500M-$1.2B supply, steady but concentrated activity |
+| Bear | 20% | Wrapper complexity, liquidity limits, regulatory constraints, or issuer concerns cap adoption | <$400M supply or weak holder growth |
+
+The bull case is not "YLDS replaces USDC." The bull case is that YLDS becomes a preferred onchain cash-management asset for users who accept securities compliance in exchange for yield and a clearer legal framework.
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| CoinGecko market cap | ~$575M | Sustained >$1B | Below $400M |
+| DefiLlama supply | ~$571M | Growth across official rails and integrations | supply shrinks while peers grow |
+| RWA.xyz holders | 3,645 | >10,000 holders | holder growth stalls |
+| Monthly active addresses | 634 | >2,000 with diverse counterparties | activity concentrated in few flows |
+| 30d transfer volume | ~$3.08B | recurring volume not driven by one-off bridging | volume falls without organic use |
+| Chain distribution | Solana/Ethereum/Provenance/Stellar | clear issuer-supported wrapper accounting | unclear wrapper/liability mapping |
+| Redemption | instant through FCC-controlled channels | transparent uptime and settlement history | delays, restrictions, or support incidents |
+| Disclosure quality | official site + SEC prospectus + RWA dashboards | current prospectus aligns with marketing terms | unresolved yield or risk-term discrepancies |
+
+## Verdict
+
+YLDS is a **high-quality RWA / yield-bearing dollar watchlist asset**, but it is not yet a core stablecoin holding.
+
+The bull case is real. Figure has the right ingredients: SEC-registered structure, onchain security transfer mechanics, Provenance RWA infrastructure, Stellar payment expansion, Figure Markets distribution, and enough supply to appear on major stablecoin and RWA dashboards. The product is also intellectually honest in a way many "yield-bearing stablecoins" are not: it says it is a security, not just a magical dollar wrapper.
+
+The caution is equally real. YLDS is an unsecured issuer obligation with compliance-controlled transfer and redemption. The chain footprint needs reconciliation across official Provenance/Stellar messaging and DefiLlama's Solana/Ethereum balances. Liquidity is still modest relative to headline market cap. The current website and older SEC prospectus use different SOFR spread language, which should be resolved before treating the economics as fully settled.
+
+My current view: **YLDS deserves a serious RWA watchlist slot, especially for the regulated yield-bearing dollar theme, but I would not treat it as a permissionless payment stablecoin or a risk-free cash substitute.** It becomes more compelling if supply breaks above $1B, holder count and active addresses broaden, official disclosures reconcile the latest yield terms, and third-party integrations show real use beyond Figure-controlled channels.
+
+## Selected Sources
+
+- [YLDS official site](https://www.ylds.com/)
+- [YLDS developers and ecosystems](https://www.ylds.com/developers-and-ecosystems/)
+- [Figure Markets YLDS](https://www.figuremarkets.com/c/ylds)
+- [Figure Certificate Company SEC prospectus](https://www.sec.gov/Archives/edgar/data/1974395/000094787125000216/ss4476065_497.htm)
+- [CoinGecko YLDS](https://www.coingecko.com/en/coins/ylds)
+- [DefiLlama stablecoins](https://defillama.com/stablecoins)
+- [DefiLlama Figure Markets](https://defillama.com/protocol/figure-markets)
+- [RWA.xyz YLDS](https://app.rwa.xyz/assets/YLDS)

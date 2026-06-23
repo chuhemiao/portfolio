@@ -1,0 +1,241 @@
+---
+title: 'Solstice USX: Solana Yield Stablecoin, Liquidity Layer, and Proof-of-Solvency Test'
+publishedAt: '2026-06-22'
+summary: 'Solstice USX is a Solana-native overcollateralized settlement stablecoin with about $508M in circulating value, CoinGecko rank around #102, and visible Orca USX/USDC liquidity of roughly $13.8M as of June 22, 2026. The protocol pairs USX with eUSX, a non-rebasing yield-bearing vault receipt tied to delta-neutral strategies, funding-rate arbitrage, hedged staking, and tokenized T-bills. The setup is one of the more serious Solana stablecoin and yield experiments because it combines institutional strategy history, Accountable.Capital proof-of-solvency verification, Halborn audits, and meaningful DEX depth. The risk is that USX is not a simple cash stablecoin: minting/redemption is permissioned, holders have no direct collateral claim, yield depends on hedge execution and counterparties such as exchanges and custodians, and eUSX has cooldown and mark-to-market liquidity risk.'
+slug: 'solstice-usx-solana-yield-stablecoin-liquidity-proof-of-solvency'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Solstice USX is a high-quality Solana stablecoin / yield watchlist asset, but not a core cash stablecoin yet.
+- **Why it matters:** USX gives Solana a native settlement unit backed by an overcollateralized, hedged portfolio, while eUSX turns that collateral base into a composable yield product.
+- **What still needs proof:** USX needs more transparent live collateral dashboards, durable third-party liquidity, redemption evidence under stress, and clearer evidence that yield survives negative funding-rate regimes without hidden counterparty concentration.
+
+## Executive Summary
+
+Solstice is a Solana DeFi protocol built around **USX**, **eUSX**, and **SLX**. USX is the settlement asset: a fully collateralized, soft-pegged dollar token on Solana. eUSX is the yield-bearing token: users lock USX in YieldVault, receive eUSX, and eUSX appreciates relative to USX as the underlying strategy generates rewards. SLX is the governance and utility token for the wider ecosystem. [Solstice Introduction](https://docs.solstice.finance/overview/readme.md)
+
+As of the June 22, 2026 market snapshot, CoinGecko shows USX at about **$0.999**, with roughly **$508M** market cap / FDV, about **508M** circulating and total supply, around **$624K** in 24h volume, and market-cap rank around **#102**. The token lives on Solana at `6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG`. [CoinGecko](https://www.coingecko.com/en/coins/usx)
+
+Public DEX liquidity is meaningful but still narrow. Dexscreener shows the main Orca **USX/USDC** pool at about **$13.8M** liquidity and roughly **$341K** 24h volume, while the main **eUSX/USX** Orca pool shows about **$6.6M** liquidity and roughly **$26K** 24h volume. That is strong for a newer Solana stablecoin, but small relative to USDC, USDT, USDS, PYUSD, or major centralized redemption rails. [Dexscreener USX/USDC](https://dexscreener.com/solana/2e3wem4wwdeqwttrnwn3gjsbhng1p6aj2y7kedfrybix) [Dexscreener eUSX/USX](https://dexscreener.com/solana/aur5evrwgdskb2ees1v63ncjhxdnrdlvfbp47qnvpovf)
+
+The investment relevance is not that USX is a new dollar wrapper. It is that USX tries to turn institutional delta-neutral strategy collateral into a Solana-native liquidity layer. Solstice says its strategy has been live privately since January 2023, previously managing more than **$200M** in institutional capital, with reported **8.4%** trailing 12-month returns, **13.8%** net IRR, **6.6** aggregated Sharpe, and **-0.14%** maximum daily drawdown as of its April 1, 2026 track-record update. These are project-reported figures, not independently reconstructed performance. [Track Record](https://docs.solstice.finance/overview/track-record.md)
+
+Verdict: **High-quality watchlist / selective exposure.** USX is one of the more credible Solana-native stablecoin experiments because it has real scale, DEX liquidity, audits, proof-of-solvency architecture, and a differentiated eUSX yield layer. It is not a core cash stablecoin because redemption is permissioned, holders have no direct collateral ownership claim, the backing includes hedged crypto and counterparty exposures, and eUSX introduces strategy and cooldown risk.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Can Solstice make USX a durable Solana settlement asset, or is it mainly a high-yield wrapper whose demand depends on favorable funding markets and incentive cycles?**
+
+That matters because Solana dollar liquidity is fragmenting into several models:
+
+| Model | Examples | Core Edge | Main Risk |
+| --- | --- | --- | --- |
+| Fiat-backed payment stablecoins | USDC, USDT, PYUSD | redemption clarity and broad integrations | issuer / freeze / banking risk |
+| RWA and Treasury dollars | USDY, USYC, BUIDL, USTB | regulated yield and collateral usage | access, liquidity, legal structure |
+| Synthetic / strategy-backed dollars | USDe, USX, USD0 variants | yield and capital efficiency | hedge execution, counterparty, liquidity |
+| DeFi-native dollars | USDS, DAI, crvUSD | composability and onchain collateral | governance, oracle, liquidation risk |
+
+USX sits between synthetic stablecoins and Solana-native collateral rails. It is not as simple as USDC, but it may be more capital-efficient if the hedged portfolio and eUSX vault keep producing competitive yield.
+
+## Project Overview
+
+Solstice describes USX as a **fully collateralized settlement layer on Solana**, backed above 100% by a diversified portfolio of hedged assets. USX is the core capital unit for Solstice strategies and Solana liquidity routing. [USX Docs](https://docs.solstice.finance/solstice-for-users/usx.md)
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | Solstice Finance |
+| Asset | USX |
+| Sector | Stablecoin, yield stablecoin, Solana DeFi |
+| Chain | Solana |
+| Token mint | `6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG` |
+| Market cap / FDV | About $508M |
+| Main user | Solana DeFi users, institutional minters, yield users, liquidity providers |
+| Core companion asset | eUSX, the yield-bearing YieldVault receipt |
+| Governance / utility token | SLX |
+
+The key distinction is simple:
+
+| Asset | Function | Risk Profile |
+| --- | --- | --- |
+| USX | Settlement stablecoin and collateral unit | peg, redemption, collateral, issuer/counterparty risk |
+| eUSX | Yield-bearing non-rebasing vault receipt | all USX risks plus strategy, cooldown, and vault liquidity risk |
+| SLX | Governance / utility token | protocol adoption, emissions, unlocks, and value capture risk |
+
+For portfolio construction, USX and eUSX should not be treated as the same asset. USX is closer to a settlement dollar. eUSX is closer to a yield vault share.
+
+## USX Design, Minting, and Redemption
+
+Solstice says approved and ID-verified institutional participants can mint USX by depositing USDG, USDC, or USDT into the USX Program. Redemption is also permissioned: the participant returns USX and receives USDG as the primary redemption asset. Solstice says minting and redemption involve no spread and that it does not profit from issuance or redemption. [USX Docs](https://docs.solstice.finance/solstice-for-users/usx.md)
+
+For everyone else, USX is available permissionlessly through the Solstice app and Solana DEXs such as Raydium, Orca, and Jupiter. That creates two different user experiences:
+
+| User Type | Access | Practical Implication |
+| --- | --- | --- |
+| Approved institutional participant | Can mint and redeem directly | closer to primary-market stablecoin access |
+| Normal DeFi user | Can swap on app / DEXs | dependent on secondary liquidity and app routing |
+| eUSX holder | Can unlock via YieldVault or sell on DEX | faces cooldown or market-price discount risk |
+
+This is the first major risk boundary. A token can trade near $1 on DEXs while still having uneven redemption access. For ordinary users, DEX liquidity and Solstice app routing matter more than primary redemption terms.
+
+## Collateral, Custody, and Proof of Solvency
+
+Solstice says USX backing can include hedged positions across BTC, ETH, SOL, other liquid assets and corresponding perpetual futures, major stablecoins, and tokenized Treasuries. Collateral is first deposited into Solana-based vaults, with a portion transferred to custodians Copper and Ceffu for off-exchange settlement; during redemptions, collateral moves back onchain. [USX Docs](https://docs.solstice.finance/solstice-for-users/usx.md)
+
+The official proof-of-solvency page says USX collateral is continuously verified by Accountable.Capital across wallets, custodians, banks, and internal accounts. Solstice says the protocol targets collateralization above 100% at all times. The same page also contains the most important caveat: **USX token holders have no direct ownership, claim, or beneficial interest in collateral assets**, and proof of solvency is verification, not a guarantee of value or redemption liquidity. [Proof of Solvency](https://docs.solstice.finance/legal-documents/attestations-and-proof-of-solvency.md)
+
+That caveat changes the risk model:
+
+| Layer | Strength | Risk |
+| --- | --- | --- |
+| Overcollateralization target | Better than undercollateralized synthetic dollars | collateral ratio can fluctuate intra-day |
+| Accountable.Capital verification | Stronger than self-reported dashboards | not equivalent to legal claim or instant redemption |
+| Copper / Ceffu custody | Professional custody and off-exchange settlement | counterparty, custody, recovery, and insurance limits |
+| Hedged portfolio | Can generate yield without directional exposure | imperfect hedges, negative funding, liquidity stress |
+
+The December 2025 archived attestation snapshot listed **100.93%** collateralization. That is above 100%, but with a thin margin. Solstice has since moved to live proof-of-solvency verification, so archived monthly reports should be treated as historical evidence rather than the current collateral ratio. [December 2025 Proof of Solvency](https://docs.solstice.finance/legal-documents/attestations-and-proof-of-solvency/december-2025.md)
+
+## eUSX and YieldVault
+
+eUSX is the yield-bearing token users receive after locking USX in YieldVault. It is non-rebasing: users do not receive more eUSX when the strategy performs; instead, eUSX should appreciate relative to USX over time. [eUSX Docs](https://docs.solstice.finance/solstice-for-users/eusx-powered-by-yieldvault.md)
+
+| eUSX Property | Detail |
+| --- | --- |
+| Token mint | `3ThdFZQKM6kRyVGLG48kaPg5TRMhYMKY1iCRa9xop1WC` |
+| Mechanic | Lock USX, receive eUSX, eUSX exchange rate increases through yield |
+| Yield source | Solstice delta-neutral strategies |
+| Cooldown | 7 days standard; 24 hours for amounts up to $1,000 |
+| Instant exit | Possible on Solana DEXs, but price can differ from redemption value |
+
+Solstice lists three core yield sources:
+
+| Yield Source | How It Works | Main Risk |
+| --- | --- | --- |
+| Funding-rate arbitrage | Hold spot and short perpetual futures to capture positive funding | negative funding, exchange failure, hedge slippage |
+| Hedged staking | Earn staking yield while hedging price exposure | volatility, hedge cost, liquid staking risk |
+| Tokenized T-bills | Allocate part of backing to tokenized Treasury exposure | issuer, custody, tokenized fund liquidity |
+
+Solstice reports that the strategy has 100% positive month-over-month returns since first fund activity and a trailing 12-month Sharpe ratio of 8.09 in the yield-source page. That should be read as project-reported strategy history, not as a guaranteed eUSX return. [Yield Sources](https://docs.solstice.finance/overview/yield-sources.md)
+
+## Smart Contracts, Audits, and Controls
+
+The USX Protocol has three Solana programs: the USX Program for minting, redemption, and collateral management; the YieldVault Program for locking and yield distribution; and the Solstice Oracle for price feeds. [Smart Contracts](https://docs.solstice.finance/solstice-for-builders/smart-contracts.md)
+
+| Component | Address / Role |
+| --- | --- |
+| USX Token Mint | `6FrrzDk5mQARGc1TDYoyVnSyRdds1t4PbtohCD6p3tgG` |
+| USX Program ID | `USXyiSTsPEWz55pSK7sZoUL79ntoVGQbaTDT57tH6bx` |
+| eUSX Token Mint | `3ThdFZQKM6kRyVGLG48kaPg5TRMhYMKY1iCRa9xop1WC` |
+| YieldVault Program ID | `eUSXyKoZ6aGejYVbnp3wtWQ1E8zuokLAJPecPxxtgG3` |
+
+Critical operations are controlled by multi-signature architecture. The docs list program upgrades, configuration changes, multisig membership, permissioned account management, collateral-token registration, custodian authorization, and emergency fund movements as multisig-controlled operations. That is normal for an actively managed stablecoin, but it means USX is not governance-minimized or immutable infrastructure. [Smart Contracts](https://docs.solstice.finance/solstice-for-builders/smart-contracts.md)
+
+Solstice lists Halborn audits for USX on **March 27, 2025**, Staking on **December 1, 2025**, and Rewarder on **December 8, 2025**. Audit coverage is a positive signal, but it does not eliminate oracle, upgrade, custody, or strategy risk. [Audits](https://docs.solstice.finance/legal-documents/audits.md)
+
+## Market Data and Liquidity
+
+USX has already reached meaningful stablecoin scale on Solana.
+
+| Metric | June 22, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | Around #102 |
+| Price | ~$0.999 |
+| Market cap / FDV | ~$508M |
+| Circulating / total supply | ~508.2M USX |
+| CoinGecko 24h volume | ~$624K |
+| Main Orca USX/USDC liquidity | ~$13.8M |
+| Main Orca USX/USDC 24h volume | ~$341K |
+| Main Orca eUSX/USX liquidity | ~$6.6M |
+| Main Orca eUSX/USX 24h volume | ~$26K |
+
+The positive read is that USX is not a tiny experimental stablecoin. A half-billion-dollar supply and eight-figure DEX liquidity on Solana are enough to matter for integrations.
+
+The cautious read is that liquidity is still concentrated. CoinGecko's top tickers are mostly Orca and Raydium pairs against USDC and eUSX. Dexscreener also reports clearly wrong FDV / market-cap fields for the USX pool, so CoinGecko supply and market-cap data should be preferred over Dexscreener FDV for valuation context. [CoinGecko](https://www.coingecko.com/en/coins/usx) [Dexscreener USX/USDC](https://dexscreener.com/solana/2e3wem4wwdeqwttrnwn3gjsbhng1p6aj2y7kedfrybix)
+
+## Competitive Landscape
+
+| Asset | Model | Core Edge | USX Readthrough |
+| --- | --- | --- | --- |
+| USDC | fiat-backed regulated stablecoin | deepest Solana institutional dollar | USX must win yield and native strategy use cases |
+| USDT | fiat-backed exchange stablecoin | global liquidity and CEX depth | USX cannot compete on global exchange liquidity yet |
+| PYUSD | PayFi stablecoin | PayPal / Venmo / merchant distribution | USX is more DeFi-yield-native, weaker in consumer payments |
+| USDY | tokenized Treasury note | RWA yield and compliant access | USX has broader strategy mix and Solana DeFi composability |
+| USDe | synthetic dollar | large basis trade and yield demand | USX is smaller but more Solana-native |
+| USDS / DAI | DeFi-native dollar | long DeFi history and collateral integrations | USX has less history but simpler Solana focus |
+
+The closest mental model is not USDC. It is a smaller, Solana-native cousin of the synthetic/yield dollar category, with a stronger proof-of-solvency story than many strategy-backed products but less primary redemption openness than simple fiat stablecoins.
+
+## SLX Token Context
+
+This report is primarily about USX and eUSX, but SLX matters because governance-token incentives can shape USX liquidity.
+
+The official tokenomics page says SLX has a fixed **1B** total supply, no early VC token allocations, and about **24%** initial circulating supply at TGE. Allocation includes Foundation **24%**, Community **37.71%**, Team & Advisors **20%**, Airdrops **10%**, Strategic TVL Partners **8%**, and Public Sale **0.29%**. [SLX Tokenomics](https://docs.solstice.finance/solstice-for-users/slx/tokenomics.md)
+
+For USX analysis, the key question is whether SLX incentives bootstrap durable USX liquidity or temporarily rent TVL. If USX supply and eUSX deposits remain sticky after SLX campaigns, the protocol quality improves. If balances leave after rewards, the stablecoin is more incentive-dependent than it appears.
+
+## Risk Assessment
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Redemption access | High | Primary mint/redeem is permissioned for approved institutional participants | user exit routes, app quotes, DEX depth |
+| No direct collateral claim | High | Docs say token holders have no direct ownership or beneficial interest in collateral assets | legal terms, proof-of-solvency disclosures |
+| Counterparty risk | High | Copper, Ceffu, exchanges, and stablecoin issuers are part of the stack | custodian concentration, exchange exposure, incident reports |
+| Strategy risk | High | Funding and hedge strategies can underperform in negative-rate or stressed markets | realized eUSX rate, drawdowns, negative funding periods |
+| Liquidity concentration | Medium-High | Main liquidity is concentrated in a small set of Solana pools | pool depth, slippage, LP concentration |
+| Oracle / smart-contract risk | Medium | USX uses Solstice Oracle, Pyth checks, upgradeable programs, and multisig controls | audits, upgrades, oracle incidents |
+| Regulatory risk | Medium | Yield-bearing dollar products and permissioned redemption sit in a sensitive regulatory zone | jurisdiction access, legal docs, KYC requirements |
+| Incentive dependency | Medium | SLX and campaign rewards could drive non-organic deposits | deposits after campaigns, fee/yield without rewards |
+
+The official risk disclosures are direct about these categories: funding-rate volatility, imperfect hedges, liquidity stress, exchange/custody dependencies, stablecoin depeg risk, smart-contract risk, regulatory change, and concentration risk. [Risk Disclosures](https://docs.solstice.finance/legal-documents/risk-disclosures.md)
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | What Would Prove It |
+| --- | ---: | --- | --- |
+| Bull | 25% | USX becomes a top Solana-native settlement asset, eUSX becomes a default yield vault, and proof-of-solvency builds institutional trust | supply >$1.5B, DEX liquidity >$75M, eUSX durable deposits, transparent live collateral above 102% |
+| Base | 50% | USX remains a credible Solana stablecoin with selective integrations and a useful eUSX vault, but does not displace USDC | $400M-$1B supply, moderate liquidity, yields normalize, limited payment adoption |
+| Bear | 25% | Negative funding, counterparty stress, redemption limits, or incentive churn reduce confidence | supply <$250M, eUSX discount widens, live collateral margin tightens, DEX depth falls |
+
+The bear case is not necessarily a depeg collapse. It could simply be that USX remains a specialist yield product rather than becoming a broadly trusted settlement asset.
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| USX supply / market cap | ~$508M | sustained >$1B, then >$1.5B | <$250M |
+| Main USX/USDC liquidity | ~$13.8M | >$50M across multiple venues | <$5M or one-pool concentration |
+| eUSX/USX liquidity | ~$6.6M | >$25M with tight spread | persistent eUSX discount |
+| Collateralization | target >100%; latest archived snapshot 100.93% in Dec 2025 | live dashboard consistently >102% | repeated dips near or below 100% |
+| Yield quality | project-reported 8.4% trailing 12m strategy return | stable eUSX appreciation without reward distortion | negative months or widening unlock pressure |
+| Redemption evidence | permissioned institutional mint/redeem | transparent redemption volumes and stress-period exits | app/DEX exit slippage under stress |
+| SLX incentives | active ecosystem bootstrapping | sticky USX supply after campaigns | large TVL exits after rewards |
+
+## Verdict
+
+USX is a **high-quality watchlist / selective exposure** stablecoin theme for Solana.
+
+The bull case is real. Solstice has meaningful supply, real DEX depth, a coherent USX/eUSX product split, project-reported institutional strategy history, Halborn audits, and an Accountable.Capital proof-of-solvency architecture. Solana needs dollar liquidity beyond USDC, and USX has a plausible wedge as a native settlement and yield layer.
+
+The caution is also real. USX is not a bank-dollar wrapper and not a simple fiat stablecoin. The backing includes hedged crypto positions, stablecoins, tokenized Treasuries, custodians, exchanges, offchain systems, multisig controls, and permissioned primary-market redemption. eUSX adds strategy and cooldown risk. The official documentation explicitly says holders have no direct claim on collateral assets.
+
+My current view: **USX deserves a serious place on the Solana stablecoin / yield watchlist, but I would not treat it as a core cash reserve.** It becomes more compelling if supply grows above $1B with deep multi-venue liquidity, Accountable.Capital live proof-of-solvency remains comfortably above 100%, and eUSX proves it can retain deposits through lower funding-rate regimes without heavy SLX incentives.
+
+## Selected Sources
+
+- [Solstice Introduction](https://docs.solstice.finance/overview/readme.md)
+- [USX documentation](https://docs.solstice.finance/solstice-for-users/usx.md)
+- [eUSX / YieldVault documentation](https://docs.solstice.finance/solstice-for-users/eusx-powered-by-yieldvault.md)
+- [Track Record](https://docs.solstice.finance/overview/track-record.md)
+- [Yield Sources](https://docs.solstice.finance/overview/yield-sources.md)
+- [Smart Contracts](https://docs.solstice.finance/solstice-for-builders/smart-contracts.md)
+- [Proof of Solvency](https://docs.solstice.finance/legal-documents/attestations-and-proof-of-solvency.md)
+- [December 2025 Proof of Solvency archive](https://docs.solstice.finance/legal-documents/attestations-and-proof-of-solvency/december-2025.md)
+- [Audits](https://docs.solstice.finance/legal-documents/audits.md)
+- [Risk Disclosures](https://docs.solstice.finance/legal-documents/risk-disclosures.md)
+- [SLX Tokenomics](https://docs.solstice.finance/solstice-for-users/slx/tokenomics.md)
+- [CoinGecko USX](https://www.coingecko.com/en/coins/usx)
+- [Dexscreener USX/USDC](https://dexscreener.com/solana/2e3wem4wwdeqwttrnwn3gjsbhng1p6aj2y7kedfrybix)
+- [Dexscreener eUSX/USX](https://dexscreener.com/solana/aur5evrwgdskb2ees1v63ncjhxdnrdlvfbp47qnvpovf)

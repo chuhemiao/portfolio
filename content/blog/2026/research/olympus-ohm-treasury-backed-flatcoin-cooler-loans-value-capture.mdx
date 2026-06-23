@@ -1,0 +1,233 @@
+---
+title: 'Olympus OHM: Treasury-Backed Flatcoin, Cooler Credit, and the Backing Value-Capture Test'
+publishedAt: '2026-06-23'
+summary: 'Olympus OHM is no longer just the 2021 rebasing reserve-currency experiment. It is now a treasury-backed, free-floating flatcoin system with protocol-owned liquidity, Cooler Loans, Yield Repurchase Facility buybacks, and an Emissions Manager replacing the old active RBS policy. As of the June 23, 2026 snapshot, CoinGecko shows OHM around $15.82, rank #151, roughly $236.6M market cap, $313.9M FDV, $198K 24h volume, and 14.95M / 19.84M circulating / total supply. Olympus treasury metrics for June 22, 2026 show $183.6M treasury market value, $170.4M liquid backing, about $12.00 liquid backing per backed OHM, and $229.9M sOHM TVL. Verdict: high-quality DeFi monetary-infra watchlist / selective exposure, but not a high-conviction cash-flow token until OHM proves durable external demand, deeper liquidity, and premium discipline above backing.'
+slug: 'olympus-ohm-treasury-backed-flatcoin-cooler-loans-value-capture'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** Olympus is a high-quality DeFi monetary-infrastructure watchlist / selective exposure, not a high-conviction allocation yet.
+- **Why it matters:** OHM has evolved from a reflexive rebasing narrative into a treasury-backed flatcoin with protocol-owned liquidity, direct credit through Cooler Loans, buybacks through YRF, and supply expansion through Emissions Manager.
+- **What still needs proof:** OHM needs more external demand, deeper non-Olympus liquidity, and a stable premium to liquid backing that reflects utility rather than nostalgia.
+
+## Executive Summary
+
+Olympus is one of the few DeFi 1.0 protocols that survived long enough to become structurally interesting again. The old market memory is "OHM = rebasing Ponzi." The current design is more nuanced: OHM is a treasury-backed, free-floating flatcoin with policy tools around liquidity, credit, buybacks, and supply expansion. The protocol now looks less like a yield farm and more like an onchain monetary balance sheet. [Olympus Intro](https://docs.olympusdao.finance/main/overview/intro)
+
+As of the June 23, 2026 market snapshot, CoinGecko shows OHM at about **$15.82**, rank **#151**, roughly **$236.6M** market cap, **$313.9M** FDV, about **$198K** in 24h volume, and **14.95M / 19.84M** circulating / total supply. CoinGecko lists OHM deployments across Ethereum, Berachain, Optimism, Solana, Base, and Arbitrum. [CoinGecko](https://www.coingecko.com/en/coins/olympus)
+
+Olympus' own treasury metrics are more important than market cap. The treasury API's latest complete cross-chain snapshot is **June 22, 2026**. It shows **$183.6M** treasury market value, **$170.4M** treasury liquid backing, about **$11.995** liquid backing per backed OHM, about **14.21M** backed OHM supply, **19.84M** total OHM supply, and about **$229.9M** sOHM TVL. The same snapshot shows most liquid backing categorized as stable assets, with roughly **$168.0M** stable assets, **$2.0M** protocol-owned liquidity, and **$1.2M** volatile assets by value-excluding-OHM. [Olympus Treasury API](https://treasury-subgraph-api.olympusdao.finance/v2/metrics/daily?start=2026-06-22&end=2026-06-22) [Olympus Treasury Assets API](https://treasury-subgraph-api.olympusdao.finance/v2/treasury-assets/daily?start=2026-06-22&end=2026-06-22)
+
+DefiLlama classifies Olympus DAO as a reserve-currency protocol. The latest DefiLlama snapshot shows normal protocol TVL at zero but **Ethereum-staking / staking TVL around $232.8M**, which matches the sOHM-centered design better than a standard DeFi TVL frame. DefiLlama fee data shows about **$3.8K** 24h fees, **$31.3K** 7d fees, **$138K** 30d fees, and **$2.81M** 1y fees. [DefiLlama Olympus](https://defillama.com/protocol/olympus-dao) [DefiLlama Fees](https://defillama.com/fees/olympus-dao)
+
+Verdict: **High-quality watchlist / selective exposure.** OHM is investable only if one believes an onchain reserve asset can earn a sustainable premium to backing through liquidity, credit, and monetary policy. It is not a clean cash-flow token. The current premium above liquid backing is real, but it needs durable external demand, not just internal treasury mechanics.
+
+## Research Question and Investment Relevance
+
+The useful question is:
+
+**Has Olympus become a credible onchain monetary primitive, or is OHM still mostly a treasury-backed token trading at a fragile premium to liquid backing?**
+
+This matters because OHM sits in a strange category:
+
+| Asset Type | Examples | Main Claim | Investor Question |
+| --- | --- | --- | --- |
+| Fiat stablecoin | USDC, PYUSD, USDT | redeemable dollar | reserve and issuer trust |
+| DeFi stablecoin | USDS, DAI, GHO, crvUSD | collateralized onchain credit | mechanism and governance risk |
+| Treasury-backed flatcoin | OHM | floating asset with treasury backing and policy | premium to backing and real use |
+| Governance/cash-flow token | AAVE, MKR/SKY, CRV | protocol rights / fees / voting | value accrual and dilution |
+
+OHM is not trying to be a strict dollar stablecoin. It is trying to be a decentralized, policy-controlled monetary asset that preserves purchasing power over time, stays liquid, and can be used as collateral or unit of account. That is ambitious. It is also hard to prove in a market that mostly wants simple stablecoins and high-beta tokens.
+
+## Project Overview
+
+Olympus describes itself as a DeFi system supporting OHM, a treasury-backed, liquidity-enabling token on Ethereum. The protocol uses Protocol Owned Liquidity, Range Bound Stability, and Cooler Loans to build "programmatic policy-controlled money." [Olympus Intro](https://docs.olympusdao.finance/main/overview/intro)
+
+| Field | Current Assessment |
+| --- | --- |
+| Protocol | Olympus DAO |
+| Token | OHM |
+| Governance token | gOHM |
+| Sector | DeFi monetary infrastructure, reserve currency, treasury-backed flatcoin |
+| Core chain | Ethereum, with cross-chain deployments on Arbitrum, Base, Berachain, Optimism, Solana, and others |
+| Current market cap | ~$236.6M on CoinGecko |
+| Treasury market value | ~$183.6M on latest complete Olympus treasury snapshot |
+| Liquid backing | ~$170.4M |
+| Liquid backing per backed OHM | ~$11.995 |
+| Primary mechanisms | POL, Cooler Loans, YRF, Emissions Manager, governance |
+
+The key framing from Olympus docs is that **OHM is not pegged to fiat**. It is a free-floating flatcoin fully backed by the Olympus Treasury, with a price range enforced programmatically through policy systems. gOHM is the governance token and can be used as collateral for Cooler Loans. [OHM and gOHM](https://docs.olympusdao.finance/main/overview/tokens)
+
+## Mechanism: From RBS to YRF and Emissions Manager
+
+Olympus' historical Range Bound Stability system matters because it explains the monetary design. RBS was built to absorb OHM volatility by deploying treasury reserves when OHM traded low and selling OHM for reserves when it traded high. The docs now say **RBS is currently disabled** and that its functionality has been replaced by:
+
+- **Yield Repurchase Facility:** handles lower bounds by buying OHM when price is low.
+- **Emissions Manager:** handles upper bounds by selling OHM when price is high. [Range Bound Stability](https://docs.olympusdao.finance/main/overview/range-bound)
+
+This is a meaningful evolution. The old RBS framing sounded like a direct price band. The current design is more modular:
+
+1. Treasury generates yield and maintains reserves.
+2. YRF uses earned yield and backing mechanics to buy and burn OHM.
+3. Emissions Manager sells OHM only when premium conditions justify expansion.
+4. Cooler Loans let gOHM holders borrow against their backing without price liquidation.
+
+The result is a protocol with a visible balance sheet, an internal credit facility, and programmatic supply policy. It still needs market demand, but it is no longer just a high-APY rebasing asset.
+
+## Treasury and Backing
+
+The treasury is the center of the OHM thesis. Olympus docs say the treasury owns and controls protocol assets, ensures OHM liquidity on open markets, and stabilizes OHM with direct market operations. The treasury currently uses a streamlined strategy with reserves held as sDAI / sUSDS-style assets, with RBS and Cooler loans accessing those reserves as needed. [Treasury](https://docs.olympusdao.finance/main/overview/treasury)
+
+Latest complete treasury snapshot:
+
+| Metric | June 22, 2026 |
+| --- | ---: |
+| Treasury market value | ~$183.6M |
+| Treasury liquid backing | ~$170.4M |
+| Liquid backing per backed OHM | ~$11.995 |
+| Backed OHM supply | ~14.21M OHM |
+| Circulating OHM supply | ~14.95M OHM |
+| Total OHM supply | ~19.84M OHM |
+| sOHM total value locked | ~$229.9M |
+| Protocol-owned liquidity OHM | ~748.7K OHM |
+
+Treasury asset categories by value-excluding-OHM:
+
+| Category | Value |
+| --- | ---: |
+| Stable assets | ~$168.0M |
+| Protocol-owned liquidity | ~$2.04M |
+| Volatile assets | ~$1.18M |
+
+Top asset lines include **USDS borrowed through Cooler Loans V2 MonoCooler (~$123.4M)**, **sUSDe (~$30.8M)**, **sUSDS (~$8.4M)**, and older Cooler/DAI lines. That asset mix makes OHM much more stablecoin- and yield-asset-sensitive than a generic volatile crypto treasury. [Treasury Assets API](https://treasury-subgraph-api.olympusdao.finance/v2/treasury-assets/daily?start=2026-06-22&end=2026-06-22)
+
+The critical valuation observation is simple: OHM trades above backing. CoinGecko's market price around **$15.82** compares with roughly **$12.00** liquid backing per backed OHM. That premium can be justified if OHM becomes useful monetary collateral with credible policy and liquidity. It becomes fragile if users only value OHM as a redeemable treasury claim.
+
+## Cooler Loans: The Credit Primitive
+
+Cooler Loans are now central to Olympus. The docs describe Cooler V2 as a protocol-native, perpetual lending system where OHM holders borrow **USDS** using **gOHM** collateral. Cooler V2 has fixed **0.5% APR**, no price-based liquidations, no expiry, and loans originated from the Olympus Treasury. [Cooler Loans](https://docs.olympusdao.finance/main/overview/cooler-loans)
+
+The bullish interpretation is that Cooler turns OHM from a passive treasury-backed token into a credit primitive:
+
+- long-term holders can borrow stable assets without selling OHM,
+- the treasury earns interest,
+- gOHM remains governance collateral,
+- liquidity access is tied to backing rather than external lender sentiment.
+
+The bearish interpretation is that Cooler internalizes leverage and creates a reflexive loop. If OHM demand falls, holders can still borrow against backing, but the system depends on governance parameters, treasury liquidity, and confidence in the backing model. The absence of price-based liquidation is a product feature, but it is also why governance-controlled LTV and backing discipline matter.
+
+## POL, Liquidity, and Market Structure
+
+Olympus pioneered Protocol Owned Liquidity. The docs say POL lets OHM holders access liquidity without relying on liquidity-mining incentives. Current POL includes DEX-based liquidity and RBS-style swaps, with the key DEX POL held in an OHM/WETH Uniswap v3 pool. [Protocol Owned Liquidity](https://docs.olympusdao.finance/main/overview/pol)
+
+Public market data shows a mixed picture:
+
+| Venue / Data Source | Current Signal |
+| --- | ---: |
+| CoinGecko 24h volume | ~$198K |
+| Ethereum Uniswap OHM/WETH Dexscreener liquidity | ~$3.63M |
+| Ethereum Uniswap OHM/WETH 24h volume | ~$230K |
+| Base OHM/USDC Dexscreener liquidity | ~$800K |
+| Berachain OHM/HONEY Dexscreener liquidity | ~$392K |
+| DefiLlama 30d fees | ~$138K |
+| DefiLlama 1y fees | ~$2.81M |
+
+This is not deep liquidity for a $200M+ asset. The positive read is that Olympus owns and manages a large share of its own liquidity and does not need mercenary emissions to exist. The negative read is that external demand and independent exchange depth are still modest.
+
+## Value Accrual and Token Economics
+
+OHM value accrual has three layers.
+
+First, the treasury gives OHM a backing floor-like reference. It is not a hard redemption guarantee for every holder at spot price, but it is the balance-sheet anchor.
+
+Second, YRF uses protocol yield to buy back and burn OHM. The docs say YRF pulls earned yield from treasury reserves and Cooler loans, buys OHM through Bond Protocol markets, borrows USDS against purchased OHM at backing value, and burns the OHM. [Yield Repurchase Facility](https://docs.olympusdao.finance/main/overview/yield-repurchase-facility)
+
+Third, Emissions Manager expands supply when OHM trades at a sufficient premium to backing. It calculates premium as market price divided by backing price and can run Convertible Deposit auctions for reserves when the premium is high enough. The docs explicitly say core parameters such as base emissions rate, minimum premium, backing, tick size, and pricing scalar are governance-configurable. [Emissions Manager](https://docs.olympusdao.finance/main/overview/emissions-manager)
+
+The economic question is whether these systems create disciplined monetary policy or simply move value around inside a closed system. For OHM to deserve a durable premium, external users need to want OHM for liquidity, collateral, treasury reserve, or unit-of-account reasons.
+
+## Security and Governance
+
+GoPlus shows the Ethereum OHM token as open-source, non-proxy, 0% buy/sell tax, non-honeypot, with about **8,384** Ethereum holders. It also flags `is_mintable=1`, which is expected for a protocol-governed monetary token but still important: OHM monetary policy depends on governance and protocol contracts, not fixed-supply immutability. [GoPlus](https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5)
+
+Olympus docs list contract addresses for the V3 Kernel, Treasury, MINTR, RANGE, EmissionManager, Cooler V2, Treasury Borrower, YieldRepurchaseFacility, Heart, TreasuryCustodian, and multiple multisigs. The system is therefore legible but complex. [Contract Addresses](https://docs.olympusdao.finance/main/contracts/addresses)
+
+Governance is not decorative here. Governance parameters shape LTV, emissions, treasury access, buyback behavior, cross-chain setup, and upgrade paths. gOHM is the only token currently used for Olympus governance proposals and can also be used as Cooler collateral. [OHM and gOHM](https://docs.olympusdao.finance/main/overview/tokens)
+
+## Competitive Landscape
+
+| Asset / Protocol | Category | Edge | OHM Readthrough |
+| --- | --- | --- | --- |
+| USDS / Sky | DeFi stablecoin | large dollar liquidity, savings rate, Maker lineage | OHM is less dollar-stable but more treasury-backed monetary asset |
+| GHO | protocol-native stablecoin | Aave distribution and sGHO savings | OHM has stronger treasury/policy identity, weaker lending distribution |
+| FRAX / Frax | DeFi money stack | broad stablecoin + LST + L2 stack | Olympus is narrower but more focused on reserve asset policy |
+| crvUSD | CDP stablecoin | Curve-native liquidation and liquidity | OHM is not a peg token; it targets floating backing premium |
+| Ampleforth / flatcoin projects | non-pegged monetary assets | purchasing-power narrative | Olympus has deeper treasury and credit tooling |
+| RWA yield dollars | YLDS, USDY, USYC | cleaner yield or Treasury exposure | OHM adds governance/policy risk but has monetary upside |
+
+The direct competitor is not USDT. OHM is competing for a smaller but more interesting niche: users and protocols that want an onchain reserve asset with backing, liquidity, credit access, and monetary policy.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What Happens | OHM Implication |
+| --- | ---: | --- | --- |
+| Bull | 25% | Cooler Loans become a trusted DeFi credit primitive, YRF/EM create credible policy discipline, and OHM earns integrations as collateral or treasury reserve | OHM sustains >1.5x liquid backing premium and grows market cap with treasury value |
+| Base | 55% | Olympus remains a serious but niche DeFi monetary system with stable backing, modest fees, and limited external demand | OHM trades between 1.1x-1.5x liquid backing |
+| Bear | 20% | External demand stays thin, premium compresses, Cooler usage mainly internalizes leverage, and liquidity remains shallow | OHM trades close to liquid backing and loses top-rank relevance |
+
+The base case is not failure. Olympus can remain solvent, useful, and technically interesting while still being a mediocre investment if the market does not pay a premium for onchain monetary policy.
+
+## Risk Matrix
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Premium-to-backing risk | High | OHM trades above liquid backing; that premium must be earned | market price / liquid backing per backed OHM |
+| Demand risk | High | OHM needs external use beyond holders and treasury mechanics | integrations, collateral markets, transfer volume |
+| Liquidity risk | Medium-High | DEX volume is modest for market cap | OHM/WETH, OHM/sUSDS, Base, Berachain depth |
+| Governance risk | High | emissions, LTV, treasury access, and upgrades are parameterized | OCG proposals and contract changes |
+| Treasury asset risk | Medium | backing is concentrated in stable/yield assets and Cooler exposures | sUSDS/sUSDe/USDS exposure, drawdowns, counterparty risk |
+| Credit risk | Medium | Cooler loans depend on treasury liquidity and parameter discipline | utilization, defaults, interest, LTV updates |
+| Smart-contract risk | Medium | Olympus V3 is modular and complex | audits, bug bounty, upgrade events |
+| Narrative risk | Medium | 2021 OHM memory still affects market perception | holder growth and institutional adoption |
+
+## Monitoring Dashboard
+
+| Metric | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| CoinGecko market cap | ~$236.6M | >$500M with treasury growth | <$150M with backing flat |
+| Liquid backing per backed OHM | ~$11.995 | backing grows while price premium holds | backing declines or becomes less liquid |
+| Price / backing premium | ~1.3x using CoinGecko price | durable 1.5x+ with external use | compresses near 1.0x |
+| Treasury market value | ~$183.6M | >$250M | <$150M |
+| sOHM TVL | ~$229.9M | >$400M | <$150M |
+| DefiLlama fees | ~$138K 30d | >$500K 30d | <$50K 30d |
+| OHM/WETH liquidity | ~$3.6M | >$10M independent depth | <$1.5M |
+| Cooler V2 | fixed 0.5% APR, no price liquidation | growing healthy utilization | stress, parameter cuts, default issues |
+
+## Verdict
+
+Olympus is a **high-quality DeFi monetary-infrastructure watchlist / selective exposure**, not a high-conviction allocation yet.
+
+The bull case is real. Olympus has a transparent treasury, protocol-owned liquidity, credible docs, a meaningful staking base, and a more coherent policy stack than its old rebasing image suggests. Cooler Loans are genuinely differentiated: fixed-rate, no-price-liquidation borrowing against gOHM, funded by the protocol treasury, is not a generic DeFi primitive.
+
+The caution is equally real. OHM is not a stablecoin, not a simple cash-flow token, and not a fixed-supply asset. It trades at a premium to liquid backing, while public trading volume and external liquidity are still modest. The investment question is therefore not "is Olympus solvent?" It is "does OHM deserve a durable premium above backing?"
+
+My current view: **OHM belongs on the DeFi monetary infrastructure watchlist, but sizing should be selective.** It becomes more compelling if liquid backing grows, Cooler loan demand expands without stressing the treasury, YRF buybacks become material, and OHM finds real use as collateral or reserve asset outside Olympus-native venues.
+
+## Selected Sources
+
+- [Olympus docs: What is Olympus?](https://docs.olympusdao.finance/main/overview/intro)
+- [Olympus docs: OHM and gOHM](https://docs.olympusdao.finance/main/overview/tokens)
+- [Olympus docs: Treasury](https://docs.olympusdao.finance/main/overview/treasury)
+- [Olympus docs: Protocol Owned Liquidity](https://docs.olympusdao.finance/main/overview/pol)
+- [Olympus docs: Range Bound Stability](https://docs.olympusdao.finance/main/overview/range-bound)
+- [Olympus docs: Cooler Loans](https://docs.olympusdao.finance/main/overview/cooler-loans)
+- [Olympus docs: Yield Repurchase Facility](https://docs.olympusdao.finance/main/overview/yield-repurchase-facility)
+- [Olympus docs: Emissions Manager](https://docs.olympusdao.finance/main/overview/emissions-manager)
+- [Olympus Treasury API](https://treasury-subgraph-api.olympusdao.finance/v2/metrics/daily?start=2026-06-22&end=2026-06-22)
+- [CoinGecko Olympus](https://www.coingecko.com/en/coins/olympus)
+- [DefiLlama Olympus](https://defillama.com/protocol/olympus-dao)
+- [DefiLlama Olympus fees](https://defillama.com/fees/olympus-dao)
+- [Dexscreener Ethereum OHM/WETH](https://dexscreener.com/ethereum/0x88051b0eea095007d3bef21ab287be961f3d8598)
+- [GoPlus OHM token security](https://api.gopluslabs.io/api/v1/token_security/1?contract_addresses=0x64aa3364f17a4d01c6f1751fd97c2bd3d7e7f1d5)
