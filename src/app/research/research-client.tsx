@@ -1766,6 +1766,16 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/falcon-usd-usdf-overcollateralized-synthetic-dollar-reserve-strategy-risk.png",
   },
   {
+    name: 'Falcon Finance FF',
+    description:
+      'Universal collateral and synthetic-dollar infrastructure token where sFF staking, governance, and unlock discipline must prove value capture',
+    type: 'DeFi/Stablecoin',
+    slug: 'falcon-finance-ff-universal-collateral-token-value-capture-risk',
+    color: '#111827',
+    initial: 'FF',
+    logoUrl: "/research-logos/falcon-finance-ff-universal-collateral-token-value-capture-risk.png",
+  },
+  {
     name: 'GHO',
     description:
       'Aave-native overcollateralized stablecoin where sGHO savings and DAO revenue must prove sustainable growth',
@@ -2143,6 +2153,16 @@ const PROJECTS: ResearchProject[] = [
     color: '#F5B800',
     initial: 'B',
     logoUrl: "/research-logos/buildon-b-bnb-chain-usd1-meme-liquidity-narrative-risk.jpg",
+  },
+  {
+    name: 'Velvet',
+    description:
+      'AI-powered onchain trading terminal where VELVET value capture depends on fees, staking, cashback, and trader retention',
+    type: 'AI/Trading',
+    slug: 'velvet-velvet-ai-onchain-trading-terminal-token-value-capture-risk',
+    color: '#7C3AED',
+    initial: 'VELVET',
+    logoUrl: "/research-logos/velvet-velvet-ai-onchain-trading-terminal-token-value-capture-risk.jpg",
   },
   {
     name: 'Official Trump',
@@ -2717,6 +2737,42 @@ const PROJECTS: ResearchProject[] = [
     initial: 'INJ',
     logoUrl: "/research-logos/injective-inj-finance-l1-burn-auction-value-capture-gap.svg",
   },
+  {
+    name: 'Bitway',
+    description: 'Bitcoin-native DeTraFi yield and lending stack testing whether BTW can capture value beyond incentives',
+    type: 'BTCFi/Yield',
+    slug: 'bitway-btw-bitcoin-native-yield-lending-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'BTW',
+    logoUrl: "/research-logos/bitway-btw-bitcoin-native-yield-lending-token-value-capture-risk.svg",
+  },
+  {
+    name: 'LayerZero',
+    description: 'Omnichain messaging infrastructure testing whether ZRO fee-switch governance can capture protocol value',
+    type: 'Interoperability',
+    slug: 'layerzero-zro-omnichain-messaging-fee-switch-value-capture-gap',
+    color: '#0B0F19',
+    initial: 'ZRO',
+    logoUrl: "/research-logos/layerzero-zro-omnichain-messaging-fee-switch-value-capture-gap.svg",
+  },
+  {
+    name: 'Humanity',
+    description: 'Proof-of-humanity identity network where H value capture must recover from token migration, unlocks, and verifier adoption risk',
+    type: 'Identity/PoH',
+    slug: 'humanity-h-proof-of-humanity-token-swap-value-capture-risk',
+    color: '#EC4899',
+    initial: 'H',
+    logoUrl: "/research-logos/humanity-h-proof-of-humanity-token-swap-value-capture-risk.svg",
+  },
+  {
+    name: 'MegaUSD',
+    description: 'MegaETH-native stablecoin using Ethena reserve yield to subsidize sequencer costs while testing redemption and liquidity depth',
+    type: 'Stablecoin',
+    slug: 'megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk',
+    color: '#FF4D00',
+    initial: 'USDM',
+    logoUrl: "/research-logos/megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk.svg",
+  },
 ];
 
 const ALL_TYPES = [
@@ -2736,7 +2792,10 @@ const ALL_TYPES = [
   'Prediction',
   'Stablecoin',
   'PayFi',
+  'BTCFi/Yield',
   'Consumer/Sports',
+  'Interoperability',
+  'Identity/PoH',
   'Data/Infra',
   'Restaking/Cloud',
   'AI/DePIN',
