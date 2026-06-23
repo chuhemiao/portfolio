@@ -2513,6 +2513,15 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/kucoin-token-kcs-exchange-utility-kcc-trust-rebuild.png",
   },
   {
+    name: 'BNB',
+    description: 'Exchange-linked L1 gas and staking asset with Binance distribution, burn mechanics, and validator centralization risk',
+    type: 'L1',
+    slug: 'bnb-bnb-chain-exchange-utility-token-burn-validator-centralization-risk',
+    color: '#F0B90B',
+    initial: 'BNB',
+    logoUrl: "/research-logos/bnb-bnb-chain-exchange-utility-token-burn-validator-centralization-risk.svg",
+  },
+  {
     name: 'Ethereum Classic',
     description: 'Legacy proof-of-work Ethereum chain with fixed supply and weak app-layer demand',
     type: 'L1',
@@ -2772,6 +2781,15 @@ const PROJECTS: ResearchProject[] = [
     color: '#FF4D00',
     initial: 'USDM',
     logoUrl: "/research-logos/megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk.svg",
+  },
+  {
+    name: 'OnRe',
+    description: 'Tokenized reinsurance yield asset on Solana where ONYC must prove underwriting, collateral, redemption, and admin-control resilience',
+    type: 'RWA',
+    slug: 'onre-onyc-tokenized-reinsurance-yield-collateral-risk',
+    color: '#0F766E',
+    initial: 'ONYC',
+    logoUrl: "/research-logos/onre-onyc-tokenized-reinsurance-yield-collateral-risk.svg",
   },
 ];
 
