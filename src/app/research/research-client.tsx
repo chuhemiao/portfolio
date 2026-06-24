@@ -2791,6 +2791,33 @@ const PROJECTS: ResearchProject[] = [
     initial: 'ONYC',
     logoUrl: "/research-logos/onre-onyc-tokenized-reinsurance-yield-collateral-risk.svg",
   },
+  {
+    name: 'COCO',
+    description: 'BNB Chain meme and AI-agent wrapper where token value depends on real app usage, liquidity depth, and resolving contract-identity risk',
+    type: 'Meme/AI',
+    slug: 'coco-coco-bnb-chain-meme-ai-agent-contract-risk',
+    color: '#F0B90B',
+    initial: 'COCO',
+    logoUrl: "/research-logos/coco-coco-bnb-chain-meme-ai-agent-contract-risk.svg",
+  },
+  {
+    name: 'KOGE',
+    description: '48 Club BNB Chain infrastructure-adjacent token where liquidity depth, holder concentration, and value capture need proof',
+    type: 'Infra',
+    slug: 'koge-48-club-token-bnb-chain-infrastructure-liquidity-value-capture-risk',
+    color: '#F0B90B',
+    initial: 'KOGE',
+    logoUrl: "/research-logos/koge-48-club-token-bnb-chain-infrastructure-liquidity-value-capture-risk.svg",
+  },
+  {
+    name: 'RealLink',
+    description: 'SocialFi and payments token where app usage, emissions, supply reconciliation, and liquidity quality need proof',
+    type: 'SocialFi',
+    slug: 'reallink-real-socialfi-payments-supply-liquidity-risk',
+    color: '#1D4ED8',
+    initial: 'REAL',
+    logoUrl: "/research-logos/reallink-real-socialfi-payments-supply-liquidity-risk.svg",
+  },
 ];
 
 const ALL_TYPES = [
@@ -2817,6 +2844,8 @@ const ALL_TYPES = [
   'Data/Infra',
   'Restaking/Cloud',
   'AI/DePIN',
+  'Meme/AI',
+  'SocialFi',
   'RWA',
   'Wallet',
   'Infra'
