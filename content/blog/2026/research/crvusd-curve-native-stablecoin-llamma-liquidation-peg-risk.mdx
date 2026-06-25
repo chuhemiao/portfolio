@@ -1,0 +1,227 @@
+---
+title: 'crvUSD: Curve-Native Stablecoin, LLAMMA Liquidations, and Peg/Liquidity Risk'
+publishedAt: '2026-06-25'
+summary: "crvUSD is Curve Finance's native crypto-backed CDP stablecoin and the liability unit for Curve LlamaLend, built around LLAMMA soft-liquidation markets, controllers, PegKeepers, Curve DEX liquidity, and the newer scrvUSD savings layer. As of the June 25, 2026 snapshot, CoinGecko shows crvUSD around rank #182, price near $0.999, market cap about $174.6M, FDV about $173.9M, 24h volume about $46.1M, and roughly 174.7M circulating supply; CoinMarketCap and Curve API show a similar ~174.7M supply, while DefiLlama stablecoins shows about $189.6M circulating value, mostly on Ethereum. The verdict is high-quality DeFi-native stablecoin watchlist / selective integration asset, not cash-equivalent reserve collateral: Curve gives crvUSD credible native liquidity and a differentiated LLAMMA design, but supply has contracted from prior levels, LlamaLend fees remain small, holder/controller concentration is high by design, and supply methodology must be monitored carefully."
+slug: 'crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk'
+category: 'research'
+---
+
+## TL;DR
+
+- **Verdict:** crvUSD is a high-quality DeFi-native stablecoin watchlist and selective integration asset, not a cash-equivalent reserve asset.
+- **Why it matters:** It is the stablecoin side of Curve's credit stack: Curve DEX liquidity, LLAMMA liquidation markets, LlamaLend, PegKeepers, and scrvUSD all connect through crvUSD.
+- **Main risk:** Peg and liquidity are only part of the risk. The bigger underwriting problem is whether crvUSD can grow durable borrow demand while keeping controller, collateral, PegKeeper, and supply-accounting risk legible.
+- **What would upgrade the view:** Supply growth back above $500M, LlamaLend borrowed assets above $150M, sustained peg behavior inside $0.998-$1.002, and transparent reconciliation between Curve API supply, DefiLlama stablecoin supply, and raw ERC-20 balances.
+
+## Executive Summary
+
+crvUSD is Curve Finance's native overcollateralized stablecoin. It is not a fiat-backed payment dollar and not a synthetic-dollar carry product. It is a DeFi-native credit dollar minted against crypto collateral through Curve's crvUSD controllers and used across Curve DEX pools, LlamaLend markets, and the scrvUSD savings layer. Curve documentation frames crvUSD around a collateralized debt position model and LLAMMA, the Lending-Liquidating AMM Algorithm used for gradual liquidation rather than one-shot liquidation. [Curve crvUSD docs](https://docs.curve.finance/crvUSD/overview/) [LLAMMA docs](https://docs.curve.finance/crvUSD/amm/)
+
+The design is differentiated. In classic lending liquidations, a borrower can be liquidated abruptly after crossing a threshold. In Curve's model, collateral can be gradually converted through a liquidation AMM as price moves against the borrower, then converted back if price recovers. That can reduce cliff risk for borrowers, but it also creates a more complex system: the stablecoin depends on controller parameters, oracle behavior, AMM liquidity, PegKeepers, collateral market depth, and Curve governance.
+
+As of the June 25, 2026 snapshot, CoinGecko shows crvUSD around **rank #182**, **$0.999** price, about **$174.6M** market cap, about **$173.9M** FDV, roughly **$46.1M** 24h volume, and **174.7M** circulating supply. CoinMarketCap shows a similar price, market cap, FDV, volume around **$52.0M**, and supply of **174.7M**, sourced from Curve's `getCrvusdTotalSupplyNumber` endpoint. The Curve API returned **174,732,336.18448195** crvUSD in the same snapshot. [CoinGecko](https://www.coingecko.com/en/coins/crvusd) [CoinMarketCap](https://coinmarketcap.com/currencies/crvusd/) [Curve supply API](https://api.curve.finance/api/getCrvusdTotalSupplyNumber)
+
+DefiLlama's stablecoin dashboard shows a higher **$189.6M** circulating value and classifies crvUSD as a **crypto-backed** peggedUSD asset, mostly on Ethereum. That is close enough to confirm the scale, but different enough to matter for stablecoin underwriting. The right conclusion is not "one source is wrong"; it is that crvUSD needs supply reconciliation between Curve API supply, market-data supply, bridged representations, and raw token balances. [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+My view: **high-quality DeFi-native stablecoin watchlist / selective integration asset.** crvUSD is credible because it sits inside Curve, one of DeFi's deepest stable-swap venues. But it is not a core reserve dollar. Supply has fallen from the roughly $222M level seen in the June 22 Curve DAO research snapshot to the ~$175M-$190M range in this June 25 snapshot. LlamaLend is useful but still small, and the holder view is heavily concentrated in Curve controllers, pools, and related strategy contracts by design.
+
+## Research Question and Investment Relevance
+
+The central question:
+
+**Can crvUSD become a durable Curve-native credit dollar, or will it remain a niche collateralized stablecoin whose demand rises and falls with Curve incentives, LLAMMA markets, and DeFi leverage cycles?**
+
+This matters for three reasons:
+
+1. **Stablecoin selection:** Integrators need to decide whether crvUSD is suitable as routing liquidity, lending collateral, or savings inventory.
+2. **Curve thesis:** crvUSD is one of the main ways Curve can move beyond swaps into credit and stablecoin issuance.
+3. **Risk modeling:** crvUSD is not underwritten like USDC, USDT, or PYUSD. Its risk is collateral, oracle, liquidation, governance, liquidity, and supply methodology.
+
+| Stablecoin Type | Examples | Primary Edge | Main Risk |
+| --- | --- | --- | --- |
+| Fiat-backed payment dollars | USDC, USDT, PYUSD, RLUSD | redemption and payment distribution | issuer, bank, freeze, regulatory risk |
+| DeFi CDP stablecoins | crvUSD, GHO, LUSD, DAI / USDS | onchain collateral and protocol-native demand | liquidation, governance, oracle, peg risk |
+| Synthetic dollars | USDe, USDf, USDM-style designs | yield / carry and fast growth | CEX, custody, funding, strategy risk |
+| Tokenized cash / RWA dollars | BUIDL-like wrappers, USDY, USTB | Treasury or fund exposure | legal wrapper, access, duration, liquidity |
+
+crvUSD belongs in the DeFi CDP bucket. Its best use case is not retail payments; it is DeFi liquidity, borrowing, collateral loops, LLAMMA markets, and Curve-native stablecoin routing.
+
+## Project Overview
+
+| Field | Current Assessment |
+| --- | --- |
+| Project | crvUSD |
+| Parent protocol | Curve Finance / Curve DAO |
+| Sector | DeFi-native stablecoin, CDP stablecoin, lending infrastructure |
+| Peg | USD-referenced |
+| Core mechanism | Overcollateralized borrowing through crvUSD controllers and LLAMMA liquidation AMMs |
+| Main contract | Ethereum `0xf939e0a03fb07f59a73314e73794be0e57ac1b4e` |
+| Other representations | Arbitrum, Base, Optimism, Polygon, Fraxtal, Taiko, BSC, Gnosis, Sonic, and others |
+| Savings layer | scrvUSD |
+| Primary users | Curve borrowers, Curve LPs, DeFi routers, stablecoin traders, LlamaLend users |
+| Core risk | Peg, collateral, controller, PegKeeper, governance, and liquidity risk |
+
+CoinGecko lists crvUSD representations on Ethereum, Arbitrum, Optimism, Base, Polygon, Fraxtal, Taiko, BSC, and Gnosis. Surf's project-detail endpoint resolves crvUSD under the broader Curve DAO profile, which is directionally useful for contracts and social context but not enough for crvUSD-specific market metrics; for token supply and market data, CoinGecko, CoinMarketCap, Curve API, and DefiLlama are better primary data surfaces. [CoinGecko](https://www.coingecko.com/en/coins/crvusd)
+
+The key identity point: crvUSD should be analyzed as a **Curve-native liability**, not as a separate startup token. The upside is native access to Curve liquidity and governance. The downside is dependence on Curve's existing architecture, governance, and incentive system.
+
+## Mechanism: LLAMMA, Controllers, and PegKeepers
+
+crvUSD's main design distinction is LLAMMA. Curve's documentation describes the AMM as part of the liquidation design for crvUSD, where collateral can be gradually exchanged against crvUSD as market prices move. [LLAMMA docs](https://docs.curve.finance/crvUSD/amm/)
+
+The practical effect is:
+
+| Component | Role | Risk |
+| --- | --- | --- |
+| Controller | manages borrowing, debt, collateral, and liquidation bands | parameter, oracle, and admin/governance risk |
+| LLAMMA | performs gradual liquidation / de-liquidation through AMM bands | path dependence, slippage, collateral liquidity risk |
+| Monetary policy | sets borrowing rates and incentives around peg conditions | slow or aggressive rate response |
+| PegKeepers | interact with pools to help stabilize crvUSD around the peg | pool composition and governance dependency |
+| Curve DEX pools | provide crvUSD swap liquidity and routing | liquidity concentration and incentive cyclicality |
+
+This is more elegant than many blunt liquidation systems, but it is also harder to explain to a treasury user. That matters. Stablecoins win not only through mechanism quality; they win through trust, simplicity, liquidity, and predictable failure modes.
+
+## Market Data and Supply Snapshot
+
+| Metric | June 25, 2026 Snapshot |
+| --- | ---: |
+| CoinGecko rank | #182 |
+| CoinGecko price | ~$0.999 |
+| CoinGecko market cap | ~$174.6M |
+| CoinGecko FDV | ~$173.9M |
+| CoinGecko 24h volume | ~$46.1M |
+| CoinGecko circulating supply | ~174.7M crvUSD |
+| CoinMarketCap market cap / FDV | ~$174.6M / ~$174.6M |
+| CoinMarketCap 24h volume | ~$52.0M |
+| Curve API supply | ~174.7M crvUSD |
+| DefiLlama circulating value | ~$189.6M |
+| DefiLlama peg mechanism | crypto-backed |
+
+The CoinGecko and CoinMarketCap supply numbers are tightly aligned with Curve's direct API. DefiLlama is higher at about **$189.6M**, with about **$186.3M** on Ethereum, **$1.83M** on Arbitrum, **$605K** on OP Mainnet, **$347K** on Base, and **$273K** on Fraxtal. That means crvUSD remains overwhelmingly Ethereum-centered, with L2 deployments still small. [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+
+The trend is not purely positive. In the June 22 Curve DAO research snapshot, DefiLlama showed crvUSD supply around **$222.5M**. The June 25 snapshot is materially lower. For a stablecoin, shrinking supply is not automatically bad if it reflects lower risk or cleaner deleveraging, but it weakens the growth thesis.
+
+## Liquidity and Usage
+
+Curve DEX remains the most important external support for crvUSD. DefiLlama's Curve DEX dashboard shows about **$126.5M** 24h volume, **$600.6M** 7d volume, **$3.72B** 30d volume, and **$94.1B** 1y volume across Curve DEX. That does not mean crvUSD owns all that volume, but it means crvUSD is embedded in a serious routing venue rather than an isolated small pool. [DefiLlama Curve DEX](https://defillama.com/dexs/protocol/curve-dex)
+
+Dexscreener shows multiple visible Curve Ethereum crvUSD pools with real depth in the June 25 snapshot: crvUSD/USDT around **$18.1M** liquidity and **$20.1M** 24h volume, crvUSD/USDC around **$18.1M** liquidity and **$6.35M** 24h volume, crvUSD/WETH pools including one around **$42.7M** liquidity, and BTC-collateral pairs such as cbBTC/crvUSD and tBTC/crvUSD with meaningful quoted liquidity. [Dexscreener crvUSD](https://dexscreener.com/ethereum/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)
+
+This is where source conflict matters. CoinMarketCap's `totalOnchainLiquidity` field shows only about **$10.7K** and its top pools are mostly thin Uniswap pools. That appears to miss or underweight Curve-native pool liquidity, so I would not use that single field to assess crvUSD depth. CoinMarketCap remains useful for supply and holder metadata, but Curve / Dexscreener / DefiLlama are better liquidity references here. [CoinMarketCap](https://coinmarketcap.com/currencies/crvusd/) [Dexscreener crvUSD](https://dexscreener.com/ethereum/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)
+
+## LlamaLend and Revenue Readthrough
+
+LlamaLend is the credit venue that most directly connects crvUSD to borrow demand. DefiLlama describes Curve LlamaLend as isolated lending market infrastructure where users can borrow or lend using crvUSD and where positions can enter soft-liquidation mode if collateral prices fall. [DefiLlama Curve LlamaLend](https://defillama.com/protocol/curve-llamalend)
+
+| Metric | June 25, 2026 Snapshot |
+| --- | ---: |
+| Ethereum LlamaLend TVL | ~$61.0M |
+| Arbitrum LlamaLend TVL | ~$1.34M |
+| Fraxtal LlamaLend TVL | ~$233K |
+| Total borrowed | ~$41.5M |
+| Ethereum borrowed | ~$40.5M |
+| Arbitrum borrowed | ~$594K |
+| Fraxtal borrowed | ~$407K |
+| LlamaLend 24h fees | ~$751 |
+| LlamaLend 7d fees | ~$1.55K |
+| LlamaLend 30d fees | ~$19.9K |
+| LlamaLend 1y fees | ~$464.5K |
+
+The readthrough is mixed. Borrowed assets around **$41.5M** are real. But fee generation is still small versus the scale needed to make crvUSD a major stablecoin business line. DefiLlama also flags a **$240K** Curve LlamaLend protocol-logic donation attack dated March 2, 2026, which reinforces the point that LLAMMA-style markets are powerful but operationally complex. [DefiLlama Curve LlamaLend](https://defillama.com/protocol/curve-llamalend)
+
+## scrvUSD: Savings Wrapper and Fee Sink
+
+scrvUSD gives crvUSD a savings layer. Curve documentation describes scrvUSD as a yield-bearing vault for crvUSD, with yield distributed to vault depositors. [scrvUSD docs](https://docs.curve.finance/scrvUSD/overview/)
+
+This is strategically useful because stablecoins without a native yield or utility loop struggle to retain supply when alternatives offer onchain savings rates. But it changes the analytical question:
+
+| Layer | Bull Read | Bear Read |
+| --- | --- | --- |
+| crvUSD | stable borrowing unit for Curve credit | supply can shrink if borrow demand is weak |
+| LlamaLend | creates native demand and interest flows | current fees are too small to prove scale |
+| scrvUSD | can retain holders and route yield | depends on fee sources and governance economics |
+| Curve DEX pools | provide liquidity and arbitrage paths | liquidity can be concentrated and incentive-sensitive |
+
+For integration, scrvUSD is not the same as crvUSD. crvUSD is the stablecoin. scrvUSD is a yield wrapper with its own vault and liquidity considerations.
+
+## Contract, Holder, and Supply-Methodology Risk
+
+GoPlus shows the Ethereum crvUSD token as open-source, non-proxy, no buy/sell tax, transfer not pausable, and not flagged as a honeypot. It also flags `is_mintable=1`, which is expected for a CDP stablecoin rather than a fixed-supply asset. [GoPlus crvUSD](https://gopluslabs.io/token-security/1/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)
+
+The more important point is supply methodology. GoPlus' raw token view showed about **2.09B** total supply and about **94.9K** holders, while Curve API / CoinGecko / CoinMarketCap showed about **174.7M** circulating or protocol-recognized supply. Surf token-holder data showed the largest holder as a Yield Basis factory at about **35.5%** of raw token balance, followed by several Curve.fi crvUSD Controller addresses around **9.5%**, **8.8%**, and **6.8%**. CoinMarketCap similarly showed about **94.3K** holders and **77.8%** top-ten holder ratio. [CoinMarketCap](https://coinmarketcap.com/currencies/crvusd/) [GoPlus crvUSD](https://gopluslabs.io/token-security/1/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)
+
+This is not automatically a red flag in the same way it would be for a meme token. Stablecoin controllers, pools, vaults, and strategy factories naturally hold large balances. But it is a monitoring item. A treasury user should understand which balances are circulating user liquidity, which are controller accounting balances, which sit inside vaults, and which represent bridged or strategy inventory.
+
+## Competitive Landscape
+
+| Asset | Category | Current Edge | crvUSD Readthrough |
+| --- | --- | --- | --- |
+| USDC | Fiat-backed payment stablecoin | reserve clarity, redemption, institutional trust | crvUSD cannot match fiat redemption credibility |
+| USDT | Fiat-backed liquidity stablecoin | deepest global crypto liquidity | crvUSD is more DeFi-native but much smaller |
+| GHO | DeFi-native Aave stablecoin | Aave collateral base and governance | crvUSD has better Curve-native liquidity, smaller lending platform |
+| USDS / DAI | DeFi CDP / RWA hybrid | long operating history and large integrations | crvUSD is more specialized and less scaled |
+| LUSD | Immutable-style CDP stablecoin | conservative ETH-backed design history | crvUSD is more flexible but more governance/system complex |
+| USDe | Synthetic dollar | yield-led growth and broad liquidity | crvUSD avoids CEX basis risk but lacks USDe's growth engine |
+
+crvUSD's best competitive edge is Curve-native liquidity. Its biggest disadvantage is limited distribution outside the Curve ecosystem.
+
+## Scenario Analysis
+
+| Scenario | Probability | What Happens | crvUSD Implication |
+| --- | ---: | --- | --- |
+| Bull | 25% | crvUSD supply grows above $500M, LlamaLend borrowed assets exceed $150M, scrvUSD deposits become sticky, and Curve pools remain deep through volatility | crvUSD becomes a leading DeFi-native stablecoin for integrations and collateral loops |
+| Base | 55% | crvUSD remains useful inside Curve, supply fluctuates between $150M-$300M, LlamaLend grows slowly, and liquidity is strong mainly in Curve pools | selective integration asset, not core reserve |
+| Bear | 20% | supply continues shrinking, LLAMMA or PegKeeper stress creates peg volatility, and liquidity becomes too concentrated in a few pools or strategies | use only for tactical routing, avoid as treasury collateral |
+
+The base case is still constructive because Curve gives crvUSD a real home. But the burden of proof is growth, not mere survival.
+
+## Risks and Mitigants
+
+| Risk | Severity | Why It Matters | Monitor |
+| --- | --- | --- | --- |
+| Peg risk | High | crvUSD depends on market arbitrage, Curve liquidity, PegKeepers, and borrow-rate incentives | price bands, pool imbalance, PegKeeper activity |
+| Collateral / liquidation risk | High | LLAMMA reduces cliff liquidations but adds path-dependent AMM risk | collateral mix, band liquidity, liquidation events |
+| Supply contraction | Medium-High | shrinking supply weakens network effects and stablecoin utility | Curve API supply, DefiLlama supply, borrow demand |
+| Controller concentration | Medium-High | large balances sit in controllers and strategy contracts | top holder labels, controller balances, governance changes |
+| LlamaLend revenue weakness | Medium | fees are not yet material enough to prove a credit flywheel | borrowed assets, utilization, 30d fees |
+| Liquidity concentration | Medium | Curve pools are deep, but liquidity is ecosystem-specific | Curve pool depth, non-Curve liquidity, slippage |
+| Governance / parameter risk | Medium | monetary policy, controllers, PegKeepers, and fees depend on governance | proposals, parameter changes, emergency actions |
+| Smart-contract risk | Medium | crvUSD, LLAMMA, LlamaLend, PegKeepers, and scrvUSD expand surface area | audits, incidents, bug bounties, GoPlus flags |
+
+## Monitoring Dashboard
+
+| Indicator | Current Level | Bull Trigger | Bear Trigger |
+| --- | ---: | --- | --- |
+| CoinGecko rank | #182 | top 100 with organic volume | falls outside top 300 |
+| Curve API supply | ~174.7M crvUSD | >500M with tight peg | <125M or persistent contraction |
+| DefiLlama supply | ~$189.6M | >500M across Ethereum + L2s | supply diverges sharply from Curve API without clear explanation |
+| Peg | ~$0.999 | stable $0.998-$1.002 | persistent <$0.995 or >$1.005 |
+| LlamaLend borrowed | ~$41.5M | >$150M | <$25M |
+| LlamaLend 30d fees | ~$19.9K | >$250K | remains immaterial despite incentives |
+| Curve DEX 30d volume | ~$3.72B | growing with crvUSD pool usage | DEX volume weakens and crvUSD pools thin |
+| Holder concentration | top ten ~77.8% by CMC | controller/pool balances transparent and stable | unexplained large balance movement |
+| GoPlus flags | open-source, non-proxy, mintable | expected controls documented | unexpected owner/admin or mint changes |
+
+## Verdict
+
+crvUSD is a **high-quality DeFi-native stablecoin watchlist / selective integration asset**, not a core reserve stablecoin.
+
+The positive case is real. Curve gives crvUSD native liquidity, a credible DeFi brand, specialized stable-swap infrastructure, LLAMMA liquidation design, LlamaLend credit markets, and scrvUSD as a savings layer. Very few DeFi-native stablecoins have that much protocol context.
+
+The caution is equally clear. crvUSD supply is only about **$175M-$190M** depending on source, down materially from the recent $222M snapshot used in the Curve DAO memo. LlamaLend fees are still small. Holder views are concentrated by design, and raw ERC-20 balances require careful interpretation. The stablecoin works best inside Curve; it is not yet a broadly trusted reserve dollar.
+
+My current conclusion: **use crvUSD selectively for Curve-native routing, lending, and DeFi integration, but do not treat it like cash collateral.** The view improves if supply grows above $500M, LlamaLend borrowed assets become meaningfully larger, scrvUSD deposits prove sticky, and supply reconciliation remains transparent across Curve API, DefiLlama, CoinGecko, CoinMarketCap, Surf, and raw holder data.
+
+## Selected Sources
+
+- [Curve crvUSD documentation](https://docs.curve.finance/crvUSD/overview/)
+- [Curve LLAMMA documentation](https://docs.curve.finance/crvUSD/amm/)
+- [Curve scrvUSD documentation](https://docs.curve.finance/scrvUSD/overview/)
+- [Curve crvUSD supply API](https://api.curve.finance/api/getCrvusdTotalSupplyNumber)
+- [CoinGecko crvUSD](https://www.coingecko.com/en/coins/crvusd)
+- [CoinMarketCap crvUSD](https://coinmarketcap.com/currencies/crvusd/)
+- [DefiLlama Stablecoins](https://defillama.com/stablecoins)
+- [DefiLlama Curve LlamaLend](https://defillama.com/protocol/curve-llamalend)
+- [DefiLlama Curve DEX](https://defillama.com/dexs/protocol/curve-dex)
+- [Dexscreener crvUSD](https://dexscreener.com/ethereum/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)
+- [GoPlus crvUSD token security](https://gopluslabs.io/token-security/1/0xf939e0a03fb07f59a73314e73794be0e57ac1b4e)

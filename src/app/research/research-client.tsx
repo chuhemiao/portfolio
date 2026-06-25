@@ -1786,6 +1786,16 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/gho-aave-native-stablecoin-sgho-yield-dao-revenue-risk.png",
   },
   {
+    name: 'crvUSD',
+    description:
+      'Curve-native overcollateralized stablecoin where LLAMMA liquidations, LlamaLend borrow demand, and peg liquidity must stay transparent',
+    type: 'Stablecoin',
+    slug: 'crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk',
+    color: '#3465A4',
+    initial: 'crvUSD',
+    logoUrl: "/research-logos/crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk.svg",
+  },
+  {
     name: 'Legacy Frax Dollar',
     description:
       'Legacy FRAX stablecoin where frxUSD migration, Fraxtal money-stack value capture, and shallow liquidity drive the risk model',
