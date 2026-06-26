@@ -10,6 +10,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
 import { syncResearchLogos } from './sync-research-logos.mjs';
+import { syncResearchRegistry } from './sync-research-registry.mjs';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const RESEARCH_CLIENT = path.join(
@@ -154,6 +155,9 @@ async function main() {
       await syncResearchLogos();
     }
 
+    console.log('↻ Syncing local research registry...');
+    syncResearchRegistry();
+
     return;
   }
 
@@ -174,7 +178,11 @@ async function main() {
     console.log(`✓ Appended ${scaffolds.length} scaffold entry(s) to PROJECTS.`);
     console.log('↻ Syncing local research logos...');
     await syncResearchLogos();
+    console.log('↻ Syncing local research registry...');
+    syncResearchRegistry();
   } else {
+    console.log('↻ Syncing local research registry...');
+    syncResearchRegistry();
     console.log('Run with --add to auto-append scaffold entries:');
     console.log('  pnpm sync:research --add');
   }
