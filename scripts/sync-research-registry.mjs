@@ -255,12 +255,12 @@ function readCandidates() {
 
 function candidateAliases(candidate) {
   return uniq([
-    candidate.target,
     candidate.name,
-    candidate.symbol,
     candidate.coingeckoId,
     candidate.coinmarketcapSlug,
     candidate.contract,
+    candidate.target,
+    candidate.symbol,
   ]);
 }
 
@@ -268,9 +268,12 @@ function matchProject(projects, aliases) {
   const keys = aliases.map(normalize).filter(Boolean);
   if (keys.length === 0) return null;
 
-  return projects.find((project) =>
-    keys.some((key) => project.lookupKeys.includes(key))
-  ) || null;
+  for (const key of keys) {
+    const match = projects.find((project) => project.lookupKeys.includes(key));
+    if (match) return match;
+  }
+
+  return null;
 }
 
 function syncCandidates(registry) {
