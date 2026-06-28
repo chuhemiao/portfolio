@@ -1,0 +1,313 @@
+---
+title: 'EUR CoinVertible: Societe Generale Euro Stablecoin and Reserve Risk'
+publishedAt: '2026-06-28'
+summary: 'EUR CoinVertible (EURCV) is SG-FORGE's MiCA-compliant euro e-money token backed 1:1 by euro cash at Societe Generale, now expanded from an initially institutional Ethereum stablecoin into a more transferable multi-chain euro settlement asset across Ethereum, Solana, XRPL, and Stellar references. The bull case is not token upside, because EURCV should stay close to one euro; it is the chance that a major European bank turns regulated euro stablecoins into settlement infrastructure for DeFi, tokenized securities, Canton, Seturion, Bpifrance-style institutional workflows, and European onchain FX. The base case is still watchlist, not accumulation: issuer quality is high, reserve transparency is better than most bank-linked pilots, and CoinGecko shows roughly 123.3M EURCV supply / about $140M market cap, but liquidity remains shallow versus EURC, chain-deployment data conflicts across sources, redemption is compliance-gated, and the product depends on Societe Generale / SG-FORGE distribution more than permissionless network effects.'
+slug: 'eur-coinvertible-eurcv-societe-generale-euro-stablecoin-reserve-risk'
+category: 'research'
+---
+
+## Pre-screen Decision
+
+**Decision: full research.** EUR CoinVertible (EURCV) deserves a full-depth memo because it is not another small euro stablecoin clone. It is a regulated euro e-money token issued by Societe Generale-FORGE, the digital-asset subsidiary of Societe Generale, and it sits at the intersection of MiCA, bank stablecoins, tokenized securities settlement, DeFi liquidity, and European monetary infrastructure. The asset also creates an unusually clean research problem: the token itself is designed to stay around one euro, so the investment question is not "will EURCV go up?" The question is whether EURCV can become an important rail, collateral asset, and institutional settlement layer, and whether that makes the surrounding issuer ecosystem, exchanges, market makers, and tokenized-finance integrations strategically valuable.
+
+The identity check passes. The official CoinVertible page describes CoinVertible as a regulated e-money token issued by Societe Generale-FORGE, backed by cash, operating across Ethereum, Solana, XRP Ledger, and a Stellar rollout path, with daily reserve disclosure on the SG-FORGE site. [SG-FORGE CoinVertible](https://www.sgforge.com/product/coinvertible/) The current MiCA white paper identifies EUR CoinVertible / EURCV as an e-money token issued by Societe Generale-FORGE and provides the formal issuer, rights, reserve, redemption, and risk framework. [EURCV white paper](https://www.sgforge.com/wp-content/uploads/2025/10/EURCV-WP-Ethereum-Solana_XRPL_Stellar_2025.10.14.pdf) The Ethereum contract is also labeled by Etherscan as EUR CoinVertible (EURCV), issued by Societe Generale-FORGE, with the public contract address `0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2`. [Etherscan EURCV](https://etherscan.io/token/0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2)
+
+The local duplicate check also passed before writing. `pnpm sync:research:registry -- --check "EURCV"` and `pnpm sync:research:registry -- --check "EUR CoinVertible"` returned no local research match. That makes this a new Research MDX rather than an update of an existing full report.
+
+The key caution is that EURCV is a stablecoin, not an upside token. A holder should not expect capital appreciation beyond euro FX moves against the reporting currency. Any "investment" view must therefore be framed as infrastructure relevance, issuer franchise quality, reserve risk, liquidity quality, and integration velocity. If the goal is return, the relevant assets may be Societe Generale equity, stablecoin infrastructure venues, market makers, tokenized-securities platforms, or DeFi protocols that integrate EURCV. EURCV itself is a cash-equivalent crypto rail with issuer, reserve, legal, and liquidity risk.
+
+## TL;DR / Executive Summary
+
+EUR CoinVertible is one of the highest-quality euro stablecoin experiments in the market, but that statement needs careful parsing. It has a credible bank-linked issuer, a clear MiCA EMT framework, daily reserve-style disclosure, verified public-chain contracts, and actual exchange / DeFi liquidity. It also has real friction: direct issuance and redemption are compliance-gated, liquidity is much smaller than Circle EURC, reserve concentration sits inside the Societe Generale banking perimeter, public chain data does not line up neatly across every data provider, and the stablecoin's success does not automatically create token upside for holders.
+
+As of the June 28, 2026 snapshot, SG-FORGE's official product page shows about **123.29M EURCV in circulation** and **123.29M EUR in backing**, with the page describing assets as **100% backed by cash** and reserving transparency updated daily. [SG-FORGE CoinVertible](https://www.sgforge.com/product/coinvertible/) CoinGecko broadly matches the official supply view, showing EURCV around **$1.14**, rank around **#204**, roughly **$140M market cap / FDV**, about **123.29M circulating and total supply**, and about **$3.3M** in 24h volume across tracked markets. [CoinGecko EURCV](https://www.coingecko.com/en/coins/eur-coinvertible) CoinMarketCap's listing also identifies EUR CoinVertible under ticker EURCV and reports live USD price / 24h volume, though its page is less useful for deep mechanism work. [CoinMarketCap EURCV](https://coinmarketcap.com/currencies/eur-coinvertible/)
+
+DefiLlama gives a more conservative chain-tracked stablecoin view: about **109.9M EUR** circulating value for EURCV, with roughly **103.7M EUR on Ethereum** and **6.2M EUR on Solana** in its stablecoin dataset. [DefiLlama stablecoins API](https://stablecoins.llama.fi/stablecoins?includePrices=true) The difference is not necessarily a red flag by itself. DefiLlama appears to focus on the chains it is actively tracking for this asset, while CoinGecko and SG-FORGE include broader circulating supply and additional chain references such as XRPL and Stellar. But the discrepancy matters because a stablecoin's quality depends on exact supply, reserve, and redemption reconciliation. If different sources disagree by more than 10M EUR, a serious treasury user should treat the issuer page as the primary reserve source while monitoring on-chain supply by chain.
+
+The bull case is compelling because EURCV is a bank stablecoin with distribution optionality. SG-FORGE's July 2024 restructuring made EURCV MiCA-compliant, turned it into an Electronic-Money Token, removed earlier whitelisting restrictions, and added Wintermute as a liquidity provider. [SG-FORGE stablecoin elevation](https://www.sgforge.com/stablecoin-elevation/) White & Case separately described the July 1, 2024 update as SG-FORGE obtaining an EMI license from the ACPR, restructuring EURCV into an EMT under MiCA, and allowing free transferability without whitelisting restrictions. [White & Case](https://www.whitecase.com/news/press-release/white-case-advises-sg-forge-transformative-updates-eur-coinvertible-stablecoin) In 2026, the catalyst path expanded: Bpifrance announced it would use EUR CoinVertible for blockchain-related operations, Societe Generale announced plans to bring CoinVertible solutions to Canton, and Seturion / Boerse Stuttgart Group described SG-FORGE as providing euro and US dollar stablecoins for tokenized securities settlement. [Bpifrance partnership](https://www.sgforge.com/bpifrance-et-sgf-sassocient-utilisation-eurcv-operations-blockchain/) [Canton announcement](https://www.sgforge.com/sg-tokenized-finance-and-bring-coinvertible-to-canton/) [Seturion release](https://www.sgforge.com/wp-content/uploads/2026/05/2026-05-21_MR-Seturion-SocGen-FORGE-flatex.pdf)
+
+The base case is more restrained. EURCV is already relevant, but it is not yet the default euro stablecoin. Circle's EURC has broader DeFi and multi-chain reach, larger DefiLlama circulating value, and stronger stablecoin brand adjacency to USDC. [Circle EURC](https://www.circle.com/eurc) EURCV's bank-grade issuer is a differentiator for institutions, but it may also make the product more conservative, slower to integrate, and less naturally viral in permissionless DeFi. The most investable interpretation is **watchlist / infrastructure relevance**, not buy-and-hold return. EURCV can be useful as a euro cash rail, as collateral in regulated workflows, and as a signal for bank adoption of tokenized settlement. It should not be treated like an equity claim on SG-FORGE's stablecoin revenue.
+
+## Project Overview
+
+EUR CoinVertible is a euro-denominated stablecoin issued by Societe Generale-FORGE. SG-FORGE is the digital-assets subsidiary of Societe Generale, and the project was launched in April 2023 as an institutional stablecoin deployed on Ethereum public blockchain infrastructure. The original launch framed EURCV as a settlement and cash-management tool for institutional clients and described it as part of SG-FORGE's broader attempt to bridge traditional capital markets with digital assets. [2023 launch announcement](https://www.sgforge.com/societe-generale-forge-launches-coinvertible-the-first-institutional-stablecoin-deployed-on-a-public-blockchain/)
+
+The product has changed meaningfully since launch. In the first version, EURCV was often criticized because transfers were not truly open. The July 2024 restructuring matters because it moved the token into the MiCA e-money token regime and removed the earlier whitelisting constraint. SG-FORGE states that EURCV was restructured from July 1, 2024 so that an "open stablecoin" capability set would be met: MiCA compliance and free transferability without whitelisting restrictions. [SG-FORGE stablecoin elevation](https://www.sgforge.com/stablecoin-elevation/)
+
+The current CoinVertible product family also includes USD CoinVertible (USDCV). That creates a practical identity risk: the official product page lists both EURCV and USDCV contract links. The EURCV Ethereum contract is `0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2`; the page also lists a different Ethereum address for USD CoinVertible. This report treats only EUR CoinVertible / EURCV as the subject. The relevant chain links for EURCV are the Ethereum token page, Solana mint, XRPL token / issuer reference, and Stellar asset page. [Etherscan EURCV](https://etherscan.io/token/0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2) [Solscan EURCV](https://solscan.io/token/DghpMkatCiUsofbTmid3M3kAbDTPqDwKiYHnudXeGG52) [Bithomp EURCV](https://bithomp.com/fr/token/rUNaS5sqRuxZz6V7rBGhoSaZiVYA3ut4UL/4555524356000000000000000000000000000000) [Stellar Expert EURCV](https://stellar.expert/explorer/public/asset/EURCV-GCEYGIVOLAVBF2TG2RUSGTUJCIN75KEX3NGLMY4VPL4GFE5L355AXW3G-2)
+
+| Field | Current working view |
+| --- | --- |
+| Asset | EUR CoinVertible |
+| Ticker | EURCV |
+| Issuer | Societe Generale-FORGE |
+| Parent / support context | Societe Generale Group |
+| Category | Euro fiat-backed stablecoin, e-money token, PayFi, tokenized settlement, RWA cash leg |
+| Legal framing | MiCA-compliant Electronic-Money Token, per SG-FORGE and white paper |
+| Peg | 1 EUR per 1 EURCV |
+| Reserve statement | 100% backed by cash, daily reserve disclosure on SG-FORGE site |
+| Key chains | Ethereum, Solana, XRPL, Stellar references; DefiLlama currently tracks Ethereum and Solana |
+| Primary use cases | Euro onchain settlement, tokenized securities cash leg, FX, DeFi liquidity, institutional blockchain operations |
+| Investment framing | Watchlist infrastructure asset, not an upside token |
+
+EURCV is strategically important because it sits in a category Europe wants to exist but has struggled to scale: euro stablecoins. USD stablecoins dominate crypto settlement. That dominance is rational because most crypto liquidity, collateral, risk appetite, and market-making inventory are dollar-denominated. But MiCA gives European regulated issuers a more explicit legal lane. If euro stablecoin demand grows, the winners will likely need a mix of trusted issuer status, clean redemption, exchange distribution, market-maker depth, chain coverage, and compliance compatibility with banks and tokenized securities venues. EURCV has strong issuer credibility and improving distribution; it still needs deeper open-market liquidity and broader onchain utility.
+
+## Research Question and Investment Relevance
+
+The core research question is:
+
+**Can EURCV become a durable euro settlement rail for regulated onchain finance, or is it mainly a bank-branded euro stablecoin with limited DeFi velocity?**
+
+This framing matters because EURCV is not an equity security, governance token, fee-share token, or speculative L1 coin. A normal token investment memo asks whether token demand can rise faster than supply and whether holders capture future economics. For EURCV, successful design means the price does **not** rise materially above one euro. The asset's value is in settlement certainty, not capital appreciation.
+
+That makes EURCV relevant in four different ways. First, it is a usable euro cash leg for traders, market makers, DeFi protocols, and cross-currency stablecoin pools. Second, it is a real-world data point on whether bank-issued stablecoins can move from pilots into permissionless or semi-permissionless crypto markets. Third, it may become a settlement asset inside tokenized securities, public-chain bonds, repo, and institutional blockchain environments. Fourth, it creates a benchmark for evaluating other euro stablecoins such as EURC, EURI, EURR, and EUROe.
+
+The investment angle is therefore indirect. A portfolio cannot buy EURCV expecting appreciation. A portfolio can use EURCV as a euro cash asset, track its supply growth as a signal for regulated stablecoin adoption, study how EURCV liquidity affects euro DeFi pairs, or use EURCV adoption to underwrite opportunities in adjacent infrastructure. If EURCV becomes the preferred cash leg in tokenized securities settlement, the upside accrues to the issuer franchise, integrated venues, custody providers, market makers, and protocols that route volume. EURCV holders mainly receive utility and euro exposure.
+
+The asset is also a useful contrast with Circle EURC. Circle's EURC is a stablecoin-native issuer's euro product with a large USDC distribution engine and broad multi-chain footprint. EURCV is a bank-linked product with a stronger traditional-finance signal but potentially less crypto-native distribution. The competitive question is whether European institutional users prefer a euro stablecoin from a global stablecoin company or one supported by a major European bank. The answer may differ by use case: DeFi may favor EURC's breadth; tokenized securities settlement may favor EURCV's bank integration.
+
+## Architecture/Product Mechanism
+
+EURCV's mechanism is conceptually simple but operationally dense. At the user level, one EURCV is designed to represent one euro. An eligible user or partner brings euro fiat into the SG-FORGE issuance workflow, EURCV is minted, and the token can then circulate on supported public blockchains. When EURCV is redeemed, the token is returned through the issuer or an eligible redemption path, burned or removed from circulation, and euro cash is sent back subject to compliance checks and the issuer's procedures. The white paper describes holder rights, redemption, recovery / redemption plans, and the formal issuer obligations under the MiCA framework. [EURCV white paper](https://www.sgforge.com/wp-content/uploads/2025/10/EURCV-WP-Ethereum-Solana_XRPL_Stellar_2025.10.14.pdf)
+
+The trust model has four layers. The first layer is reserve trust: holders rely on SG-FORGE and Societe Generale for euro cash backing and operational liquidity. The official page says assets are 100% backed by cash and directs users to daily reserve tracking. [SG-FORGE CoinVertible](https://www.sgforge.com/product/coinvertible/) The second layer is legal trust: EURCV relies on MiCA EMT rules, ACPR / AMF regulatory perimeter, white paper obligations, and the legal enforceability of redemption claims. ESMA summarizes MiCA as a uniform EU crypto-assets framework covering transparency, disclosure, authorization, supervision, market integrity, and consumer information. [ESMA MiCA](https://www.esma.europa.eu/esmas-activities/digital-finance-and-innovation/markets-crypto-assets-regulation-mica) The third layer is smart-contract trust: Ethereum uses a proxy contract architecture, Solana uses token mint infrastructure, XRPL and Stellar have their own issuer / asset models, and contracts have been audited by Hacken according to SG-FORGE's product page. [Hacken audit PDF](https://www.sgforge.com/wp-content/uploads/2026/01/Hacken_Societe-Generale-Forge-SG-Forge_SCA-SG-Forge-_-SmartCoin-_-Aug2025_P-2025-1810_2_20250904-12_12.pdf) The fourth layer is liquidity trust: even if redemption works, most holders interact through exchanges, brokers, market makers, and DEX pools.
+
+The product flow looks like this:
+
+| Step | Actor | Asset movement | Control point | Main risk |
+| --- | --- | --- | --- | --- |
+| Subscription | Eligible client / partner | EUR fiat to issuer workflow | KYC, AML, onboarding, issuer terms | access restriction, fiat settlement delay |
+| Minting | SG-FORGE | EURCV minted to approved wallet / distribution channel | issuer mint authority | operational error, admin-key control |
+| Circulation | User, exchange, broker, DeFi protocol | EURCV transfers on public chains | chain rules, token contracts, CASP controls | liquidity fragmentation, compliance screening |
+| Secondary liquidity | Market makers, CEXs, DEXs | EURCV trades versus EUR, BTC, USDC, EURC, USDT, other assets | exchange books and pool depth | slippage, off-peg pricing, exchange dependency |
+| Redemption | Holder / partner / issuer | EURCV returned, EUR fiat paid out | issuer redemption process and compliance review | redemption queue, bank liquidity, legal dispute |
+| Reporting | SG-FORGE | reserve and supply disclosure | issuer website and white paper obligations | mismatch between official and third-party data |
+
+There is no native yield in EURCV. That is important. If a holder earns yield using EURCV, the yield comes from an external venue such as lending, liquidity provision, structured products, or market-maker activity. It is not an entitlement from the token itself. CoinGecko's descriptive section also notes that the official white paper does not make EURCV a remunerating token; holders may use it in DeFi, but market-driven yield is external. [CoinGecko EURCV](https://www.coingecko.com/en/coins/eur-coinvertible)
+
+The smart-contract architecture is not fully permissionless in the philosophical sense. The ERC-20 contract is an upgradeable proxy on Ethereum, with Etherscan showing proxy source-code metadata and implementation references. [Etherscan EURCV](https://etherscan.io/token/0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2) For a stablecoin, upgradeability and issuer controls are not unusual. USDC, USDT, PYUSD, EURC, EURI, and other regulated stablecoins also depend on issuer permissions, blacklisting / freeze functions, mint / burn controls, and compliance tooling. But the risk must be explicit: EURCV's safety is not "code is law"; it is "regulated issuer plus audited code plus legal recourse plus bank reserve management."
+
+The "bank-grade" part is therefore both the edge and the limitation. A bank-linked stablecoin can be trusted by institutions that would never use an anonymous DeFi stablecoin as settlement collateral. It can plug into regulated securities workflows where an issuer's balance sheet, compliance stack, and auditability matter. But the same product may not move at the same speed as crypto-native tokens. Direct redemption is not as frictionless as swapping on a DEX. Onboarding is not universal. Compliance obligations can make integrations slower. If EURCV is to win beyond a narrow institutional niche, SG-FORGE needs distribution through exchanges, wallets, market makers, tokenized securities venues, and public-chain DeFi.
+
+## Market Intelligence
+
+The current data says EURCV has moved from proof-of-concept into a real, but still mid-sized, euro stablecoin. CoinGecko lists EUR CoinVertible at about **$1.14**, rank around **#204**, about **$140.1M** market cap / FDV, **123.29M** circulating and total supply, and roughly **$3.3M** 24h volume. It also lists Ethereum, XRP Ledger, Solana, and Stellar references under contract / chain information. [CoinGecko EURCV](https://www.coingecko.com/en/coins/eur-coinvertible) SG-FORGE's official product page shows about **123.29M EURCV in circulation** and backing of **123.29M EUR** as of the page's June 28, 2026 update. [SG-FORGE CoinVertible](https://www.sgforge.com/product/coinvertible/)
+
+DefiLlama's stablecoin API is more conservative, tracking **109.90M EUR** of EURCV circulating value: **103.74M EUR on Ethereum** and **6.16M EUR on Solana**. [DefiLlama stablecoins API](https://stablecoins.llama.fi/stablecoins?includePrices=true) Etherscan, meanwhile, shows Ethereum max total supply of about **92.54M EURCV**, **5,488 holders**, price around **$1.14**, onchain market cap around **$105.5M**, and a higher circulating supply market-cap number sourced from external exchange data. [Etherscan EURCV](https://etherscan.io/token/0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2) These numbers are not supposed to be identical because each source is measuring a different perimeter: official total EURCV, CoinGecko's cross-market circulating supply, DefiLlama's chain-tracked stablecoin supply, and Etherscan's Ethereum-only token contract.
+
+| Metric | SG-FORGE official page | CoinGecko | DefiLlama / Etherscan | Working interpretation | Risk |
+| --- | ---: | ---: | ---: | --- | --- |
+| Total EURCV circulation | ~123.29M EURCV / EUR backing | ~123.29M circulating and total supply | DefiLlama ~109.90M EUR; Etherscan Ethereum supply ~92.54M | Treat official / CoinGecko as total circulation, DefiLlama as tracked-chain subset, Etherscan as Ethereum-only | supply reconciliation is not clean enough for treasury-grade automation |
+| Chain deployment | Ethereum, Solana, XRPL, Stellar references; product copy still says Stellar coming soon in one section | Ethereum, Solana, XRP Ledger, Stellar categories | DefiLlama shows Ethereum and Solana only | Multi-chain identity is real, but data coverage is uneven | users can overestimate liquidity on newer chains |
+| Reserve backing | 100% cash backing, daily disclosure | repeats segregated euro collateral framing in description | no reserve proof, only supply tracking | issuer page is primary reserve source | reserve reliance is centralized and bank dependent |
+| Trading liquidity | market-maker / exchange ecosystem described by SG-FORGE | ~$3.3M 24h volume | GeckoTerminal EURC/EURCV pool ~$2.1M liquidity, ~$598K 24h volume | liquidity exists but is shallow relative to major USD stablecoins and EURC | large exits may need issuer or market-maker route |
+| Holder distribution | not disclosed in detail | no full distribution in page text | Etherscan ~5.5K holders on Ethereum | enough retail / DeFi presence to be visible, not enough for broad network effect | concentration likely high around issuer, exchanges, pools |
+
+The best liquidity evidence is the EURC/EURCV Uniswap V3 pool. GeckoTerminal shows a Euro Coin / EURCV 0.01% Uniswap V3 pool with about **$2.09M liquidity**, around **$597.9K** 24h volume, and pool reserves around **822K EURC** and **1.01M EURCV** at the snapshot. [GeckoTerminal EURC/EURCV](https://www.geckoterminal.com/eth/pools/0x6d074d42d50399581cc3d303b8024000a7897290) That is useful but not deep. It means an onchain trader can move modest size between Circle EURC and EURCV, but it is not a venue for institutional-size settlement without slippage or offchain execution.
+
+The market structure is also still heavily dependent on exchanges and market makers. CoinGecko says the most active venue in its listing is Bullish, with Uniswap V3 and Bitstamp by Robinhood also relevant. [CoinGecko EURCV](https://www.coingecko.com/en/coins/eur-coinvertible) The July 2024 SG-FORGE release named Wintermute as a dedicated liquidity provider, and SG-FORGE's later news archive shows listings and distribution with Bitvavo, Bit2Me, Bitpanda, and DeFi deployment initiatives. [SG-FORGE news](https://www.sgforge.com/news/) That is the right direction. But EURCV is still far from the liquidity profile of USDC, USDT, or even the leading euro stablecoin, EURC.
+
+The negative data read is simple: EURCV's issuer credibility is stronger than its open-market liquidity. That is not fatal for a bank stablecoin because direct institutional flows may matter more than public DEX depth. But it limits the token's usefulness as permissionless DeFi collateral. A stablecoin can have perfect reserve backing and still fail to gain traction if it lacks routing depth, integrations, wallet defaults, exchange pairs, and composability.
+
+## Source Conflict Matrix
+
+| Issue | Source A | Source B | Source C | Working interpretation | Confidence impact |
+| --- | --- | --- | --- | --- | --- |
+| EURCV supply | SG-FORGE page shows ~123.29M EURCV and matching backing | CoinGecko shows ~123.29M supply / ~$140M market cap | DefiLlama shows ~109.9M EUR chain-tracked supply | Official and CoinGecko likely include all issued supply; DefiLlama currently undercounts relative to total because not every chain / source is captured | Medium risk: use official reserve page for treasury decisions |
+| Ethereum supply | Etherscan shows ~92.54M max total supply on Ethereum | DefiLlama shows ~103.74M EUR on Ethereum | CoinGecko shows total supply across all chains | Etherscan is contract-specific, but the exact gap to DefiLlama's Ethereum figure needs monitoring | Medium risk: third-party supply transforms can be stale |
+| Chain support | SG product copy says Ethereum, Solana, XRP Ledger, plus Stellar coming soon | Official page contract list includes Stellar smart contract link | CoinGecko lists Ethereum, Solana, XRP Ledger, Stellar | Treat Stellar as launched / referenced, but acknowledge SG page copy has inconsistent wording | Low-to-medium risk: newer-chain liquidity may be thin |
+| Reserve model | SG-FORGE says 100% cash backed and daily reserve tracking | White paper defines holder rights and MiCA EMT framework | Third-party market sources do not verify reserves directly | Reserve proof is issuer-primary, not independently onchain | Medium risk: centralized bank reserve dependence |
+| Liquidity quality | CoinGecko shows ~$3.3M 24h volume | GeckoTerminal EURC/EURCV pool shows ~$2.1M liquidity and ~$598K volume | CMC reports similar live volume direction in listing snippets | Liquidity exists but is not deep enough for large permissionless flows | Medium-to-high risk for DeFi users |
+| Regulatory status | SG-FORGE says MiCA-compliant EMI licensed by ACPR | White & Case says SG-FORGE obtained EMI license effective July 1, 2024 | AMF white-list page shows SG-FORGE crypto-asset service authorization status | Regulatory identity is strong | Positive for institutional trust, but not a guarantee of no losses |
+
+## Economics/Value Capture
+
+EURCV's economics are stablecoin economics, not governance-token economics. The holder's expected return should be approximately euro cash return minus any opportunity cost, liquidity friction, exchange fees, DeFi smart-contract risk, and issuer / bank risk. EURCV does not entitle holders to SG-FORGE revenue, Societe Generale equity upside, reserve income, governance rights, or a share of market-maker profits.
+
+Who earns? The issuer can potentially earn economics from reserve management, issuance / redemption services, distribution partnerships, institutional settlement products, and broader tokenized-finance workflows. Exchanges and market makers earn spread, fees, and inventory economics. DeFi LPs may earn trading fees or incentive yield, but they take pool risk and impermanent / peg risk. Custodians, brokers, tokenization platforms, and transfer agents can earn service fees. End users receive a euro-denominated onchain asset.
+
+Who pays? Users pay in several forms. They may pay exchange spread, gas fees, withdrawal fees, custody fees, compliance friction, and opportunity cost from holding a non-yielding stablecoin. Direct redemption may not be available to every holder without KYC and issuer procedures. DeFi users may avoid direct issuer onboarding by trading in secondary markets, but secondary markets are exactly where depeg and liquidity risks appear first.
+
+The strongest value-capture path is not EURCV price appreciation. It is **settlement network value**. If EURCV becomes a reliable cash leg for tokenized funds, securities settlement, institutional repo, OTC trades, and euro FX, SG-FORGE can deepen its role as a tokenized capital-markets infrastructure provider. The Seturion release is important because it specifically describes SG-FORGE providing euro and US dollar stablecoins for settlement in a European tokenized securities platform context. [Seturion release](https://www.sgforge.com/wp-content/uploads/2026/05/2026-05-21_MR-Seturion-SocGen-FORGE-flatex.pdf) The Canton announcement is relevant because Canton is institutionally oriented infrastructure, and Societe Generale's decision to bring CoinVertible stablecoin solutions there suggests the bank is not treating EURCV as only a public-chain retail token. [Canton announcement](https://www.sgforge.com/sg-tokenized-finance-and-bring-coinvertible-to-canton/)
+
+The value-capture failure path is equally clear. EURCV can become useful while creating little incremental profit. If issuance remains modest, reserve income is constrained by regulation and interest-rate cycles, direct issuance / redemption stays narrow, and DeFi liquidity remains shallow, then EURCV is strategically interesting but economically small. A bank can use it as innovation branding, settlement plumbing, and client service without it becoming a material profit center. For token holders, that is fine if the goal is euro settlement. For investors looking for upside, it is not enough.
+
+The second failure path is that EURCV succeeds inside closed institutional corridors but fails in open DeFi. A regulated bank stablecoin may be preferred by corporate treasuries and tokenized securities platforms, while crypto-native users choose EURC for liquidity and integrations. That split would still make EURCV useful, but it would limit the broader network effect. The asset could look strong in official partnerships and weak in daily DEX velocity.
+
+## Tokenomics/Capital Structure
+
+EURCV has no fixed max supply. Supply should expand and contract with subscriptions and redemptions. CoinGecko lists max supply as infinity, circulating and total supply around **123.29M**, and FDV equal to market cap because all issued tokens are treated as circulating. [CoinGecko EURCV](https://www.coingecko.com/en/coins/eur-coinvertible) This is normal for a fiat-backed stablecoin. Supply growth is not dilution in the same way it would be for a governance token; it should be matched by reserve growth. The core question is whether supply is fully backed, legally protected, and redeemable at par.
+
+| Tokenomics item | Assessment |
+| --- | --- |
+| Supply cap | No meaningful cap; supply expands with issuance |
+| Peg | 1 EUR per 1 EURCV |
+| Reserve asset | Official page says cash backing, 100% |
+| Holder yield | None from the token itself |
+| Redemption | Holder rights described in MiCA white paper; operationally subject to issuer process and compliance checks |
+| Burn / mint | Issuer-controlled stablecoin supply management |
+| Governance | No holder governance over issuer, reserve policy, or chain deployments |
+| FDV | Equal to current supply x price in CoinGecko's view |
+| Main capital risk | reserve, redemption, legal, operational, and liquidity risk |
+
+The reserve structure is the core "capital structure" of the asset. SG-FORGE's official page says assets are 100% backed by cash and emphasizes daily reserve tracking. [SG-FORGE CoinVertible](https://www.sgforge.com/product/coinvertible/) That is conservative relative to stablecoins that hold a mix of short-term securities, repos, and deposits. But it also creates bank concentration. A cash-backed token is only as liquid as the banking arrangements, operational controls, and legal protections around those deposits. The investor should not confuse "cash backed" with "risk free." Cash deposits carry bank exposure, legal-process risk, operational freeze risk, and jurisdictional risk.
+
+The white paper also matters because it is the formal MiCA document. It covers the issuer, the e-money token, rights and obligations, technology, risks, and redemption plans. [EURCV white paper](https://www.sgforge.com/wp-content/uploads/2025/10/EURCV-WP-Ethereum-Solana_XRPL_Stellar_2025.10.14.pdf) A serious stablecoin review should read the white paper as a legal and operational document, not a marketing asset. It defines what holders can expect in ordinary and stressed conditions. It also reminds us that stablecoins can have recovery and redemption plan mechanics in adverse events.
+
+The main tokenomics risk is not inflation. It is mismatch. If supply moves faster than reserves, if reserve reporting becomes stale, if chain supply is difficult to reconcile, or if secondary-market liquidity decouples from issuer redemption, the stablecoin can trade away from par. EURCV's issuer quality reduces this risk, but it does not eliminate it.
+
+## Team, Funding, Governance
+
+The execution team is unusually credible by crypto standards because SG-FORGE is integrated with a major European banking group. SG-FORGE has been active in digital bonds, tokenized finance, and regulated crypto-asset services, and Societe Generale has used the subsidiary to test public-chain capital-markets infrastructure for several years. The 2023 launch announcement described SG-FORGE as a fully integrated and regulated subsidiary of Societe Generale Group dedicated to digital assets. [2023 launch announcement](https://www.sgforge.com/societe-generale-forge-launches-coinvertible-the-first-institutional-stablecoin-deployed-on-a-public-blockchain/)
+
+Regulatory standing is a material part of the governance model. SG-FORGE's July 2024 release says the company was licensed as an Electronic Money Institution by the ACPR and was the first company to be licensed as a Digital Asset Service Provider by the AMF in July 2023. [SG-FORGE stablecoin elevation](https://www.sgforge.com/stablecoin-elevation/) The AMF white-list page provides additional evidence of SG-FORGE's regulated crypto-asset service status under the French / MiCA perimeter. [AMF SG-FORGE](https://www.amf-france.org/en/warnings/white-lists/daspcasp/societe-generale-forge)
+
+Governance is centralized. That is not a criticism; it is a feature of regulated stablecoins. SG-FORGE controls issuance, reserve disclosure, redemption process, contract upgrades, chain deployments, and partner access. Token holders do not vote on reserve composition, risk policy, contract upgrades, or strategic integrations. This is closer to holding a tokenized bank liability / e-money instrument than participating in a decentralized protocol.
+
+The governance risk is therefore institutional and operational. If SG-FORGE changes terms, pauses issuance, restricts access, delays redemption under compliance review, deprecates a chain deployment, or responds to regulatory pressure, token holders have limited governance recourse. Their recourse is legal, contractual, and market-based. That is appropriate for many institutional users, but it is different from permissionless DeFi expectations.
+
+## Competitive Landscape
+
+EURCV competes in a small but strategically important euro stablecoin market. The direct competitors are EURC, EURI, EURR, Monerium EURe / EURE, EUROe, EUROP, EURS, and smaller euro-pegged tokens. The broader substitutes are USD stablecoins, tokenized money-market funds, bank deposits, SEPA instant transfers, tokenized deposit pilots, and CBDC-style settlement systems.
+
+| Competitor | Issuer / model | Current scale signal | Edge versus EURCV | Weakness versus EURCV |
+| --- | --- | --- | --- | --- |
+| EURC | Circle | DefiLlama shows about 428.7M EUR circulating across many chains | larger supply, broader DeFi and USDC adjacency, strong stablecoin-native distribution | less bank-native European capital-markets branding than Societe Generale |
+| EURI | Banking Circle | DefiLlama shows about 41.6M EUR; official site says Banking Circle S.A., 1:1 euro cash backing, Ethereum and BNB Chain | direct payment-bank distribution, Binance visibility, no-fee redemption language | narrower DeFi depth and brand than Circle; smaller than EURC and EURCV |
+| EURR | StablR Euro | DefiLlama shows much smaller supply; StablR white paper covers reserve and redemption mechanics | specialized MiCA EMT issuer with stablecoin focus | much smaller liquidity; data anomaly in DefiLlama price makes monitoring harder |
+| EUROe | Membrane / Paxos wind-down | Paxos page says EUROe is decommissioned and redemption-only | historical early euro stablecoin footprint | no new minting / trading, no longer a growth competitor |
+| EURe / EURE | Monerium | DefiLlama shows meaningful Gnosis / multi-chain supply | strong payments / IBAN integration narrative | less major-bank balance-sheet signal than SG-FORGE |
+| EURS | Stasis | older euro stablecoin | legacy presence | weaker MiCA / bank-linked institutional narrative than EURCV |
+
+Circle EURC is the most important competitor. Circle says EURC is MiCA-compliant, redeemable 1:1 for euro, backed 100% by euro, and accessible globally on Avalanche, Base, Ethereum, Solana, and Stellar, with Circle Mint enabling conversion between euro and EURC. [Circle EURC](https://www.circle.com/eurc) Circle's EEA page also emphasizes USDC and EURC as MiCA-compliant stablecoins and describes reserves and redemption transparency. [Circle EEA](https://www.circle.com/circle-eea) For DeFi, EURC currently looks ahead: more chains, deeper liquidity, and more crypto-native integrations.
+
+EURI is the strongest bank / payment institution comparison. Eurite's official site says EURI is issued by Banking Circle S.A., pegged 1:1 to the euro, backed 1:1 by euro cash, available on Ethereum and BNB Smart Chain, and fully redeemable at no fee subject to customer due diligence. [Eurite EURI](https://www.eurite.com/) This makes EURI a serious regulated euro competitor, especially for payment and exchange distribution. EURCV's counter is Societe Generale's capital-markets franchise and tokenized-securities path.
+
+StablR EURR is a smaller MiCA competitor with a white paper that describes euro EMT issuance, redemption rights, reserve handling, and institutional use cases. [StablR EURR white paper](https://www.stablr.com/whitepaper/StablR_Whitepaper_v3.1.pdf) It matters less by current liquidity but helps show that the European euro-stablecoin market is becoming crowded with regulated EMT issuers.
+
+EUROe is now more a cautionary tale than a live competitor. Paxos's EUROe page says Paxos completed the acquisition of Membrane Finance in 2025, is decommissioning the EUROe stablecoin line, and has moved the platform to redemption-only mode with no new minting or trading. [Paxos EUROe redemptions](https://www.euroe.com/) That matters for EURCV because it shows that regulatory status alone does not guarantee distribution or product survival. Euro stablecoins need liquidity and integration, not just compliance.
+
+## Catalysts
+
+EURCV's catalysts are not meme-style listing catalysts. They are institutional workflow catalysts.
+
+The first catalyst is broader exchange and broker distribution. SG-FORGE's news archive shows a run of 2025 and 2026 distribution headlines: Bitvavo listings, Bit2Me and Bitpanda partnerships, DeFi deployment via partners, and USDCV expansion through MetaMask / Consensys. [SG-FORGE news](https://www.sgforge.com/news/) If EURCV becomes easy to obtain through European exchanges and brokers, the product can move from a niche institutional token into a usable euro liquidity asset.
+
+The second catalyst is deeper DeFi liquidity. The EURC/EURCV Uniswap pool is important because it creates a direct bridge between the leading crypto-native euro stablecoin and the bank-linked euro stablecoin. [GeckoTerminal EURC/EURCV](https://www.geckoterminal.com/eth/pools/0x6d074d42d50399581cc3d303b8024000a7897290) If that pool grows from roughly $2M liquidity to tens of millions, EURCV becomes more useful for onchain FX, collateral routing, and euro stablecoin arbitrage. If it stays shallow, EURCV remains mostly offchain / institutional.
+
+The third catalyst is tokenized securities settlement. Seturion's May 2026 release says SG-FORGE will provide euro and US dollar stablecoins for settlement in the context of Boerse Stuttgart Group's European settlement platform for tokenized securities. [Seturion release](https://www.sgforge.com/wp-content/uploads/2026/05/2026-05-21_MR-Seturion-SocGen-FORGE-flatex.pdf) This is exactly the workflow where EURCV's bank backing matters. If a tokenized bond, fund, or securities platform needs a regulated euro cash leg, a Societe Generale-supported stablecoin is a more natural fit than a purely crypto-native token.
+
+The fourth catalyst is public-sector or quasi-public institutional usage. Bpifrance's April 2026 partnership says the French public investment bank will use Societe Generale-FORGE's EUR CoinVertible for several blockchain operations. [Bpifrance partnership](https://www.sgforge.com/bpifrance-et-sgf-sassocient-utilisation-eurcv-operations-blockchain/) The significance is not immediate volume; it is credibility. Bpifrance using EURCV validates the idea that regulated European institutions can use a public-chain stablecoin in actual operations.
+
+The fifth catalyst is interoperability with institutional networks such as Canton and SWIFT-related digital asset work. The Canton announcement signals that Societe Generale wants CoinVertible stablecoin solutions inside institutional tokenized finance, not only on public DeFi rails. [Canton announcement](https://www.sgforge.com/sg-tokenized-finance-and-bring-coinvertible-to-canton/) SG-FORGE's news archive also references SWIFT digital asset interoperability work. [SG-FORGE news](https://www.sgforge.com/news/) If EURCV can bridge public chains, institutional networks, and traditional settlement messaging, it becomes more than a token listing.
+
+## Risk Matrix
+
+| Risk | Severity | Evidence / current read | What would improve it | What would worsen it |
+| --- | --- | --- | --- | --- |
+| Reserve concentration | High | official page says 100% cash backing, supported by Societe Generale | independent attestations with granular cash-bank distribution and stress procedures | reserve disclosure gaps, banking stress, unexplained supply changes |
+| Redemption friction | High | MiCA white paper provides rights, but direct redemption is issuer / compliance gated | clear public redemption SLA, more redemption partners, lower minimums | queues, KYC disputes, secondary market trading below par |
+| Liquidity depth | High | CoinGecko ~$3.3M 24h volume; EURC/EURCV pool ~$2.1M liquidity | DEX liquidity above $20M and multiple CEX euro books with tight spreads | declining volume, market-maker exit, pool imbalance |
+| Source reconciliation | Medium | SG-FORGE / CoinGecko ~123.3M, DefiLlama ~109.9M, Etherscan Ethereum-only ~92.5M | chain-by-chain supply dashboard with explorer proofs | persistent unexplained differences across supply sources |
+| Smart-contract admin risk | Medium | Ethereum is upgradeable proxy; issuer controls mint / burn | transparent admin structure, timelocks where possible, recurring audits | emergency upgrades, opaque role changes, exploit |
+| Regulatory risk | Medium | MiCA status is strong, but regulation can change | stable MiCA implementation, clear cross-border distribution | stricter EMT limits, reserve rules, or distribution constraints |
+| Competition | Medium | EURC larger and more liquid; EURI has payment-bank angle | EURCV wins settlement integrations and DeFi depth | EURC becomes default across Europe; EURI wins exchange distribution |
+| Adoption gap | Medium | strong partnerships but modest open liquidity | recurring real settlement volumes from Bpifrance, Seturion, Canton, DeFi | partnerships remain press-release level |
+| Stablecoin no-yield opportunity cost | Medium | EURCV itself pays no interest | external euro yield products integrate safely | rates stay high and users choose T-bills / tokenized MMFs |
+| Public-chain risk | Medium | Ethereum, Solana, XRPL, Stellar have different risk profiles | diversified chain supply and bridge-minimized issuance | chain outage, token mint problem, explorer mismatch |
+
+The highest risk is not that EURCV suddenly collapses like an algorithmic stablecoin. It is that adoption is slower than the narrative. A bank-issued MiCA stablecoin can be safe, transparent, and technically sound while remaining small. The second highest risk is redemption-path opacity for non-institutional users. Secondary market users can buy EURCV on an exchange or DEX, but in stress they need confidence that the arbitrage path back to one euro is open to enough professional participants.
+
+## Valuation / Importance Framework
+
+EURCV cannot be valued like a normal token. The fair value target is one euro. A premium above one euro should be arbitraged by issuance or selling pressure, while a discount should be arbitraged by redemption if professional holders can access the issuer path. The real valuation framework is an importance framework:
+
+| Dimension | Bullish read | Bearish read | Current score |
+| --- | --- | --- | --- |
+| Reserve credibility | major European bank support, cash backing, daily disclosure | centralized reserve dependence, issuer-primary proof | High |
+| Regulatory clarity | MiCA EMT, ACPR / AMF perimeter | regulation can constrain distribution and reserve economics | High |
+| Liquidity | real CEX and DEX markets, Wintermute support, EURC/EURCV pool | still small versus EURC and USD stablecoins | Medium |
+| DeFi composability | Uniswap pool and partner deployment path | not default collateral, shallow open liquidity | Medium-low |
+| Institutional adoption | Bpifrance, Canton, Seturion, Societe Generale tokenized finance | actual recurring volume not yet public | Medium |
+| Holder upside | strong euro cash utility | no token appreciation or revenue claim | Low |
+
+One practical metric is supply share among euro stablecoins. DefiLlama's snapshot puts EURC around **428.7M EUR**, EURCV around **109.9M EUR**, EURI around **41.6M EUR**, Monerium EURE around **29.9M EUR**, and EUROe around **0.12M EUR** with redemption-only context. [DefiLlama stablecoins API](https://stablecoins.llama.fi/stablecoins?includePrices=true) EURCV is therefore meaningful but not dominant. It is the second major euro stablecoin in this data view, but EURC is roughly four times larger.
+
+Another metric is liquidity per unit supply. EURCV can show 123M supply and still have only a few million dollars of daily volume. That is not necessarily weak if much of the supply is held for settlement or treasury purposes, but it limits DeFi price discovery. The key bull threshold is not simply supply growth; it is supply growth plus multiple deep trading venues plus real settlement volumes.
+
+The best way to underwrite EURCV is to separate **asset safety** from **ecosystem upside**. Asset safety asks whether one EURCV can be redeemed for one euro. Ecosystem upside asks whether EURCV becomes a default euro cash rail. EURCV scores well on the first, still unproven on the second.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | 12-24M path | Confirmation metrics | Investment implication |
+| --- | ---: | --- | --- | --- |
+| Bull | 25% | EURCV supply grows above 500M EUR, EURC/EURCV and EURCV/USDC pools deepen, Seturion / Canton / Bpifrance workflows become recurring, and EURCV becomes the preferred bank-linked euro settlement token | official supply above 500M, DefiLlama tracked supply above 400M, DEX liquidity above $50M, multiple institutional settlement announcements with volumes | EURCV becomes a top euro cash rail; watch issuer ecosystem and integrated venues |
+| Base | 55% | EURCV grows steadily but remains smaller than EURC, used by bank / institutional workflows and some DeFi pools, with supply between 150M and 300M EUR | supply growth but EURC still leads, 24h volume $5M-$20M, no persistent depeg, more CEX listings | high-quality stablecoin watchlist; useful rail, not an upside token |
+| Bear | 20% | EURCV remains a narrow institutional product, DeFi liquidity stagnates, source reconciliation stays messy, and users prefer EURC / EURI / USD stablecoins | supply flat or down below 100M, DEX liquidity below $5M, repeated market discounts, few real integrations | avoid for open DeFi treasury except tactical uses; use only through issuer-grade channels |
+
+The bull case requires more than press releases. It requires proof that EURCV is used as a recurring cash leg. A one-off partnership can validate credibility; recurring issuance, redemption, settlement volume, and liquidity validate product-market fit.
+
+The base case is already valuable. If EURCV becomes a reliable second-place euro stablecoin with bank-linked settlement use, that is strategically important for Europe and tokenized finance. But it still does not make EURCV a return-seeking asset.
+
+The bear case is not catastrophic depeg. It is irrelevance. EURCV could stay safe but small, while EURC wins permissionless liquidity and EURI wins exchange-payment distribution. A safe stablecoin that nobody routes through is not a network.
+
+## Confidence Score
+
+| Dimension | Rating | Notes |
+| --- | --- | --- |
+| Source quality | High | official SG-FORGE page, white paper, AMF / ESMA context, Etherscan, CoinGecko, DefiLlama, competitor official pages |
+| Data consistency | Medium | official / CoinGecko supply aligns, but DefiLlama and chain-specific numbers differ |
+| Mechanism clarity | High | fiat-backed EMT stablecoin mechanics are clear; smart-contract and issuer control are visible |
+| Value capture | Low for token, Medium for issuer ecosystem | holders get euro utility, not issuer economics |
+| Liquidity quality | Medium-low | meaningful but still shallow versus EURC and USD stablecoins |
+| Overall confidence | Medium-high | identity and reserve framing are strong; adoption and liquidity trajectory remain unproven |
+
+The confidence score is **Medium-high for EURCV as a credible euro stablecoin** and **Medium for EURCV as an important future settlement rail**. The confidence score is **Low for EURCV as an investment token**, because the token's target function is price stability, not upside.
+
+## Red-team Check
+
+The strongest reason the thesis could be wrong is that the market does not care about a major European bank issuer as much as institutions think it should. Crypto liquidity tends to prefer availability, integration, collateral acceptance, and routing depth. If Circle EURC remains much larger and more composable, EURCV's bank-grade issuer may win boardroom trust but lose daily wallet share.
+
+The most gameable metric is announced partnerships. A bank, public investment institution, or tokenized securities platform can announce usage without disclosing recurring volume. The market should not treat partnership count as adoption unless supply, volume, settlement counts, or public transaction evidence follows.
+
+The least trustworthy hard metric is total supply without chain-by-chain context. Official supply and CoinGecko supply appear aligned, but DefiLlama's chain-tracked supply is lower, and individual explorers only show their own chain. A dashboard that reconciles Ethereum, Solana, XRPL, Stellar, and issuer reserves would improve confidence materially.
+
+The value-capture failure path is that EURCV succeeds operationally but does not create investable upside. A stablecoin can be useful, safe, and strategically important while generating limited marginal revenue. Holders do not receive reserve income. DeFi LPs take risk for fees. SG-FORGE may benefit, but EURCV holders only hold a euro claim.
+
+The plausible permanent-impairment path is a legal, bank, or operational stress event that blocks redemption while secondary-market liquidity is shallow. A token trading at a discount can usually recover if professional arbitrageurs can redeem. If redemptions are delayed, restricted, or uncertain, shallow liquidity can turn a temporary discount into a damaging confidence event.
+
+## Monitoring Dashboard
+
+| Metric | Current snapshot | Bull threshold | Bear threshold | Source |
+| --- | ---: | ---: | ---: | --- |
+| Official EURCV in circulation | ~123.29M EURCV | >500M | <100M after growth phase | [SG-FORGE](https://www.sgforge.com/product/coinvertible/) |
+| CoinGecko market cap / FDV | ~$140M / ~$140M | >$600M equivalent | <$100M with declining volume | [CoinGecko](https://www.coingecko.com/en/coins/eur-coinvertible) |
+| DefiLlama tracked supply | ~109.9M EUR | >400M EUR | <80M EUR | [DefiLlama API](https://stablecoins.llama.fi/stablecoins?includePrices=true) |
+| Ethereum holder count | ~5.5K holders | >25K | declining holders with flat supply | [Etherscan](https://etherscan.io/token/0x5F7827FDeb7c20b443265Fc2F40845B715385Ff2) |
+| 24h market volume | ~$3M range | sustained >$25M | <$1M for weeks | [CoinGecko](https://www.coingecko.com/en/coins/eur-coinvertible) |
+| EURC/EURCV pool liquidity | ~$2.1M | >$50M | <$1M | [GeckoTerminal](https://www.geckoterminal.com/eth/pools/0x6d074d42d50399581cc3d303b8024000a7897290) |
+| EUR stablecoin rank | second by DefiLlama among major EUR stablecoins | closes gap with EURC | loses share to EURI / EURC | [DefiLlama API](https://stablecoins.llama.fi/stablecoins?includePrices=true) |
+| Reserve disclosure | daily official disclosure | more granular attestation / audit | delayed or missing reports | [SG-FORGE](https://www.sgforge.com/product/coinvertible/) |
+| Institutional integrations | Bpifrance, Canton, Seturion headlines | public recurring volume / settlement numbers | no follow-through after announcements | [SG-FORGE news](https://www.sgforge.com/news/) |
+
+## Follow-up Triggers
+
+| Trigger | Why it matters | Action |
+| --- | --- | --- |
+| Official EURCV supply breaks 250M, then 500M EUR | confirms product adoption beyond launch / listing effects | upgrade adoption view and re-check liquidity quality |
+| EURC/EURCV or EURCV/USDC pool liquidity exceeds $25M | shows EURCV is becoming DeFi-routable, not only institutionally held | reassess DeFi utility and collateral potential |
+| SG-FORGE publishes granular third-party reserve attestation | reduces reserve-transparency discount | raise reserve confidence if clean |
+| DefiLlama / CoinGecko / official supply gap widens above 20% without explanation | supply reconciliation problem can become treasury risk | downgrade data consistency until resolved |
+| Redemption delays, reserve disclosure delays, or market price below 0.995 EUR persists | stablecoin confidence event | move from watchlist to risk-off / avoid secondary liquidity |
+| Seturion, Canton, or Bpifrance flows disclose recurring transaction volume | validates institutional settlement thesis | upgrade strategic importance |
+| EURC expands much faster while EURCV stalls | bank issuer advantage may not translate into network effect | downgrade competitive position |
+
+## Final Investment View
+
+EUR CoinVertible is a **high-quality regulated euro stablecoin watchlist asset**, not an investment token to accumulate for price upside. The issuer identity is strong, the MiCA / EMT path is clear, the reserve model is conservative, and the 2024-2026 distribution arc is real. SG-FORGE has moved EURCV from an institutional Ethereum pilot toward a broader euro settlement asset with public-chain, DeFi, exchange, and tokenized-finance relevance.
+
+The final view is **Watchlist / useful euro rail / no token-upside thesis**. For treasury use, EURCV is worth monitoring and may be attractive when a user specifically wants a bank-supported euro stablecoin, especially in institutional workflows. For DeFi use, EURCV is promising but not yet deep enough to be treated as default euro collateral. For investment analysis, EURCV is a signal: it tells us how seriously European banks are moving into stablecoin settlement, but it does not itself provide an equity-like claim on that transition.
+
+I would upgrade the view if three things happen together: official and chain-tracked supply both grow above 250M-500M EUR, EURCV liquidity deepens across multiple venues without persistent peg discounts, and institutional settlement announcements begin reporting recurring volumes rather than only partnerships. I would downgrade the view if reserve disclosure weakens, redemption friction appears in stress, EURC keeps compounding share while EURCV stagnates, or source reconciliation remains too messy for treasury-grade monitoring.
+
+The core conclusion: **EURCV is credible, strategically important, and structurally safer than most small euro stablecoins, but the investable edge is in the surrounding settlement network, not in holding EURCV for upside.**

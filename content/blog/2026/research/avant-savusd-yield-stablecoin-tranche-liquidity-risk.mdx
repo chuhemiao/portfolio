@@ -1,125 +1,296 @@
 ---
-title: 'Avant savUSD: Yield Stablecoin, Tranching, and Liquidity Risk'
+title: 'Avant savUSD: Yield Stablecoin, Tranche Mechanics, and Redemption Risk'
 publishedAt: '2026-06-28'
-summary: 'Avant is Avalanche stable-value and yield-token protocol with a June 28, 2026 Surf snapshot of $87.68M market cap, $87.68M FDV, and $3.68 24h token volume. The investable question is whether Avalanche stable-value and yield-token protocol can create durable token demand; the key risk is yield source, tranche, and redemption liquidity risk. Verdict: watchlist unless usage, liquidity, and token value capture improve.'
+summary: "Avant is an Avalanche-origin yield-stablecoin protocol built around avUSD and its yield-bearing wrapper savUSD. The refreshed June 28, 2026 view is that the product has real traction, with DeFiLlama showing about $126.9M parent TVL and about $106.2M in the avUSD sleeve, but savUSD is better framed as a high-risk yield receipt than as a clean upside token. The investable question is whether diversified market-neutral yield, reserve design, and DeFi integrations can survive stressed funding markets, redemption demand, and source conflicts in supply and liquidity data. Verdict: watchlist / selective yield allocation only, not high-conviction token exposure."
 slug: 'avant-savusd-yield-stablecoin-tranche-liquidity-risk'
 category: 'research'
 ---
 
 ## Pre-screen Decision
 
-Full research. Avant is a live, market-ranked project with no local Research Map match before this batch. It deserves coverage because it sits in the Stablecoin bucket and has enough market cap, exchange visibility, or strategic category relevance to affect portfolio screening.
+Full research. Avant deserves a full-depth upgrade because it is no longer just a thin narrative entry in the Research Map. It is a live yield-stablecoin protocol with public docs, on-chain token contracts, DeFiLlama protocol coverage, exchange and market-data pages, third-party funding coverage, and a product design that sits in one of the most reflexive sectors in crypto: synthetic dollars and yield-bearing stable-value assets. The previous memo had enough identity data to justify a watchlist label, but it did not answer the harder investment question: whether savUSD is a durable yield instrument, a liquidity wrapper around off-chain and on-chain strategy risk, or simply a smaller Avalanche-native version of the Ethena trade.
 
-## TL;DR
+The target remains the existing slug and category. I am treating this as an upgrade of the published Research article, not as a new project listing. The report is written in English and keeps the focus on Avant / savUSD, while also covering avUSD, avUSDx, avBTC, savBTC, and the broader Avant protocol where those products explain the risk stack. The current data refresh is dated June 28, 2026. Because market data, TVL, APY, funding rates, and token supply can move intraday, all execution-sensitive numbers should be rechecked on the linked live pages before sizing capital.
 
-Avant is Avalanche stable-value and yield-token protocol. The project profile in Surf describes it as: Avant is a DeFi protocol (on Avalanche) that issues avUSD, a stable-value token backed by USDC/USDT, and avBTC for Bitcoin exposure. It provides staked yield tokens (savUSD, savBTC) and a boosted junior tranche (avUSDx), using market-neutral strategies and tranching to deliver sustainable, risk-adjusted yield. The canonical web anchor is the [official site](https://www.avantprotocol.com/), with live market identity cross-checkable on [CoinGecko](https://www.coingecko.com/en/coins/avant).
+The depth decision is `full research`, not `quick note`, for five reasons. First, Avant has a complete enough primary-source surface: official site, docs, token list, contract list, risk disclosures, security pages, audits, and yield documentation. Second, the protocol has measurable scale: [DeFiLlama](https://defillama.com/protocol/avant-protocol) showed about $126.9M of parent TVL on June 28, 2026, split mainly between Avalanche and Ethereum exposure. Third, it touches a sector where small documentation gaps matter because a stable-value token can look low-volatility until the risk engine, custodian, strategy manager, or redemption queue is stressed. Fourth, the market-data surface is inconsistent enough to require a source conflict matrix rather than a simple snapshot. Fifth, the investment object is not a normal governance token: savUSD is a yield-bearing receipt, so the correct question is not "will the token pump?" but "what risk-adjusted yield, liquidity, and impairment profile is the holder actually underwriting?"
 
-As of the June 28, 2026 Surf snapshot, SAVUSD traded around $1.15000, with $87.68M market cap, $87.68M FDV, and $3.68 24h volume. The thesis is not simply that the token exists; it is whether Avalanche stable-value and yield-token protocol can translate into sustained demand for SAVUSD. My base view is watchlist, with the main caveat being yield source, tranche, and redemption liquidity risk.
+My starting verdict is watchlist / selective yield allocation. I would not treat savUSD as a high-conviction long-only token. The bull case is real if Avant can sustain transparent, diversified, market-neutral yield while growing integrations and keeping redemptions orderly. The bear case is also real: yield stablecoins can import basis-trade, counterparty, liquidity, admin, and oracle risk into an asset that users emotionally price as stable. The burden of proof is therefore higher than for an ordinary DeFi farm.
 
-## Research Question
+## TL;DR / Executive Summary
 
-Is Avant durable infrastructure with token value capture, or is it mainly cyclical/narrative beta inside Stablecoin?
+Avant is a DeFi yield-stablecoin protocol that issues avUSD, a stable-value asset, and savUSD, the yield-bearing version that represents staked avUSD. The project began as an Avalanche-native product and now has official contract coverage across Avalanche and Ethereum in its [contract address documentation](https://docs.avantprotocol.com/security/contract-addresses). The official materials describe avUSD as the base stable-value token, savUSD as the yield-accruing wrapper, avUSDx as a higher-risk boosted tranche, and avBTC / savBTC as the Bitcoin-denominated extension of the same product family. The public site and docs position the system around DeFi-native yield, market-neutral strategy access, and a security stack that includes audits, partner checks, custody or asset-management controls, reserve design, and disclosed protocol risks.
 
-## Product and Mechanism
+The positive reading is that Avant has escaped the "idea with a website" stage. [DeFiLlama's Avant Protocol page](https://defillama.com/protocol/avant-protocol) showed about $126.9M of parent TVL on June 28, 2026, with about $112.4M on Avalanche and about $14.5M on Ethereum in the API snapshot I pulled. The [Avant avUSD page](https://defillama.com/protocol/avant-avusd) showed about $106.2M of avUSD TVL on the same date, while [Avant avBTC](https://defillama.com/protocol/avant-avbtc) showed about $6.2M. The numbers are meaningful for an Avalanche-origin stable-value protocol and show that the product has found real deposits, not just a whitepaper. The official docs also list many live strategy and contract addresses, which makes the system more inspectable than a purely opaque CeFi yield note.
 
-Avant is a DeFi protocol (on Avalanche) that issues avUSD, a stable-value token backed by USDC/USDT, and avBTC for Bitcoin exposure. It provides staked yield tokens (savUSD, savBTC) and a boosted junior tranche (avUSDx), using market-neutral strategies and tranching to deliver sustainable, risk-adjusted yield.
+The negative reading is that this category can hide correlated risks behind the word "stable." A holder of savUSD is not holding a money-market fund, not holding insured bank deposits, and not holding a pure USDC wrapper. The holder is taking exposure to avUSD redemption mechanics, strategy allocation, yield generation, smart contracts, manager discretion, stablecoin collateral, exchange or counterparty exposure where relevant, on-chain protocol risk, and market-liquidity risk. The official [risk page](https://docs.avantprotocol.com/legal-and-risk/risks) explicitly lists categories such as smart contract risk, market risk, liquidity and redemption risk, and counterparty risk. That disclosure is a positive for transparency, but it also confirms that savUSD should be analyzed like a structured DeFi product rather than like a simple dollar.
 
-Relevant chains: Avalanche. Key listings or venues from Surf: not listed in Surf overview. Contracts sampled from Surf: avalanche SAVUSD: `0x06d47f3fb376649c3a9dafe069b3d6e35572219e`; avalanche AVUSD: `0x24de8771bc5ddb3362db529fc3358f2df3a0e346`.
+The key investment distinction is that savUSD is not a conventional upside token. It is a yield-bearing claim whose upside should come from yield accrual and perhaps secondary-market liquidity, not from governance-token style multiple expansion. If the protocol succeeds, depositors may earn yield and integrations may deepen. But unless there is a separate live governance or fee-capture token with clear rights, the value-capture path for savUSD holders is mostly the quality and durability of yield after risk, fees, and liquidity frictions. The project may later introduce or expand other incentive layers, but this report does not assume tokenholder value that is not visible in current public documentation.
 
-The token value-capture path should be judged through three questions: who pays, what activity creates repeat demand, and whether SAVUSD is required for access, fees, staking, governance, collateral, rewards, or settlement. If that linkage remains vague, the token should be treated as narrative/liquidity beta rather than a cash-flow asset.
+My base case is that Avant becomes a useful Avalanche/Ethereum yield-stablecoin venue but remains structurally higher risk than plain stablecoins and more source-thin than the largest synthetic-dollar issuers. A small, actively monitored allocation can make sense for users who understand DeFi strategy risk and can tolerate redemption uncertainty. A passive portfolio allocation should wait for three confirmations: sustained TVL after incentives normalize, clearer recurring fee/revenue disclosures, and proof that liquidity can absorb meaningful exits without a discount. The most important invalidation trigger is not a price move; it is a stress event where avUSD or savUSD redemption, secondary liquidity, or strategy losses diverge from the stable-value promise.
 
-## Market Snapshot
+Final view: Watchlist / selective yield allocation. Avant has real product substance and enough current traction to monitor closely. It does not yet earn a high-conviction portfolio rating because the supply, liquidity, fee, and strategy-risk evidence is not yet strong enough to underwrite savUSD as a low-risk cash equivalent.
 
-| Metric | June 28, 2026 snapshot |
-|---|---:|
-| Market-cap rank | ~250 |
-| Price | $1.15000 |
-| Market cap | $87.68M |
-| FDV | $87.68M |
-| FDV / market cap | 1.00x |
-| 24h token volume | $3.68 |
-| Circulating supply | 75.96M SAVUSD |
-| Total supply | 75.96M SAVUSD |
-| Chains | Avalanche |
-| Tags | Derivatives (Perp/Option), Lending & Borrowing, Yield & Asset Mgmt |
+## Project Overview
+
+Avant's public surface is best understood as a family of yield-backed tokens rather than one token. The [official site](https://www.avantprotocol.com/) presents Avant as a protocol for DeFi-powered stable-value and yield-bearing assets. The [documentation homepage](https://docs.avantprotocol.com/) expands that into a system where users can hold or mint avUSD, stake into savUSD, access a higher-risk boosted tranche through avUSDx, and use the related Bitcoin product family through avBTC and savBTC. The current report focuses on savUSD because the Research Map entry is about Avant / savUSD, but savUSD cannot be analyzed without avUSD. The base token is the unit of account and redemption anchor; the staked token is the yield wrapper; the strategy layer is where the risk lives.
+
+Avant was founded in 2024 and publicly framed as an Avalanche-based crypto yield protocol. [The Block](https://www.theblock.co/post/328512/avant-protocol-ethena-like-seed-funding) reported in November 2024 that Avant raised a $6.5M seed round at a $25M post-money valuation, with participation from Superlayer, Avalaunch, GoGoPool, Daybreak Digital, and angel investors. The same report identified Rhett Shipp as founder and compared Avant to Ethena because both products use market-neutral yield strategies to support yield-bearing stable-value assets. That comparison is useful but incomplete. Ethena is the sector leader in synthetic dollar scale and CEX-driven basis strategy. Avant's pitch is more DeFi-native and Avalanche-origin, with an explicit focus on diversified strategy allocation and on-chain visibility.
+
+The user problem is straightforward: crypto users want dollar-like assets that earn yield without requiring them to run complex strategies, manage delta hedges, rotate between lending markets, or monitor multiple counterparties. A plain stablecoin solves the unit-of-account problem but usually gives the holder no yield. A DeFi lending position gives yield but exposes the user to protocol-specific risk, variable utilization, liquidation markets, and strategy management. A yield stablecoin wraps the operational complexity into a token. The user holds savUSD; Avant manages the backing, strategy routing, and yield distribution. The product is appealing precisely because it hides complexity from the end user. That is also why the investment analysis must re-open the box.
+
+The sector context matters. Yield-bearing stablecoins and synthetic dollars have become a central competition lane in DeFi because they are easy to integrate as collateral, easy to use as a portfolio cash sleeve, and highly reflexive when yield is attractive. If a protocol can offer a credible stable-value instrument with high risk-adjusted yield, it can pull TVL from idle stablecoins, lending markets, CEX yield products, and other delta-neutral issuers. If the yield is subsidized, opaque, or fragile, the same product can unwind quickly because users do not owe it loyalty. Stablecoin users are ruthless capital allocators. A 100 bps yield edge can attract deposits; one redemption scare can erase them.
+
+Avant's current scale is large enough to analyze but small enough that liquidity quality remains a central question. Parent TVL of roughly $126.9M on [DeFiLlama](https://defillama.com/protocol/avant-protocol) is meaningful, but it is not the same as billions of dollars of battle-tested liquidity. The June 28, 2026 [CoinGecko page for SAVUSD](https://www.coingecko.com/en/coins/avant) showed a live market identity for the staked token and indicated a price near $1.15 with market cap and FDV around the high-eight-figure range. The [CoinGecko avUSD page](https://www.coingecko.com/en/coins/avant-usd) provides a separate market identity for the base token. Those pages are useful identity and market anchors, but secondary trading volume and displayed market cap are not enough to prove redemption capacity.
+
+The project is therefore investment relevant for two different audiences. For DeFi users, the question is whether savUSD yield compensates for the extra risk over USDC, USDT, sUSDS, sUSDe, USDY, or lending-market deposits. For token researchers, the question is whether Avant can become a strategically important stable-value layer in Avalanche and adjacent DeFi ecosystems. The two questions overlap but are not identical. A user can earn attractive yield from savUSD while the protocol's long-term strategic value remains uncertain. Conversely, the protocol can grow TVL while marginal savUSD holders discover that their risk-adjusted return is not compelling after liquidity, redemption, and smart-contract risk.
+
+## Research Question and Investment Relevance
+
+The core research question is: Is Avant building durable stable-value infrastructure with defensible yield distribution, or is savUSD primarily a high-beta wrapper around crowded market-neutral DeFi yield?
+
+I frame Avant as a "yield-stablecoin structured product" rather than a simple stablecoin issuer. That distinction changes the diligence standard. A simple fiat-backed stablecoin is mostly judged by reserves, attestations, redemption, legal structure, and distribution. A decentralized overcollateralized stablecoin is judged by collateral ratios, liquidation design, governance, and oracle integrity. A synthetic-dollar or yield-stablecoin product must be judged by all of those plus strategy risk: where the yield comes from, who executes it, what happens when funding compresses, what counterparties are used, how losses are absorbed, how redemptions are sequenced, and whether the secondary token price can drift from the underlying value.
+
+The investable version of the bull case is not "Avant has a higher APY." APY is the most gameable number in the entire sector. The real bull case is that Avant can create a stable-value instrument whose yield comes from diversified, explainable, risk-managed strategies and whose integrations make it useful beyond mercenary yield farming. That would mean savUSD becomes a cash-management primitive: useful as collateral, useful in lending, useful in liquidity pools, and reliable enough that users do not need to exit whenever a competitor posts a higher headline rate. If that happens, the protocol can accumulate sticky TVL, earn fees, and possibly support future governance or incentive structures.
+
+The bear case is that Avant's apparent growth is mostly a function of favorable market conditions and user willingness to underwrite hidden complexity. The docs describe yield generation and security controls, but the system still depends on strategy execution and external markets. Market-neutral trades can fail through basis compression, exchange stress, liquidity squeezes, collateral slippage, oracle anomalies, smart-contract bugs, bridge issues, or manager error. The protocol can look healthy when funding rates are favorable and deposits are growing. It is tested when yield falls, redemptions rise, and secondary liquidity has to clear real size. The stable-value label does not eliminate that tail; it can make users underestimate it.
+
+For portfolio classification, I would not bucket savUSD with ordinary liquid tokens. It belongs in a monitored yield sleeve, closer to sUSDe, sUSDS, USDY, USDM, Aave stablecoin deposits, or on-chain basis products. The important output is not a price target. It is a risk budget. How much capital can be placed in a product where the best outcome is yield plus principal preservation, while the downside includes depeg, delayed redemption, strategy impairment, and liquidity discount? My answer today is: only sized as an experimental or tactical yield allocation, not a core stablecoin substitute.
+
+The main debate this memo resolves is whether the previous "watchlist unless usage, liquidity, and token value capture improve" line should be upgraded. My answer is partially. Usage evidence has improved materially: DeFiLlama coverage and TVL scale are no longer trivial. Mechanism evidence is also stronger because the official docs provide more detail than the old memo captured. But token value capture is still not clean, and liquidity data remains weak relative to the psychological promise of a stable-value token. The correct upgrade is therefore from "thin watchlist" to "real but risky watchlist." That is progress, not a buy signal.
+
+## Source Package and Evidence Map
+
+The source base is broad enough for full research, but uneven across evidence lanes. Official sources are strongest for identity, token taxonomy, risk disclosures, contract addresses, audits, and the claimed security model. Data providers are strongest for TVL and market identity. They are weaker for protocol revenue, realized strategy PnL, redemption queues, and holder concentration. That asymmetry is central to the confidence score.
+
+| Evidence lane | Key sources | What they support | Open gap |
+|---|---|---|---|
+| Identity | [Official site](https://www.avantprotocol.com/), [docs](https://docs.avantprotocol.com/), [core tokens](https://docs.avantprotocol.com/overview/core-tokens), [contract addresses](https://docs.avantprotocol.com/security/contract-addresses) | Avant token family, chains, contract identity, product taxonomy | Cross-chain supply needs ongoing explorer reconciliation |
+| Mechanism | [Yield generation](https://docs.avantprotocol.com/yield-strategies-and-revenue/yield-generation), [yield distribution](https://docs.avantprotocol.com/yield-strategies-and-revenue/yield-distribution), [protocol revenue and fees](https://docs.avantprotocol.com/yield-strategies-and-revenue/protocol-revenue-and-fees), [APY metrics](https://docs.avantprotocol.com/yield-strategies-and-revenue/apy-metrics) | avUSD to savUSD flow, strategy yield, distribution model, fee logic | Realized net PnL by strategy and stress-period performance are not fully public |
+| Traction | [DeFiLlama parent](https://defillama.com/protocol/avant-protocol), [DeFiLlama avUSD](https://defillama.com/protocol/avant-avusd), [DeFiLlama avBTC](https://defillama.com/protocol/avant-avbtc), [RWA.xyz avUSD](https://app.rwa.xyz/assets/avUSD) | TVL scale, chain split, asset tracking, third-party protocol visibility | User retention, redemption volume, and cohort behavior are not disclosed |
+| Market data | [CoinGecko SAVUSD](https://www.coingecko.com/en/coins/avant), [CoinGecko AVUSD](https://www.coingecko.com/en/coins/avant-usd), [Coinbase AVUSD](https://www.coinbase.com/price/avant-usd), [Kraken AVUSD](https://www.kraken.com/prices/avant-usd) | Market identity, displayed price, supply, market cap, exchange/price pages | Live API access was unreliable during this refresh; volume depth remains thin |
+| Security/risk | [Audits](https://docs.avantprotocol.com/security/audits), [fund protection layers](https://docs.avantprotocol.com/security/fund-protection-layers), [reserve fund](https://docs.avantprotocol.com/security/reserve-fund), [risk management](https://docs.avantprotocol.com/security/risk-management), [risks](https://docs.avantprotocol.com/legal-and-risk/risks) | Audit surface, reserves, operational risk controls, disclosed risk categories | Audit scope does not equal strategy solvency or redemption guarantee |
+| Team/funding | [The Block funding report](https://www.theblock.co/post/328512/avant-protocol-ethena-like-seed-funding), [FinSMEs funding note](https://www.finsmes.com/2024/11/avant-raises-6-5m-in-seed-funding.html), [RootData profile](https://www.rootdata.com/projects/detail/Avant?k=MTUxODY%3D) | $6.5M seed, $25M reported valuation, founder and backer context | Current treasury runway and governance structure are not fully disclosed |
+
+## Architecture/Product Mechanism
+
+Avant's mechanism can be described as a four-layer stack: token issuance, staking/yield accounting, strategy allocation, and protection/risk management. Each layer has a different failure mode. A user who only sees the savUSD balance sees one token. Under the hood, that token is a claim on a system of stablecoin deposits, strategy execution, contracts, controls, and secondary liquidity.
+
+The first layer is issuance. The base asset is avUSD. The [core token documentation](https://docs.avantprotocol.com/overview/core-tokens) describes avUSD as the stable-value token. In a simple user flow, the user brings accepted stable assets or acquires avUSD in a market, then either holds avUSD as a non-yielding stable-value token or stakes into savUSD to receive yield exposure. The docs also show that the token family is not limited to one chain or one asset. The [contract address page](https://docs.avantprotocol.com/security/contract-addresses) lists Avalanche and Ethereum addresses for avUSD and savUSD, plus the related BTC products. That matters because cross-chain supply and wrappers introduce extra reconciliation work. A single "market cap" number can be less reliable than the underlying contract inventory.
+
+The second layer is staking and yield accounting. savUSD is the yield-bearing version of avUSD. The intuitive model is similar to other staked receipt tokens: the wrapper should represent avUSD plus accumulated yield, so its exchange value can be above $1 even though the underlying accounting unit is a stable-value dollar. That is why a CoinGecko price near $1.15 for SAVUSD is not automatically a depeg. It can reflect accumulated value inside the wrapper. The more important question is whether the wrapper is redeemable into expected underlying value and whether secondary markets price that claim with enough depth.
+
+The third layer is yield generation. Avant's [yield generation page](https://docs.avantprotocol.com/yield-strategies-and-revenue/yield-generation) and related [strategy address page](https://docs.avantprotocol.com/yield-strategies-and-revenue/strategy-addresses) describe a strategy-driven system rather than a passive reserve. The strategy logic includes market-neutral yield. The implication is that savUSD holders are indirectly underwriting the manager's ability to earn returns without taking unacceptable directional exposure. A market-neutral label is not a guarantee. A delta-neutral or basis-style portfolio can lose money if funding reverses, collateral is impaired, hedges fail to execute, exchanges halt withdrawals, lending venues suffer bad debt, or assets become illiquid during stress. The correct diligence question is not whether a strategy is directionally hedged; it is whether the hedge survives the exact conditions in which depositors will want to redeem.
+
+The fourth layer is risk protection. Avant's docs include pages for [fund protection layers](https://docs.avantprotocol.com/security/fund-protection-layers), [reserve fund](https://docs.avantprotocol.com/security/reserve-fund), [risk management](https://docs.avantprotocol.com/security/risk-management), [operational security](https://docs.avantprotocol.com/security/operational-security), and [security partners](https://docs.avantprotocol.com/security/security-partners). This is a positive sign because the team is not pretending risk does not exist. However, protection layers must be judged by scope. Audits reduce smart-contract risk but do not eliminate economic risk. Reserves can buffer losses but only to the extent they are funded, liquid, and controlled in a way that prioritizes tokenholders. Security partners can improve monitoring but cannot make a strategy risk-free. Operational controls can reduce key-person and admin risk but cannot fully remove discretionary governance risk.
+
+The product family also includes avUSDx, described in earlier material as a boosted junior tranche. The existence of a junior or boosted tranche is conceptually important because it suggests the protocol may route risk and return across different capital positions. A senior token such as savUSD should not be evaluated in isolation if a junior tranche absorbs or amplifies part of the loss/yield distribution. The question is whether the tranching is actually sized and documented well enough for users to understand who is first-loss, who receives excess yield, and what happens when strategy returns are negative. If the junior tranche is small, inactive, or thinly traded, it may not provide meaningful protection to the senior sleeve.
+
+The most useful mental model is a balance sheet. Assets include stablecoin collateral, deployed strategy positions, reserve assets, and possibly receivables or on-chain claims. Liabilities include avUSD and savUSD redemption claims. Equity-like buffers include protocol reserves, junior tranches, retained fees, and any external capital the protocol can use to absorb losses. The spread between strategy returns and tokenholder yield/fees is the economic engine. The system is healthy when assets are liquid, strategies are profitable, reserves are adequate, and redemptions are orderly. It is fragile when assets are hard to unwind, APY is maintained for marketing reasons, reserves are thin, or deposits grow faster than risk controls.
+
+## Market Intelligence and Traction
+
+The June 28, 2026 data picture is better than the old memo but still requires reconciliation. [DeFiLlama](https://defillama.com/protocol/avant-protocol) showed Avant Protocol parent TVL around $126.9M. The API snapshot I pulled during this refresh showed roughly $112.4M on Avalanche and $14.5M on Ethereum. [Avant avUSD](https://defillama.com/protocol/avant-avusd) showed about $106.2M of TVL, while [Avant avBTC](https://defillama.com/protocol/avant-avbtc) showed about $6.2M. The remaining difference between parent TVL and those two sleeves appears to come from other Avant products such as avETH or cross-chain components, but I am not treating that difference as fee-generating revenue without a cleaner breakdown.
+
+Market data is less clean than TVL data. The [CoinGecko SAVUSD page](https://www.coingecko.com/en/coins/avant) provides the primary market identity used by the old memo and still anchors the staked token. The older snapshot in the existing report showed SAVUSD near $1.15, around $87.7M market cap/FDV, roughly 75.96M circulating and total supply, and extremely low 24h token volume. The live page should be used for execution, but the important analytical point remains: displayed market cap can look large while secondary trading volume is thin. That is normal for a staked receipt token, but it lowers confidence in price discovery and exit liquidity.
+
+The base token has its own [CoinGecko AVUSD page](https://www.coingecko.com/en/coins/avant-usd), and there are also price pages on [Coinbase](https://www.coinbase.com/price/avant-usd) and [Kraken](https://www.kraken.com/prices/avant-usd). These pages help confirm that avUSD is recognized by market-data providers, but they do not substitute for direct redemption data. A stable-value token can trade near $1 on light volume while primary-market mint/redeem capacity is the true source of stability. For stablecoins and yield-bearing stablecoins, the hierarchy is redemption first, deep secondary liquidity second, market-data pages third. Avant has the third and some evidence of the second; the first still needs clearer public reporting.
+
+| Metric | June 28, 2026 refreshed read | Source | Interpretation |
+|---|---:|---|---|
+| Parent TVL | About $126.9M | [DeFiLlama Avant Protocol](https://defillama.com/protocol/avant-protocol) | Meaningful live scale for a young yield-stablecoin protocol |
+| Avalanche TVL in parent API | About $112.4M | [DeFiLlama Avant Protocol](https://defillama.com/protocol/avant-protocol) | Avalanche remains the core venue |
+| Ethereum TVL in parent API | About $14.5M | [DeFiLlama Avant Protocol](https://defillama.com/protocol/avant-protocol) | Cross-chain expansion is visible but smaller |
+| avUSD TVL | About $106.2M | [DeFiLlama avUSD](https://defillama.com/protocol/avant-avusd) | Main asset sleeve and the core of the thesis |
+| avBTC TVL | About $6.2M | [DeFiLlama avBTC](https://defillama.com/protocol/avant-avbtc) | Product extension exists but is not the main risk budget |
+| SAVUSD market identity | Live CoinGecko page; older snapshot near $1.15 and about $87.7M MC/FDV | [CoinGecko SAVUSD](https://www.coingecko.com/en/coins/avant) | Useful identity anchor; volume depth must be checked live |
+| AVUSD market identity | Separate market page | [CoinGecko AVUSD](https://www.coingecko.com/en/coins/avant-usd) | Base token should be monitored separately from savUSD |
+| On-chain identity | Avalanche and Ethereum contract list | [Avant contract addresses](https://docs.avantprotocol.com/security/contract-addresses) | Contract-level reconciliation matters more than a single displayed supply number |
+
+The growth quality question is unresolved. TVL shows that users are willing to deposit or hold Avant assets. It does not prove that the product is sticky, that yield is recurring, or that redemptions would remain smooth in stress. The most useful missing data would be a public dashboard with daily deposits, redemptions, net flows, strategy allocation, realized PnL, reserve balance, outstanding avUSD/savUSD by chain, and secondary liquidity depth. RWA.xyz's [avUSD page](https://app.rwa.xyz/assets/avUSD) is helpful as an independent asset tracker, but I would still prefer protocol-native reporting that reconciles supply, reserves, and strategy assets in one place.
+
+The fee/revenue picture is also incomplete. Avant's docs include a [protocol revenue and fees](https://docs.avantprotocol.com/yield-strategies-and-revenue/protocol-revenue-and-fees) page, but DeFiLlama did not return clean daily fee/revenue series in the API snapshot I pulled for this refresh. That means valuation cannot rely on revenue multiples. If Avant later publishes recurring protocol revenue, a share of strategy spread, or a fee schedule with historical realized numbers, the memo can be upgraded. Today, the stronger evidence is TVL and product documentation; the weaker evidence is cash-flow visibility.
 
 ## Source Conflict Matrix
 
-| Metric | Surf snapshot | Cross-check source | Working interpretation | Risk |
-|---|---:|---|---|---|
-| Valuation | $87.68M MC / $87.68M FDV | [CoinGecko](https://www.coingecko.com/en/coins/avant) live page | Dated snapshot is useful for research, not execution | Medium |
-| Supply | 75.96M circulating / 75.96M total | Token contract/explorer should be checked before sizing | Dilution or bridge assumptions can change the token view | Medium |
-| Liquidity | $3.68 24h volume | Exchange order books and DEX pools | Token volume does not prove organic protocol usage | Medium |
-| Usage | Not fully quantified in this pass | Official dashboards, docs, GitHub, Dune/DefiLlama if available | Upgrade only when usage confirms the narrative | High |
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+|---|---:|---:|---:|---|---|
+| Parent TVL | DeFiLlama parent showed about $126.9M on June 28, 2026 | Product-level DeFiLlama pages sum to less than parent TVL | Official docs list multiple products and chains | Use DeFiLlama parent for total protocol scale, but product sleeves need separate tracking | Medium |
+| avUSD scale | DeFiLlama avUSD showed about $106.2M | RWA.xyz tracks avUSD as a separate asset | CoinGecko AVUSD shows a market-data token page | avUSD is the main measurable sleeve; market cap and TVL may not be identical | Medium |
+| savUSD supply / market cap | CoinGecko SAVUSD page gives market identity and displayed capitalization | Snowtrace contract gives token-level on-chain data for Avalanche SAVUSD | Official docs list contracts across chains | Treat displayed market cap as approximate until cross-chain supply is reconciled | Medium-High |
+| SAVUSD price | CoinGecko historically showed about $1.15 in the prior June 28 snapshot | Secondary markets may be thin | savUSD should accrete yield relative to avUSD | Price above $1 can be normal for a yield wrapper, but thin markets can misprice exits | Medium |
+| Liquidity | Old snapshot showed very low 24h token volume | DEX/exchange pages must be checked live | Primary redemption may matter more than secondary volume | Low secondary volume does not kill the product, but it makes urgent exit risk higher | High |
+| Fees/revenue | Official docs describe fees and revenue mechanics | DeFiLlama API snapshot did not provide clean daily fee/revenue | No audited income statement found | Do not use revenue multiples yet | High |
+| Security | Avant lists audits and security partners | DeFiLlama avUSD records audits count for the avUSD page | Audit reports have scope limits | Audits improve confidence in contracts, not in strategy solvency | Medium |
+| Funding | The Block reported $6.5M seed at $25M post-money valuation | FinSMEs also reported $6.5M seed funding | RootData lists total raised | Funding is credible enough for team runway context, not enough to infer token value | Low-Medium |
 
-## Economics and Value Capture
+The main conflict is not that sources disagree wildly. It is that each source measures a different object. DeFiLlama measures TVL. CoinGecko measures displayed market data. Snowtrace measures contract-level token data on a chain. Official docs describe intended mechanics. None of those alone gives a complete solvency or redemption picture. For a yield stablecoin, the "truth" is the reconciliation of all four.
 
-The positive case is that Avalanche stable-value and yield-token protocol creates recurring activity and that SAVUSD captures part of it through fees, staking, governance, access, burns, collateral, or incentives. The weak case is that the product can grow while SAVUSD remains only a rewards or governance asset. For this reason, I would track usage and token sinks before treating SAVUSD as more than watchlist exposure.
+## Economics/Value Capture
+
+Avant's economics start with user demand for yield on stable-value assets. Users bring capital because they want a higher return than idle stablecoins or because they want exposure to a managed market-neutral strategy without operational overhead. The protocol can capture value from fees, strategy spread, staking mechanics, and possibly future incentive or governance systems. The user receives yield through savUSD. The protocol receives the ability to scale assets, earn fees, deepen integrations, and build a brand around stable-value yield.
+
+The cleanest value capture today accrues to savUSD holders as yield, not to an external tokenholder. That is a crucial distinction. If a user buys or mints savUSD, the target return is the yield embedded in the wrapper. If the yield is sustainable and redemptions are reliable, the holder benefits. But this is not the same as owning equity in Avant or a governance token with explicit fee rights. The protocol can become more successful while savUSD remains a capped-upside instrument whose best outcome is principal preservation plus yield. That is not bad; it is simply a different investment profile.
+
+Who pays? The ultimate source of yield is the strategy layer. Depending on allocation, yield can come from basis trades, lending markets, liquidity positions, collateral returns, and other market-neutral opportunities. Users effectively delegate strategy selection and operation to Avant and its partners. The protocol may retain some spread or fee. The user gets the remainder through savUSD yield. If gross strategy yield is high, both users and the protocol can benefit. If gross yield compresses, the system must either lower user APY, subsidize yield, take more risk, or accept lower protocol economics. The choice among those options tells investors a lot about management quality.
+
+Who earns? savUSD holders earn the visible yield. Strategy operators and partners may earn management or performance economics. Avant may earn fees or spread. Liquidity providers may earn DEX fees or incentives. Integrators may earn lending or collateral demand. The risk is that the system becomes a competition for the same yield pool. If most of the economics must be passed to savUSD holders to retain deposits, protocol-level value capture may be low. If the protocol retains too much, users can leave for Ethena, Sky, Ondo, Mountain, Aave, or simple T-bill proxies. Sustainable economics require a balance between competitive user yield and protocol margin.
+
+Who subsidizes? This is the most important question for any yield product. If savUSD yield is fully funded by recurring, realized, risk-managed strategy returns, it is economically healthier. If yield is partly subsidized by points, token incentives, junior tranche dilution, temporary grants, or treasury support, then headline APY overstates durability. Avant's docs explain yield and fees, but the public data I found does not yet provide a clean realized-PnL history by source. That does not mean yield is fake. It means confidence should be moderate rather than high.
+
+The strongest value-capture argument is that Avant can become a DeFi-native yield allocator. If the team can route capital across multiple strategies, keep risk transparent, and maintain stable-value credibility, then TVL itself becomes a distribution advantage. Integrations can create switching costs. Lending markets can accept avUSD or savUSD collateral. Liquidity pools can deepen. Wallets and dashboards can list the tokens. Strategy partners may prefer a growing protocol with sticky capital. In that world, value capture does not need to come from one governance token; it comes from the protocol becoming a trusted asset issuer.
+
+The strongest anti-value-capture argument is that stablecoin users are mercenary and yield is commoditized. If Avant's yield is not materially better after risk, users can rotate away. If Ethena, Sky, Aave, Ondo, or CEX products offer simpler risk for similar yield, Avant has to compete on either APY or ecosystem integration. Competing on APY alone is dangerous because it can push a protocol toward hidden leverage, less liquid strategies, or aggressive incentive design. The long-term winner in this sector is not the protocol with the highest yield in a calm market. It is the protocol whose yield survives a bad market without breaking redemption confidence.
+
+## Tokenomics/Capital Structure
+
+savUSD is a yield-bearing receipt token, so normal tokenomics categories such as max supply, emissions, team unlocks, and governance dilution are less relevant than asset-liability structure. The supply of savUSD should expand or contract with user deposits, staking, redemptions, and cross-chain movements. A growing supply is not automatically dilution; it can be a sign of more deposits. A shrinking supply is not automatically bearish; it can reflect users exiting a strategy or rotating across wrappers. The key is whether supply growth is matched by high-quality assets and whether supply contraction can be serviced without discounts.
+
+The base capital structure is closer to a managed fund or structured note than to a fixed-supply token. avUSD and savUSD are liabilities of the system in an economic sense, even if legally the docs define them differently. Assets backing them include stablecoins, strategy positions, and protocol reserves. A reserve fund can act as an equity buffer if it is funded and accessible. A junior tranche such as avUSDx can potentially absorb more risk or receive more yield, but its protective value depends on size, rules, and actual capital at risk. If junior capital is small relative to senior liabilities, it is not a robust shock absorber.
+
+The [contract address list](https://docs.avantprotocol.com/security/contract-addresses) is important because it shows multiple contracts across Avalanche and Ethereum. For tokenomics, that means supply analysis should be contract-level. A single data-provider number can miss bridged wrappers, strategy-held balances, treasury-controlled addresses, or cross-chain representations. Explorer links such as [Snowtrace for SAVUSD](https://snowtrace.io/token/0x06d47F3fb376649c3A9Dafe069B3D6E35572219E) and [Snowtrace for AVUSD](https://snowtrace.io/token/0x24dE8771bC5DdB3362Db529Fc3358F2df3A0E346) are useful monitoring tools, but they must be combined with Ethereum explorers and official contract lists for a full supply picture.
+
+I do not assign a traditional FDV target to savUSD. The token is supposed to behave like a yield-bearing stable-value claim, not a venture token. If a market-data page shows FDV equal to market cap, that mostly means the token supply is fully reflected in the visible data provider at that time. It does not tell us whether the asset is cheap or expensive. The relevant valuation metrics are yield spread over safer alternatives, TVL growth, reserve coverage, liquidity depth, redemption reliability, realized strategy drawdown, and protocol fee capture.
+
+If Avant later launches or emphasizes a separate AVANT governance token, the analysis would need a new tokenomics section covering allocation, vesting, emissions, vote escrow, fee rights, and governance power. Some third-party funding coverage in 2024 discussed future governance plans, but this memo does not treat a non-central or not-clearly-live governance token as the investment object. The current object is savUSD. That keeps the analysis disciplined: the upside is yield; the downside is impairment or liquidity discount.
 
 ## Team, Funding, and Governance
 
-Surf lists reported funding of $6.50M. Team snapshot: Rhett Shipp (Founder). Governance/admin-key details were not fully verified in this batch, so smart-contract permissions, multisig controls, unlock schedules, and foundation treasury movements remain follow-up items.
+The team and funding evidence is credible but not exhaustive. [The Block](https://www.theblock.co/post/328512/avant-protocol-ethena-like-seed-funding) reported a $6.5M seed round at a $25M post-money valuation in November 2024. [FinSMEs](https://www.finsmes.com/2024/11/avant-raises-6-5m-in-seed-funding.html) also reported the $6.5M seed and described Avant as the company behind avUSD and savUSD. [RootData](https://www.rootdata.com/projects/detail/Avant?k=MTUxODY%3D) lists Avant as a decentralized stablecoin protocol and identifies the same funding scale. The founder context matters because Rhett Shipp previously worked on Gravita, a stablecoin-related DeFi project. That gives Avant some category credibility, though it does not eliminate execution risk.
+
+The backer list is mixed. Superlayer and Avalaunch are relevant ecosystem investors, and GoGoPool is an Avalanche-aligned name. This is not the same signaling power as a top-tier global venture syndicate, but for an Avalanche-origin DeFi product it is meaningful. The reported $25M post-money valuation was modest relative to the potential TVL Avant now manages, but equity valuation does not directly transfer to savUSD holders. A depositor cares more about risk controls than startup valuation. A token investor in a future governance asset would care more about cap table, emissions, and fee rights.
+
+Governance risk remains a major diligence item. Avant's [operational security](https://docs.avantprotocol.com/security/operational-security), [risk management](https://docs.avantprotocol.com/security/risk-management), and [fund protection](https://docs.avantprotocol.com/security/fund-protection-layers) pages indicate that the team has thought about controls. But for capital allocation I still want more detail on multisig signers, timelocks, emergency pause powers, upgradeability, strategy approval, redemption prioritization, reserve governance, and partner replacement procedures. In stablecoin systems, admin power can be either a safety feature or a centralization risk. It is a safety feature when used transparently to pause exploits or manage orderly wind-downs. It is a risk when it allows unexpected rule changes, discretionary redemptions, or opaque strategy moves.
+
+The governance bar should be high because users are not buying a meme coin. They are parking stable-value capital. The more the product resembles cash management, the more users deserve institutional-grade reporting. Avant does not need to become a bank, but it does need to publish enough operational detail for users to understand who can move funds, who can change strategies, who can pause contracts, and how tokenholders are treated in a loss event.
 
 ## Competitive Landscape
 
-| Comparison set | Why it matters |
-|---|---|
-| Ethena, sDAI, Aave GHO, Ondo yield products, and other yield-bearing stablecoins | These alternatives compete for the same users, liquidity, developers, or narrative budget |
-| CEX liquidity and passive beta | Major venue access can support price without proving product traction |
-| Native ecosystem substitutes | Users may prefer apps integrated directly into larger ecosystems |
+Avant competes in a crowded but still expanding category. The direct competitors are yield-bearing stable-value assets and synthetic dollars. The indirect competitors are plain stablecoins, DeFi lending deposits, tokenized T-bill products, CEX earn products, and on-chain basis strategies that users can execute themselves. The competitive question is not "does Avant have a product?" It clearly does. The question is whether Avant has a durable reason for users to choose it when capital can move in minutes.
 
-## Risk Matrix
+| Competitor / substitute | Core product | Avant edge | Avant weakness |
+|---|---|---|---|
+| [Ethena](https://defillama.com/protocol/ethena) / USDe and sUSDe | Large synthetic dollar using delta-neutral and basis-style strategies | Avant can differentiate through Avalanche-native distribution and diversified DeFi strategy design | Ethena has far greater scale, liquidity, brand, integrations, and market attention |
+| [Sky](https://sky.money/) / USDS and sUSDS | Maker/Sky stablecoin and savings system | Avant may offer higher strategy-driven yield and more flexible DeFi-native products | Sky has deeper history, governance, collateral infrastructure, and institutional mindshare |
+| [Ondo USDY](https://ondo.finance/usdy) | Tokenized yield product tied to real-world yield | Avant is more crypto-native and composable in DeFi | Ondo benefits from RWA narrative, legal packaging, and institutional distribution |
+| [Mountain USDM](https://mountainprotocol.com/) | Yield-bearing stablecoin with reserve-yield orientation | Avant can offer differentiated market-neutral returns | USDM-style products can be simpler for users who prefer reserve yield over strategy yield |
+| Aave stablecoin / lending deposits | DeFi money-market yield and GHO ecosystem | Avant can abstract strategy management into one receipt token | Aave has deeper liquidity, battle-tested markets, and broader collateral integrations |
+| Plain USDC / USDT | Liquidity and stability | Avant offers yield | Plain stablecoins have simpler risk, deeper liquidity, and clearer redemption expectations |
 
-| Risk | Severity | Why it matters |
-|---|---|---|
-| yield source, tranche, and redemption liquidity risk | High | This is the main path where the thesis fails |
-| Token value capture | High | Product adoption does not automatically accrue to token holders |
-| Liquidity quality | Medium | 24h volume can be incentive-driven or venue-concentrated |
-| Competition | Medium | The category has credible substitutes |
-| Execution and disclosure | Medium | Missing dashboards, audits, or unlock data should lower position sizing |
+Avant's strongest competitive angle is not "we are Ethena on Avalanche." That would be a weak copycat thesis. The better angle is "we can become a DeFi-native stable-value allocator with transparent contracts, diversified strategies, and ecosystem-specific integrations." If Avalanche DeFi needs a native yield dollar and Avant becomes the default, the protocol can win a regional niche even while Ethena dominates the global synthetic-dollar conversation. Ecosystem specialization can matter because integrations, incentives, liquidity pools, and user habits are local before they are global.
+
+The weakness is that ecosystem specialization can also cap scale. Stablecoin liquidity tends to consolidate around the deepest venues. Users want the asset that is accepted everywhere, not just the asset that works in one ecosystem. Avant's move into Ethereum contracts helps, but Ethereum distribution is expensive and competitive. To win beyond Avalanche, Avant must prove that its yield and risk controls justify attention in a market where users already have sUSDe, sUSDS, USDC lending, USDY, USDM, and CEX yield products.
+
+Switching costs are moderate to low. If savUSD is integrated as collateral in lending markets or embedded in structured strategies, users may stay. If it is mostly a wallet-held yield token, users can rotate quickly. That makes monitoring integrations more important than monitoring headline APY. A deep lending integration that creates borrowing demand is more valuable than a temporary yield spike.
+
+## Catalysts
+
+Avant has several catalysts that can improve the investment view, but they should be separated into fundamental catalysts and narrative catalysts. Fundamental catalysts improve solvency, liquidity, usage, or value capture. Narrative catalysts improve attention and may be tradable, but they do not necessarily improve the risk-adjusted yield case.
+
+The first fundamental catalyst is better reporting. A live dashboard that reconciles avUSD supply, savUSD supply, chain split, reserve balance, strategy allocation, realized PnL, fees, deposits, redemptions, and secondary liquidity would materially improve confidence. The docs already provide many individual pages, including [APY metrics](https://docs.avantprotocol.com/yield-strategies-and-revenue/apy-metrics) and [strategy addresses](https://docs.avantprotocol.com/yield-strategies-and-revenue/strategy-addresses). The next step is a compact investor-grade dashboard that makes source conflicts easy to resolve.
+
+The second catalyst is liquidity expansion. More deep pools, more lending-market integrations, and more exchange venues would reduce the risk that savUSD holders face a large discount during exits. Liquidity should be measured by slippage for meaningful trade sizes, not by number of listings. A stable-value product with many thin markets is still fragile.
+
+The third catalyst is stress-tested yield. If Avant can maintain orderly redemptions and reasonable savUSD pricing through a period of falling funding rates, market drawdown, or ecosystem outflows, the confidence score should rise. Calm-market yield is easy to market. Stress-market survival is the real proof.
+
+The fourth catalyst is protocol economics disclosure. If Avant publishes recurring fees or retained spread, then the project can be evaluated with a more normal business lens. Today the report uses an importance and risk framework because revenue data is not clean enough for a credible multiple.
+
+The fifth catalyst is ecosystem adoption. Avalanche-native integrations, Ethereum expansion, and any institutional or RWA-style distribution could expand the addressable market. However, partnerships should be discounted unless they produce measurable TVL, volume, borrow demand, or fee growth. In this category, announcement quality matters less than retained capital.
+
+## Valuation / Importance Framework
+
+Traditional valuation is not appropriate for savUSD. A yield-bearing stable-value token should not be bought because one expects a 5x price move. It should be held because its yield and utility compensate for its risk. The correct framework is therefore a risk-adjusted yield and strategic-importance framework.
+
+The first metric is yield spread over safer alternatives. If savUSD yields only slightly more than USDC lending, sUSDS, or tokenized T-bill products, the extra strategy and liquidity risk may not be worth it. If the spread is large and demonstrably supported by realized strategy returns rather than subsidies, a controlled allocation can be rational. The spread must be measured net of expected liquidity cost, smart-contract risk, depeg risk, and monitoring burden. A 10% headline APY is not really 10% if a user needs to price a 3% tail loss probability and uncertain redemption liquidity.
+
+The second metric is TVL durability. Parent TVL of about $126.9M is meaningful, but durability matters more than peak. If TVL grows slowly while APY normalizes, that is bullish because it suggests organic demand. If TVL spikes only when yield is promotional and leaves when yield falls, the protocol is a yield farm. DeFiLlama trend lines should be checked monthly, with special attention to drawdowns after market stress.
+
+The third metric is liquidity coverage. For a stable-value token, a useful question is: how much can exit on secondary markets or through redemption without moving price materially? The old snapshot's extremely low 24h SAVUSD volume makes this a key risk. Even if primary redemption is available, users often rely on secondary liquidity during stress. If liquidity deepens, the asset becomes more useful as collateral and cash management. If liquidity stays thin, allocation size must stay small.
+
+The fourth metric is protocol margin. If Avant can retain a stable spread while keeping user yields competitive, it becomes more than a pass-through wrapper. If all economics are competed away to attract deposits, strategic value is lower. Today I cannot calculate a reliable FDV/revenue or TVL/fee multiple because public fee data is not clean enough. That is a gap, not a reason to invent precision.
+
+The fifth metric is reserve and loss absorption. A reserve fund and junior tranche can make the structure safer, but only if their size is material relative to liabilities. The [reserve fund](https://docs.avantprotocol.com/security/reserve-fund) page is therefore an important monitoring source. I would want a reserve-to-liabilities ratio, reserve asset composition, and rules for use. Without those, reserve language is directionally positive but hard to underwrite.
+
+Using this framework, Avant is important enough to track but not yet important enough to treat as a core stablecoin holding. It has crossed the threshold from experiment to real protocol. It has not crossed the threshold from real protocol to low-risk cash equivalent.
+
+## Risks
+
+| Risk | Severity | Evidence / reason | What would reduce it |
+|---|---|---|---|
+| Strategy loss risk | High | Yield comes from managed strategies, not passive reserves | Public realized PnL, allocation caps, stress-period track record |
+| Redemption and liquidity risk | High | Stable-value assets can face exit pressure when confidence drops | Deep pools, transparent redemption queues, reliable primary liquidity |
+| Smart-contract risk | Medium-High | Multiple contracts across chains and strategy modules | Repeated audits, bug bounty, timelocks, limited upgrade authority |
+| Counterparty / venue risk | Medium-High | Market-neutral strategies may require external venues or protocols | Exposure limits, partner transparency, non-custodial routing where possible |
+| Oracle and pricing risk | Medium | avBTC page notes Chainlink as an oracle source; stable-value assets need reliable pricing | Redundant oracles, circuit breakers, public incident playbooks |
+| Stablecoin collateral risk | Medium | USDC/USDT or other stable assets can depeg or face issuer risk | Diversified collateral and clear redemption hierarchy |
+| Governance / admin risk | Medium | Emergency powers can protect or harm users | Public multisig, timelocks, signer transparency, governance process |
+| APY compression | Medium | Basis and market-neutral returns are cyclical | Dynamic APY, honest reporting, no artificial yield maintenance |
+| Competition risk | Medium | Ethena, Sky, Ondo, Mountain, Aave and CEXs compete for stable yield | Better integrations, differentiated risk profile, ecosystem stickiness |
+| Data transparency risk | Medium | Revenue, realized PnL, and redemption metrics are not fully visible | Public dashboard and periodic reports |
+
+The most dangerous failure path is not a hack alone. It is a confidence loop. A rumor, strategy loss, or market shock causes users to exit. Secondary liquidity is thin, so savUSD trades at a discount. The discount creates concern about redemption value. More users exit. Strategy positions have to be unwound into bad markets. If reserves are insufficient or redemption rules are unclear, the stable-value narrative breaks. This is the same reflexive structure that makes stablecoin-like products powerful in growth and fragile in stress.
+
+Regulatory risk is also worth naming. Yield-bearing stable-value products can attract scrutiny because they can resemble interest-bearing dollar products, managed funds, securities, or structured notes depending on jurisdiction and legal design. Avant is DeFi-native, but DeFi-native does not mean regulation-free. A major regulatory action against synthetic dollars, yield stablecoins, or strategy-managed stable assets would affect the entire category.
 
 ## Bull / Base / Bear Scenarios
 
-| Scenario | What must be true | Confirmation metric |
-|---|---|---|
-| Bull | Avant turns category relevance into repeat users, integrations, and measurable token sinks | Usage, revenue/fees, liquidity, and SAVUSD utility all trend higher for two quarters |
-| Base | The project remains liquid and visible but token accrual is only partially proven | Market cap and volume hold while usage data stays mixed |
-| Bear | Narrative, incentives, or listings fade before durable demand appears | Volume, users, and token utility weaken together |
+| Scenario | Probability | 12-24M outcome | What must be true | Confirmation metrics |
+|---|---:|---|---|---|
+| Bull | 25% | Avant becomes a recognized Avalanche/Ethereum yield-stablecoin venue with durable $300M+ TVL and better liquidity | Strategy returns remain positive after APY normalization, integrations deepen, redemptions stay orderly | TVL above $300M, reserve reporting, deep pools, no material depeg, visible fee/revenue data |
+| Base | 50% | Avant remains a useful but niche yield product around current-to-moderately-higher scale | Product works, but liquidity and revenue transparency remain only moderate | TVL holds above $100M, APY competitive but lower, no major incident, limited secondary depth |
+| Bear | 25% | TVL contracts sharply or savUSD trades at a persistent discount after yield compression or stress | Yield falls, users exit, liquidity is thin, reporting fails to reassure | TVL down >50%, secondary discount >2% for multiple days, delayed redemptions, reserve ambiguity |
+
+The bull scenario requires more than high APY. It requires trust. If Avant can publish better reporting and survive a stress cycle, the protocol can graduate from a watchlist yield experiment to a serious stable-value allocation candidate. The base scenario is the most likely: Avant continues operating, TVL fluctuates with yield conditions, and the product remains attractive to active DeFi users but not to conservative stablecoin holders. The bear scenario is not remote because the category itself is reflexive. A thin-liquidity yield stablecoin can move from calm to stressed faster than a normal lending position.
 
 ## Confidence Score
 
 | Dimension | Rating | Notes |
 |---|---|---|
-| Source quality | Medium | Surf, official web anchor, and market pages provide identity and market data |
-| Data consistency | Medium | Market data is usable, but supply/usage needs ongoing cross-checks |
-| Mechanism clarity | Medium | Product narrative is understandable, token accrual needs proof |
-| Value capture | Low to Medium | Upgrade only if token sinks become measurable |
-| Liquidity quality | Medium | $3.68 24h volume is enough for monitoring, not a fundamentals guarantee |
+| Source quality | Medium-High | Official docs are broad; DeFiLlama and market-data pages provide external checks; revenue data remains incomplete |
+| Data consistency | Medium | TVL is clear enough; supply, market cap, volume, and cross-chain token accounting require ongoing reconciliation |
+| Mechanism clarity | Medium-High | Token flow and security pages are understandable; strategy-level PnL and loss waterfall need more detail |
+| Value capture | Medium for savUSD yield, Low-Medium for protocol/token upside | savUSD captures yield, but upside is capped and governance-token economics are not the current object |
+| Liquidity quality | Low-Medium | TVL is meaningful, but secondary SAVUSD trading depth appears thin relative to a stable-value promise |
 
-Overall confidence: Medium for identity and market data; Low to Medium for durable investment quality.
+Overall confidence: Medium. I am more confident in Avant's identity, product reality, and TVL traction than the old memo was. I am less confident in treating savUSD as a low-risk stablecoin substitute. The confidence score would rise if Avant publishes a strong dashboard for redemptions, realized PnL, reserves, and fees; if secondary liquidity deepens; and if the protocol passes a meaningful market stress test without discount or redemption issues.
 
 ## Red-team Check
 
-The strongest bear case is that Avant grows attention or integrations without creating durable demand for SAVUSD. The most gameable metric is headline partnerships or volume without retained users. The token value-capture failure path is product usage that bypasses token sinks. The plausible impairment path is liquidity decline, token unlock pressure, weak usage data, or a better-funded competitor taking category share.
+The strongest reason the thesis could be wrong is that I may be over-weighting complexity risk and under-weighting the protocol's ability to manage it. If Avant's strategy allocation is genuinely conservative, well diversified, and transparently risk-managed, then current TVL may be an early sign of product-market fit rather than a warning sign. In that case, waiting for perfect reporting could miss the early compounding phase of a useful yield primitive.
+
+The most gameable metric is APY. A protocol can show attractive APY through favorable funding, subsidies, temporary incentives, junior tranche economics, or riskier strategy selection. APY tells users what they earned recently; it does not tell them how much hidden tail risk they accepted. The second most gameable metric is TVL. TVL can rise because capital is sticky, but it can also rise because mercenary yield farmers found a better rate. The difference only becomes clear when yield falls or stress appears.
+
+The value-capture failure path is that Avant grows TVL but captures little durable margin. Users receive most of the yield, strategy partners receive economics for execution, and the protocol must keep incentives high to retain deposits. In that world, savUSD holders may still earn yield, but the protocol's strategic value is lower. If a future governance token exists, it could struggle to capture value unless it has explicit rights to fees, risk governance, or emissions control.
+
+The zero or permanent-impairment path is a combined strategy and liquidity event. A strategy loss or counterparty issue reduces asset value. The reserve fund is insufficient or slow to deploy. Redemptions are delayed or discounted. Secondary markets reprice savUSD below expected value. Communications fail to restore confidence. TVL exits faster than the protocol can unwind positions. Even if final recovery is partial, the asset loses its stable-value credibility. Once that trust breaks, rebuilding it is difficult.
 
 ## Monitoring Dashboard
 
-| Metric | Current | Bull threshold | Bear threshold | Source |
+| Metric | Current read on June 28, 2026 | Bull threshold | Bear threshold | Source |
 |---|---:|---:|---:|---|
-| 24h token volume | $3.68 | 3x current level sustained | <25% of current level | Surf / exchanges |
-| FDV / MC | 1.00x | Gap compresses through adoption | Gap widens from unlock pressure | Surf / token unlocks |
-| Product usage | Not quantified here | Public dashboard shows growth | No usage disclosure | Official / Dune / DefiLlama |
-| Token utility | Needs verification | Fees, staking, or burns become material | Utility remains cosmetic | Docs / governance |
+| Parent TVL | About $126.9M | >$300M sustained with no APY subsidy spike | <$65M or >50% drawdown | [DeFiLlama](https://defillama.com/protocol/avant-protocol) |
+| avUSD TVL | About $106.2M | >$225M with deeper liquidity | <$55M or sustained outflows | [DeFiLlama avUSD](https://defillama.com/protocol/avant-avusd) |
+| Chain concentration | Majority on Avalanche | Ethereum and other venues grow without weakening controls | One chain exit creates liquidity stress | [Contract docs](https://docs.avantprotocol.com/security/contract-addresses) |
+| SAVUSD secondary price | Historically around yield-wrapper value above $1 | Stable pricing with tight spreads | >2% discount to implied value for multiple days | [CoinGecko](https://www.coingecko.com/en/coins/avant) |
+| Secondary liquidity | Needs live depth check before sizing | Deep pools and low slippage for six-figure exits | Thin volume during normal markets | CoinGecko / DEX / exchange pages |
+| Reserve coverage | Public docs exist; ratio needs monitoring | Reserve ratio disclosed and rising | Reserve unclear or falling during stress | [Reserve fund](https://docs.avantprotocol.com/security/reserve-fund) |
+| Realized strategy PnL | Not fully disclosed in one dashboard | Monthly reporting by strategy | APY maintained without PnL support | [Yield docs](https://docs.avantprotocol.com/yield-strategies-and-revenue/yield-generation) |
+| Fees/revenue | Not clean enough for multiple | Recurring fees visible on dashboard | No disclosure after scale growth | [Revenue and fees](https://docs.avantprotocol.com/yield-strategies-and-revenue/protocol-revenue-and-fees) |
+| Audit/security status | Audits page and security controls exist | New audits after major upgrades | Upgrade without audit or unclear admin event | [Audits](https://docs.avantprotocol.com/security/audits) |
 
 ## Follow-up Triggers
 
 | Trigger | Why it matters | Action |
 |---|---|---|
-| Major usage dashboard or revenue disclosure | Converts narrative into measurable fundamentals | Reopen and update confidence |
-| Token unlock, migration, or supply revision | Directly changes FDV and dilution risk | Recalculate valuation |
-| Exchange listing/delisting or volume shock | Changes liquidity and reflexivity | Reassess liquidity quality |
-| Security incident, bridge failure, or admin-key event | Permanent impairment risk | Downgrade immediately |
+| Parent TVL falls below $65M or avUSD TVL falls below $55M | Indicates loss of confidence, yield compression, or capital rotation | Reopen and downgrade unless redemptions are orderly and explained |
+| SAVUSD trades at a persistent >2% discount to implied wrapper value | Stable-value credibility is weakening | Check redemption queues, pool depth, reserve fund, and strategy updates immediately |
+| Avant publishes a full supply/reserve/PnL dashboard | Would materially improve source quality | Upgrade confidence if data reconciles with DeFiLlama and explorers |
+| Major audit, exploit, admin-key, bridge, or oracle event | Direct impairment or governance risk | Reassess risk matrix before any new allocation |
+| New deep integration in lending, collateral, or payments with measurable usage | Could turn Avant from yield farm into infrastructure | Upgrade competitive position if usage is retained for two quarters |
 
 ## Final Investment View
 
-Watchlist. Avant has enough market presence to track, but SAVUSD needs stronger evidence of durable usage and token value capture before becoming high-conviction portfolio exposure.
+Avant is real, but savUSD is not a lazy cash substitute. The refreshed report upgrades the project from a short watchlist card to a serious yield-stablecoin memo: the protocol has meaningful TVL, a documented token family, public contracts, security disclosures, and credible funding history. It also has the exact risks that matter in this sector: strategy opacity, APY cyclicality, redemption uncertainty, thin secondary liquidity, cross-chain supply reconciliation, and unclear protocol-level revenue capture.
+
+My final rating is Watchlist / selective yield allocation with Medium confidence. I would consider savUSD only for a small, actively monitored DeFi yield sleeve where the holder understands that the return is compensation for strategy and liquidity risk. I would not count it as equivalent to USDC, USDT, or a conservative cash reserve. I would not underwrite it as a high-upside token either, because savUSD's main upside is yield accrual, not multiple expansion.
+
+The investment view would improve if Avant publishes strong reserve and realized-PnL reporting, grows TVL while APY normalizes, deepens secondary liquidity, and proves redemptions through stress. The view would deteriorate quickly if savUSD trades at a persistent discount, TVL exits faster than liquidity can handle, strategy losses are disclosed late, or governance/admin actions become opaque. Until then, the correct posture is curiosity with tight risk limits: useful protocol, promising niche, not yet a core stable-value allocation.

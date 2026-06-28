@@ -1,0 +1,410 @@
+---
+title: 'USAT USAT: Tether USA Stablecoin, Reserve Quality, and Liquidity Risk'
+publishedAt: '2026-06-28'
+summary: 'USAT is a Tether-supported U.S.-regulated dollar stablecoin issued by Anchorage Digital Bank on Ethereum, with credible primary-source identity, monthly reserve attestations, and roughly $187M circulating supply in the June 28, 2026 snapshot. The base case is useful but narrow: USAT is a watchlist cash instrument for users who need its U.S. regulated Tether rail, not an investment token, because non-client redemption limits, secondary-market liquidity, upgradeable contract controls, reserve-report timing lag, and competition from USDT, USDC, USDG, PYUSD, RLUSD, and USD1 still dominate the risk/reward.'
+slug: 'usat-usat-stablecoin-reserve-liquidity-regulatory-risk'
+category: 'research'
+---
+
+## Pre-screen Decision
+
+Decision: full research.
+
+USAT deserves full-depth coverage because it is not a random same-ticker stablecoin. It is the U.S.-regulated dollar stablecoin that Tether supports for the American market, with issuance handled by Anchorage Digital Bank, N.A. The identity can be resolved through multiple primary sources: Tether's January 27, 2026 [official launch announcement](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/) says USA/USAT is issued by Anchorage Digital Bank; Anchorage's own [launch post](https://www.anchorage.com/insights/anchorage-digital-tether-introduce-usat) says Anchorage Digital Bank issues the token directly; the [USAT official site](https://usat.io/) is linked by both market and issuer sources; and the Ethereum contract at [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) identifies the token as Tether America USD with ticker USAT, contract `0x07041776f5007aca2a54844f50503a18a72a8b68`, and website `usat.io`. This is enough to proceed. It is not a fake identity, ticker collision, or unverifiable shell.
+
+Local duplicate coverage was checked before live market-data work by running `pnpm sync:research:registry -- --check "USAT"`. The registry synced at `356 projects, 213 pending candidates` and returned no local research match for `USAT`. That means a new MDX memo is appropriate, but this task intentionally does not add the project to Research Map cards; the main thread will handle card integration later.
+
+The pre-screen standard is full research rather than quick note for three reasons. First, USAT sits at the intersection of three strategically important narratives: Tether's U.S. market entry, federally supervised stablecoin issuance, and the competition between USDT, USDC, USDG, PYUSD, RLUSD, USD1, and issuer-branded enterprise dollars. Second, USAT has real current market size. The June 28, 2026 snapshot shows roughly `187M` USAT in circulation across [CoinGecko](https://www.coingecko.com/en/coins/usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68), [CoinMarketCap](https://coinmarketcap.com/currencies/tether-usat/), and [DefiLlama](https://defillama.com/stablecoin/usat), not just a press-release asset. Third, the core diligence question is non-trivial: USAT has stronger reserve and issuer documentation than most new stablecoins, but the current public evidence also exposes redemption-access limits, secondary-market dependence for non-clients, no holder yield, upgradeable smart-contract design, and a reserve-attestation lag versus live supply.
+
+The initial verdict is **watchlist / use-case-specific cash instrument, not an investment token**. A dollar stablecoin should not be bought for upside. The right investment question is whether USAT is a reliable dollar rail for a specific user, venue, or treasury workflow. The answer is "credible, but not default." USAT is credible because the issuer trail, reserve attestations, OCC charter context, and Tether distribution support are strong. It is not default because USDC and USDT still dominate liquidity, USAT direct redemption is limited to Anchorage Digital Bank clients, and the latest public reserve report found in this run was for April 30, 2026 while live supply had already risen to roughly $187M by June 28, 2026.
+
+## TL;DR / Executive Summary
+
+USAT is best understood as Tether's regulated U.S. dollar rail, issued by Anchorage Digital Bank rather than by Tether Operations or the offshore USDT issuer. That distinction is the whole product. USDT is the global liquidity dollar; USAT is the U.S.-framework dollar. Tether's launch announcement frames USAT as a dollar-backed stablecoin made for the U.S. federal stablecoin regime under the GENIUS Act, while Anchorage states that the token is issued by its federally regulated bank and is designed for institutions that want a U.S.-issued digital dollar. The official legal and operating language is also clear that USAT is separate from USDT, not legal tender, not backed or guaranteed by the U.S. government, not FDIC/SIPC insured for token holders, and not an interest-bearing investment product.
+
+The current market size is material but still early. On June 28, 2026, CoinGecko showed USAT at about `$0.9982`, market cap and FDV around `$187.14M`, 24h volume around `$1.75M`, circulating and total supply near `187.49M`, and rank around `#176`. Etherscan showed max total supply near `187,485,243.5 USAT`, about `12,159` holders, 24h transfers of only `104`, an onchain market cap near `$187.14M`, and a TransparentUpgradeableProxy contract with no contract security audit submitted on Etherscan. DefiLlama's stablecoin API showed about `$187.13M` circulating supply, all on Ethereum, price around `$0.9981`, and one-month supply around `$157.28M`. CoinMarketCap's page rendered inconsistently through the tool but its crawled metadata showed a near-dollar price and roughly `$1.9M-$2.4M` 24h volume, broadly consistent with the conclusion that USAT is real but still modestly traded relative to its supply.
+
+The reserve evidence is better than the average new stablecoin but not complete enough to remove monitoring risk. Anchorage's [USAT reserve attestations page](https://www.anchorage.com/platform/usat-reserve-attestations) says reserve holdings are disclosed monthly and reports are provided by a Big Four independent third-party accounting firm under AICPA attestation standards. The January 31, 2026 [attestation report](https://learn.anchorage.com/01.31.26_USAT-Stablecoin-Attestation-Report.pdf) showed `17.50M` redeemable tokens and `$17.60M` reserve assets. The March 31 report showed `22.05M` redeemable tokens and `$22.20M` reserve assets. The April 30 [attestation report](https://learn.anchorage.com/04.30.26_USAT_Stablecoin_Attestation_Report%20%28FINAL%29%20signed%205.27.26.pdf) showed `140.85M` redeemable tokens and `$141.18M` reserve assets, including `$13.43M` cash and `$127.75M` reverse repos collateralized by U.S. Treasuries. That is a strong reserve composition for a fiat-backed stablecoin. The risk is timing: by June 28, live supply was roughly `187M`, but the public reserve archive visible in this run had not yet advanced past April. The gap is not evidence of undercollateralization; it is a monitoring issue.
+
+The product mechanism is centralized by design. Anchorage Digital Bank issues and redeems USAT only for its clients, according to the [USAT Policies and Disclosures](https://www.anchorage.com/usat-policies-disclosures). Non-clients can buy or sell USAT only through secondary markets, and Anchorage explicitly says it does not guarantee secondary-market liquidity or pricing. The same policy page says reserves are held in a segregated South Dakota trust, the reserve is intended to meet or exceed outstanding USAT, Anchorage does not lend, pledge, or rehypothecate reserve assets except limited legally permitted circumstances, and Anchorage retains reserve earnings because it is prohibited from paying yield to USAT holders solely for holding or using the token. This design is good for regulatory clarity and bad for users who expect permissionless redemption or yield.
+
+Investment view: **watchlist / operational use only**. USAT can be useful for users who specifically need Tether brand distribution plus U.S.-regulated Anchorage issuance. It should not be treated as a yield asset, equity proxy, or broad replacement for USDC/USDT liquidity. The bull case is that Tether's distribution, Anchorage's charter, Cantor reserve role, and U.S. stablecoin clarity let USAT become a regulated institutional dollar with billions in supply. The base case is that USAT grows into a credible but secondary stablecoin, useful on selected exchanges and institutional rails. The bear case is that liquidity stays thin, direct redemption remains limited, regulatory or service-provider constraints slow adoption, or the market prefers USDC/USDG/PYUSD/RLUSD for regulated U.S. rails and USDT for global liquidity.
+
+## Project Overview
+
+USAT, also styled in official materials as USA, is a U.S.-regulated dollar-backed stablecoin supported by Tether and issued by Anchorage Digital Bank, N.A. The product exists because Tether needed a U.S. domestic stablecoin vehicle that could operate under the new U.S. stablecoin framework without trying to force the global USDT structure into the same box. Tether's January 2026 launch announcement says USAT is purpose-built for the U.S. market and that Anchorage Digital Bank is the issuer. Anchorage says the token brings Tether's stablecoin ecosystem together with Anchorage's bank-grade issuance infrastructure. The result is a two-brand, two-role structure: Tether contributes brand, stablecoin operating experience, and ecosystem distribution; Anchorage Digital Bank is the legal issuer and redemption counterparty.
+
+This structure should be compared with Tether USDT rather than confused with it. USDT is issued by Tether International, S.A. de C.V. and operates as the dominant offshore/global exchange and payments stablecoin. USAT is issued by Anchorage Digital Bank and is built for the U.S. market. The [USAT policy page](https://www.anchorage.com/usat-policies-disclosures) explicitly states that Tether is not the issuer and has no obligation to issue, redeem, or guarantee USAT, while also stating that USAT is separate and distinct from USDT. This is not legal trivia. It determines who owes redemption, who controls reserve management, whose regulatory perimeter matters, and whose balance-sheet risk a holder is taking.
+
+The first supported blockchain is Ethereum. The token contract is `0x07041776f5007aca2a54844f50503a18a72a8b68`, visible on [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68), [CoinGecko](https://www.coingecko.com/en/coins/usat), and market-data pages. The contract has 6 decimals, is classified by Etherscan as ERC-20 Source Code (Proxy), and uses a TransparentUpgradeableProxy. That design is common for regulated stablecoins because issuers need operational controls, upgrades, and compliance actions. It also means smart-contract risk is not the same as an immutable commodity asset. Admin rights, upgrade governance, freezing/burning capability, sanctions handling, and operational control become part of the asset's risk surface.
+
+The target user is not a speculative investor. USAT is for institutions, platforms, exchanges, fintechs, payment companies, and possibly high-compliance U.S. users who want a Tether-linked dollar token inside an American regulatory framework. Tether's launch announcement named early availability on Bybit, Crypto.com, Kraken, OKX, and MoonPay. CoinGecko's market page later showed a broader list of exchange markets, with OKX, HTX, MEXC, Bitget, KCEX, Bybit, BTSE, Kraken, and others appearing among tracked venues. But volume concentration matters. In the June 28 snapshot, the largest CoinGecko market line was HTX USAT/USDT, while several major-name venues showed limited 24h volume. That is a very different liquidity profile from USDT or USDC.
+
+The user problem is straightforward. U.S. institutions want blockchain dollars, but they need clarity on issuer, reserves, redemption, AML/sanctions controls, accounting, custody, and regulatory accountability. Global crypto users want Tether liquidity, but U.S. regulated platforms cannot simply rely on every offshore structure. USAT tries to bridge those needs: Tether's stablecoin brand and distribution, but issued through Anchorage Digital Bank under federal bank supervision. The product is therefore not trying to be decentralized money. It is trying to be compliant, redeemable, transferable dollar infrastructure.
+
+The core limitation is equally straightforward. Holding USAT does not create a customer relationship with Anchorage Digital Bank unless the holder is already an Anchorage client. Non-clients rely on secondary-market liquidity. That makes USAT closer to a two-tier stablecoin: direct mint/redeem for eligible clients, market trading for everyone else. That is normal for many stablecoins, but it must be priced into risk. A holder on an exchange may see a stable $1 quote in normal conditions, yet have no direct claim path to the issuer except through an eligible intermediary.
+
+## Research Question and Investment Relevance
+
+The central research question is:
+
+**Can USAT become a durable U.S.-regulated Tether dollar rail, or will it remain a small issuer-controlled stablecoin whose brand is stronger than its liquidity and redemption reach?**
+
+This matters because stablecoin competition is no longer only about peg stability. It is about distribution, regulation, reserve yield, payment network effects, exchange support, chain footprint, issuer credibility, and jurisdictional strategy. USDT dominates global crypto liquidity. USDC dominates much of regulated DeFi and U.S.-friendly institutional stablecoin flow. PYUSD tests PayPal/Venmo consumer and merchant distribution. USDG tests partner-network stablecoin economics. RLUSD tests Ripple's enterprise payments and XRPL distribution. USD1 tests political and exchange-driven dollar distribution. USAT tests whether Tether can take its global stablecoin franchise into a U.S. regulated wrapper without cannibalizing or confusing USDT.
+
+For a normal token, the research question would be about upside, fee capture, staking, burn, governance, and FDV. USAT is not that. The token is designed to stay near one dollar. A good outcome for a holder is boring: tight peg, reliable redemption through eligible channels, deep market liquidity, transparent reserves, no surprise freeze, no legal impairment, and no smart-contract incident. A bad outcome is asymmetric: depeg, delayed redemption, market liquidity evaporation, freeze/burn action, reserve shortfall, regulatory restriction, service-provider failure, or chain/contract problem. The upside is operational usefulness; the downside is capital impairment or trapped funds.
+
+USAT is investment-relevant in three ways.
+
+First, it is a signal on Tether's U.S. strategy. Tether has historically been the world's largest stablecoin issuer, but USDT's reserve, issuer, and jurisdiction profile has not always fit the U.S. regulated platform model. USAT lets Tether compete in the American market through a separate issuer and reserve architecture. If USAT scales, it may weaken the idea that regulated stablecoin growth belongs mostly to Circle, Paxos, PayPal, Ripple, or bank-tokenized deposits.
+
+Second, it is a signal on Anchorage's stablecoin issuance business. Anchorage Digital Bank received conditional OCC approval for conversion to a national trust bank in 2021, as described in the [OCC release](https://www.occ.gov/news-issuances/news-releases/2021/nr-occ-2021-6.html), and now uses that bank-chartered posture to issue USAT and other stablecoin products. If USAT works, it validates Anchorage as a stablecoin issuer-of-record for large brands. That has implications beyond USAT itself.
+
+Third, it is a cash-management question for crypto users. A stablecoin with a Tether brand, U.S. issuer, treasury-backed reserve structure, and multiple exchange listings may be attractive for treasury, settlement, and payments. But it is not automatically superior to USDC, USDT, PYUSD, USDG, or RLUSD. The right asset depends on where the user can redeem, where they trade, what jurisdiction they face, which exchanges support the asset, what reserve reporting they trust, and whether secondary liquidity is sufficient for their exit size.
+
+The investment framework should therefore be:
+
+| Lens | Normal crypto token question | USAT question |
+| --- | --- | --- |
+| Price upside | Can the asset rerate? | Can the token stay close to $1 and redeem cleanly? |
+| Value capture | Do holders capture protocol fees? | Who earns reserve income, and do holders receive any yield? |
+| Supply | Is dilution controlled? | Are outstanding liabilities fully backed and attested? |
+| Liquidity | Can investors enter and exit cheaply? | Can holders exit through issuer redemption or markets during stress? |
+| Governance | Is protocol control decentralized? | Are centralized controls documented, constrained, and acceptable? |
+| Regulation | Does the token avoid enforcement risk? | Can issuance, transfers, redemption, and supported chains survive regulatory change? |
+
+The current answer is mixed. USAT is credible enough to monitor closely and use in specific supported contexts. It is not yet proven enough to become a default cash-equivalent allocation for broad crypto treasury unless the user has direct Anchorage access or very reliable market-making relationships.
+
+## Identity Resolution and Source Trail
+
+The identity lane is high-confidence.
+
+| Field | Working answer | Evidence | Risk note |
+| --- | --- | --- | --- |
+| Canonical name | USAT / Tether America USD / USA | [Tether launch](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/), [Anchorage launch](https://www.anchorage.com/insights/anchorage-digital-tether-introduce-usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Branding sometimes uses USA/USA-styled form; market ticker is USAT. |
+| Symbol | USAT | [CoinGecko](https://www.coingecko.com/en/coins/usat), [CoinMarketCap](https://coinmarketcap.com/currencies/tether-usat/), [DefiLlama](https://defillama.com/stablecoin/usat) | Same ticker must still be resolved by contract. |
+| Issuer | Anchorage Digital Bank, N.A. | [Tether launch](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/), [USAT policies](https://www.anchorage.com/usat-policies-disclosures), [April attestation](https://learn.anchorage.com/04.30.26_USAT_Stablecoin_Attestation_Report%20%28FINAL%29%20signed%205.27.26.pdf) | Tether is a supporter/brand licensor, not the issuer. |
+| Tether role | Supporter / trademark licensor / ecosystem sponsor | [USAT policies](https://www.anchorage.com/usat-policies-disclosures), [Tether launch](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/) | Tether has no redemption obligation per the policy page. |
+| Reserve custodian / dealer role | Cantor Fitzgerald named by Tether as designated reserve custodian and preferred primary dealer | [Tether launch](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/) | Exact operating agreements are not public in the memo sources. |
+| Contract | Ethereum ERC-20, `0x07041776f5007aca2a54844f50503a18a72a8b68` | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68), [CoinGecko](https://www.coingecko.com/en/coins/usat) | Upgradeable proxy design adds admin-control risk. |
+| Market-data IDs | CoinGecko API ID `usa`; CoinMarketCap slug `tether-usat`; DefiLlama stablecoin page `usat` | [CoinGecko](https://www.coingecko.com/en/coins/usat), [CoinMarketCap](https://coinmarketcap.com/currencies/tether-usat/), [DefiLlama](https://defillama.com/stablecoin/usat) | Aggregator naming differs; contract resolves identity. |
+| Reserve reports | Monthly archive Jan-Apr 2026 visible during run | [Reserve attestations page](https://www.anchorage.com/platform/usat-reserve-attestations) | May/June reports were not visible in the public archive during this run. |
+
+This source trail has a few important implications. The asset is real. The issuer is not Tether. The contract is Ethereum-only in current public data. The reserve reports are primary-source, but point-in-time. The direct redemption relationship is client-limited. The market-data pages are useful for supply, price, and volume, but should not be used as proof of legal redeemability.
+
+## Architecture / Product Mechanism
+
+USAT has four core layers: issuance/redemption, reserve management, onchain token operation, and distribution/liquidity.
+
+The issuance and redemption layer is controlled by Anchorage Digital Bank. According to the USAT Policies and Disclosures, Anchorage issues USAT only to, and redeems USAT only from, persons who are Anchorage clients with an account relationship in good standing. Issuance and redemption occur one-to-one against U.S. dollars, net of disclosed fees, and the transaction is complete when Anchorage processes and settles the corresponding transfer. Anchorage can delay, restrict, or refuse a request to comply with law, manage risk, or preserve operational integrity. Non-clients do not receive issuance/redemption rights merely by holding USAT. That means a wallet holder who buys USAT on an exchange owns a transferable token, but not necessarily a direct bank-client redemption relationship.
+
+The reserve layer is built around cash and low-risk liquid investments held in a segregated trust structure. The policy page says U.S. dollars received through issuance are held as cash and investments in low-risk, highly liquid assets, collectively called the USAT Reserve. It says Anchorage manages the reserve so aggregate value meets or exceeds the dollar value of outstanding USAT, and uses reserve assets to fund redemption. It also says the reserve is held in accounts titled to the USAT Reserve Trust, an express trust under South Dakota law, with Anchorage as trustee. That legal structure is important because it attempts to separate reserve assets from Anchorage's general assets and creditor claims.
+
+The April 30 attestation gives the best concrete mechanism view. At that date, the reserve consisted of `$13.43M` cash and `$127.75M` reverse repurchase agreements collateralized by U.S. Treasury securities. The repo maturity listed was overnight, from April 30 to May 1, 2026. This is a conservative-looking structure: cash plus Treasury-collateralized reverse repo. It is not the same as holding only cash in a bank account, but for stablecoin reserve management it is a common way to combine liquidity, collateral quality, and yield. The risk is counterparty and settlement execution, not obvious credit speculation.
+
+The onchain token layer is an Ethereum ERC-20 with 6 decimals and a TransparentUpgradeableProxy. Etherscan's contract tab shows source-code verified similar match and a proxy implementation. It also shows no contract security audit submitted on Etherscan. A regulated stablecoin can rationally use a proxy because it may need upgrades for compliance, bug fixes, chain support, or operational controls. However, upgradeability creates a different risk profile than an immutable contract. A holder must trust the issuer/admin process, key management, implementation review, governance approval, and incident-response controls. If the admin key is compromised, if an implementation upgrade is bad, or if a lawful freeze/burn action targets an address, the holder may be affected.
+
+The distribution layer is exchange- and platform-driven. Tether's launch announcement named Bybit, Crypto.com, Kraken, OKX, and MoonPay for first-phase availability. CoinGecko later tracked 19 markets across 16 exchanges in the June 28 snapshot, but the volume distribution was uneven. HTX was the largest listed venue by 24h volume in the visible market table, while some brand-name venues had limited displayed volume. This matters because stablecoin usability depends on where a holder can convert at size. An asset can have a large supply and still have shallow usable liquidity for a given venue or jurisdiction.
+
+The product flow is:
+
+| Step | Actor | Mechanism | Main risk |
+| --- | --- | --- | --- |
+| 1 | Anchorage client | Delivers USD or eligible settlement value to Anchorage | Client onboarding and banking settlement constraints |
+| 2 | Anchorage | Mints/issues USAT on supported blockchain | Operational processing, compliance review, smart-contract/admin risk |
+| 3 | Holder/platform | Transfers USAT on Ethereum or through listed venues | Network fees, address errors, freeze/sanctions risk, market liquidity |
+| 4 | Non-client holder | Sells USAT in secondary market if they lack direct redemption | Market depth and spread risk |
+| 5 | Anchorage client | Redeems USAT for USD through Anchorage | Timing, fees, compliance review, operational delay |
+| 6 | Reserve trust | Uses reserve assets to meet redemption obligations | Bank, custodian, repo counterparty, timing, and attestation lag |
+
+Mechanism conclusion: USAT is a centralized, regulated, issuer-redeemable dollar token with secondary-market access for broader users. That is not a weakness by itself. It is the intended product. The risk comes from users treating it as if it had USDT-level liquidity, USDC-level integrations, direct redemption for everyone, or decentralized censorship resistance. It does not.
+
+## Market Intelligence
+
+Data snapshot: June 28, 2026, with volatile market numbers dated to this research run.
+
+USAT's live market footprint is meaningful for a newly launched stablecoin but small relative to the leading stablecoins. CoinGecko showed rank around `#176`, price about `$0.9982`, market cap around `$187.14M`, FDV around `$187.14M`, 24h volume around `$1.75M`, circulating supply `187,485,243`, and total supply `187,485,243`. Etherscan showed very similar onchain supply and market cap numbers. DefiLlama showed about `$187.13M` circulating supply, all on Ethereum, and price around `$0.9981`. CoinMarketCap metadata showed a similar near-dollar price and roughly `$1.9M-$2.4M` in 24h volume, depending on crawl point. The working conclusion is a supply near `$187M` and normal daily reported volume in the low single-digit millions.
+
+The supply ramp is fast. The January 31 reserve report showed `17.50M` redeemable tokens. March 31 showed `22.05M`. April 30 showed `140.85M`. By June 28, Etherscan/CoinGecko/DefiLlama showed roughly `187M`. That means the large supply increase happened after the March report and before the April report, then continued into May/June. This is a real adoption signal if it reflects new platform inventories, institutional demand, exchange listings, or payment usage. It is also a risk signal because public reserve proof is monthly and delayed by design.
+
+Liquidity quality is the weaker part of the market picture. CoinGecko's visible market table showed top exchanges with reasonable spreads but limited depth and concentrated reported volume. HTX's USAT/USDT pair accounted for the majority of the displayed 24h CoinGecko market volume in the visible rows. OKX had multiple pairs with smaller volume but better-known venue depth. Kraken, Bybit, Bitget, MEXC, KCEX, and others appeared, but many venue rows showed small 24h volume in the snapshot. Etherscan showed only `104` 24h token transfers, which reinforces the idea that secondary trading is more exchange-led than broad onchain retail usage.
+
+The stablecoin market context is unforgiving. DefiLlama's stablecoin API showed USDT around `$184.9B`, USDC around `$73.8B`, USDS around `$8.2B`, USD1 around `$4.7B`, USDG around `$2.9B`, PYUSD around `$2.7B`, RLUSD around `$1.57B`, and USAT around `$187M`. USAT is already larger than a small experiment, but it is not close to the network effects of USDT, USDC, or even the larger regulated challengers. For a stablecoin, network effects are not abstract. They determine order-book depth, accepted collateral lists, wallet support, payment integrations, DeFi pools, bridge availability, and redemption arbitrage.
+
+| Metric | June 28, 2026 working value | Source | Interpretation |
+| --- | ---: | --- | --- |
+| Price | About `$0.9981-$1.00` | [CoinGecko](https://www.coingecko.com/en/coins/usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68), [DefiLlama](https://defillama.com/stablecoin/usat) | Peg is tight in normal-market snapshot. |
+| Circulating supply | About `187.1M-187.5M USAT` | [CoinGecko](https://www.coingecko.com/en/coins/usat), [DefiLlama API](https://stablecoins.llama.fi/stablecoins?includePrices=true), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Market and onchain supply align well. |
+| 24h volume | About `$1.75M-$2.4M` | [CoinGecko](https://www.coingecko.com/en/coins/usat), [CoinMarketCap](https://coinmarketcap.com/currencies/tether-usat/) | Volume is modest relative to supply. |
+| Holders | About `12,159` | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Wider than a seed token, but still early. |
+| 24h transfers | `104` | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Onchain transfer activity appears low. |
+| Chain footprint | Ethereum only in DefiLlama current data | [DefiLlama](https://defillama.com/stablecoin/usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Single-chain concentration. |
+| Latest visible attestation | April 30, 2026 | [Anchorage reserve archive](https://www.anchorage.com/platform/usat-reserve-attestations) | Report timing lags live supply. |
+
+Market conclusion: USAT is liquid enough to be visible and tradable, but not liquid enough to be treated as a generic cash substitute at size without checking venue-level depth and redemption access. The supply is real; the velocity remains under-proven.
+
+## Source Conflict Matrix
+
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+| --- | ---: | ---: | ---: | --- | --- |
+| Current supply | CoinGecko: `187,485,243` circulating and total | Etherscan: `187,485,243.5` max total supply | DefiLlama: about `$187.13M` circulating | Supply is around `187M`; small differences come from decimals, price, and methodology | Low supply conflict today, but live supply can move faster than attestations. |
+| Current price | CoinGecko: about `$0.9982` | DefiLlama coins endpoint: about `$0.9981` | Etherscan market: about `$1.00` | Peg is close to $1 in the snapshot | Stable snapshots do not prove stress redemption. |
+| Volume | CoinGecko: about `$1.75M` 24h | CoinMarketCap crawl: about `$1.9M-$2.4M` 24h | CoinGecko markets show concentration by venue | Daily volume is low single-digit millions | Liquidity may be too thin for large exits outside issuer redemption. |
+| Attested redeemable tokens | April attestation: `140,850,950` | Etherscan/CoinGecko June supply: about `187.5M` | DefiLlama June supply: about `187.1M` | Latest public attestation is point-in-time and stale by June 28 | Need May/June reports to confirm reserves kept pace. |
+| Reserve assets | April: `$141.18M` total assets | April redeemable tokens: `$140.85M` | Surplus: `$327,450` | April reserve report showed assets above liabilities | Surplus is small relative to total supply, as expected for a fiat stablecoin. |
+| Reserve composition | April: `$13.43M` cash | April: `$127.75M` Treasury-collateralized reverse repo | Policy: cash and low-risk liquid investments | Conservative reserve mix in the latest report | Repo counterparty and settlement timing matter in stress. |
+| Redemption access | Policy: clients only | Non-clients use secondary markets | ADB does not guarantee secondary liquidity | Direct redemption is not universal | Non-client holders bear market liquidity and intermediary risk. |
+| Legal issuer | Tether launch says Anchorage is issuer | Anchorage launch says Anchorage issues directly | Policy says Tether is not issuer | High confidence: issuer is Anchorage Digital Bank | Tether brand may cause users to misread who owes redemption. |
+| Government protection | Tether/Anchorage say not legal tender or government guaranteed | Policy says no FDIC/NCUA/SIPC insurance for USAT holders | Reserve cash may be in FDIC-insured accounts but can exceed limits | Stablecoin reserve structure is not deposit insurance for holders | Users may overestimate government backstop. |
+| Contract controls | Etherscan: TransparentUpgradeableProxy | Policy allows freeze/block/seize/burn for compliance | Etherscan: no contract security audit submitted | Centralized control is part of the product | Admin/security/process risk must be accepted. |
+
+The most important conflict is not supply across aggregators; that is consistent. The most important conflict is **time**: reserve reports are monthly and point-in-time, while live supply changes daily. The second conflict is **access**: direct redemption is client-only, while public market pages can make USAT look like any other freely redeemable dollar. The third conflict is **branding**: Tether supports the asset, but Anchorage is the issuer.
+
+## Reserve, Redemption, and Attestation Quality
+
+The reserve setup is the strongest part of USAT's case. Anchorage's policy language is unusually explicit. It says reserves are held in a trust, segregated from Anchorage's general assets, managed solely for the reserve trust, and not lent, pledged, or rehypothecated except in limited legally permitted circumstances such as facilitating lawful redemption transactions. It also says reserve value is managed to meet or exceed outstanding USAT. This is the kind of disclosure stablecoin users should want.
+
+The attestation reports add concrete numbers. The January report showed `17,501,391` redeemable tokens and `$17,604,716` reserve assets. The March report showed `22,050,123` redeemable tokens and `$22,200,850` reserve assets. The April report showed `140,850,950` redeemable tokens and `$141,178,400` reserve assets. The April surplus was `$327,450` before timing/temporary differences. This is not a large equity cushion; it is a small overcollateralization buffer, which is normal for a fiat stablecoin whose business model is not overcollateralized lending.
+
+Reserve composition changed with scale. January had more cash relative to total assets because the reserve was small. March had `$2.40M` cash and `$19.80M` reverse repos. April had `$13.43M` cash and `$127.75M` reverse repos. The repo collateral was U.S. Treasury securities, with overnight maturity listed in the report. That structure has three strengths: high-quality collateral, short maturity, and operationally familiar money-market plumbing. It also has three risks: dependence on repo counterparties, settlement timing during market stress, and the legal/operational reliability of custodians and sub-custodians.
+
+The attestation reports also state their own limits. The independent accountant's report says the examination was not performed to determine whether Anchorage complied with laws, regulations, or customer contracts, or to evaluate design or operating effectiveness of controls. This is normal language, but it matters. A reserve attestation is not a full financial audit, smart-contract audit, legal opinion, bank examination report, or real-time proof of reserves. It supports the reserve claim at a point in time; it does not eliminate operational, legal, or liquidity risk.
+
+The redemption policy is good for eligible clients and weaker for everyone else. Anchorage clients can issue/redeem one-to-one with dollars subject to account agreement, sufficient balances, fees, processing, and compliance controls. Non-clients cannot mint or redeem directly. They can acquire or dispose of USAT only through non-issuer transactions such as exchange or DeFi transactions, and Anchorage does not guarantee the availability, pricing, or liquidity of those markets. This matters most during stress. In normal markets, market makers may keep USAT close to $1. In stress, the direct redemption route belongs to eligible clients, not every wallet.
+
+The no-yield policy is also important. Anchorage says it is prohibited by law from paying any form of interest or yield to holders solely for holding, using, or retaining USAT, and that Anchorage retains reserve earnings as compensation for issuing/redeeming USAT and managing the reserve. That means USAT is a non-yielding payment stablecoin. Holders should not expect sUSDe-style yield, PayFi rewards, reserve-income sharing, governance upside, or equity exposure. If a platform offers an incentive around USAT, that is a platform program, not a native reserve-yield entitlement from Anchorage.
+
+Reserve conclusion: USAT has a strong reserve documentation trail for a new stablecoin, but the only defensible approach is continuous monitoring. The memo's confidence would improve if May and June 2026 attestations confirm reserve assets above the new `187M` supply level, if the reserve archive remains timely, if reserve composition stays short-duration and highly liquid, and if the issuer publishes more operational control detail around contract administration.
+
+## Economics / Value Capture
+
+USAT's economics accrue primarily to Anchorage, Tether, reserve managers, distribution partners, exchanges, and market makers, not to USAT holders. This is normal. A stablecoin is a liability instrument. The holder gets dollar utility. The issuer and ecosystem capture reserve spread, distribution value, payment flow, exchange flow, and strategic positioning.
+
+The first value pool is reserve income. The April report's reserve composition was mostly Treasury-collateralized reverse repo. In a positive-rate environment, that reserve earns income. Anchorage's policy says Anchorage retains interest, income, or other earnings from the reserve as compensation for issuing/redeeming USAT and managing the reserve. That gives Anchorage a direct business model: issue more USAT, manage reserves conservatively, retain the net economics, and charge any disclosed fees. Tether may benefit through brand licensing, ecosystem strategy, and its broader macro stablecoin position, but the policy page makes clear Tether is not the issuer or redemption obligor.
+
+The second value pool is distribution. USAT can create value for exchanges and payment platforms because it gives them a Tether-linked, U.S.-regulated dollar product. If U.S.-regulated venues cannot use USDT in some contexts, USAT may serve as a cleaner listing, trading, and settlement asset. If global venues want to offer U.S. customers a compliant stablecoin while preserving Tether-related brand demand, USAT is useful. Distribution value can produce listing fees, spreads, custody balances, payment flows, and customer retention.
+
+The third value pool is strategic optionality for Tether. USDT has global network effects that USAT will not quickly replicate. But USAT gives Tether an American compliance branch without changing USDT's global product overnight. If U.S. law, exchange policy, banking relationships, or institutional mandates increasingly prefer stablecoins issued by U.S. supervised entities, Tether can compete through USAT. That is not necessarily value for a USAT holder; it is value for the broader Tether ecosystem.
+
+The fourth value pool is strategic optionality for Anchorage. Anchorage can use USAT as a proof point for stablecoin issuance infrastructure. The more credible USAT becomes, the easier it is for Anchorage to sell stablecoin issuance, reserve management, custody, settlement, and compliance services to other brands. That makes USAT a case study in white-label or branded stablecoin issuance through a federally supervised crypto bank.
+
+The holder value proposition is narrow but real:
+
+| Holder benefit | Why it matters | Limitation |
+| --- | --- | --- |
+| Dollar stability | Useful for payments, exchange settlement, treasury parking | Peg depends on reserves, redemption, and market making. |
+| Tether brand adjacency | Familiar to global crypto users | Tether is not the issuer or redemption counterparty. |
+| U.S. regulated issuer | Better fit for institutions than offshore-only structures | Regulation does not equal government guarantee. |
+| Ethereum ERC-20 composability | Wallet/exchange support is straightforward | Ethereum fees and single-chain concentration apply. |
+| Monthly reserve reports | Better transparency than opaque stablecoins | Reports lag live supply and do not audit controls. |
+
+The value-capture attack is simple: USAT can succeed as a product while holders receive no economic upside. If supply grows to billions, reserve income likely accrues to the issuer and partners. If USAT becomes a major exchange settlement asset, market makers and venues may capture spreads and flow. If Tether's U.S. strategy works, Tether's brand and ecosystem gain. The stablecoin holder mostly gets a transferable dollar claim with limited direct redemption depending on client status. That is fine if the holder wants payments or settlement. It is not an investment thesis for capital appreciation.
+
+## Tokenomics / Capital Structure
+
+USAT does not have a fixed tokenomics schedule in the way a governance token does. There is no FDV unlock cliff, no staking emission, no DAO treasury, no validator reward schedule, and no burn-based value accrual. Supply expands and contracts through issuance and redemption. CoinGecko's "max supply" field showed infinity, which is conceptually correct for a mint/redeem stablecoin: supply is limited by demand, reserve backing, issuer policy, regulation, and supported chains rather than a hard-coded cap.
+
+The current token balance sheet is:
+
+| Item | Current read | Evidence |
+| --- | ---: | --- |
+| Current circulating/total supply | About `187.1M-187.5M USAT` | [CoinGecko](https://www.coingecko.com/en/coins/usat), [DefiLlama](https://defillama.com/stablecoin/usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) |
+| Latest visible attested redeemable tokens | `140,850,950` as of April 30, 2026 | [April attestation](https://learn.anchorage.com/04.30.26_USAT_Stablecoin_Attestation_Report%20%28FINAL%29%20signed%205.27.26.pdf) |
+| Latest visible attested reserves | `$141,178,400` as of April 30, 2026 | [April attestation](https://learn.anchorage.com/04.30.26_USAT_Stablecoin_Attestation_Report%20%28FINAL%29%20signed%205.27.26.pdf) |
+| Contract decimals | 6 | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) |
+| Current holders | About `12,159` | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) |
+| Direct redemption access | Anchorage clients only | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Holder yield | None from Anchorage solely for holding/using USAT | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Contract pattern | TransparentUpgradeableProxy | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) |
+
+The capital-structure analogy is useful. USAT holders are effectively holders of a tokenized dollar liability whose reserve assets sit in a segregated trust structure. They are not shareholders. They do not receive reserve earnings. They do not govern the issuer. They do not have a claim on Tether profits. They may not have direct redemption rights unless they are Anchorage clients. In return, they get transferability, exchange acceptance, and dollar settlement utility.
+
+The primary tokenomics risk is not dilution. It is backing and access. If supply increases, that is not bearish if reserves increase in step and redemption access is reliable. It may even be bullish for distribution. But if supply increases faster than public attestations, users have to wait for the next report to verify backing. If most holders are non-clients, they rely on arbitrageurs and market makers to keep the peg tight. If market makers cannot access redemption or if the issuer delays/restricts redemption requests, the secondary market can trade away from $1.
+
+The second tokenomics risk is contract control. Etherscan's proxy status indicates upgradeability. The policy page also gives Anchorage broad compliance powers, including delaying, restricting, blocking, refusing, freezing, blocking, seizing, burning, or otherwise preventing transfer/use in connection with prohibited, unlawful, or high-risk activity, including for non-client addresses. These controls are normal for a regulated stablecoin, but they are part of the capital structure because they determine whether a token is always freely transferable and redeemable. A frozen token may become inaccessible or non-redeemable through Anchorage.
+
+The third tokenomics risk is chain scope. USAT currently appears to be Ethereum-only in DefiLlama's stablecoin tracking. That simplifies contract monitoring and reserve reconciliation, but limits payment utility. USDT and USDC are multi-chain by default; USDG, PYUSD, RLUSD, and USD1 also have multi-chain or at least multi-venue strategies. USAT may need additional supported chains to compete for payments, but each added chain increases operational, bridge, mint/burn, and policy complexity.
+
+## Team / Funding / Governance
+
+USAT's operating stack is institutionally credible.
+
+Anchorage Digital Bank is the issuer. The OCC conditionally approved Anchorage Trust Company's conversion into Anchorage Digital Bank, National Association in January 2021, after a review process and with operating-agreement conditions around capital, liquidity, and risk management. Anchorage's own materials describe it as a federally chartered crypto-native bank and qualified custodian with fiduciary powers. In the April attestation, Anchorage management identifies the bank as a federally chartered national trust bank and qualified custodian with fiduciary powers regulated by the OCC. For a stablecoin issuer, this is a stronger starting credential than an offshore entity with vague reserve custody.
+
+Tether is the strategic sponsor and brand force. Tether's launch announcement states that USAT combines Tether's stablecoin ecosystem with a U.S. regulatory framework and that the token is designed for U.S. institutions. It named Bo Hines as CEO of Tether USAT and Paolo Ardoino as Tether CEO. It also stated that Cantor Fitzgerald serves as designated reserve custodian and preferred primary dealer. That gives USAT a strong institutional and political narrative: Tether brand, Anchorage issuer, Cantor reserve role, and a U.S. stablecoin legal framework.
+
+Governance is centralized. Anchorage issues, redeems, manages reserves, decides supported blockchains, handles client relationships, and can delay/restrict/refuse services. It can also take compliance actions at the token level. Tether controls/owns the USAT trademark and supports the product, but the policy page states that Tether is not the issuer and has no redemption obligation. Holders do not vote on reserve composition, contract upgrades, supported chains, compliance decisions, or service-provider changes.
+
+This governance model is acceptable for a regulated stablecoin, but it should not be confused with decentralization. The holder is underwriting the competence, legal posture, operational controls, and risk management of Anchorage and its service providers. The policy page says service providers may include technical/operational support providers, sub-custodians, asset managers, trademark licensors, distribution/marketing entities, and related parties. It also says Anchorage is the sole issuer and the only entity with obligations to redeem according to applicable law.
+
+The governance diligence questions are:
+
+| Area | Current evidence | What would improve confidence |
+| --- | --- | --- |
+| Issuer authority | Anchorage is clearly named as issuer in primary sources | Public operating/control framework for stablecoin issuance |
+| Reserve governance | Monthly attestations and reserve policy exist | Timelier reports and machine-readable reserve dashboard |
+| Contract admin | Etherscan shows proxy; policy discloses compliance powers | Public admin-key, upgrade, multisig/MPC, and audit details |
+| Service providers | Cantor named by Tether; policy references service providers | Clearer map of custodian, repo counterparty, and market-maker roles |
+| User rights | Client/non-client redemption distinction is disclosed | Plain-language redemption FAQ and fee schedule visibility |
+| Regulatory posture | OCC charter context and GENIUS framework positioning | Specific ongoing supervisory disclosures as rules mature |
+
+Team/governance conclusion: the institution stack is a strength, but it is also the trust assumption. USAT is not trustless. Its safety depends on regulated centralized actors executing well.
+
+## Competitive Landscape
+
+USAT competes in the most crowded and highest-network-effect sector in crypto: dollar stablecoins.
+
+| Asset | June 28, 2026 DefiLlama supply | Core edge | USAT comparison |
+| --- | ---: | --- | --- |
+| [USDT](https://tether.to/en/transparency/) | About `$184.9B` | Largest global exchange and payments liquidity | USAT has Tether adjacency but none of USDT's global liquidity scale. |
+| [USDC](https://www.circle.com/en/transparency) | About `$73.8B` | U.S.-regulated brand, DeFi depth, institutional distribution | USAT competes on U.S. issuer credibility but lacks USDC's integrations. |
+| [USDS](https://sky.money/) | About `$8.2B` | DeFi-native collateral and yield ecosystem | USAT is more centralized/compliant and less DeFi-native. |
+| [USD1](https://www.worldlibertyfinancial.com/usd1) | About `$4.7B` | Political/partner narrative and exchange distribution | USAT has clearer Tether brand but smaller current supply. |
+| [USDG](https://www.globaldollar.com/) | About `$2.9B` | Partner-network economics and regulated distribution | USAT may need similar partner incentives to scale beyond Tether brand. |
+| [PYUSD](https://www.paypal.com/us/digital-wallet/manage-money/crypto/pyusd) | About `$2.7B` | PayPal/Venmo consumer and merchant surface | USAT has institutional/Tether angle, weaker consumer distribution. |
+| [RLUSD](https://ripple.com/solutions/stablecoin/) | About `$1.57B` | Ripple payments, XRPL, enterprise settlement | USAT has Tether brand and Anchorage issuance but less proven enterprise flow. |
+| USAT | About `$187M` | Tether-supported U.S. regulated stablecoin via Anchorage | Early, credible, but liquidity and reach are still small. |
+
+USAT's edge is not raw liquidity. USDT and USDC dominate that. Its edge is **regulatory brand bridging**: a Tether-supported stablecoin for the U.S. market, issued by a federally supervised crypto bank. That is a differentiated wedge. Users who want "Tether but U.S.-regulated" may care. Exchanges that want Tether-associated demand without using USDT in some U.S. contexts may care. Institutions that trust Anchorage and want Tether ecosystem compatibility may care.
+
+USAT's weakness is that stablecoins are distribution monopolies in practice. A slightly safer or more compliant stablecoin does not automatically win if users cannot trade it everywhere, borrow against it, pay merchants with it, redeem it directly, or move it cheaply across chains. USDC's edge is not only reserve transparency; it is integration density. USDT's edge is not only size; it is global acceptance. PYUSD's edge is PayPal distribution. RLUSD's edge is Ripple's payments network. USDG's edge is partner economics. USAT must prove a specific distribution surface beyond "Tether launched a U.S. product."
+
+Switching costs are also asymmetric. For a trader already using USDT pairs, USAT must offer a reason to switch. For a DeFi user already using USDC on Base, Ethereum, Solana, Arbitrum, and other chains, USAT must offer chain support and integrations. For an enterprise already using a bank account or a tokenized money-market fund, USAT must provide faster settlement or better platform access. For a yield-seeking stablecoin user, USAT may actually be less attractive because Anchorage cannot pay holder yield solely for holding/using USAT.
+
+Competition conclusion: USAT is credible, but it is entering a market where trust is necessary and distribution is decisive. The current product has the trust ingredients. It still needs proof of distribution depth.
+
+## Catalysts
+
+USAT's catalysts are not speculative roadmap slogans. They are concrete evidence events that would update the risk/reward.
+
+| Catalyst | Bullish read | Bearish read |
+| --- | --- | --- |
+| May/June 2026 reserve attestations publish | Confirms reserves kept pace with supply growth beyond April | Delay or unexplained mismatch raises confidence penalty |
+| Supply moves above `$500M` with matching volume growth | Shows USAT is becoming more than a launch inventory asset | Supply rises while volume stays under `$5M/day`, suggesting passive inventory |
+| More U.S.-regulated exchange support | Expands access and arbitrage | Listings exist but order books remain shallow |
+| Direct redemption access expands through partners | Improves peg arbitrage for non-Anchorage clients | Direct redemption remains narrow and secondary markets carry exit risk |
+| Additional supported chains | Improves payments and DeFi reach | More chains add operational and bridge/issuance complexity |
+| Public smart-contract audit / admin-control disclosure | Reduces proxy/admin-key risk | No disclosure while supply grows |
+| Institutional payment integrations | Moves thesis from exchange asset to settlement rail | Partner announcements lack transaction/volume evidence |
+
+The most important near-term catalyst is the next reserve report. The market has already moved beyond the April attested supply. The credibility of the stablecoin is not harmed by normal reporting lag, but the next report needs to arrive and align with live outstanding supply.
+
+## Risk Matrix
+
+| Risk | Severity | Why it matters | Evidence / monitor |
+| --- | --- | --- | --- |
+| Reserve-attestation lag | High | Live supply is about `187M` while latest visible report is April `140.85M` redeemable tokens | [Reserve archive](https://www.anchorage.com/platform/usat-reserve-attestations), May/June reports |
+| Direct redemption access | High | Non-clients cannot redeem directly with Anchorage | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Secondary-market liquidity | High | 24h volume is low single-digit millions versus `187M` supply | [CoinGecko](https://www.coingecko.com/en/coins/usat), [CoinMarketCap](https://coinmarketcap.com/currencies/tether-usat/) |
+| Contract/admin control | High | Proxy contract and compliance powers can affect transfers | [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68), [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Regulatory change | Medium-High | U.S. stablecoin rules can alter issuance, redemption, supported chains, or users | [Tether launch](https://tether.io/news/tether-announces-the-launch-of-usat-the-federally-regulated-dollar-backed-stablecoin-made-in-america/), [OCC charter context](https://www.occ.gov/news-issuances/news-releases/2021/nr-occ-2021-6.html) |
+| Service-provider dependency | Medium | Reserve custody, repo, technical, trademark, and distribution providers matter | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Repo counterparty / settlement | Medium | Reserve assets include reverse repos collateralized by Treasuries | [April attestation](https://learn.anchorage.com/04.30.26_USAT_Stablecoin_Attestation_Report%20%28FINAL%29%20signed%205.27.26.pdf) |
+| No holder yield | Medium | USAT may be less attractive than yield-bearing dollars | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Single-chain concentration | Medium | Ethereum-only footprint limits payments and adds gas-cost friction | [DefiLlama](https://defillama.com/stablecoin/usat), [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) |
+| Brand confusion | Medium | Users may think Tether redeems/guarantees USAT | [USAT Policies](https://www.anchorage.com/usat-policies-disclosures) |
+| Competition | High | Larger stablecoins have far deeper network effects | [DefiLlama stablecoin API](https://stablecoins.llama.fi/stablecoins?includePrices=true) |
+
+The key failure path is not an immediate depeg. It is slow irrelevance: USAT remains legally credible but fails to build enough liquidity and distribution to matter outside niche venues, while users choose USDC for U.S. regulated rails and USDT for global liquidity.
+
+## Valuation / Importance Framework
+
+USAT cannot be valued like an equity token because holders do not receive reserve yield, governance rights, issuer profits, or token appreciation. The correct framework is operational importance and risk-adjusted cash utility.
+
+Three questions matter:
+
+1. Does USAT offer a better dollar rail than the alternatives for a specific user?
+2. Does the user have reliable exit and/or direct redemption access?
+3. Does the issuer/reserve/control structure justify holding size relative to liquidity?
+
+For a user who is an Anchorage client, can redeem directly, trades on supported venues, and wants a Tether-supported U.S. stablecoin, USAT may be attractive. For a user who holds USAT only because it appears on an exchange, has no direct redemption access, and can already use USDC or USDT, the case is weaker. For a user seeking yield, USAT is likely not the right instrument unless a separate platform incentive exists and is independently diligenced.
+
+The importance score should be based on supply share, liquidity depth, reserve quality, distribution quality, and regulatory fit:
+
+| Dimension | Current read | Importance implication |
+| --- | --- | --- |
+| Supply | About `$187M` | Meaningful but not systemic |
+| Reserve quality | Cash + Treasury-collateralized reverse repos in latest report | Strong relative to opaque stablecoins |
+| Reporting | Monthly attestations, but lagging live supply | Good structure; needs ongoing timeliness |
+| Liquidity | Low single-digit millions daily | Not yet a deep cash rail |
+| Distribution | Multiple CEX listings and Tether/Anchorage support | Good launch, not yet network effect |
+| Regulatory fit | U.S. issuer under Anchorage bank structure | Core differentiator |
+| Holder economics | No native yield or upside | Utility-only asset |
+
+Importance verdict: USAT is strategically important as a Tether/Anchorage U.S. stablecoin experiment. It is not yet strategically important as a market-wide dollar settlement rail. That can change if supply scales above `$1B`, volume and depth rise proportionally, reserve reports remain timely, and direct redemption access broadens through regulated intermediaries.
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | What happens | Confirmation metrics | User action |
+| --- | ---: | --- | --- | --- |
+| Bull | 25% | USAT becomes the main U.S.-regulated Tether rail, grows above `$1B`, expands venue support, and maintains clean monthly reserve reporting | Supply above `$1B`, daily volume above `$50M`, timely reports, more direct redemption partners, multiple supported chains | Use selectively as regulated Tether rail; consider larger operational balances only with redemption path |
+| Base | 55% | USAT grows gradually into a credible but secondary stablecoin with good reserves, limited volume, and niche exchange/institutional use | Supply `$200M-$700M`, volume `$2M-$20M`, reserves on time, no major depeg, listings stable | Watchlist and small operational use; prefer USDC/USDT for broad liquidity |
+| Bear | 20% | Liquidity remains thin, reserve reports lag, supply stalls or contracts, or users prefer USDC/USDG/PYUSD/RLUSD for regulated rails | Supply below `$150M`, volume below `$1M`, delayed attestations, wider peg, venue delistings | Avoid except for mandatory venue-specific settlement |
+
+The bull case requires more than Tether brand. It requires market depth, redemption access, reserve-report discipline, and use cases that are not just launch inventory. The base case is the most likely: credible, useful in narrow contexts, but not yet a default stablecoin. The bear case does not require fraud or reserve failure. It can simply be a distribution failure.
+
+## Confidence Score
+
+Confidence: **Medium**.
+
+| Dimension | Rating | Notes |
+| --- | --- | --- |
+| Source quality | High | Tether, Anchorage, reserve reports, OCC, Etherscan, CoinGecko, DefiLlama provide a strong source base. |
+| Data consistency | Medium | Current supply is consistent across market/onchain sources, but reserve reports lag live supply. |
+| Mechanism clarity | Medium-High | Issuance, reserve, and client redemption policies are clear; admin control details are less granular. |
+| Value capture | Low for holders | Holders get dollar utility, not reserve yield, equity exposure, or governance. |
+| Liquidity quality | Medium-Low | Trading exists, but volume/depth are small relative to supply and far below USDT/USDC. |
+| Regulatory durability | Medium | Anchorage issuer structure is strong, but stablecoin implementation rules and service restrictions can change. |
+
+The confidence score is not higher because the most important user question is stress behavior, not normal-market supply. A stablecoin can look excellent on a calm day and fail during redemption stress if market makers pull back, if direct redemption is limited, or if operational/compliance reviews slow movement. USAT has better building blocks than most new stablecoins, but it has not yet been tested at USDT/USDC scale.
+
+## Red-team Check
+
+The strongest reason the thesis could be wrong is that USAT may be more of a strategic brand wrapper than a durable liquidity network. Tether and Anchorage can make the legal and reserve structure credible, but users still need reasons to hold USAT instead of USDC, USDT, PYUSD, USDG, RLUSD, or exchange balances. If those reasons are limited to a few venue listings, supply can plateau.
+
+The most gameable metric is supply. Stablecoin supply can grow because of real payment demand, exchange inventory, market-maker inventory, treasury parking, partner incentives, or temporary promotional balances. Without transfer velocity, redemption volume, venue depth, holder concentration, and payment-flow data, supply growth alone can overstate adoption quality.
+
+The value-capture failure path is straightforward. USAT supply grows, Anchorage earns reserve income, Tether gains strategic U.S. market presence, exchanges earn spreads, and holders receive no upside. That is not a failure for the product, but it is a failure for anyone treating USAT as an investable asset rather than a cash instrument.
+
+The plausible impairment path is also straightforward. Reserve reporting falls behind, a regulatory action restricts certain users, a contract/admin action freezes high-profile addresses, or secondary-market liquidity dries up while non-clients cannot redeem directly. The token may still be fully reserved for eligible redemption, yet secondary holders could experience discount, delay, or operational friction.
+
+Blue-team response: USAT's current disclosures reduce many of these risks. The policy page is clear about client-only redemption and non-client secondary-market dependence. The reserve reports are detailed. The issuer is identifiable. The contract is public. The strongest bullish argument is not that USAT is risk-free; it is that the risks are more legible than in many stablecoin launches.
+
+## Monitoring Dashboard
+
+| Metric | Current value / source | Bull threshold | Bear threshold |
+| --- | ---: | ---: | ---: |
+| Circulating supply | About `$187M` via [CoinGecko](https://www.coingecko.com/en/coins/usat) / [DefiLlama](https://defillama.com/stablecoin/usat) | Sustained above `$500M`, then `$1B` | Below `$150M` after launch cycle |
+| 24h volume | About `$1.75M-$2.4M` | Sustained above `$25M`, then `$50M` | Below `$1M` for several weeks |
+| Peg | About `$0.998-$1.00` | Tight range within 20 bps during market stress | Persistent below `$0.995` or above `$1.005` |
+| Reserve reports | Latest visible April 30 report | May/June reports publish on time and match supply | Delayed reports or unexplained reserve/supply mismatch |
+| Reserve composition | Cash + Treasury-collateralized reverse repo | Short-duration, liquid, transparent counterparties | Longer-duration, opaque, or higher-risk assets |
+| Direct redemption | Anchorage clients only | Broader partner redemption or clearer institutional rails | No improvement while supply/holders grow |
+| Holders | About `12,159` on [Etherscan](https://etherscan.io/token/0x07041776f5007aca2a54844f50503a18a72a8b68) | Healthy growth with lower concentration | Holder growth stalls or top-holder concentration rises |
+| Contract risk | Proxy, no Etherscan-submitted audit | Public audit/admin framework | Upgrade incident, freeze controversy, no disclosure |
+| Chain footprint | Ethereum only | Additional supported chains with clear mint/burn controls | Fragmented wrapped versions not redeemable by issuer |
+| Competitive share | About `$187M` vs USDT/USDC billions | Enters top regulated challenger group | Remains subscale while rivals grow |
+
+## Follow-up Triggers
+
+| Trigger | Why it matters | Action |
+| --- | --- | --- |
+| May or June reserve report publishes | Confirms whether reserves kept pace with supply growth | Recalculate reserve surplus, composition, and timing gap |
+| USAT supply crosses `$500M` | Moves USAT from early challenger to meaningful stablecoin | Recheck liquidity, holders, venue depth, and attestations |
+| 24h volume exceeds `$25M` for two weeks | Suggests market depth is improving | Upgrade liquidity score if depth is real across venues |
+| Persistent peg below `$0.995` | Signals redemption/liquidity stress | Downgrade and investigate venue/issuer flows |
+| Public smart-contract audit or admin-control disclosure appears | Reduces operational risk | Upgrade mechanism clarity if credible |
+| A major U.S. regulated platform lists or delists USAT | Distribution can change quickly | Reassess use-case relevance |
+| Anchorage changes client redemption policy or fee schedule | Directly affects holder exit risk | Reprice cash-instrument utility |
+
+## Final Investment View
+
+Final view: **watchlist / operational use only; not an investment token**.
+
+USAT is one of the more credible new stablecoin launches because the identity is clear, the issuer is identifiable, reserve reports exist, reserve composition is conservative in the latest visible report, and the product has a real strategic reason to exist. The Tether brand plus Anchorage issuance combination is meaningful. It gives Tether a U.S. regulated stablecoin path and gives Anchorage a high-profile issuance proof point.
+
+The report does not recommend treating USAT as a default cash-equivalent replacement for USDC or USDT. The biggest reasons are client-limited redemption, low secondary volume relative to supply, single-chain concentration, proxy/admin control, no holder yield, and the gap between April attested reserves and June live supply. None of these points make USAT bad. They simply define the correct sizing and use case.
+
+For an Anchorage client or a platform with reliable redemption/market-making access, USAT can be a useful U.S.-regulated Tether-linked settlement dollar. For a normal secondary-market holder, it should be held only when there is a specific venue, payment, or treasury reason to hold it, and only in size that can be exited through known liquidity. For yield seekers, USAT is not the product. For investors looking for upside, USAT is not the asset. For stablecoin researchers, USAT is important because it is a live test of whether Tether can compete inside the U.S. regulated stablecoin stack without changing USDT's global model.
+
+Confidence remains **Medium**. Upgrade to Medium-High if May/June reserve reports arrive cleanly, supply grows with proportional volume/depth, direct redemption paths broaden through regulated partners, and contract/admin-control disclosures improve. Downgrade to Low if attestation cadence slips, peg weakens, exchange liquidity remains concentrated, or any regulatory/control event makes secondary holders question whether they can exit at par.
