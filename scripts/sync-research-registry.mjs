@@ -259,8 +259,9 @@ function candidateAliases(candidate) {
     candidate.coingeckoId,
     candidate.coinmarketcapSlug,
     candidate.contract,
-    candidate.target,
     candidate.symbol,
+    candidate.target,
+    candidate.surfSlug,
   ]);
 }
 

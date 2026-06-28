@@ -991,6 +991,16 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/chainlink-vs.png",
   },
   {
+    name: 'Chainlink',
+    description:
+      'Oracle, CCIP, reserve, staking, and capital-markets infrastructure asset',
+    type: 'Infra',
+    slug: 'chainlink-link-oracle-ccip-capital-markets-token-value-capture-risk',
+    color: '#2A5ADA',
+    initial: 'LINK',
+    logoUrl: "/research-logos/chainlink-link-oracle-ccip-capital-markets-token-value-capture-risk.svg",
+  },
+  {
     name: 'GenLayer',
     description:
       'GenLayer is primarily a synthetic jurisdiction for subjective on-chain coordi...',
@@ -1159,16 +1169,6 @@ const PROJECTS: ResearchProject[] = [
     color: '#EF4444',
     initial: 'EA',
     logoUrl: "/research-logos/ethena-and-usde-durability-of-the-synthetic-dollar-model-risks.png",
-  },
-  {
-    name: 'Institutional Deep Dive',
-    description:
-      'UNUS SED LEO (LEO), the utility token of the iFinex/Bitfinex ecosystem, trade...',
-    type: 'Wallet',
-    slug: 'institutional-deep-dive-unus-sed-leo-leo-ifinex-ecosystem-s',
-    color: '#4F46E5',
-    initial: 'ID',
-    logoUrl: "/research-logos/institutional-deep-dive-unus-sed-leo-leo-ifinex-ecosystem-s.png",
   },
   {
     name: 'Monero (XMR)',
@@ -1451,14 +1451,14 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/dexe-protocol-institutional-analysis-of-dao-infrastructure-governance-and-dexe.png",
   },
   {
-    name: 'FILCOIN',
+    name: 'Filecoin',
     description:
-      'FILCOIN: Fil Decentralized Storage Moat & Token Capture Assessment',
-    type: 'DeFi',
-    slug: 'filcoin-fil-decentralized-storage-moat-and-token-capture-assessment',
-    color: '#EC4899',
-    initial: 'FILC',
-    logoUrl: "/research-logos/filcoin-fil-decentralized-storage-moat-and-token-capture-assessment.png",
+      'Decentralized storage network with FVM, collateral, and demand-capture risk',
+    type: 'Infra',
+    slug: 'filecoin-fil-decentralized-storage-fvm-token-economics-risk',
+    color: '#0090FF',
+    initial: 'FIL',
+    logoUrl: "/research-logos/filecoin-fil-decentralized-storage-fvm-token-economics-risk.svg",
   },
   {
     name: 'Kaspa (KAS)',
@@ -1584,13 +1584,13 @@ const PROJECTS: ResearchProject[] = [
     logoUrl: "/research-logos/worldcoin-is-proof-of-humanity-a-bubble-or-the-ai-era.png",
   },
   {
-    name: 'Venice AI',
-    description: 'Venice operates as a private, uncensored AI inference platform combining a co...',
-    type: 'Perp DEX',
-    slug: 'venice-ai-private-inference-and-vvv-tokenomics-deep-dive',
+    name: 'Venice AI / VVV',
+    description: 'Private AI API token with staking, DIEM, buyback, and value-capture risk',
+    type: 'AI/DePIN',
+    slug: 'venice-token-vvv-private-ai-token-value-capture-risk',
     color: '#6366F1',
-    initial: 'VA',
-    logoUrl: "/research-logos/venice-ai-private-inference-and-vvv-tokenomics-deep-dive.png",
+    initial: 'VVV',
+    logoUrl: "/research-logos/venice-token-vvv-private-ai-token-value-capture-risk.svg",
   },
   {
     name: 'Beldex Unmasked',
@@ -2458,6 +2458,15 @@ const PROJECTS: ResearchProject[] = [
     color: '#111827',
     initial: 'RL',
     logoUrl: "/research-logos/ripple-usd-rlusd-enterprise-stablecoin.png",
+  },
+  {
+    name: 'USDGO',
+    description: 'OSL-branded Anchorage-issued enterprise stablecoin with reserve and liquidity risk',
+    type: 'Stablecoin',
+    slug: 'usdgo-usdgo-stablecoin-liquidity-collateral-risk',
+    color: '#0F766E',
+    initial: 'USDGO',
+    logoUrl: "/research-logos/usdgo-usdgo-stablecoin-liquidity-collateral-risk.svg",
   },
   {
     name: 'Ondo USDY',
@@ -3367,6 +3376,24 @@ const PROJECTS: ResearchProject[] = [
     color: '#0F766E',
     initial: 'LPT',
     logoUrl: "/research-logos/livepeer-lpt-decentralized-video-ai-gpu-token-risk.svg",
+  },
+  {
+    name: 'Aleo',
+    description: 'Privacy-first ZK L1 with live mainnet, prover economics, and PMF risk',
+    type: 'Privacy',
+    slug: 'aleo-aleo-private-zk-l1-prover-economics-value-capture-risk',
+    color: '#7C3AED',
+    initial: 'ALEO',
+    logoUrl: "/research-logos/aleo-aleo-private-zk-l1-prover-economics-value-capture-risk.svg",
+  },
+  {
+    name: 'LEO Token',
+    description: 'Bitfinex exchange token with buyback burns, issuer concentration, and liquidity risk',
+    type: 'CEX',
+    slug: 'leo-token-leo-bitfinex-exchange-token-buyback-liquidity-risk',
+    color: '#0891B2',
+    initial: 'LEO',
+    logoUrl: "/research-logos/leo-token-leo-bitfinex-exchange-token-buyback-liquidity-risk.svg",
   },
 ];
 

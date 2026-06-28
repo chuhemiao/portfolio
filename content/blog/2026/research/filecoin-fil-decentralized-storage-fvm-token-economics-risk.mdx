@@ -1,0 +1,383 @@
+---
+title: 'Filecoin FIL: Decentralized Storage, FVM Optionality, and Token Value-Capture Risk'
+publishedAt: '2026-06-28'
+summary: 'Filecoin is one of the few Web3 infrastructure networks with real physical scale, live cryptographic storage proofs, a deep Protocol Labs ecosystem, active storage providers, and a 2026 demand pivot through Filecoin Onchain Cloud; however, FIL is still a watchlist asset rather than a clean accumulation because raw storage capacity materially exceeds clearly paid demand, FVM DeFi is small, market-data providers disagree on circulating supply, provider rewards still dominate burned fees, and token value capture depends on collateral demand, useful paid deals, PDP/FOC adoption, and improved network economics rather than direct revenue share.'
+slug: 'filecoin-fil-decentralized-storage-fvm-token-economics-risk'
+category: 'research'
+---
+
+## Pre-screen Decision
+
+Decision: full research.
+
+Filecoin / FIL deserves a full-depth Research Map memo because it is not a small narrative token pretending to be infrastructure. It is one of the longest-running attempts to coordinate real-world storage hardware with a public blockchain, a native asset, cryptographic proofs, client-provider markets, and a global open-source ecosystem. The project has a live mainnet, exabyte-scale storage power, hundreds of active storage providers, a published economic model, an Ethereum-compatible smart-contract layer through the Filecoin Virtual Machine, a 2026 strategy explicitly focused on paid onchain storage deals, and a current large-cap-but-distressed market profile. The current investment debate is therefore not "does Filecoin exist?" or "is decentralized storage an idea?" The debate is whether Filecoin's real infrastructure scale is finally converting into recurring paid demand and durable FIL value capture.
+
+Local registry check before writing returned no canonical Filecoin research match: `pnpm sync:research:registry -- --check "Filecoin"` reported "No local research match." During a broader text scan, I found an older typo-labeled `filcoin-fil-decentralized-storage-moat-and-token-capture-assessment.mdx` file. That file is not being edited, renamed, reverted, or integrated in this task. This memo treats the canonical project identity as Filecoin / FIL, with official website [filecoin.io](https://filecoin.io/), official docs at [docs.filecoin.io](https://docs.filecoin.io/), current market pages at [CoinGecko](https://www.coingecko.com/en/coins/filecoin) and [CoinMarketCap](https://coinmarketcap.com/currencies/filecoin/), and chain explorers / network data anchored by [Filfox](https://filfox.info/en) and the Filfox [overview API](https://filfox.info/api/v1/overview).
+
+The pre-screen answer is full research for three reasons. First, Filecoin is a strategically important decentralized physical infrastructure network with a distinct mechanism: Proof-of-Replication, Proof-of-Spacetime, storage provider collateral, quality-adjusted power, provider rewards, slashing, storage deals, retrieval markets, and now Proof of Data Possession for hot / warm storage. This is mechanism-heavy enough that a short overview would miss the investment point. Second, Filecoin is at an inflection moment. The official [2026 Filecoin Network Strategy](https://filecoin.io/blog/the-2026-filecoin-network-strategy) says the ecosystem is shifting away from merely growing supply and toward paid onchain deals, network profitability, and flagship client adoption. Third, the market has already repriced FIL sharply down from prior-cycle highs, so the asset now combines real technical assets with weak market confidence. That makes it a useful watchlist candidate.
+
+The working verdict is skeptical but not dismissive: Filecoin is credible infrastructure with a real storage network, a credible developer ecosystem, and a coherent AI / verifiable-data demand narrative. FIL, however, is not yet a clean cash-flow or fee-accrual asset. It is a collateral-and-infrastructure token whose upside depends on paid storage demand absorbing supply, provider collateral needs rising with useful work, burned fees and onchain payments becoming material, and FVM / Filecoin Onchain Cloud turning the network into more than a subsidized capacity market. This memo therefore classifies FIL as "watchlist / selective optionality," not "accumulate blindly."
+
+## TL;DR
+
+Filecoin is best understood as a decentralized storage economy, not simply a cheap hard-drive marketplace. Storage providers pledge sectors, generate Proof-of-Replication when data is sealed, submit Proof-of-Spacetime to prove continued storage, lock FIL collateral, receive block rewards in proportion to storage power, and can earn client payments for storage and retrieval services. The protocol uses FIL for gas, collateral, penalties, rewards, storage payments, and economic alignment. The official docs describe Filecoin as a blockchain secured by storage proofs rather than proof-of-work hash power, and the [crypto-economics docs](https://docs.filecoin.io/getting-started/what-is-filecoin/crypto-economics) place a maximum circulating supply cap at 2 billion FIL. This makes Filecoin one of the few networks where the consensus resource is a real-world commodity: storage capacity.
+
+The strongest bullish evidence is physical and institutional. The June 28, 2026 Filfox snapshot showed height around `6,144,197`, about `616` active miners / storage providers, raw byte power around `1.90e18` bytes, quality-adjusted power around `1.68e19` bytes, about `3.80M` accounts, and roughly `75.8M FIL` in pledge collateral. Converting raw bytes into binary units gives about `1.65 EiB` of raw power, while quality-adjusted power is about `14.55 EiB`. That distinction matters because Filecoin's verified-deal multipliers and quality-adjusted accounting can make economic power much larger than raw storage capacity. The same Filfox snapshot showed `42.38M FIL` burned and about `62,130 FIL` mined daily. This is not a dead chain.
+
+The second bullish evidence lane is product evolution. Filecoin's early years were dominated by raw capacity growth and subsidized onboarding. The 2026 strategy is more focused: paid onchain deals, network profitability, and flagship client adoption. [Filecoin Onchain Cloud went live on mainnet](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet) in March 2026 with programmable storage, onchain proofs, Filecoin Pay, the Synapse SDK, two-copy replication, service-provider performance thresholds, and early mainnet figures of `49.41 TiB` stored across `478` active datasets and `81` payer wallets. Those numbers are small relative to Filecoin's network capacity, but they are important because they move the product from "offchain deal coordination plus block rewards" toward "developers can buy verifiable storage with onchain payment rails."
+
+The third bullish evidence lane is developer and infrastructure depth. The [Lotus](https://github.com/filecoin-project/lotus) reference implementation, [builtin actors](https://github.com/filecoin-project/builtin-actors), [FIPs](https://github.com/filecoin-project/FIPs), [Curio](https://github.com/filecoin-project/curio), and [Filecoin Docs](https://github.com/filecoin-project/filecoin-docs) repositories were active in late June 2026 in GitHub API checks during this run. Lotus alone remains a large Go repository with thousands of stars and recent pushes. The docs have been updated recently, the FIP process is active, and Curio is the next-generation storage-provider software. This does not prove demand, but it does support execution continuity.
+
+The bearish case is equally serious. Filecoin has had years to prove commercial storage demand, and the data still shows an awkward gap between network scale and paid usage. Messari's public [Q3 2025 State of Filecoin](https://messari.io/report/state-of-filecoin-q3-2025) summarized utilization rising to 36% while committed capacity fell, which can be read as right-sizing rather than demand explosion. The [FilecoinTLDR paid-deals dashboard](https://filecointldr.io/paid-deals-dashboard/) explicitly says its data is self-reported by participating teams and is not exhaustive. The official FOC mainnet stats are promising but tiny compared with exabyte-scale capacity. FVM DeFi remains small: DefiLlama's chain list showed Filecoin TVL near `$3.79M`, stablecoin supply on Filecoin near `$157K`, and DEX volume on Filecoin around `$4.61M` over 30 days in this run. That is not enough to rerate FIL by itself.
+
+The token case is mixed. FIL is useful because storage providers need collateral, users need gas and payments, and penalties burn or redirect economic value. But FIL holders do not receive a direct revenue share. DefiLlama's Filecoin chain-fee methodology treats gas fees paid by users as burned, and the June 28, 2026 data path showed Filecoin chain fees around `$1.9K` in 24h, `$56K` in 30d, and `$2.62M` over one year, while Filfox showed about `62K FIL` mined daily. At the live DefiLlama price near `$0.7308`, daily issuance is roughly `$45K` before considering vesting, collateral dynamics, or market flows. The burn exists, but it is not yet the dominant economic force.
+
+Market data also conflicts. DefiLlama's Filecoin protocol page showed market cap around `$577.4M`, and DefiLlama's coin endpoint showed FIL near `$0.7308` on June 28, 2026. That implies a market-data circulating base around `790M FIL`. Filfox's chain overview, however, showed about `881.3M FIL` circulating, `977.4M FIL` total supply, and `2B FIL` max supply. CoinGecko and CoinMarketCap pages should be treated as dynamic public venue references, while Filfox should be treated as chain-specific state. The working interpretation: price is high-confidence; exact circulating supply and market cap should be used as ranges, not false precision.
+
+Verdict: Filecoin is a legitimate decentralized storage infrastructure asset with meaningful optionality from AI data, verifiable storage, Filecoin Onchain Cloud, PDP, F3 / fast finality, paid onchain deals, and FVM composability. FIL is still a watchlist asset because token capture is indirect, paid demand is not yet proven at the scale of network capacity, DeFi usage is small, provider economics remain subsidy-heavy, and supply / circulating definitions require reconciliation. A serious upgrade would require clear growth in paid onchain deals, rising active datasets, stable or rising raw capacity without collapsing provider count, higher burned fees relative to issuance, and FVM / GLIF / stablecoin liquidity that becomes large enough to matter.
+
+## Identity, Research Question, and Evidence Map
+
+Canonical identity: Filecoin is the public decentralized storage network originally developed around Protocol Labs, IPFS, and a token sale ecosystem. The token is FIL. The official domain is [filecoin.io](https://filecoin.io/). The official docs are [docs.filecoin.io](https://docs.filecoin.io/). The official Filecoin Onchain Cloud product surface is [filecoin.cloud](https://filecoin.cloud/). Mainnet launched in 2020, and the protocol has since expanded from storage deals and provider rewards into FVM / FEVM, Filecoin Onchain Cloud, programmable payments, Proof of Data Possession, and efforts to build a warmer / more retrievable storage layer.
+
+The core research question is: is Filecoin becoming commercially durable verifiable cloud infrastructure, or is FIL mainly a distressed infrastructure-beta token attached to an underutilized storage network?
+
+This distinction matters. A decentralized storage network can look impressive on raw capacity but weak on paid demand. It can be cheap per terabyte but lose to AWS, Google Cloud, Cloudflare R2, or specialized Web2 infrastructure on UX, support, latency, compliance, retrieval performance, and procurement. It can also generate real token demand through collateral and storage deals while still failing passive holders if issuance, provider sell pressure, and indirect value capture overwhelm burned fees. FIL is investable only if storage-market adoption, useful work, collateral demand, and network economics strengthen together.
+
+| Evidence lane | Key facts used in this memo | Main source links | Confidence impact |
+|---|---|---|---|
+| Identity | Official Filecoin domain, docs, Filecoin Onchain Cloud, FIL ticker, 2B max supply framework | [Filecoin](https://filecoin.io/), [docs](https://docs.filecoin.io/), [crypto-economics](https://docs.filecoin.io/getting-started/what-is-filecoin/crypto-economics) | High |
+| Mechanism | PoRep, PoSt, sectors, collateral, slashing, provider rewards, FVM / FEVM | [Proofs](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine/proofs), [storage proving](https://docs.filecoin.io/provide-storage/filecoin-economics/storage-proving), [FVM](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine) | High |
+| Network data | 616 active miners, about 1.65 EiB raw power, about 14.55 EiB QA power, 75.8M FIL collateral, 42.38M FIL burned | [Filfox overview API](https://filfox.info/api/v1/overview), [Filfox miner power API](https://filfox.info/api/v1/miner/list/power?pageSize=20) | Medium-High |
+| Market data | FIL near $0.7308, market cap around $577M, 24h volume around $37M-$38M from Surf / venue seed, FDV around $1.46B using 2B max supply | [DefiLlama price](https://coins.llama.fi/prices/current/coingecko:filecoin), [DefiLlama Filecoin](https://defillama.com/protocol/filecoin), [CoinGecko](https://www.coingecko.com/en/coins/filecoin), [CoinMarketCap](https://coinmarketcap.com/currencies/filecoin/) | Medium |
+| Usage | FOC mainnet data is early; TLDR paid-deal dashboard is self-reported; Messari history shows utilization improved while capacity shrank | [FOC mainnet](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet), [FilecoinTLDR](https://filecointldr.io/paid-deals-dashboard/), [Messari Q3 2025](https://messari.io/report/state-of-filecoin-q3-2025) | Medium |
+| FVM / DeFi | Filecoin chain TVL about $3.79M; GLIF data conflicts with chain TVL; stablecoin supply is tiny; DEX volume is small | [DefiLlama chains](https://defillama.com/chains), [GLIF](https://defillama.com/protocol/glif), [stablecoins](https://stablecoins.llama.fi/stablecoins?chain=Filecoin), [Filecoin DEXs](https://defillama.com/dexs/chains/Filecoin) | Medium-Low |
+| Developer activity | Lotus, builtin actors, FIPs, Curio, docs all active in late June 2026 | [Lotus](https://github.com/filecoin-project/lotus), [builtin actors](https://github.com/filecoin-project/builtin-actors), [FIPs](https://github.com/filecoin-project/FIPs), [Curio](https://github.com/filecoin-project/curio) | Medium-High |
+| Competition | Arweave, IPFS, BNB Greenfield, Shadow Drive, Celestia / Avail-style DA, Sia / Storj, hyperscalers | [Arweave](https://docs.arweave.org/), [BNB Greenfield](https://docs.bnbchain.org/bnb-greenfield/), [Shadow Drive](https://docs.shadow.cloud/), [Celestia](https://docs.celestia.org/) | Medium |
+
+## Project Overview
+
+Filecoin is a decentralized storage network where the core product is not only cheap disk space but verifiable storage. A normal cloud customer trusts AWS, Google Cloud, Azure, Cloudflare, or a smaller storage vendor to hold data according to contract terms. Filecoin changes the trust model by making storage commitments public, collateralized, and cryptographically verifiable. Storage providers earn the right to participate in consensus by proving that they store data over time. Clients can use the network to store content-addressed data, while applications can increasingly use Filecoin Onchain Cloud, Filecoin Pay, Synapse, PDP, and FVM contracts to coordinate storage and payments onchain.
+
+The project sits at the intersection of three markets. The first is decentralized physical infrastructure: Filecoin coordinates hardware operators, collateral, and rewards. The second is data infrastructure: Filecoin sells durability, auditability, retrievability, and data ownership to developers and organizations that do not want data locked inside centralized vendors. The third is programmable Web3 infrastructure: FVM lets smart contracts interact with storage commitments, FIL liquidity, provider finance, and data-centric applications. This means Filecoin should not be evaluated as a normal L1, a pure DeFi protocol, or a pure cloud company. It is a storage marketplace with a blockchain-native capital layer.
+
+The user problem is real but specific. Filecoin is strongest where users care about verifiable persistence, open data, long-term archives, censorship resistance, data provenance, public-good datasets, AI training corpus integrity, decentralized frontends, and Web3-native payment / escrow flows. It is weakest where users primarily care about low-latency hot reads, fully managed enterprise support, procurement simplicity, data residency controls, or existing cloud integrations. The investment mistake is to claim Filecoin replaces all cloud storage. The more useful question is whether Filecoin can win enough high-value verifiable storage to make provider collateral, onchain payments, and burned fees economically meaningful for FIL.
+
+The current product surface is broader than historical Filecoin. Early Filecoin was often discussed as a storage marketplace plus IPFS-adjacent archival layer. The 2026 product surface includes Filecoin Onchain Cloud for programmable storage, Filecoin Pay for onchain payment flows, Synapse for developer integration, PDP for proof-backed warm data, FVM / FEVM for smart contracts, GLIF-style provider credit markets, and ongoing protocol work such as F3 / fast finality. The strategic direction is clear: move from raw capacity and subsidized onboarding toward paid, retrievable, programmable, onchain storage services.
+
+That direction is why this memo is not simply bearish. Filecoin's historical weakness is visible in the data, but the current roadmap is aimed at exactly that weakness. If the 2026 strategy works, Filecoin becomes a verifiable cloud layer with stronger token sinks. If it fails, the network remains technically impressive while FIL continues to trade as legacy storage beta with unclear cash-flow support.
+
+## Mechanism
+
+Filecoin's mechanism starts with a storage marketplace and then adds a blockchain around verifiable commitments. A client wants data stored. A storage provider agrees to store that data for a duration and locks FIL collateral. The provider seals the data into sectors and generates a Proof-of-Replication, which proves that the provider has created a unique encoded copy. After onboarding, the provider must continuously prove that the data remains stored over time through Proof-of-Spacetime. The [Filecoin proof docs](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine/proofs) and [storage proving docs](https://docs.filecoin.io/provide-storage/filecoin-economics/storage-proving) describe the proof structure, and the docs glossary describes sectors, WindowPoSt, WinningPoSt, slashing, quality-adjusted power, and storage providers.
+
+The reason this matters is that Filecoin is not paying providers simply for claiming disk space. It is paying them for cryptographically verifiable commitments. Storage power determines a provider's probability of being elected to produce blocks and receive block rewards. Quality-adjusted power can differ from raw power because verified deals and useful data have different weight than capacity commitments. This creates both an advantage and a measurement problem. The advantage is that Filecoin can incentivize useful storage rather than only empty capacity. The measurement problem is that raw power, quality-adjusted power, active deals, paid deals, verified deals, capacity commitments, and retrievability are not the same metric. A bullish report that cites only quality-adjusted power is over-reading the network. A bearish report that cites only raw power misses the incentive design.
+
+Storage provider economics have several moving parts. Providers need hardware, operational expertise, sealing infrastructure, network reliability, FIL collateral, and proof submission. They earn block rewards, client payments, and potentially other service revenue. They can be penalized if they fail to prove storage. The docs on [FIL collateral](https://docs.filecoin.io/provide-storage/filecoin-economics/fil-collateral) and [block rewards](https://docs.filecoin.io/provide-storage/filecoin-economics/block-rewards) are important because they show the network is a capital-intensive provider economy. This is one reason Filecoin is harder to bootstrap than a software-only L1. It also creates a token sink: providers must lock FIL to participate. The issue is that collateral demand is healthy only if it is tied to useful, profitable, recurring storage demand rather than block-reward farming.
+
+The storage workflow can be simplified into this chain:
+
+| Step | What happens | Economic implication |
+|---|---|---|
+| Client / app prepares data | Data is addressed by content, typically through IPFS / CID-style workflows | Filecoin inherits content-addressed data advantages |
+| Provider accepts deal or service request | Terms define storage duration, pricing, and service expectations | Paid demand starts here, but not every deal is organic |
+| Provider seals data into sectors | Sealing creates a unique commitment using PoRep | High operational complexity and hardware cost |
+| Provider locks collateral | FIL is committed to guarantee storage duties | FIL demand rises with provider participation |
+| Provider submits ongoing proofs | PoSt / PDP-style proofs verify continued data possession | Failure can create penalties and slash risk |
+| Chain records commitments | The Filecoin chain becomes the settlement and verification layer | Onchain state creates transparency |
+| Provider receives rewards / payments | Block rewards, storage payments, retrieval payments, FOC service payments | Token value depends on balance between rewards and demand |
+| User retrieves or verifies data | Retrieval quality determines whether storage is commercially useful | Retrieval remains a key adoption bottleneck |
+
+The Filecoin Virtual Machine adds a second layer. FVM gives Filecoin smart-contract programmability beyond native storage actors. The official [FVM docs](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine) describe it as the runtime environment for smart contracts, while the [FEVM docs](https://docs.filecoin.io/core-concepts/filecoin-evm-runtime) describe Ethereum compatibility. This means Solidity developers can deploy EVM-style contracts to Filecoin, and applications can build on storage commitments, tokenized data rights, payment rails, lending, liquid staking, and data DAOs. In theory, FVM is a powerful unlock because storage data can become programmable collateral, not just static blobs. In practice, DeFi and application liquidity on Filecoin remain small, so FVM is an option, not yet the main value driver.
+
+Filecoin Onchain Cloud is the 2026 attempt to productize the mechanism. The March 2026 [mainnet announcement](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet) frames FOC as programmable storage and payment infrastructure where data is verified onchain, payments are enforced by smart contracts, and actions leave auditable records. It introduced two-copy replication, Filecoin Pay, Synapse SDK flows, service-provider thresholds, and a PDP Explorer. The [Filecoin Cloud site](https://filecoin.cloud/) frames the product as a way for applications to own data, payments, and logic. The [payments and storage docs](https://docs.filecoin.cloud/cookbooks/payments-and-storage/) provide a concrete pricing formula for active datasets. This is materially more legible to developers than older deal flows.
+
+The most important mechanism improvement is Proof of Data Possession for warm data. Classic Filecoin storage was better suited to long-lived storage commitments than low-latency hot storage. The 2025 year-in-review post describes PDP as a capability for on-demand verification of hot data and says it underpins the Warm Storage Service. If PDP plus FOC can make Filecoin practical for AI pipelines, agent logs, datasets, decentralized frontends, and data provenance, the network can move closer to commercial cloud replacement. If PDP remains niche and FOC does not scale past early adopters, Filecoin remains primarily a cold-storage and subsidized-deal network.
+
+There is also a trust-assumption layer. Filecoin removes some trust in storage providers by requiring cryptographic proofs and collateral, but it does not remove all trust and operational risk. Users still need usable onramps, reliable retrieval, provider quality filters, data replication policies, pinning / retrieval interfaces, bridges or payment rails, indexing, and application-level integration. FOC's provider thresholds - storage success rate, PDP fault rate, retrieval success rate - are an attempt to make this operational layer credible. For institutional users, the open network alone is not enough. They need SLAs, data locality, compliance, support, and reliable procurement. Filecoin's mechanism is strong; the commercial wrapper still needs proof.
+
+## Market / Usage Data
+
+Snapshot date: June 28, 2026 unless otherwise noted.
+
+Market data first. DefiLlama's coin endpoint returned FIL near `$0.7308` with high confidence in this run. DefiLlama's Filecoin protocol page showed market cap around `$577.4M`. The Surf candidate seed supplied for this task had Filecoin around rank #95, market cap around `$577M`, and 24h volume around `$38M`. CoinGecko / CoinMarketCap-style public market pages cluster around the same broad valuation range, although exact price, volume, supply, and rank move intraday. Using the 2B FIL maximum supply from Filecoin docs, the live price implies fully diluted value around `$1.46B`. Using DefiLlama market cap and price implies circulating supply around `790M FIL`. That conflicts with the Filfox chain overview's `881.3M FIL` circulating supply field, so this memo uses market cap as a range rather than a single exact truth.
+
+Network data is stronger than most DePIN projects. The [Filfox overview API](https://filfox.info/api/v1/overview) showed about `616` active miners, `3.80M` accounts, `1.90e18` raw byte power, `1.68e19` quality-adjusted power, `75.8M FIL` in pledge collateral, `42.38M FIL` burned, `10.62M FIL` multisig locked, a block reward near `4.38 FIL`, and about `43K` daily messages. The same endpoint showed daily coins mined around `62.1K FIL`. The [Filfox miner power API](https://filfox.info/api/v1/miner/list/power?pageSize=20) showed the largest listed miner with roughly `16.3e15` raw bytes, which is about `14.5 PiB`, and less than 1% of total raw power. This suggests provider power is not obviously dominated by a single provider, although identity clustering across related provider IDs still needs deeper analysis.
+
+The raw-versus-quality-adjusted distinction is central:
+
+| Metric | June 28, 2026 data | Interpretation |
+|---|---:|---|
+| Raw byte power | About `1.90e18` bytes, or about `1.65 EiB` | Physical storage commitment scale, down from earlier-cycle highs |
+| Quality-adjusted power | About `1.68e19` bytes, or about `14.55 EiB` | Incentive-weighted power including quality / verified multipliers |
+| Active miners | `616` | Still broad provider participation, but professionalized |
+| Pledge collateral | About `75.8M FIL` | Major token sink tied to provider economics |
+| Burned supply | About `42.38M FIL` | Real sink, but not enough alone to dominate issuance |
+| Daily mined | About `62.1K FIL` | Material ongoing issuance / provider rewards |
+| Daily messages | About `43K` | Chain is active, but message count does not equal paid storage demand |
+
+Demand data is less clean. The [FilecoinTLDR paid-deals dashboard](https://filecointldr.io/paid-deals-dashboard/) tracks teams oriented around paid deals, but the dashboard itself says the data is self-reported by participating teams and is not exhaustive. That is useful transparency, but it weakens the ability to underwrite paid demand from a single dashboard. Messari's public Filecoin reports provide historical context: Q1 2025 utilization was around 30%, Q2 2025 around 32%, and [Q3 2025](https://messari.io/report/state-of-filecoin-q3-2025) around 36% while total committed capacity fell. Rising utilization can be bullish if active paid deals grow. It can also be a mechanical result of capacity leaving the network faster than demand falls. For Filecoin, that distinction is the whole debate.
+
+FOC mainnet data is early but important. The March 2026 FOC mainnet post reported `49.41 TiB` stored across `478` active datasets and `81` payer wallets at launch. Those numbers are tiny compared with exabyte-scale network capacity. A naive reader might dismiss them as irrelevant. That would be too harsh because FOC is a new product surface: the right metric is growth rate, not launch size. But investors cannot yet use FOC mainnet data as proof that Filecoin has solved commercial demand. It is a promising leading indicator, not a mature revenue line.
+
+FVM / DeFi data is small. DefiLlama's chain list showed Filecoin TVL around `$3.79M`. DefiLlama's DEX overview for Filecoin showed roughly `$29K` 24h DEX volume and `$4.61M` 30d DEX volume in this run. The [stablecoin API](https://stablecoins.llama.fi/stablecoins?chain=Filecoin) showed Filecoin stablecoin circulating value around `$157K`. GLIF is the main exception: [DefiLlama GLIF](https://defillama.com/protocol/glif) showed a much larger Filecoin-specific protocol TVL figure around `$23.7M` in the API output, because GLIF is a liquid staking / credit layer for storage-provider financing rather than ordinary EVM app TVL. This creates a data interpretation problem: Filecoin's credit layer is more meaningful than its DEX ecosystem, but the broader FVM app economy is still thin.
+
+Fees and revenue are also small versus issuance and market cap. DefiLlama's Filecoin chain fee methodology says users pay gas fees and that transaction fees are burned. The June 28, 2026 API run showed the Filecoin chain line around `$1.9K` in 24h fees / revenue, `$56K` over 30 days, and `$2.62M` over one year. GLIF fee data was smaller on a 30-day basis in this snapshot, around `$7.2K` in revenue, though GLIF's TVL and credit role are more important than this fee number alone. These metrics support a conservative conclusion: Filecoin has real burned fees, but the token's current economics are still dominated by collateral, provider rewards, supply dynamics, and future paid demand rather than present fee burn.
+
+The negative usage read is not that Filecoin has no demand. The negative read is that the strongest visible demand metrics are either old, self-reported, subsidized / verified-deal-influenced, or still small in the newest product surface. The positive read is that the 2026 strategy openly acknowledges this weakness and is focusing the ecosystem on paid onchain deals and network profitability. Many crypto projects hide weak unit economics. Filecoin is at least trying to make the weakness the workstream.
+
+## Source Conflict Matrix
+
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+|---|---:|---:|---:|---|---|
+| Price | [DefiLlama coin endpoint](https://coins.llama.fi/prices/current/coingecko:filecoin): about `$0.7308` on June 28, 2026 | [CoinGecko](https://www.coingecko.com/en/coins/filecoin) dynamic page | [CoinMarketCap](https://coinmarketcap.com/currencies/filecoin/) dynamic page | Use about `$0.73` as snapshot price | Intraday price moves are normal |
+| Market cap | [DefiLlama Filecoin](https://defillama.com/protocol/filecoin): about `$577.4M` | Surf seed: around `$577M` | Market venues can differ | High-level range is reliable | Market cap depends on circulating supply |
+| 24h volume | Surf seed: around `$38M` | Market-page snapshots around `$37M-$38M` | DEX volume on Filecoin is only about `$29K` 24h | CEX volume dominates; FVM DEX activity is tiny | Volume quality is mostly offchain / CEX |
+| FDV | Price * 2B max supply: about `$1.46B` | Market venues may use different total supply | Filfox max supply field: 2B FIL | 2B max supply is the right long-term cap | FDV can look cheap while near-term issuance remains material |
+| Circulating supply | DefiLlama mcap / price implies about `790M FIL` | [Filfox overview](https://filfox.info/api/v1/overview): `881.3M FIL` circulating | CoinGecko / CMC may differ intraday | Treat circulation as a range and reconcile before sizing | Valuation and float could be misstated |
+| Total supply | Filfox: `977.4M FIL` | Filecoin docs: cap 2B FIL | CoinList sale page historically used 2B total | High confidence on max, medium on current circulating methodology | Supply accounting is complex |
+| Raw storage power | Filfox: about `1.90e18` bytes, or `1.65 EiB` | Messari Q3 2025: committed capacity around `3.0 EiB` | Older reports showed higher capacity | Network capacity has shrunk from earlier highs | Capacity loss may signal provider economics stress |
+| Quality-adjusted power | Filfox: about `1.68e19` bytes, or `14.55 EiB` | Older articles often cite decimal EB or QA power without raw distinction | Docs define quality-adjusted power separately | Use raw and QA separately | QA power can overstate physical capacity |
+| Utilization | Messari Q3 2025: 36% utilization | TLDR / paid-deal dashboards are self-reported and newer paid-deal data is less standardized | Current raw power changed after Q3 2025 | Utilization trend is useful, but not direct paid revenue | Subsidized / verified deals can inflate demand quality |
+| Chain fees / burn | DefiLlama chain line: about `$56K` 30d and `$2.62M` 1y | Filfox shows `42.38M FIL` burned lifetime | Market value of burn depends on FIL price | Burn exists but is not dominant today | Investors can overstate fee capture |
+| Issuance | Filfox: about `62.1K FIL` mined daily | Docs describe baseline and simple minting | Provider rewards vary with network state | Issuance remains material relative to daily burned fees | Provider selling can pressure price |
+| FVM TVL | DefiLlama chains: about `$3.79M` | GLIF protocol API shows Filecoin TVL around `$23.7M` | Stablecoin API shows only about `$157K` on Filecoin | App TVL is small; GLIF is a special credit-layer case | FVM traction can be overstated if GLIF is counted loosely |
+| FOC usage | FOC mainnet post: `49.41 TiB`, `478` datasets, `81` payer wallets at launch | Filecoin Cloud site is product marketing | Paid-deals dashboard is self-reported | FOC is early but important | Launch metrics are not yet commercial scale |
+
+## Token Economics / Value Capture
+
+FIL is not a governance-only token. It is deeply embedded in Filecoin's provider economy. Storage providers lock FIL collateral. Users pay gas. Providers earn block rewards. Storage deals can involve FIL-denominated payments or onchain payment rails. Penalties can burn or slash value. FVM applications use FIL as the native gas asset. The [crypto-economics docs](https://docs.filecoin.io/getting-started/what-is-filecoin/crypto-economics) describe the network's minting and supply constraints, including simple minting, baseline minting, reserve concepts, locked tokens, pledge collateral, and the 2B FIL cap.
+
+The bullish value-capture chain is clear:
+
+1. More paid storage demand requires more storage providers or higher useful power.
+2. More useful provider participation requires more FIL collateral.
+3. More onchain storage, payments, FOC contracts, FVM apps, and retrieval coordination create more gas use.
+4. More gas use burns FIL-denominated fees.
+5. More commercial provider revenue improves storage-provider profitability and reduces dependence on pure block rewards.
+6. More credible token economics can reduce sell pressure and support monetary premium.
+
+That is a coherent value-capture path. It is not yet a proven one at scale.
+
+The first weakness is that client payments and provider revenue do not automatically equal FIL holder revenue. A storage provider earning FIL can sell it. A provider locking collateral creates demand, but collateral can be returned when sectors expire or providers exit. Gas fees can be burned, but current burned fees are small compared with issuance and market capitalization. Filecoin does not have a direct revenue-share mechanism where FIL holders receive protocol cash flow. FIL holders benefit indirectly through scarcity, collateral demand, burn, network demand, and monetary premium. Indirect capture can work, but it must be monitored rather than assumed.
+
+The second weakness is that provider rewards still matter more than user fees. Filfox showed about `62.1K FIL` mined daily. At about `$0.7308`, that is roughly `$45K` of daily issuance. DefiLlama's Filecoin chain line showed about `$1.9K` in 24h burned fees. This simple comparison is not the whole economy because provider collateral, vesting, storage payments, and burn mechanics matter. But it gives the right intuition: current fee burn is not yet strong enough to offset issuance by itself. The investment case therefore depends on future paid demand and better reward allocation, not present fee income.
+
+The third weakness is supply accounting. Filecoin's 2B max supply is clear, but circulating supply is not a single clean number across providers. Filfox showed `881.3M FIL` circulating; DefiLlama market cap and price imply around `790M FIL`; dynamic market pages may differ. Multisig locked balance, pledge collateral, market pledge, burned supply, team / foundation / SAFT vesting, miner rewards, and exchange float all affect investable supply. The official 2026 strategy notes that final network vesting periods are ending later in 2026, which is important because the end of vesting can remove one dilution overhang but can also make previously locked supply more liquid. This is a key follow-up trigger.
+
+The fourth weakness is that Filecoin's historical economics were supply-led. Early Filecoin subsidized capacity and verified storage onboarding. That created the world's largest decentralized storage network, but it also made paid demand hard to isolate. The 2026 strategy explicitly aims to redirect incentives toward paid usage, useful work, and long-term participation. This is the right direction. It also admits that the previous regime did not fully solve network profitability.
+
+The strongest token-positive feature is collateral. The Filfox overview showed `75.8M FIL` in pledge collateral. At the snapshot price, that is roughly `$55M` of FIL economically tied to provider obligations. Collateral is not burned, but it is economically meaningful because it ties supply to network work. If paid deals grow and providers need more collateral to serve profitable customers, FIL demand can rise even without fee-share. If raw power declines and providers exit, collateral demand can weaken.
+
+The second token-positive feature is burn. Filecoin burns base fees and penalties. Filfox showed `42.38M FIL` burned, which is economically non-trivial over the network's life. The issue is current burn rate. A large historical burned balance helps long-term scarcity, but investment returns depend on current and future net flows. Burn becomes a strong FIL thesis only if FOC, FVM, storage payments, and message volume make gas burn rise materially.
+
+The third token-positive feature is programmable credit. GLIF turns FIL into a storage-provider financing asset. The [GLIF DefiLlama page](https://defillama.com/protocol/glif) describes Filecoin liquid staking / credit pools where providers borrow or delegate FIL and LPs earn yield from storage-provider economics. This is important because Filecoin's core bottleneck is capital-intensive provider participation. A credit layer can make storage-provider financing more efficient and can create additional demand for FIL as productive capital. The risk is that GLIF makes provider leverage easier, and if provider economics weaken, credit losses or liquidity stress can feed back into FIL sentiment.
+
+The working token-economics grade is medium. FIL has stronger utility than many infrastructure tokens, but weaker direct capture than a token with explicit revenue distribution or heavy fee burn. The strongest future proof would be a dashboard that shows paid storage revenue, FOC payments, provider profitability, collateral demand, burn, issuance, vesting, and protocol incentives in one reconciled view. Until then, investors should treat FIL as a real but indirect value-capture token.
+
+## Team, Funding, Governance, and Developer Activity
+
+Filecoin's organizational credibility is high by crypto standards. Protocol Labs, Filecoin Foundation, FilOz, and the broader Filecoin ecosystem have maintained a complex network for years. The original Filecoin token sale was one of the largest in crypto history: the official [token sale completed](https://filecoin.io/blog/token-sale-completed) post says the project raised more than `$205M` in 2017, and CoinList's historical Filecoin page shows 2B total supply and sale details. Large historical funding is not automatically bullish for public token holders, but it explains why the ecosystem has been able to support long-lived research, development, grants, tooling, storage-provider operations, and community programs.
+
+The open-source footprint is active. The [Lotus](https://github.com/filecoin-project/lotus) repository is the reference implementation of the Filecoin protocol in Go and had a late-June 2026 push in this run. [Builtin actors](https://github.com/filecoin-project/builtin-actors) were also active, reflecting the Rust actor layer that matters for protocol-level behavior. [FIPs](https://github.com/filecoin-project/FIPs) remain the improvement-proposal process. [Curio](https://github.com/filecoin-project/curio) is the next-generation storage-provider software, important because provider operational complexity is one of Filecoin's main bottlenecks. [Filecoin Docs](https://github.com/filecoin-project/filecoin-docs) were updated in late June 2026, which matters because developer docs are part of adoption.
+
+Governance is more ecosystem-driven than simple token voting. Filecoin changes flow through FIPs, implementation teams, storage providers, foundations, dev summits, and broad network participants. This can be healthier than pure plutocratic voting, but it can also be harder for investors to monitor. The FIP process is transparent enough to inspect, yet economic changes can be complex. For FIL holders, the important governance questions are not social slogans. They are: how rewards change, how vesting and reserves are communicated, how paid usage incentives are designed, how provider collateral requirements evolve, how FOC contracts are upgraded, and whether protocol changes improve economics without pushing providers out of the network.
+
+The main organizational risk is fragmentation. Filecoin has many teams, products, names, and workstreams: Protocol Labs, Filecoin Foundation, FilOz, FVM, FEVM, FOC, Filecoin Pay, Synapse, PDP, F3, Curio, GLIF, Akave, Storacha, KYVE, Recall-style AI data narratives, and more. This is a sign of ecosystem depth, but it can also dilute execution focus. The 2026 strategy is useful because it narrows the objectives: paid onchain deals, network profitability, and flagship clients. If future ecosystem communications keep focusing on those measurable goals, confidence improves. If the ecosystem returns to scattered narratives, confidence should decline.
+
+## Competition
+
+Filecoin competes against several markets at once. The obvious category is decentralized storage, but the deeper category is "who owns data infrastructure for AI, Web3, and long-lived public records?" That means competitors include Arweave, IPFS pinning networks, Storj, Sia, BNB Greenfield, Solana Shadow Drive, Walrus, traditional hyperscalers, and data availability layers such as Celestia or Avail when the use case is blockchain data publication rather than long-term file storage.
+
+Arweave is the clearest crypto-native competitor. [Arweave](https://docs.arweave.org/) is positioned around permanent data storage with a one-time payment and an endowment-style model. It is simpler for users who want permanent storage and do not want to think about provider renewal. Filecoin is broader and more market-driven: it supports different storage durations, provider markets, retrieval markets, FOC service contracts, and collateralized providers. Arweave's edge is narrative clarity around permanence. Filecoin's edge is market depth and flexibility. The risk for Filecoin is that if the user only wants permanent public data, Arweave's product story is easier.
+
+IPFS is both adjacent and complementary. Filecoin is historically tied to the IPFS ecosystem and content addressing. IPFS itself is not a payment and collateral network; it is a content-addressed protocol stack. Many developers can use IPFS pinning, centralized pinning services, or hybrid storage without touching FIL. Filecoin's job is to turn content-addressed storage into verifiable, economically guaranteed service. The risk is that a large amount of "IPFS usage" never becomes Filecoin demand.
+
+BNB Greenfield is a chain-native storage competitor with distribution from the BNB ecosystem. The [BNB Greenfield docs](https://docs.bnbchain.org/bnb-greenfield/) describe a decentralized data storage system tied to BNB Chain. Its edge is ecosystem distribution and simpler vertical integration with a major exchange-backed chain. Filecoin's edge is neutral open-network identity and deeper storage-provider history. If BNB app developers prefer bundled storage tied to BNB Chain, Filecoin may not win that segment.
+
+Shadow Drive competes in Solana-aligned storage. The [Shadow Drive docs](https://docs.shadow.cloud/) describe decentralized storage for Solana and Web3 applications. Its edge is integration with Solana builders and lower-friction app deployment. Filecoin's edge is scale, proof-heavy architecture, and broader ecosystem credibility. The Filecoin risk is that app developers choose storage providers native to their app chain rather than using a separate Filecoin flow.
+
+Celestia and Avail-style data availability networks are not direct file-storage substitutes, but they compete for investor mindshare and some technical workloads. [Celestia docs](https://docs.celestia.org/) frame Celestia around modular data availability for rollups. That is not the same as storing AI datasets or public archives, but if the demand is "publish data for verification by a blockchain," DA layers can substitute for parts of the use case. Filecoin's edge is long-lived file storage and provider collateral. DA's edge is rollup-native data publication.
+
+Traditional hyperscalers remain the real commercial competitor. AWS S3, Google Cloud Storage, Azure Blob, Cloudflare R2, and specialized data vendors have procurement, support, compliance, latency, APIs, and reliability advantages. Filecoin can be cheaper and more verifiable, but enterprise users buy workflows, not ideology. FOC's S3-like / SDK-like developer experience and provider performance thresholds are attempts to close this gap. The key question is whether verifiability and data sovereignty are strong enough to overcome UX and support inertia.
+
+| Competitor | Core offer | Edge over Filecoin | Filecoin edge | Investor implication |
+|---|---|---|---|---|
+| Arweave | Permanent storage / permaweb | Simpler permanence story | Flexible storage market, provider collateral, FOC | Filecoin must prove paid storage beyond cold archive |
+| IPFS pinning | Content-addressed data hosting | Lower friction and no token complexity | Economic guarantees and proofs | IPFS usage does not automatically accrue to FIL |
+| BNB Greenfield | BNB ecosystem storage | Strong BNB distribution | Neutral and larger Filecoin-specific network | Ecosystem-native storage can fragment demand |
+| Shadow Drive | Solana / Web3 app storage | Chain-native developer fit | Scale and proof-heavy architecture | App developers may prefer local storage stacks |
+| Celestia / Avail | Data availability | Rollup-native DA use case | Long-lived file storage and retrieval | Competes for infra capital and some data workloads |
+| AWS / GCP / Azure / Cloudflare | Centralized cloud storage | UX, support, compliance, performance | Verifiability, open market, censorship resistance | Filecoin must sell differentiated guarantees, not just price |
+
+The competitive conclusion is nuanced. Filecoin does not need to beat AWS for all storage. It needs to win storage where verifiability, portability, data sovereignty, onchain payments, AI provenance, public-good preservation, and censorship resistance matter enough to offset friction. That is a smaller market than "all cloud storage," but it can still be large if AI data provenance and autonomous-agent storage become real paid categories.
+
+## Catalysts and Valuation / Importance Framework
+
+The most important catalyst is paid onchain deal growth. The official 2026 strategy makes this the first objective. The right confirmation metric is not social announcements or new partner logos. It is paid, recurring, onchain storage revenue, active datasets, payer wallets, provider profitability, retrieval success, and collateral tied to commercial deals. FOC launch metrics give a starting baseline, but the next updates need to show growth from tens of TiB to hundreds of TiB and then PiB-scale paid workloads.
+
+The second catalyst is network-economics reform. The 2026 strategy says the ecosystem wants to strengthen profitability and redirect rewards toward paid usage, useful work, and long-term participation. This is potentially powerful because Filecoin's historic weakness has been incentive quality. If rewards are increasingly tied to retrievable, paid, useful data rather than simple power, token economics improve. The risk is provider attrition. Too much pressure on rewards can make storage providers exit, shrinking capacity and weakening service resilience.
+
+The third catalyst is vesting completion. The strategy notes that final network vesting periods end later in 2026. This can be bullish because it removes a long-running dilution narrative. It can be bearish if unlocked holders sell into weak demand. The correct monitoring approach is not to assume "unlock end equals pump." Watch exchange balances, circulating supply from Filfox and venues, price resilience, provider collateral, and market depth after the event.
+
+The fourth catalyst is FVM / GLIF / stablecoin growth. Filecoin's app layer is currently small. If Filecoin remains only storage, FIL can still work, but valuation is limited by storage economics. If FVM grows into a data-finance layer with liquid staking, provider credit, data DAOs, stablecoins, storage insurance, storage-payment escrow, and programmable retrieval markets, then the addressable value widens. Today, GLIF is the most meaningful example. Stablecoin supply and DEX volume are too small to carry the thesis.
+
+The fifth catalyst is AI storage and data provenance. The FOC mainnet post explicitly frames AI agents, AI pipelines, verifiable execution logs, datasets, model checkpoints, and audit trails as target workloads. This is strategically coherent. AI increases data volume and raises provenance questions. But crypto AI narratives are often over-sold. Filecoin should be judged by paying AI customers, repeated dataset storage, agent workflows using Filecoin Pay, and proof verification, not by "AI data is huge" statements.
+
+Valuation is difficult because present revenue is small and token capture is indirect. A clean fee multiple would make FIL look expensive if one uses only current burned fees. A replacement-cost framework would make the network look cheap because Filecoin has years of protocol work, provider tooling, and exabyte-scale infrastructure. A collateral-demand framework sits between the two: if paid demand grows, provider collateral and credit layers can create meaningful FIL sinks. This memo therefore uses an importance / optionality framework rather than a false DCF.
+
+| Valuation lens | Bullish read | Bearish read | Current view |
+|---|---|---|---|
+| Fee multiple | Burned fees can grow with FOC / FVM | Current fees are tiny vs market cap | Not enough for a standalone bull case |
+| Collateral demand | 75.8M FIL pledged is real token utility | Collateral falls if providers exit or deals are unprofitable | Most important current token sink |
+| Replacement cost | Years of infra, providers, docs, FIPs, FVM, ecosystem | Capacity has shrunk and demand quality is unclear | Supports strategic watchlist |
+| AI data option | Provenance and agent storage could be real | AI narrative may not convert to paid workloads | Worth tracking, not underwriting aggressively |
+| FVM app layer | GLIF and credit markets can expand | TVL, stablecoins, DEX volume remain small | Early optionality |
+| Supply rerating | Vesting end can remove overhang | Unlocked supply can still sell | Monitor post-vesting market structure |
+
+The base-case valuation stance: FIL is not obviously cheap on current fee capture, but it may be cheap on strategic infrastructure optionality if paid demand inflects. That means the investment decision should be trigger-based. Accumulate only if the demand and economics dashboards improve; otherwise keep it on watchlist.
+
+## Risk Matrix
+
+| Risk | Severity | Evidence | What would reduce the risk |
+|---|---|---|---|
+| Paid demand remains too small | High | FOC launch was only 49.41 TiB / 478 datasets / 81 payer wallets; paid-deals dashboard is self-reported | Paid onchain deals reach PiB scale with recurring customer payments |
+| Token value capture stays indirect | High | FIL has collateral and burn utility, but no direct holder revenue share | Burned fees, collateral demand, and paid storage payments rise faster than issuance |
+| Provider economics weaken | High | Raw power has declined from prior Messari capacity levels; daily rewards remain important | Provider profitability improves from paid deals and FOC services |
+| Supply / circulating data conflict | Medium-High | DefiLlama-implied circulation differs from Filfox chain circulation | Official dashboard reconciles circulating, locked, pledged, multisig, burned, and vesting |
+| FVM ecosystem remains tiny | Medium-High | Filecoin TVL around $3.79M, stablecoins around $157K, DEX volume small | FVM TVL, stablecoins, GLIF credit, and data apps grow materially |
+| Retrieval performance lags | Medium-High | Historical Filecoin strength is storage proofs, not consumer-grade retrieval | PDP / FOC retrieval success remains above thresholds and third-party benchmarks improve |
+| Hyperscaler competition | Medium | AWS/GCP/Azure/Cloudflare have UX, support, compliance, and procurement advantages | Filecoin wins differentiated verifiability / sovereignty workloads |
+| Incentive reform backfires | Medium | Shifting rewards toward paid usage can push marginal providers out | Reforms improve profitability without collapsing provider count |
+| Governance / ecosystem fragmentation | Medium | Many teams and product names can dilute focus | 2026 objectives remain measurable and coordinated |
+| Regulatory / compliance friction | Medium | Storage can involve sensitive data, jurisdiction, copyright, privacy, and content moderation | Enterprise workflows include clear data controls and compliance tooling |
+| GLIF / credit-layer stress | Medium | Provider financing can introduce leverage and liquidity risk | Transparent risk controls, conservative collateralization, and liquidity resilience |
+| AI narrative disappoints | Medium | AI data is a plausible but not proven paid segment | Named AI customers, recurring spend, dataset growth, and proof usage confirm demand |
+
+## Bull / Base / Bear Scenarios
+
+| Scenario | Probability | 12-24 month path | Confirmation metrics | FIL implication |
+|---|---:|---|---|---|
+| Bull | 25% | Filecoin Onchain Cloud grows from early TiB-scale to meaningful paid workloads; FOC datasets and payer wallets compound; PDP / Warm Storage improves retrieval confidence; reward reforms push incentives toward useful paid work; GLIF credit expands without stress; vesting completion removes a major overhang; FVM stablecoin and DeFi liquidity grow from negligible to relevant | Paid onchain storage reaches hundreds of TiB and trends toward PiB scale; provider count stabilizes; pledged FIL rises; burned fees rise above `$250K` monthly; FVM TVL exceeds `$50M`; stablecoins exceed `$10M`; FOC publishes recurring customer data | FIL rerates as a real DePIN infrastructure asset with improving token sinks |
+| Base | 50% | Filecoin remains the largest credible decentralized storage network; raw capacity stabilizes but does not return to peak; FOC finds niche adoption in AI, public-good data, Web3 frontends, and storage providers; paid deals grow but remain small relative to total capacity; FVM stays modest; token trades as infrastructure beta | FOC grows but remains sub-PiB; burned fees stay low; GLIF remains the main DeFi product; provider count slowly declines or stabilizes around professional operators; market cap stays sensitive to broader crypto liquidity | Watchlist / selective optionality, not a core holding |
+| Bear | 25% | Paid demand fails to scale; provider rewards decline or reforms reduce provider profitability; raw power keeps falling; FOC remains developer-demo infrastructure; AI storage narrative does not convert; unlocked supply and provider selling pressure overwhelm demand; FVM liquidity stagnates | Raw power falls below 1 EiB; active miners fall sharply; FOC datasets plateau; burned fees stay below `$100K` per month; stablecoins stay below `$1M`; GLIF TVL contracts; market cap loses the `$500M` support zone | FIL becomes legacy storage beta with weak token capture |
+
+The base case is intentionally conservative because Filecoin has already had several cycles to prove the demand side. The bull case is still credible because the mechanism is real, the network is alive, the team ecosystem is active, and FOC directly targets the historical weak point: paid, verifiable, onchain usage. The bear case is not "Filecoin disappears." The more realistic bear case is that Filecoin remains technically important while FIL underperforms because storage demand is too slow, token capture is indirect, and investors prefer simpler AI / DePIN / DA assets.
+
+## Confidence Score
+
+Overall confidence: Medium.
+
+| Dimension | Rating | Notes |
+|---|---|---|
+| Source quality | High | Official docs, Filecoin strategy posts, FOC mainnet announcement, Filfox API, DefiLlama APIs, GitHub repos, Messari reports, and competitor docs give a broad source base |
+| Data consistency | Medium-Low | Price and max supply are consistent enough; circulating supply, FVM TVL, paid demand, and utilization require reconciliation |
+| Mechanism clarity | High | PoRep, PoSt, collateral, slashing, block rewards, FVM, and FOC are well documented |
+| Value capture | Medium | FIL has real utility through collateral, gas, burn, and provider economics, but no direct holder revenue share |
+| Liquidity quality | Medium | CEX volume is meaningful, but onchain Filecoin DEX liquidity and stablecoin supply are small |
+| Adoption quality | Medium-Low | Network scale is real, but paid demand and FOC traction are still early |
+| Execution quality | Medium-High | Developer activity and ecosystem continuity are strong, but commercial focus must sharpen |
+
+Why not High confidence? Because Filecoin's mechanism is much clearer than its commercial demand. The network has real infrastructure, but the market-data and usage-data layers are messy. The most important numbers - paid storage demand, organic utilization, provider profitability, circulating supply, and net token demand - are not as clean as a mature investor would want.
+
+Why not Low confidence? Because the project is too real to dismiss. It has active infrastructure, visible docs, active code, a large storage-provider base, a coherent 2026 strategy, and a new product surface that directly addresses prior weaknesses. Many Web3 infrastructure projects have narrative without physical scale. Filecoin has physical scale and now needs to prove demand quality.
+
+## Red-team Check
+
+The strongest reason the thesis could be wrong is that Filecoin's supply-side achievement may not translate into commercial demand. A network can be the largest decentralized storage network and still fail as an investment if most users prefer simpler centralized storage, if crypto-native developers use cheaper pinning or app-chain-native storage, if AI teams do not need decentralized proofs, or if enterprises treat verifiable storage as nice-to-have rather than procurement-critical.
+
+The most gameable metric is quality-adjusted power or total storage power. Quality-adjusted power can make the network look larger because verified data and incentives affect weighting. Raw power can also mislead if it measures capacity rather than paid useful demand. The better metric is paid, retrievable, recurring storage with identifiable customers, net provider margin, and onchain payment settlement.
+
+The token value-capture failure path is straightforward. Paid demand grows slowly, but provider rewards and supply continue. Providers sell FIL to cover operations. Burned fees remain small. Collateral demand falls as raw power declines. FVM remains small, stablecoins remain negligible, and GLIF becomes the only meaningful DeFi use case. In that world, Filecoin can keep working technically while FIL holders see weak returns.
+
+The plausible permanent-impairment path is a multi-step spiral: provider economics weaken, storage providers exit, raw power falls, retrieval quality and customer confidence deteriorate, paid deals do not offset reward decline, collateral unlocks, market cap falls, and the network loses its "largest decentralized storage network" premium. That is not a zero in the sense of total protocol death, but it can be a permanent impairment for FIL as a large-cap asset.
+
+The blue-team response is that Filecoin is attacking the right bottleneck. FOC, PDP, Filecoin Pay, performance thresholds, Synapse SDK, paid onchain deals, reward redirection, and flagship clients are exactly the right workstreams. The thesis is not dead. It is unproven at scale.
+
+## Monitoring Dashboard
+
+| Metric | Current snapshot | Bull threshold | Bear threshold | Source |
+|---|---:|---:|---:|---|
+| FIL price | About `$0.7308` on June 28, 2026 | Sustained reclaim above prior breakdown levels with volume | New lows below `$0.65` with weak volume | [DefiLlama price](https://coins.llama.fi/prices/current/coingecko:filecoin) |
+| Market cap | About `$577M` | Above `$1B` with improving usage | Below `$500M` while usage stagnates | [DefiLlama Filecoin](https://defillama.com/protocol/filecoin) |
+| Raw byte power | About `1.65 EiB` | Stabilizes and grows with paid deals | Falls below `1 EiB` | [Filfox overview](https://filfox.info/api/v1/overview) |
+| Quality-adjusted power | About `14.55 EiB` | Grows with useful verified demand | Diverges further from raw power without paid demand | [Filfox overview](https://filfox.info/api/v1/overview) |
+| Active miners | `616` | Stable or rising professional provider count | Sharp decline below `450` | [Filfox overview](https://filfox.info/api/v1/overview) |
+| Pledge collateral | About `75.8M FIL` | Rises with profitable provider demand | Falls materially as providers exit | [Filfox overview](https://filfox.info/api/v1/overview) |
+| Daily mined FIL | About `62.1K FIL` | Issuance becomes less important versus paid demand / burn | Issuance dominates all demand metrics | [Filfox overview](https://filfox.info/api/v1/overview) |
+| Chain fees burned | About `$56K` over 30d | Above `$250K` monthly and rising | Below `$50K` monthly with no FOC growth | [DefiLlama fees](https://defillama.com/fees/chains/Filecoin) |
+| FOC active datasets | `478` at mainnet launch | Multi-thousand datasets and hundreds of TiB | Launch metrics plateau | [FOC mainnet](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet) |
+| FOC payer wallets | `81` at launch | Hundreds to thousands of recurring payers | No growth after launch | [FOC mainnet](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet) |
+| Filecoin chain TVL | About `$3.79M` | Above `$50M` | Below `$2M` | [DefiLlama chains](https://defillama.com/chains) |
+| Stablecoin supply | About `$157K` | Above `$10M` | Stays below `$1M` | [DefiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?chain=Filecoin) |
+| DEX volume | About `$4.61M` 30d | Above `$50M` monthly | Below `$2M` monthly | [DefiLlama DEXs](https://defillama.com/dexs/chains/Filecoin) |
+| GLIF TVL | Around `$23.7M` Filecoin-side API snapshot | Grows with healthy provider credit | Contracts with provider stress | [GLIF](https://defillama.com/protocol/glif) |
+| Developer activity | Lotus / docs / Curio active in late June 2026 | Continued releases and FIPs tied to paid usage | Major repos go stale | [Lotus](https://github.com/filecoin-project/lotus), [Curio](https://github.com/filecoin-project/curio) |
+
+## Follow-up Triggers
+
+| Trigger | Why it matters | Action |
+|---|---|---|
+| FOC publishes updated mainnet metrics showing more than `250 TiB` paid storage, more than `2,000` active datasets, and more than `250` payer wallets | Confirms FOC is moving beyond launch usage | Upgrade from watchlist to selective accumulation review |
+| Raw byte power falls below `1 EiB` or active miners fall below `450` without offsetting paid-demand growth | Signals provider economics or network confidence deterioration | Downgrade thesis and review provider exits |
+| Monthly burned Filecoin chain fees exceed `$250K` while daily mined FIL declines or remains stable | Shows fee burn becoming more material | Recalculate FIL value-capture framework |
+| Filfox / official supply pages reconcile circulating supply with venue data after vesting completion | Removes a major market-data uncertainty | Revisit valuation and float assumptions |
+| FVM TVL exceeds `$50M`, stablecoin supply exceeds `$10M`, or GLIF-like credit markets grow without stress | Confirms programmable Filecoin is becoming economically relevant | Expand FVM / DeFi section and revisit bull case |
+| Major FOC customer case study discloses recurring paid usage at enterprise scale | Converts AI / verifiable data narrative into revenue evidence | Reopen report immediately |
+| Security incident, provider slashing wave, PDP / FOC failure, or GLIF liquidity stress | Storage guarantees and provider credit are core to thesis | Immediate risk downgrade |
+
+## Final Investment View
+
+Final view: Watchlist / selective optionality.
+
+Filecoin is one of the rare crypto infrastructure networks where the underlying system is real, hard, and differentiated. The network coordinates storage providers, proofs, collateral, rewards, penalties, and now programmable cloud services. It has active development, a clear 2026 strategy, and a product pivot that directly addresses prior weaknesses. It also trades at a depressed market capitalization relative to its historical ambition and infrastructure footprint. That makes FIL worth watching closely.
+
+But the report does not justify a clean accumulation rating today. The current data still says paid demand is early, FVM usage is small, stablecoin supply is negligible, provider rewards dominate burned fees, and circulating supply is not clean across sources. The market is not obviously wrong to discount FIL. It is discounting a real but still unresolved question: can Filecoin convert exabyte-scale provable storage into recurring paid demand and token-level economics?
+
+The investable bull case requires three things at once: paid onchain deals must grow, provider economics must improve without collapsing capacity, and FIL sinks must become visible through collateral, burn, and productive credit demand. If those happen, FIL can rerate as the storage layer for AI data provenance, agent logs, public archives, and Web3-owned infrastructure. If they do not, Filecoin can remain an important network while FIL remains a weak value-capture asset.
+
+Current stance: do not ignore it, do not chase it only because it is down, and do not value it on current fees alone. Track the dashboards. FIL becomes interesting when paid storage and collateral demand start rising together.
+
+## Sources
+
+- [Filecoin official website](https://filecoin.io/)
+- [Filecoin Docs](https://docs.filecoin.io/)
+- [Filecoin crypto-economics](https://docs.filecoin.io/getting-started/what-is-filecoin/crypto-economics)
+- [Filecoin blockchain overview](https://docs.filecoin.io/getting-started/what-is-filecoin/blockchain)
+- [Filecoin proofs](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine/proofs)
+- [Filecoin storage proving](https://docs.filecoin.io/provide-storage/filecoin-economics/storage-proving)
+- [Filecoin FIL collateral](https://docs.filecoin.io/provide-storage/filecoin-economics/fil-collateral)
+- [Filecoin block rewards](https://docs.filecoin.io/provide-storage/filecoin-economics/block-rewards)
+- [Filecoin Virtual Machine](https://docs.filecoin.io/core-concepts/filecoin-virtual-machine)
+- [Filecoin EVM runtime](https://docs.filecoin.io/core-concepts/filecoin-evm-runtime)
+- [The 2026 Filecoin Network Strategy](https://filecoin.io/blog/the-2026-filecoin-network-strategy)
+- [Filecoin Onchain Cloud is live on mainnet](https://www.filecoin.io/blog/filecoin-onchain-cloud-is-live-on-mainnet)
+- [Filecoin Onchain Cloud](https://filecoin.cloud/)
+- [Filecoin Cloud payments and storage docs](https://docs.filecoin.cloud/cookbooks/payments-and-storage/)
+- [Filecoin in 2025 year in review](https://filecoin.io/blog/filecoin-in-2025-year-in-review)
+- [Filecoin token sale completed](https://filecoin.io/blog/token-sale-completed)
+- [CoinGecko Filecoin](https://www.coingecko.com/en/coins/filecoin)
+- [CoinMarketCap Filecoin](https://coinmarketcap.com/currencies/filecoin/)
+- [DefiLlama Filecoin protocol page](https://defillama.com/protocol/filecoin)
+- [DefiLlama FIL price endpoint](https://coins.llama.fi/prices/current/coingecko:filecoin)
+- [DefiLlama Filecoin fees](https://defillama.com/fees/chains/Filecoin)
+- [DefiLlama Filecoin DEX volume](https://defillama.com/dexs/chains/Filecoin)
+- [DefiLlama Filecoin stablecoins API](https://stablecoins.llama.fi/stablecoins?chain=Filecoin)
+- [DefiLlama GLIF](https://defillama.com/protocol/glif)
+- [Filfox explorer](https://filfox.info/en)
+- [Filfox overview API](https://filfox.info/api/v1/overview)
+- [Filfox miner power API](https://filfox.info/api/v1/miner/list/power?pageSize=20)
+- [FilecoinTLDR paid deals dashboard](https://filecointldr.io/paid-deals-dashboard/)
+- [Filecoin storage providers market dashboard](https://filecoin-project.github.io/filecoin-storage-providers-market/)
+- [Messari State of Filecoin Q1 2025](https://messari.io/report/state-of-filecoin-q1-2025)
+- [Messari State of Filecoin Q2 2025](https://messari.io/report/state-of-filecoin-q2-2025)
+- [Messari State of Filecoin Q3 2025](https://messari.io/report/state-of-filecoin-q3-2025)
+- [GitHub filecoin-project/lotus](https://github.com/filecoin-project/lotus)
+- [GitHub filecoin-project/builtin-actors](https://github.com/filecoin-project/builtin-actors)
+- [GitHub filecoin-project/FIPs](https://github.com/filecoin-project/FIPs)
+- [GitHub filecoin-project/curio](https://github.com/filecoin-project/curio)
+- [GitHub filecoin-project/filecoin-docs](https://github.com/filecoin-project/filecoin-docs)
+- [Arweave docs](https://docs.arweave.org/)
+- [BNB Greenfield docs](https://docs.bnbchain.org/bnb-greenfield/)
+- [Shadow Drive docs](https://docs.shadow.cloud/)
+- [Celestia docs](https://docs.celestia.org/)

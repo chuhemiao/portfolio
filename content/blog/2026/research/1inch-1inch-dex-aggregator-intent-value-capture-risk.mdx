@@ -1,125 +1,323 @@
 ---
 title: '1inch 1INCH: DEX Aggregation, Intent Routing, and Value-Capture Risk'
 publishedAt: '2026-06-28'
-summary: '1inch is DEX aggregator and intent/MEV routing protocol with a June 28, 2026 Surf snapshot of $96.01M market cap, $102.5M FDV, and $9.06M 24h token volume. The investable question is whether DEX aggregator and intent/MEV routing protocol can create durable token demand; the key risk is token value capture and aggregation-margin compression risk. Verdict: watchlist unless usage, liquidity, and token value capture improve.'
+summary: '1inch is still strategically relevant DeFi routing infrastructure, but the June 28 2026 evidence points to a watchlist thesis rather than high-conviction token exposure because aggregator volume, Fusion intent routing, cross-chain tooling, and enterprise APIs do not automatically create durable 1INCH demand unless staking, resolver economics, DAO fee capture, or treasury policy become materially measurable.'
 slug: '1inch-1inch-dex-aggregator-intent-value-capture-risk'
 category: 'research'
 ---
 
 ## Pre-screen Decision
 
-Full research. 1inch is a live, market-ranked project with no local Research Map match before this batch. It deserves coverage because it sits in the DEX bucket and has enough market cap, exchange visibility, or strategic category relevance to affect portfolio screening.
+Full research. 1inch is not a thin micro-cap narrative that can be dismissed with a quick note. It is one of the canonical DeFi routing brands, it still has live cross-chain product development, it is listed across major venues, and it is large enough to matter in any DEX infrastructure map. The reason this memo needs full depth is not that the token price is high. It is that the project sits at a hard investment intersection: useful protocol, real product surface, strong brand, mixed current market share, and weak-to-medium token value capture.
 
-## TL;DR
+The working classification is DEX aggregation plus intent-based routing plus DeFi infrastructure API, not a simple AMM. The [official site](https://1inch.com/) now frames 1inch as a broader DeFi ecosystem, while the developer portal exposes Classic Swap, Fusion, Fusion+, Orderbook, Balance, Portfolio, Token, Gas Price, Transaction Gateway, and related APIs through the [1inch Business portal](https://portal.1inch.dev/documentation/apis/swap/classic-swap/introduction). That breadth is a real asset. It also complicates valuation because the most valuable product surfaces may accrue value to users, integrators, resolvers, and the company/DAO before they accrue to passive 1INCH holders.
 
-1inch is DEX aggregator and intent/MEV routing protocol. The project profile in Surf describes it as: Token for 1inch DEX aggregator protocol The canonical web anchor is the [official site](https://1inch.com/), with live market identity cross-checkable on [CoinGecko](https://www.coingecko.com/en/coins/1inch).
+The full-research question is therefore precise: does 1inch remain investable routing infrastructure, or is 1INCH mostly a liquid governance token whose product relevance is only loosely coupled to token demand? My answer as of the June 28, 2026 data refresh is watchlist / tactical infrastructure beta, not core long-term accumulation. 1inch has enough evidence to monitor closely: DeFiLlama tracks 1inch aggregator volume at roughly $55.1M over 24h, $600.3M over 7d, $2.95B over 30d, and $267.4B all time in the DEX aggregator category, with tracked activity across 14 chains on the [DeFiLlama aggregator dashboard](https://defillama.com/dexs/aggregators). But the same snapshot shows total aggregator market volume of about $2.23B over 24h and $74.09B over 30d, so 1inch's current tracked share is meaningful but not dominant. A strong product can still be a mediocre token if routing margins compress and token sinks stay optional.
 
-As of the June 28, 2026 Surf snapshot, 1INCH traded around $0.0683050, with $96.01M market cap, $102.5M FDV, and $9.06M 24h volume. The thesis is not simply that the token exists; it is whether DEX aggregator and intent/MEV routing protocol can translate into sustained demand for 1INCH. My base view is watchlist, with the main caveat being token value capture and aggregation-margin compression risk.
+## TL;DR / Executive Summary
 
-## Research Question
+1inch remains a high-quality DeFi infrastructure brand, but 1INCH is not a clean cash-flow claim. The product suite has expanded from classic smart-order routing into intent-based execution, cross-chain swaps, limit orders, wallets, portfolio tooling, and enterprise API distribution. The core technical reason 1inch matters is still simple: users and integrators want the best execution path across fragmented liquidity. The [Classic Swap documentation](https://portal.1inch.dev/documentation/apis/swap/classic-swap/introduction) describes Pathfinder v6.1 as the routing engine behind best-quote discovery and calldata generation. The [Fusion documentation](https://portal.1inch.dev/documentation/apis/swap/fusion/introduction) moves execution from direct AMM routing into intent-style orders filled by resolvers. The [Fusion+ documentation](https://portal.1inch.dev/documentation/apis/swap/fusion-plus/introduction) extends that idea to cross-chain swaps, with additional escrow, resolver, relayer, and timing assumptions.
 
-Is 1inch durable infrastructure with token value capture, or is it mainly cyclical/narrative beta inside DEX?
+The investable case is not "1inch has volume." Volume is necessary but insufficient. The stronger bull case is that the market keeps moving toward intent routing, solver competition, MEV-aware execution, and wallet/API embedded swaps, and that 1inch becomes one of the durable coordination layers for that flow. If 1inch can turn recurring order flow into measurable protocol surplus, resolver staking demand, API monetization, DAO treasury growth, or direct 1INCH utility, the token can re-rate from legacy DeFi governance beta into infrastructure optionality.
 
-## Product and Mechanism
+The current evidence does not yet prove that stronger case. On June 28, 2026 around 06:54 UTC, market sources clustered around a $95M-$99M market cap and roughly $102M-$103M FDV, but they disagreed on rank and exact circulating supply: [CoinGecko](https://www.coingecko.com/en/coins/1inch) showed roughly $95.7M market cap and rank around the mid-270s, [CoinMarketCap](https://coinmarketcap.com/currencies/1inch/) showed roughly $96.8M market cap and a higher rank, [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302) anchored the Ethereum ERC-20 contract and holder view, and [Tokenomist](https://tokenomist.ai/1inch) tracked roughly 1.406B circulating supply against a 1.5B total / max supply. These are not fatal conflicts, but they matter because most of the supply is already liquid, FDV/MC is close to 1.07x, and future upside is less about hidden unlock math than about new demand.
 
-Token for 1inch DEX aggregator protocol
+The base view is watchlist with medium confidence on product relevance and low-to-medium confidence on token value capture. The strongest evidence in favor of 1inch is product persistence, multi-chain routing distribution, large all-time aggregator flow, continuing GitHub activity across the [1inch GitHub organization](https://github.com/1inch), and a product stack that is aligned with the market's shift toward intents. The strongest evidence against high-conviction 1INCH exposure is that users can swap without buying 1INCH, integrator/API economics are not transparently passed through to token holders, current DeFiLlama tracked aggregator share is far below category leaders such as Jupiter and 0x, and fee/revenue data is not transparent enough to underwrite a cash-flow multiple.
 
-Relevant chains: Base, Binance Smart Chain, Ethereum. Key listings or venues from Surf: BINANCE, UPBIT, COINBASE, OKX, BITHUMB, BYBIT. Contracts sampled from Surf: base 1INCH: `0xc5fecc3a29fb57b5024eec8a2239d4621e111cbe`; ethereum 1INCH: `0x111111111117dc0aa78b770fa6a738034120c302`; bsc 1INCH: `0x111111111117dc0aa78b770fa6a738034120c302`.
+Verdict: watchlist / tactical DeFi infrastructure beta. I would upgrade the view only if 1inch publishes sustained growth in aggregator volume share, Fusion/Fusion+ resolver competition, measurable DAO or protocol fee capture, and a clearer 1INCH staking or governance value loop. I would downgrade if 30d aggregator volume continues to compress, token liquidity breaks below current levels, security/admin-risk issues appear, or new intent systems capture order flow without requiring 1inch infrastructure.
 
-The token value-capture path should be judged through three questions: who pays, what activity creates repeat demand, and whether 1INCH is required for access, fees, staking, governance, collateral, rewards, or settlement. If that linkage remains vague, the token should be treated as narrative/liquidity beta rather than a cash-flow asset.
+## Project Overview
 
-## Market Snapshot
+1inch began as a DEX aggregation project: route a user's swap through many liquidity venues, split the trade across pools when helpful, and return better execution than a user would receive from manually choosing one AMM. That original product still matters because liquidity remains fragmented across chains, AMMs, RFQ venues, orderbooks, private market makers, bridges, and chain-specific routers. However, the modern 1inch product is broader than the early aggregator story.
 
-| Metric | June 28, 2026 snapshot |
-|---|---:|
-| Market-cap rank | ~274 |
-| Price | $0.0683050 |
-| Market cap | $96.01M |
-| FDV | $102.5M |
-| FDV / market cap | 1.07x |
-| 24h token volume | $9.06M |
-| Circulating supply | 1.41B 1INCH |
-| Total supply | 1.50B 1INCH |
-| Chains | Base, Binance Smart Chain, Ethereum |
-| Tags | DEX & AMM, MEV & Intent |
+The current public surface can be split into five layers. First is the retail dApp and wallet layer, where users swap, bridge, hold assets, and interact with DeFi. Second is the routing layer, where Classic Swap uses Pathfinder to discover routes and generate transaction calldata. Third is the intent layer, where Fusion lets a user sign an order and outsource execution to resolvers, potentially improving UX by reducing gas handling, protecting against certain MEV paths, and using competition among professional fillers. Fourth is the cross-chain layer, where Fusion+ tries to solve the hard problem of cross-chain execution without asking the user to directly manage a bridge route. Fifth is the enterprise/API layer, where the [1inch Business portal](https://portal.1inch.dev/documentation/overview) sells or distributes infrastructure to wallets, apps, agents, and other integrators.
+
+The token, 1INCH, is an ERC-20 with the primary Ethereum contract at `0x111111111117dc0aa78b770fa6a738034120c302`, visible on [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302). It also has chain representations and liquidity venues across centralized exchanges and DEXs. The [Base token page](https://basescan.org/token/0xc5fecc3a29fb57b5024eec8a2239d4621e111cbe) and [BSC token page](https://bscscan.com/token/0x111111111117dc0aa78b770fa6a738034120c302) help confirm multi-chain token presence, although market-cap analysis should anchor on canonical supply rather than adding wrapped balances across chains.
+
+The product user is not one persona. Retail traders use 1inch for execution quality. Wallets and trading apps can integrate the API to avoid building their own router. Market makers and resolvers compete to fill orders in Fusion-style workflows. DAO participants and stakers use 1INCH for governance and participation. Developers consume API and smart-contract primitives such as the [Limit Order Protocol](https://github.com/1inch/limit-order-protocol), [cross-chain-swap contracts](https://github.com/1inch/cross-chain-swap), and [1inch token contracts](https://github.com/1inch/1inch-token). Each persona creates a different kind of value. The investment problem is that only some of those value streams obviously accrue to 1INCH.
+
+The sector is also more competitive than it looked in 2020-2021. DEX aggregation is now a feature embedded inside wallets, CEX apps, L2 portals, Solana apps, and cross-chain bridges. Intents are becoming an industry-wide design pattern, with [CoW Protocol](https://docs.cow.fi/cow-protocol/concepts/how-it-works), [UniswapX](https://uniswap.org/whitepaper-uniswapx.pdf), 0x's [Swap API](https://0x.org/docs/0x-swap-api/introduction), Jupiter's [swap infrastructure](https://station.jup.ag/docs), Odos's [routing docs](https://docs.odos.xyz/), Velora/ParaSwap's [product surface](https://velora.xyz/), and CEX internal routers all competing for the same order-flow value. 1inch is still relevant, but relevance is not dominance.
+
+## Research Question and Investment Relevance
+
+The research question is: is 1inch a durable infrastructure network whose token can capture value from order flow, or is 1INCH mainly a liquid governance token attached to a useful but low-margin product? This distinction matters because DEX infrastructure often creates value for users without creating the same value for token holders. A router can lower slippage, a solver network can improve execution, and an API can make developers more productive. None of those automatically imply that a governance token should trade at a high multiple.
+
+The project deserves attention now for three reasons. First, the market is moving toward intents. Users increasingly want to express "swap this asset for that asset under these constraints" and let professional agents solve execution. That direction is visible in 1inch Fusion/Fusion+, CoW Swap batch auctions, UniswapX fillers, and cross-chain solver networks. If intents become the default UX for swaps, the companies and protocols controlling solver distribution can become strategically important.
+
+Second, 1inch is no longer valued like a 2021 blue-chip DeFi token. The June 28, 2026 market data puts the token near a $100M fully diluted valuation, down massively from the prior cycle. A low valuation can create asymmetric optionality if the product is still alive and the token overhang is mostly behind it. But a low valuation can also be a value trap if the market correctly concluded that 1INCH does not capture product economics.
+
+Third, 1inch is a good test case for Research Map discipline. It has strong brand recognition, real usage, many sources, and enough complexity to tempt lazy conclusions. A shallow view would say "aggregator equals good infrastructure." A more useful view asks: who pays, who earns, who controls routing, what is the role of resolvers, what data proves traction, how much volume share is actually current, what happens if APIs are monetized off-chain, and what claim does 1INCH have on those flows?
+
+My current answer is mixed. 1inch is durable enough to monitor. It is not dead infrastructure. It has real engineering, product, exchange liquidity, and category memory. But the token is not yet a clean accumulation asset because the causal path from product adoption to 1INCH demand is indirect. The investability bar should be higher than "the app is useful." For a token thesis, I want to see either explicit fee capture, required staking tied to resolver economics, treasury accrual that can be governed by token holders, or a credible route to scarcity. Without that, 1INCH is better treated as tactical beta to the DEX/intents narrative.
+
+## Evidence Map and Current Snapshot
+
+The June 28, 2026 source package uses five evidence lanes: identity, mechanism, traction, economics, and risk. Identity is strong: official site, token page, developer portal, explorers, market-data pages, GitHub, forum, and Snapshot all point to the same project. Mechanism evidence is medium-high because Classic Swap, Fusion, Fusion+, Orderbook, and open-source repositories describe most of the system shape. Traction evidence is medium because DeFiLlama gives aggregator volume, GitHub gives development signal, and exchange pages give token liquidity, but public user retention, API revenue, resolver concentration, and protocol surplus are not as transparent. Economics evidence is low-to-medium because token supply is clear but token value capture is not. Risk evidence is medium because audits, bug bounty references, open-source contracts, and forum/governance data exist, but admin-key and revenue-distribution visibility still need active monitoring.
+
+| Evidence lane | Source examples | What it proves | Confidence impact |
+|---|---|---|---|
+| Identity | [1inch.com](https://1inch.com/), [1inch token page](https://1inch.com/token/), [CoinGecko](https://www.coingecko.com/en/coins/1inch), [CMC](https://coinmarketcap.com/currencies/1inch/) | Canonical project, ticker, token market identity | High |
+| Contracts | [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302), [BaseScan](https://basescan.org/token/0xc5fecc3a29fb57b5024eec8a2239d4621e111cbe), [BscScan](https://bscscan.com/token/0x111111111117dc0aa78b770fa6a738034120c302) | Main ERC-20 and chain representations | Medium-high |
+| Mechanism | [Classic Swap](https://portal.1inch.dev/documentation/apis/swap/classic-swap/introduction), [Fusion](https://portal.1inch.dev/documentation/apis/swap/fusion/introduction), [Fusion+](https://portal.1inch.dev/documentation/apis/swap/fusion-plus/introduction), [Orderbook](https://portal.1inch.dev/documentation/apis/orderbook/introduction) | Router, intent execution, cross-chain swap, limit-order rails | Medium-high |
+| Traction | [DeFiLlama protocol](https://defillama.com/protocol/1inch), [DeFiLlama aggregators](https://defillama.com/dexs/aggregators), [GitHub org](https://github.com/1inch) | TVL residue, aggregator volume, development footprint | Medium |
+| Governance | [Snapshot 1inch.eth](https://snapshot.box/#/s:1inch.eth), [1inch governance forum](https://gov.1inch.network/) | DAO process and proposal surface | Medium |
+| Security | [Immunefi 1inch bounty](https://immunefi.com/bug-bounty/1inch/), [1inch audits repository](https://github.com/1inch/1inch-audits) | Audit/bounty trail, not a guarantee | Medium |
+| Competition | [CoW docs](https://docs.cow.fi/cow-protocol/concepts/how-it-works), [UniswapX whitepaper](https://uniswap.org/whitepaper-uniswapx.pdf), [0x Swap API](https://0x.org/docs/0x-swap-api/introduction), [Jupiter docs](https://station.jup.ag/docs) | The intent/aggregation market is crowded | High |
+
+The current data snapshot should be read as a research snapshot, not an execution quote. Around 06:54 UTC on June 28, 2026, public market pages clustered near $0.068-$0.071 per 1INCH. CoinGecko, CMC, Etherscan, Tokenomist, Binance, Kraken, MetaMask, and Blockchain.com varied slightly in price, rank, and circulating supply. That variation is normal for live markets, but it justifies using ranges instead of false precision.
+
+| Metric | June 28, 2026 working range | Source anchors | Interpretation |
+|---|---:|---|---|
+| Price | ~$0.068-$0.071 | [CoinGecko](https://www.coingecko.com/en/coins/1inch), [CMC](https://coinmarketcap.com/currencies/1inch/), [Binance](https://www.binance.com/en/price/1inch) | Liquid but still deeply down from prior-cycle highs |
+| Market cap | ~$95M-$99M | [CoinGecko](https://www.coingecko.com/en/coins/1inch), [CMC](https://coinmarketcap.com/currencies/1inch/), [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302) | Small enough for optionality, too small to imply dominance |
+| FDV | ~$102M-$103M | [Tokenomist](https://tokenomist.ai/1inch), [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302), [CoinGecko](https://www.coingecko.com/en/coins/1inch) | FDV/MC close to 1.07x, so unlock overhang is not the main thesis issue |
+| Circulating supply | ~1.406B-1.411B 1INCH | [Tokenomist](https://tokenomist.ai/1inch), [CMC](https://coinmarketcap.com/currencies/1inch/), [Kraken](https://www.kraken.com/prices/1inch-1inch-price-chart) | Small provider differences, not a thesis-breaking conflict |
+| Total / max supply | ~1.5B 1INCH | [Etherscan](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302), [Tokenomist](https://tokenomist.ai/1inch) | Most supply is already circulating |
+| Aggregator volume | $55.1M 24h / $600.3M 7d / $2.95B 30d | [DeFiLlama aggregators](https://defillama.com/dexs/aggregators) | Real flow, but not category-leading share |
+| Aggregator all-time volume | ~$267.4B | [DeFiLlama aggregators](https://defillama.com/dexs/aggregators) | Strong historical relevance |
+| Protocol TVL | ~$2.30M current chain TVL | [DeFiLlama protocol](https://defillama.com/protocol/1inch) | TVL is not the right primary metric for an aggregator |
+| GitHub footprint | 100 public repos sampled, ~4.8K stars in GitHub API query | [1inch GitHub](https://github.com/1inch) | Active engineering signal, though stars are not fundamentals |
+
+## Architecture / Product Mechanism
+
+The 1inch system is best understood as a routing stack rather than a single protocol. Classic Swap is the direct router path. A user chooses a source token, destination token, amount, chain, and slippage constraints. Pathfinder searches liquidity venues and route splits. The API returns a quote and then transaction calldata for the 1inch Router. The user or integrator submits the transaction and pays normal chain execution costs. The key value proposition is execution quality: split routes, avoid worse pools, and reduce price impact relative to naive single-pool execution.
+
+The Classic Swap docs matter because they show the core integration surface. The [quote endpoint](https://portal.1inch.dev/documentation/apis/swap/classic-swap/methods/v6.1/1/quote/method/get) finds the best quote, while the [swap endpoint](https://portal.1inch.dev/documentation/apis/swap/classic-swap/methods/v6.1/1/swap/method/get) generates calldata. The [approval spender endpoint](https://portal.1inch.dev/documentation/apis/swap/classic-swap/methods/v6.1/1/approve/spender/method/get) and approval transaction endpoints reflect the normal ERC-20 allowance risk surface: users approve a router, then the router spends tokens for the swap. This is familiar DeFi UX, but it still creates security and UX risk because approvals, chain gas, slippage, and routing failures sit in the user transaction path.
+
+Fusion changes the workflow. Instead of the user always submitting a normal swap transaction against AMMs, the user signs an order expressing the desired outcome. Resolvers compete to fill that order. The resolver earns the spread or execution economics if it can satisfy the user's constraints profitably. This intent pattern can improve UX because the user's goal is separated from execution details. It can also protect against some forms of MEV and failed execution because specialized resolvers have better infrastructure than retail users. But it introduces new trust and market-structure questions: who are the resolvers, how competitive are they, how concentrated is fill flow, what happens when market volatility makes orders unprofitable, and how much of the resolver economics accrues to token holders?
+
+Fusion+ extends the intent model across chains. Cross-chain swaps are hard because they combine routing, bridge risk, settlement finality, inventory management, relayer liveness, and user expectation management. 1inch's [cross-chain-swap repository](https://github.com/1inch/cross-chain-swap) shows that this is not just a UI feature. The mechanism requires escrow-like contracts, source and destination chain coordination, hash/time constraints, resolver execution, and recovery paths when a fill fails or expires. This is strategically important because cross-chain UX is one of the largest remaining DeFi friction points. It is also riskier than same-chain routing because failures can involve two chains, two sets of gas markets, external relayers, resolver inventory, and chain reorg/finality assumptions.
+
+The Orderbook / Limit Order layer is another important primitive. The [Orderbook API](https://portal.1inch.dev/documentation/apis/orderbook/introduction) and [Limit Order Protocol repository](https://github.com/1inch/limit-order-protocol) allow signed orders with flexible conditions. Limit orders matter for professional traders, wallets, and integrators because they create non-immediate execution use cases. They also create optionality for more advanced order types, but again the token capture question is separate. A limit-order primitive can be excellent infrastructure while 1INCH remains only weakly tied to its usage.
+
+There is also an API monetization layer. The developer portal positions 1inch Business as enterprise-grade DeFi APIs across 13+ chains and many services. That can create revenue for 1inch as an organization, and it can deepen distribution if wallets and apps outsource routing to 1inch rather than maintaining their own infrastructure. The investment problem is transparency. If API economics accrue primarily off-chain or to an entity rather than to the DAO/token, token holders need governance rights, treasury flows, buyback/burn policy, staking requirements, or some other documented bridge to value. At present, that bridge is not strong enough to underwrite 1INCH as a revenue token.
+
+### Mechanism Walkthrough
+
+Consider four common flows.
+
+First, a retail same-chain Classic Swap. The user opens 1inch, chooses ETH to USDC on Ethereum, and asks for a quote. Pathfinder checks available venues and depths. It may split the route across multiple pools or protocols if that improves execution after gas. The user approves the router if allowance is needed, signs/submits the transaction, pays gas, and receives output tokens if execution succeeds within slippage. The value created is better execution and convenience. The main risks are allowance risk, route failure, slippage, sandwich/MEV exposure if not protected, and gas volatility. The token role is minimal unless governance, fee settings, or indirect treasury flows apply.
+
+Second, a Fusion same-chain intent. The user signs an order rather than manually executing a swap. Resolvers compete to fill. The resolver may source liquidity from AMMs, private inventory, or other routes. If filled, the user receives the desired token outcome under the order constraints, while the resolver earns the economic spread after costs. This can abstract gas and reduce some UX pain. The value created is solver competition. The risks are resolver concentration, unfavorable spread capture, liveness under stress, and opaque solver economics. The token role becomes more interesting only if resolver participation, priority, rewards, or reputation is tied to 1INCH staking or delegated power.
+
+Third, a Fusion+ cross-chain intent. The user wants asset A on chain X converted to asset B on chain Y. A resolver must coordinate source-chain lock/escrow, destination-chain delivery, and final settlement. A robust design needs timeout/recovery paths so the user is not permanently stuck if the fill fails. This flow is strategically valuable because cross-chain UX is currently awful for normal users. But it also has more moving parts than a normal swap. The investment implication is that cross-chain flow can be high-value order flow, but it increases dependence on resolver liquidity and risk controls.
+
+Fourth, an integrator API flow. A wallet, trading app, AI agent, or portfolio product calls the 1inch API and embeds the quote/swap route into its own UI. This is potentially the most scalable distribution path. It can also be the least visible to token holders if fee capture is contractual, enterprise-facing, or kept at the company layer. For 1INCH, the question is whether integration volume creates a token sink. If integrators pay for API usage in fiat/stablecoins and the organization keeps revenue off-chain, 1INCH holders get brand adjacency but not direct economic capture. If DAO policy sends part of the surplus to staking, buybacks, treasury, or governance-controlled incentives, then token capture improves.
+
+## Market Intelligence and Traction
+
+The most important traction source is DeFiLlama's aggregator volume category. As of the June 28, 2026 snapshot used for this memo, the category had roughly $2.23B 24h volume, $15.80B 7d volume, and $74.09B 30d volume. 1inch had roughly $55.1M 24h volume, $600.3M 7d volume, and $2.95B 30d volume. That implies roughly 2.5% of tracked 24h aggregator flow and roughly 4.0% of tracked 30d flow. The exact percentage moves daily, and DeFiLlama methodology may not cover every private route, API flow, or chain. Still, the direction is clear: 1inch is significant, but it is not the current tracked leader.
+
+The competitive comparison is sobering. In the same DeFiLlama snapshot, Jupiter Aggregator had roughly $1.13B 24h volume and $25.63B 30d volume, concentrated on Solana. 0x Aggregator had roughly $246.0M 24h and $4.65B 30d. CoWSwap had roughly $34.9M 24h and $3.46B 30d. Velora had roughly $22.9M 24h and $1.75B 30d. Odos had smaller 30d volume but broad chain coverage. This means 1inch is still one of the relevant EVM/multi-chain routers, but the strongest public volume growth in the current dataset is not clearly controlled by 1inch.
+
+| Aggregator | 24h volume | 7d volume | 30d volume | Chain footprint in snapshot | Read-through |
+|---|---:|---:|---:|---:|---|
+| Jupiter Aggregator | ~$1.13B | ~$5.48B | ~$25.63B | 1 | Solana-native dominance and a very different market structure |
+| 0x Aggregator | ~$246.0M | ~$1.09B | ~$4.65B | 32 | Broad API/infrastructure distribution |
+| 1inch | ~$55.1M | ~$600.3M | ~$2.95B | 14 | Relevant, but not leading current tracked volume |
+| CoWSwap | ~$34.9M | ~$684.5M | ~$3.46B | 8 | Strong intent/MEV-protection competitor |
+| Velora | ~$22.9M | ~$309.6M | ~$1.75B | 9 | ParaSwap rebrand with multi-chain competition |
+| Odos | ~$7.7M | ~$59.8M | ~$398.1M | 17 | Smaller but technically differentiated routing |
+
+Token liquidity is adequate for monitoring. The token trades on major centralized venues and has deep enough public market coverage that price discovery is not a micro-cap problem. That said, 24h token volume around $9M is not large relative to top DeFi infrastructure assets, and exchange volume does not prove product traction. It only proves the token is tradable. The product volume and token volume must be analyzed separately.
+
+TVL is a misleading primary metric for 1inch. DeFiLlama protocol TVL around $2.30M mostly reflects residual chain TVL, not the economic size of the routing network. A DEX aggregator is not a lending protocol or AMM where locked capital is the main productive asset. The right metrics are aggregator volume, route quality, solver competition, API usage, fees/surplus, active users, integrator count, resolver concentration, and retained wallet order flow. Public dashboards do not yet expose all of those in a clean way.
+
+Developer traction is still meaningful. A GitHub API snapshot of the 1inch organization returned 100 public repos and roughly 4.8K stars in the sampled page, with top repositories including `shieldy`, `1inchProtocol`, `profanity2`, `spot-price-aggregator`, `limit-order-protocol`, `solidity-utils`, and `1inch-token`. The [1inch GitHub org](https://github.com/1inch) is not a proof of revenue, but it does reduce dead-project risk. The project continues to publish and maintain code across Solidity, TypeScript, C++, and JavaScript. That matters because routers, cross-chain swaps, and solver systems are engineering-heavy products.
+
+Recent product development also supports watchlist relevance. The official [1inch blog](https://1inch.com/blog/) has continued to publish product updates around cross-chain swaps, wallet UX, APIs, and ecosystem integrations. I am cautious about treating blog cadence as fundamentals, but product cadence is better than silence. The investment weight should still come from usage and capture data, not announcements.
 
 ## Source Conflict Matrix
 
-| Metric | Surf snapshot | Cross-check source | Working interpretation | Risk |
-|---|---:|---|---|---|
-| Valuation | $96.01M MC / $102.5M FDV | [CoinGecko](https://www.coingecko.com/en/coins/1inch) live page | Dated snapshot is useful for research, not execution | Medium |
-| Supply | 1.41B circulating / 1.50B total | Token contract/explorer should be checked before sizing | Dilution or bridge assumptions can change the token view | Medium |
-| Liquidity | $9.06M 24h volume | Exchange order books and DEX pools | Token volume does not prove organic protocol usage | Medium |
-| Usage | Not fully quantified in this pass | Official dashboards, docs, GitHub, Dune/DefiLlama if available | Upgrade only when usage confirms the narrative | High |
+The main conflicts are not catastrophic. They are normal live-data differences across providers. The more important conflict is conceptual: market pages show a liquid token, while product pages show useful infrastructure, but neither proves that token holders receive enough economics.
+
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+|---|---:|---:|---:|---|---|
+| Market-cap rank | CoinGecko around mid-270s | CMC around high-100s | Exchange pages often do not emphasize rank | Rank is provider-methodology noise; do not size from rank | Medium |
+| Market cap | CoinGecko roughly $95.7M | CMC roughly $96.8M | Etherscan circ mcap around similar range | Use ~$95M-$99M range | Low |
+| FDV | Tokenomist roughly $102.6M | CoinGecko / CMC roughly similar | Etherscan max supply near 1.5B | FDV/MC close to 1.07x | Low |
+| Circulating supply | Tokenomist ~1.406B | CMC ~1.411B | Kraken / other pages near ~1.406B | Small differences do not change thesis | Low |
+| Total / max supply | Etherscan near 1.5B | Tokenomist 1.5B | CMC max/total broadly aligned | Most supply is already circulating | Low |
+| Protocol TVL | DeFiLlama protocol ~$2.30M | Not a core aggregator metric | N/A | TVL should not be used as core valuation denominator | High if misused |
+| Aggregator volume | DeFiLlama 1inch $2.95B 30d | 1inch internal dashboards not fully public in this pass | Dune dashboards may differ by methodology | Use DeFiLlama as comparable public baseline, not complete truth | Medium |
+| Fee / revenue capture | 1inch fee help page describes fees that may apply | DeFiLlama fees endpoint not clean for 1inch in this pass | Token Terminal public data not used as hard number | Revenue is not transparent enough for a cash-flow token view | High |
+| Token holders | Etherscan holder count visible for Ethereum token | Chain-specific wrapped tokens have separate holders | CEX balances hide beneficial owners | Holder count is directionally useful, not distribution truth | Medium |
+| Governance activity | Snapshot and forum exist | Participation quality varies by proposal | Treasury execution requires separate tracking | Governance exists, but token capture needs policy clarity | Medium |
 
 ## Economics and Value Capture
 
-The positive case is that DEX aggregator and intent/MEV routing protocol creates recurring activity and that 1INCH captures part of it through fees, staking, governance, access, burns, collateral, or incentives. The weak case is that the product can grow while 1INCH remains only a rewards or governance asset. For this reason, I would track usage and token sinks before treating 1INCH as more than watchlist exposure.
+The economic map has four groups: users, resolvers/market makers, integrators, and token holders. Users pay in the form of gas, spread, price impact, possible fees, and opportunity cost. Resolvers earn when they can fill orders better than the user-specified constraints. Integrators can earn by embedding swap flow, charging their own fees, or using the API to retain users. 1inch as an organization and/or DAO can earn through API plans, infrastructure fees, swap surplus arrangements, affiliate/integrator fees, treasury holdings, or governance-controlled parameters. Token holders capture value only if the last step is linked back to 1INCH.
+
+The official [fee help article](https://help.1inch.com/en/articles/13531432-do-i-pay-fees-when-using-1inch) is important because fees are nuanced. 1inch is not simply an AMM that charges a fixed pool fee to LPs and has an obvious protocol take rate. Fees can include network gas, external protocol fees, swap surplus, infrastructure fees, or integrator fees depending on product path and settings. That creates flexibility, but it also makes public token-holder economics harder to model. A hidden or variable fee stream may be real for the organization while still being hard to value for 1INCH.
+
+The cleanest value-capture path would be: more 1inch order flow -> more resolver competition and surplus -> more fees or surplus controlled by the DAO -> more staking yield, buybacks, burns, treasury value, or governance-controlled capital allocation -> more rational demand for 1INCH. The current evidence proves the first part partially, but not the full chain. There is order flow. There is a token. There is governance. There is staking/governance utility. There is not enough transparent public data to say token holders receive a predictable share of order-flow economics.
+
+The resolver/staking path is the most interesting. If 1INCH staking or delegated power is materially required for resolver participation, priority, reputation, or rewards, then usage can create token demand without a simple fee-sharing model. In that structure, 1INCH becomes an access or coordination token for the solver network. That would be a stronger thesis than passive governance. But the evidence needed is specific: amount staked, distribution of delegated power, resolver count, fill share by resolver, rewards/surplus per staked token, and whether rational resolvers need to hold or rent 1INCH at scale.
+
+The API path is more ambiguous. Enterprise APIs can be good business. The [developer portal](https://portal.1inch.dev/documentation/overview) makes clear that 1inch is selling infrastructure value to builders. If wallets, agents, fintech apps, and trading tools rely on 1inch APIs, then 1inch can be a valuable infrastructure provider even if retail dApp market share is noisy. But unless API revenue is disclosed or routed through DAO policy, token holders may only receive narrative upside. The company could be doing better than the token. That is not unusual in crypto infrastructure.
+
+The treasury/governance path is real but uncertain. Governance pages such as [Snapshot 1inch.eth](https://snapshot.box/#/s:1inch.eth) and the [governance forum](https://gov.1inch.network/) show a DAO surface. Token holders can influence proposals, parameters, and treasury direction. Governance rights can be valuable if the treasury is large, revenue is controllable, and voters can credibly direct capital. Governance is much less valuable if the main revenue channels are off-chain, if participation is low, or if insiders/resolvers dominate decision-making.
+
+The strongest negative value-capture case is that 1inch succeeds as a product while 1INCH remains a weak claim. Users do not need to buy 1INCH to swap. Integrators may choose 1inch for API quality, not token utility. Resolvers may need operational capital more than token exposure. DAO fees may remain small, variable, or politically hard to distribute. In that world, 1inch's product can keep routing billions while 1INCH trades like legacy DeFi governance beta.
+
+## Tokenomics / Capital Structure
+
+The tokenomics picture is more mature than in early-cycle projects. 1INCH has a 1.5B supply cap/total supply reference across market sources, with roughly 1.406B-1.411B circulating in the June 28, 2026 data. That puts circulating supply at roughly 94% of total. The FDV/market-cap gap is therefore small. This is good in one sense: investors are not walking into a massive hidden unlock cliff. It is bad in another sense: the token cannot rely on "FDV compression from unlock completion" as the main upside narrative. Upside must come from demand, not supply math.
+
+Tokenomist's [1INCH unlock page](https://tokenomist.ai/1inch) is useful because it frames supply schedule and circulating assumptions. Etherscan's [token contract page](https://etherscan.io/token/0x111111111117dc0aa78b770fa6a738034120c302) is useful because it anchors the ERC-20 and observed holders/transfers. CoinGecko and CMC are useful because they aggregate market cap, volume, and exchange data. None of these should be treated alone as truth; the right approach is range-based.
+
+The original token distribution included community incentives, core contributors, backers, and network growth allocations. By 2026, the more important issue is not original allocation percentages but current concentration and active treasury behavior. Holder concentration, CEX custody, DAO-controlled wallets, team/investor leftovers, staking contracts, bridge wrappers, and market-maker inventories can all affect price. Etherscan holder counts are helpful but incomplete because CEX wallets aggregate many users and wrapped chain representations split balances.
+
+The token utility set includes governance, staking/delegation dynamics, and potential resolver/DAO participation. The [official token page](https://1inch.com/token/) is the first identity anchor, while governance surfaces show active process. But utility is not the same as value capture. A governance token can be useful for voting while still weak as an investment if the system does not send material value through the governance layer. The key tokenomics question is therefore not "does 1INCH have a role?" It does. The key question is "is that role scarce, economically required, and tied to cash or order-flow economics?" Current answer: partially, but not enough for a high-conviction rating.
+
+Liquidity quality is acceptable but not exceptional. A roughly $95M-$99M market cap token with roughly $9M daily volume can support monitoring and tactical trades, but position sizing should account for volatility, venue concentration, and market-wide DeFi beta. The token has a large historical drawdown from prior highs, which can attract mean-reversion traders. That same drawdown also signals that the market has discounted the token's value-capture weakness for years.
 
 ## Team, Funding, and Governance
 
-Surf lists reported funding of $189.8M. Team snapshot: Anton Bukov (Co-Founder), Sergej Kunz (Co-Founder), Chae Ho Shin (CFO), Ilia Naryzhny (Chief Information Officer). Governance/admin-key details were not fully verified in this batch, so smart-contract permissions, multisig controls, unlock schedules, and foundation treasury movements remain follow-up items.
+1inch was co-founded by Sergej Kunz and Anton Bukov, and the team has a long execution history in DeFi routing. That history matters because aggregation and intent execution are not simple marketing wrappers. The project requires smart-contract security, market-maker relationships, routing algorithms, chain integrations, API reliability, wallet UX, and governance operations. 1inch has demonstrated enough execution to survive multiple market cycles, which is not trivial.
+
+Funding history is also meaningful but should not be over-weighted. Public databases and prior announcements have reported substantial capital raised by 1inch, including institutional rounds. Funding can support engineering and business development, but funding from 2020-2021 does not automatically mean 2026 revenue quality is high. For token investors, the more relevant questions are current treasury runway, current revenue, token treasury policy, and how much value remains inside the token-governed system.
+
+Governance is active enough to monitor through [Snapshot](https://snapshot.box/#/s:1inch.eth) and [gov.1inch.network](https://gov.1inch.network/). The governance risk is not absence. The risk is effectiveness and alignment. If governance votes on parameters that do not control major economics, token value capture stays weak. If governance controls fees, staking incentives, resolver requirements, treasury deployment, and strategic grants, then token governance can become more valuable. The memo's base case assumes governance value exists but is discounted until clearer economic policy appears.
+
+Admin and upgradeability risk should be tracked contract by contract. Routers, limit-order protocols, cross-chain escrow contracts, and API systems have different trust assumptions. An open-source repository reduces opacity, but it does not remove upgrade-key, emergency-control, or off-chain resolver risks. Security history and audits help, but cross-chain and intent systems are moving targets. The [Immunefi bounty page](https://immunefi.com/bug-bounty/1inch/) and [audit repository](https://github.com/1inch/1inch-audits) are positive signals, not guarantees.
+
+The team/funding/governance score is medium-high for execution credibility and medium for token-holder alignment. This is better than most DeFi projects, but not enough to override weak direct value capture.
 
 ## Competitive Landscape
 
-| Comparison set | Why it matters |
-|---|---|
-| CoW Swap, Matcha, Jupiter, ParaSwap, UniswapX, and CEX routing | These alternatives compete for the same users, liquidity, developers, or narrative budget |
-| CEX liquidity and passive beta | Major venue access can support price without proving product traction |
-| Native ecosystem substitutes | Users may prefer apps integrated directly into larger ecosystems |
+1inch competes in at least four markets: EVM DEX aggregation, intent-based execution, cross-chain routing, and embedded swap APIs. The competitive set changes depending on which market matters most.
+
+Against classic EVM aggregators, 1inch's brand and routing history are strengths. Its weakness is that routing is no longer rare. 0x, Odos, Velora, Kyber, LI.FI, Squid, Rango, and wallet-native routers all offer parts of the same experience. If a wallet integrates 0x or LI.FI by default, many users never open 1inch directly. Distribution can beat routing quality if the execution difference is small.
+
+Against intent systems, 1inch competes with CoW Protocol and UniswapX more directly. CoW's batch auction and solver model emphasizes MEV protection and coincidence of wants. UniswapX brings the Uniswap brand, fillers, and a whitepaper-backed Dutch auction design. 1inch Fusion has a credible path, but the question is not whether it works. The question is whether it wins enough solver mindshare and user order flow to create economics.
+
+Against Solana-native flow, Jupiter is the key reminder that chain-native distribution can overwhelm multi-chain brand. Jupiter's DeFiLlama volume is far larger in the current snapshot. That does not mean Jupiter and 1inch are perfect substitutes; their chain footprints differ. But it does mean the aggregator market does not automatically consolidate around one global brand. Users often choose the router native to their chain, wallet, or app.
+
+Against API infrastructure, 0x is a major competitor. 0x has long positioned itself around API distribution and smart order routing. If the future of swaps is embedded in wallets, apps, and agents rather than standalone DEX UIs, API reliability and developer adoption may matter more than consumer brand. 1inch's business portal is a response to this market, but public revenue data is needed before valuing it like a SaaS-like infrastructure layer.
+
+| Competitor / substitute | Primary edge | 1inch edge | 1inch weakness |
+|---|---|---|---|
+| [0x Swap API](https://0x.org/docs/0x-swap-api/introduction) | Developer/API distribution, broad chain coverage | Strong brand, deep DeFi routing history, product breadth | API revenue/token capture opacity |
+| [CoW Protocol](https://docs.cow.fi/cow-protocol/concepts/how-it-works) | Batch auctions, solver competition, MEV protection | Fusion/Fusion+ and broader retail/API surface | CoW narrative is cleaner around intents |
+| [UniswapX](https://uniswap.org/whitepaper-uniswapx.pdf) | Uniswap brand, fillers, wallet distribution | Multi-chain routing history and existing aggregator users | Uniswap ecosystem distribution is formidable |
+| [Jupiter](https://station.jup.ag/docs) | Solana-native dominance and distribution | Multi-chain/EVM experience | 1inch is not current category leader by volume |
+| [Velora](https://velora.xyz/) | ParaSwap legacy and multi-chain routing | 1inch brand and enterprise API breadth | Similar market, limited switching costs |
+| [Odos](https://docs.odos.xyz/) | Route optimization differentiation | 1inch liquidity brand and history | Users can switch aggregators easily |
+| CEX internal routing | Custody, convenience, fiat on/off ramps | Self-custody, DeFi-native routing | Many users prefer centralized UX |
+
+Switching costs are moderate to low for retail users and medium for integrators. Retail users can compare routes across aggregators. Wallets can change API providers, but migration costs, SLA confidence, and commercial terms matter. Resolvers may multi-home across systems. This market structure is competitive and margin-compressing. 1inch must win through execution quality, distribution, resolver liquidity, trust, and economic alignment.
+
+## Catalysts
+
+The most important catalyst is measurable Fusion/Fusion+ adoption. If 1inch can publish or expose resolver count, fill share distribution, cross-chain volume, average execution improvement, failure rate, and surplus capture, the market can underwrite an intent thesis. Without that, Fusion remains strategically interesting but hard to value.
+
+The second catalyst is clearer token economics. A governance proposal that routes measurable surplus to stakers, burns, treasury buybacks, resolver staking, or explicit DAO revenue could change the investment view. This must be measurable, not just cosmetic. The question is not whether a proposal sounds good; it is whether 1INCH becomes required or economically rational to hold.
+
+The third catalyst is API monetization disclosure. If 1inch Business becomes a material infrastructure revenue line and the DAO/token captures part of that value, 1INCH can be valued differently. If API revenue remains off-chain and disconnected, it supports the company's strategic value more than the token.
+
+The fourth catalyst is distribution through wallets, AI agents, and cross-chain apps. The developer portal's positioning around agentic trading and APIs suggests 1inch wants to be embedded infrastructure. That can be powerful if 1inch becomes default routing for high-value wallets or autonomous agents. The token thesis still needs capture proof.
+
+The fifth catalyst is sector rotation. DeFi infrastructure tokens can re-rate when market liquidity returns, especially if they have survived prior cycles. 1INCH could rally with DEX, MEV, solver, or intents narratives even before fundamentals fully improve. That is why the rating is watchlist rather than avoid. But tactical narrative upside is not the same as fundamental accumulation.
 
 ## Risk Matrix
 
-| Risk | Severity | Why it matters |
-|---|---|---|
-| token value capture and aggregation-margin compression risk | High | This is the main path where the thesis fails |
-| Token value capture | High | Product adoption does not automatically accrue to token holders |
-| Liquidity quality | Medium | 24h volume can be incentive-driven or venue-concentrated |
-| Competition | Medium | The category has credible substitutes |
-| Execution and disclosure | Medium | Missing dashboards, audits, or unlock data should lower position sizing |
+| Risk | Severity | Evidence / reason | What would reduce the risk |
+|---|---|---|---|
+| Weak token value capture | High | Users can use routing without buying 1INCH; fee/revenue pass-through is not transparent | Measurable DAO fee capture, staking economics, resolver token demand |
+| Aggregator share compression | High | DeFiLlama shows 1inch below Jupiter and 0x in current tracked volume | Sustained 30d share gain and chain-specific leadership |
+| Resolver concentration | Medium-high | Intent systems depend on competitive fillers/resolvers | Public resolver count, fill-share distribution, transparent selection rules |
+| Cross-chain execution risk | Medium-high | Fusion+ adds escrow, relayer, resolver, and chain-finality assumptions | Audits, stress data, low failed-fill rate, clear recovery paths |
+| Security / approval risk | Medium-high | Routers and approvals remain DeFi attack surfaces | Regular audits, bug bounty payouts, safer approval UX |
+| Off-chain API capture risk | Medium | API revenue can accrue outside token economics | DAO-controlled revenue policy or explicit token-linked economics |
+| Governance capture / apathy | Medium | Voting can be low-quality or dominated by large holders | Higher participation, transparent treasury, independent delegates |
+| Liquidity reflexivity | Medium | Token volume is adequate but not deep relative to large-cap assets | Broader venue depth and sustained organic demand |
+| Regulatory / MEV scrutiny | Medium | Solver networks, routing, and fee capture can face scrutiny | Compliance clarity and transparent execution policies |
+| Product commoditization | Medium-high | Aggregation is widely available in wallets and APIs | Better execution, stronger integrations, unique cross-chain UX |
+
+The highest risk is not a single smart-contract exploit. It is product-token decoupling. The zero path is boring: the app remains useful, but order flow migrates to wallet-native routers, 1inch API revenue stays off-token, staking demand remains optional, and 1INCH becomes a legacy governance asset with periodic narrative pumps and lower lows. This is more likely than an overnight collapse.
+
+## Valuation / Importance Framework
+
+A standard revenue multiple is not reliable because public protocol revenue data is not clean enough in this pass. DeFiLlama tracks aggregator volume, but volume is not revenue. A router that processes $2.95B in 30d volume is not worth a fixed percentage of that volume unless take rate, surplus capture, resolver economics, and token-holder share are known. Applying a CEX or AMM multiple to aggregator volume would be false precision.
+
+A better framework uses four lenses: strategic relevance, volume share, value capture, and liquidity. Strategic relevance is medium-high: 1inch is a known DeFi routing brand with live product development. Volume share is medium: $2.95B 30d aggregator volume is real but not category-leading. Value capture is low-to-medium: token utility exists but direct capture is not strongly proven. Liquidity is medium: the token is tradable and broadly listed, but not a top-tier liquid DeFi asset.
+
+At roughly $102M-$103M FDV, 1INCH does not require heroic revenue to be interesting, but it does require a believable path to token demand. If annualized aggregator volume from the current 30d level is roughly $35B, even a few basis points of net surplus could be economically meaningful. But that calculation is only useful if 1INCH holders capture the surplus. If the economics accrue to resolvers, integrators, or off-chain entities, the token should trade at a lower governance/infrastructure-optionality multiple.
+
+The importance score is higher than the valuation score. 1inch is important enough to track because it sits in the route-quality and intent infrastructure layer. The valuation score is only moderate because the token claim is not clean. This distinction is the core of the memo. Good infrastructure can be a bad token. Bad token capture can still create tactical price upside if narrative and liquidity rotate. The right position framework is therefore optionality, not fundamental core.
+
+For portfolio construction, I would treat 1INCH as a small watchlist asset tied to DeFi infrastructure recovery and intents adoption. It should not be sized like a protocol with transparent cash flow. It should not be ignored either, because the valuation is low enough that a credible tokenomics upgrade or Fusion+ volume inflection could change the market's perception quickly.
 
 ## Bull / Base / Bear Scenarios
 
-| Scenario | What must be true | Confirmation metric |
-|---|---|---|
-| Bull | 1inch turns category relevance into repeat users, integrations, and measurable token sinks | Usage, revenue/fees, liquidity, and 1INCH utility all trend higher for two quarters |
-| Base | The project remains liquid and visible but token accrual is only partially proven | Market cap and volume hold while usage data stays mixed |
-| Bear | Narrative, incentives, or listings fade before durable demand appears | Volume, users, and token utility weaken together |
+| Scenario | Probability | 6-12M path | What must be true | Confirmation metrics |
+|---|---:|---|---|---|
+| Bull | 25% | 1INCH re-rates as intents and cross-chain routing beta | Fusion/Fusion+ volume grows, resolver competition deepens, DAO/token capture improves | 30d aggregator volume >$6B, 1inch tracked share >8%, clear staking/fee demand |
+| Base | 50% | 1INCH remains a liquid watchlist DeFi infrastructure token | Product remains relevant but token capture stays partial | 30d volume $2B-$5B, MC/FDV near current range, no clear revenue pass-through |
+| Bear | 25% | 1INCH fades as legacy governance beta | Order flow shifts to Jupiter/0x/CoW/wallet-native systems, token utility stays weak | 30d volume <$1.5B, token volume <$3M/day, no active governance economics |
+
+The bull case is credible but not yet proven. It requires more than a market-wide DeFi rally. It requires 1inch to become one of the default intent/cross-chain execution systems and to make 1INCH economically relevant. The easiest bull path is a governance/tokenomics change that makes resolver participation or surplus capture visibly tied to staking. The harder but more durable bull path is organic API and order-flow dominance.
+
+The base case is a long watchlist. 1inch keeps shipping, remains listed, processes billions in annualized flow, and benefits from DeFi liquidity cycles. The token rallies in risk-on periods and sells off when DeFi beta fades. It does not become a structural holding because the market never receives enough proof that token holders capture product economics.
+
+The bear case is not "1inch disappears." The more realistic bear case is that 1inch continues to exist but loses mindshare. Jupiter dominates Solana flow, 0x wins embedded APIs, CoW/UniswapX win intent narrative, wallets route internally, and 1inch becomes one of several routers rather than a default layer. In that world, a $100M FDV may still not be cheap if there is no cash-flow claim.
 
 ## Confidence Score
 
 | Dimension | Rating | Notes |
 |---|---|---|
-| Source quality | Medium | Surf, official web anchor, and market pages provide identity and market data |
-| Data consistency | Medium | Market data is usable, but supply/usage needs ongoing cross-checks |
-| Mechanism clarity | Medium | Product narrative is understandable, token accrual needs proof |
-| Value capture | Low to Medium | Upgrade only if token sinks become measurable |
-| Liquidity quality | Medium | $9.06M 24h volume is enough for monitoring, not a fundamentals guarantee |
+| Source quality | High for identity, Medium for economics | Official docs, explorers, DeFiLlama, GitHub, CMC/CG are strong; revenue capture is less disclosed |
+| Data consistency | Medium | Supply/market-cap differences are small; rank and usage methodology differ |
+| Mechanism clarity | Medium-high | Classic Swap, Fusion, Fusion+, Orderbook, and repos explain system shape |
+| Value capture | Low-to-Medium | Token role exists, but direct capture remains insufficiently measurable |
+| Liquidity quality | Medium | Major listings and ~$9M daily volume are usable, not exceptional |
 
-Overall confidence: Medium for identity and market data; Low to Medium for durable investment quality.
+Overall confidence: Medium. I am confident that 1inch is real, active, and strategically relevant. I am less confident that 1INCH is a high-quality investment claim on that relevance. The evidence supports a watchlist rating more strongly than either an avoid or accumulate rating.
+
+Confidence would improve if three things happen together: public Fusion/Fusion+ adoption data, measurable token-linked economics, and improving aggregator share. Confidence would decline if volume share keeps falling, governance becomes inactive, or the next major product push benefits the company/API layer without strengthening token demand.
 
 ## Red-team Check
 
-The strongest bear case is that 1inch grows attention or integrations without creating durable demand for 1INCH. The most gameable metric is headline partnerships or volume without retained users. The token value-capture failure path is product usage that bypasses token sinks. The plausible impairment path is liquidity decline, token unlock pressure, weak usage data, or a better-funded competitor taking category share.
+The strongest reason the thesis could be wrong on the upside is that the market may not care about perfect value capture in a risk-on DeFi cycle. A low-FDV, heavily drawn-down, major-exchange token attached to a known DeFi brand can re-rate sharply if intents become a hot narrative. In that scenario, waiting for transparent revenue could miss the move. This is why the memo uses watchlist rather than avoid.
+
+The strongest reason the thesis could be wrong on the downside is that current product relevance may be overstated. All-time volume and brand memory can hide a deteriorating current share. If users increasingly access swaps through wallets, CEXs, chain-native aggregators, or solvers not controlled by 1inch, then 1inch's brand may matter less than its historical reputation suggests.
+
+The most gameable metric is headline volume. Aggregator volume can be affected by market volatility, bot routing, large one-off trades, incentives, and methodology changes. A 30d volume increase is bullish only if it comes with retained users, improving share, high-quality routes, resolver competition, and economic capture. Volume without take rate is not revenue.
+
+The token value-capture failure path is clear: 1inch grows API and routing usage, but fees accrue to integrators/resolvers/off-chain entities; token staking remains optional; governance does not direct meaningful surplus; and 1INCH holders own narrative exposure rather than economics. This is the base risk.
+
+The plausible zero or permanent-impairment path is not a literal zero first. It is a multi-year bleed: route share compresses, Fusion does not become default, token volume decays, large holders exit, governance proposals become irrelevant, and the market treats 1INCH as a legacy governance token. A severe exploit in router, approval, or cross-chain escrow contracts could accelerate that path, but commoditization is the more likely slow impairment vector.
 
 ## Monitoring Dashboard
 
-| Metric | Current | Bull threshold | Bear threshold | Source |
+| Metric | Current June 28 2026 value | Bull threshold | Bear threshold | Source |
 |---|---:|---:|---:|---|
-| 24h token volume | $9.06M | 3x current level sustained | <25% of current level | Surf / exchanges |
-| FDV / MC | 1.07x | Gap compresses through adoption | Gap widens from unlock pressure | Surf / token unlocks |
-| Product usage | Not quantified here | Public dashboard shows growth | No usage disclosure | Official / Dune / DefiLlama |
-| Token utility | Needs verification | Fees, staking, or burns become material | Utility remains cosmetic | Docs / governance |
+| 30d aggregator volume | ~$2.95B | >$6B for two consecutive months | <$1.5B for two consecutive months | [DeFiLlama aggregators](https://defillama.com/dexs/aggregators) |
+| 1inch tracked aggregator share | ~4.0% of 30d category volume | >8% sustained | <2% sustained | [DeFiLlama aggregators](https://defillama.com/dexs/aggregators) |
+| 24h token volume | Around $9M | >$25M organic average | <$3M average | [CoinGecko](https://www.coingecko.com/en/coins/1inch), [CMC](https://coinmarketcap.com/currencies/1inch/) |
+| FDV / MC gap | ~1.07x | Stable with rising demand | Gap widens due to supply/methodology changes | [Tokenomist](https://tokenomist.ai/1inch) |
+| Protocol TVL | ~$2.30M | Not primary metric | Misused as valuation support | [DeFiLlama protocol](https://defillama.com/protocol/1inch) |
+| Resolver count / concentration | Not cleanly quantified in this pass | Public resolver dashboard with low concentration | Opaque or highly concentrated fill share | [Fusion docs](https://portal.1inch.dev/documentation/apis/swap/fusion/introduction) |
+| Fusion+ cross-chain volume | Not cleanly quantified in this pass | Transparent growth and low failure rate | No disclosure or repeated failures | [Fusion+ docs](https://portal.1inch.dev/documentation/apis/swap/fusion-plus/introduction) |
+| Token-linked revenue / surplus | Not transparent enough | DAO-approved measurable capture | No pass-through despite volume growth | [1inch fee help](https://help.1inch.com/en/articles/13531432-do-i-pay-fees-when-using-1inch), [governance forum](https://gov.1inch.network/) |
+| GitHub / product cadence | Active org and repos | Sustained releases in routing and cross-chain systems | Long inactivity or abandoned core repos | [GitHub](https://github.com/1inch) |
+| Security posture | Audits/bounty trail exists | New audits and low incident rate | Exploit, bounty escalation, unsafe approvals | [Immunefi](https://immunefi.com/bug-bounty/1inch/), [audits repo](https://github.com/1inch/1inch-audits) |
 
 ## Follow-up Triggers
 
 | Trigger | Why it matters | Action |
 |---|---|---|
-| Major usage dashboard or revenue disclosure | Converts narrative into measurable fundamentals | Reopen and update confidence |
-| Token unlock, migration, or supply revision | Directly changes FDV and dilution risk | Recalculate valuation |
-| Exchange listing/delisting or volume shock | Changes liquidity and reflexivity | Reassess liquidity quality |
-| Security incident, bridge failure, or admin-key event | Permanent impairment risk | Downgrade immediately |
+| 30d aggregator volume exceeds $6B and share exceeds 8% for two straight months | Confirms current relevance, not just historical brand | Reopen and consider upgrade from watchlist |
+| Governance proposal creates measurable 1INCH staking, surplus, buyback, burn, or resolver-access demand | Directly changes token value-capture model | Rebuild valuation framework |
+| Fusion+ publishes cross-chain volume, resolver concentration, and failed-fill data | Turns cross-chain narrative into auditable traction | Update mechanism and risk sections |
+| Token volume falls below $3M/day while aggregator share also falls below 2% | Liquidity and product relevance deteriorate together | Downgrade to avoid / legacy beta |
+| Major router, approval, resolver, or cross-chain escrow incident | Security could permanently impair trust | Immediate downgrade and incident review |
 
 ## Final Investment View
 
-Watchlist. 1inch has enough market presence to track, but 1INCH needs stronger evidence of durable usage and token value capture before becoming high-conviction portfolio exposure.
+Final view: watchlist / tactical DeFi infrastructure beta, medium confidence. 1inch is still a real project with useful infrastructure, broad product surface, active development, and meaningful historical volume. It is not a dead token. But 1INCH is not yet a strong fundamental accumulation asset because token-holder value capture remains weaker than product relevance.
+
+The simplest portfolio rule is this: track 1inch for intent routing, cross-chain UX, and DeFi infrastructure rotation, but do not size it as if it owns the cash flows of all 1inch product usage. At current roughly $100M FDV, the token has optionality if Fusion/Fusion+ traction or DAO economics improve. The position deserves upgrade only when product usage and token demand become measurably linked. Until then, 1INCH is a watchlist asset with asymmetric narrative upside and real value-capture risk.
+
+My key invalidation trigger is positive: if 1inch can show sustained share gains plus clear staking/fee economics, the thesis changes quickly. My key negative trigger is combined volume and liquidity decay: if the token volume weakens while aggregator share compresses, the project may remain useful but the token should be removed from active consideration.

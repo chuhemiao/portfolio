@@ -1,128 +1,390 @@
 ---
-title: 'apyUSD: Apyx Yield-Bearing Stablecoin, DAT Dividends, and Collateral-Risk Premium'
+title: 'apyUSD: Digital-Credit Yield, apxUSD Discount, and DAT Dividend Risk'
 publishedAt: '2026-06-28'
-summary: 'apyUSD is a yield-bearing stablecoin from Apyx that converts dividend income from Digital Asset Treasury preferred-share exposure into an on-chain savings asset, creating a differentiated RWA-yield narrative but also introducing collateral, redemption, disclosure, and off-chain income risks that are materially different from fiat-backed stablecoins. Verdict: high-risk stablecoin/RWA watchlist, not cash-equivalent collateral.'
+summary: 'apyUSD is the Apyx savings vault for apxUSD, an onchain digital-credit dollar backed by offchain Digital Asset Treasury preferred shares, cash, and short-term Treasuries. The product is more interesting than a normal points-farm stablecoin because official docs describe real preferred-share dividend income, ERC-4626 vault accounting, monthly yield distribution, third-party attestations, and a future APYX cash-flow token. It is also riskier than the headline yield suggests: apxUSD is not a strict 1:1 fiat-backed stablecoin, DeFiLlama shows apxUSD around $0.742 while apyUSD remains around $1.013 on June 28, 2026, vault TVL has roughly halved from early-June levels, redemptions use cooldown and flexible-unlock fees, and APYX does not TGE until October 13, 2026. Verdict: high-risk RWA stablecoin watchlist, useful as a structured-credit experiment, not cash-equivalent collateral.'
 slug: 'apyusd-apyx-yield-bearing-stablecoin-dat-dividend-risk'
 category: 'research'
 ---
 
 ## Pre-screen Decision
 
-Full research. apyUSD is a newer yield-bearing stablecoin with meaningful market cap, RWA framing, and unusual collateral mechanics. It deserves full coverage because users could mistake the asset for a low-risk dollar token.
+Full research. apyUSD deserves a full-depth memo because it sits at the intersection of stablecoins, RWA yield, Digital Asset Treasury credit, tokenized vault design, and future protocol cash-flow distribution through APYX. That combination can attract users who search for double-digit "stable" yield and may not separate three very different claims: the apyUSD vault share, the underlying apxUSD redemption asset, and the offchain preferred-share collateral that funds the yield.
 
-## TL;DR
+The upgrade decision is also driven by new data. A shallow memo that only says "apyUSD is a yield-bearing stablecoin" is now actively misleading. As of the June 28, 2026 live data pass, [DeFiLlama yields](https://yields.llama.fi/pools) shows the Apyx apyUSD vault at about **$122.65 million TVL** and **14.63% APY**, while [DeFiLlama coins](https://coins.llama.fi/prices/current/ethereum:0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a,ethereum:0x98a878b1cd98131b271883b390f68d2c90674665) prices **apyUSD near $1.0126** and **apxUSD near $0.7420**. [DeFiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?includePrices=true) also shows apxUSD circulating value falling from about **$389.3 million one month earlier** to about **$275.7 million**. The old framing did not fully capture that the wrapper can look stable while the underlying asset trades at a deep discount.
 
-apyUSD is a yield-bearing stablecoin inside the Apyx protocol. Apyx describes its model as dividend-backed digital credit rather than a traditional fiat-backed stablecoin ([Apyx](https://apyx.fi/), [Apyx Docs](https://docs.apyx.fi/)). Surf shows apyUSD around $1.013 on June 28, 2026, with about $123.1M market cap, $471.6K 24h volume, and about 121.5M circulating supply. The core thesis is not "stable dollar cash." It is exposure to a yield wrapper backed by off-chain dividend streams and Digital Asset Treasury preferred-share economics.
+The correct artifact is therefore a full research memo, not a quick note. The investment question is not whether Apyx has an interesting narrative. It does. The question is whether apyUSD can be underwritten as a durable yield-bearing dollar asset when its yield depends on offchain preferred equity, its exit path leads back into apxUSD, and its future token value capture depends on reserve growth that has to coexist with peg defense.
 
-Bottom line: apyUSD is an RWA/yield watchlist asset, not reserve collateral. The key diligence item is whether collateral, redemption, and dividend cash-flow reporting are transparent enough to justify the yield premium.
+## TL;DR / Executive Summary
+
+apyUSD is the Apyx protocol's yield-bearing savings token for apxUSD. The official docs describe apyUSD as a permissionless, non-rebasing [ERC-4626 vault](https://docs.apyx.fi/product-overview/apyusd-overview.md): users deposit apxUSD, receive apyUSD, and earn through an increasing exchange rate rather than an increasing token balance. Yield is sourced from the Apyx collateral stack, which is primarily offchain Digital Asset Treasury preferred shares plus cash and short-term Treasuries. Apyx says the collateral income is converted into apxUSD and streamed to the vault via `YieldDistributor` and `LinearVestV0`, with yield rates set monthly based on the prior month's collateral income. The protocol also says deposited apxUSD is not rehypothecated, lent, or otherwise reused to generate DeFi leverage yield. That is a clean story relative to opaque looping products.
+
+The problem is that the risk is credit-like, not cash-like. Apyx's own [risk disclosures](https://docs.apyx.fi/risk-management/apyx-and-dat-risks.md) say apxUSD is not a fiat-backed stablecoin, apxUSD is not designed as a strict 1:1 peg instrument, apyUSD yield is not guaranteed, and neither token is risk-free. apxUSD is backed by perpetual, dividend-bearing preferred equity issued by Digital Asset Treasuries, along with cash and Treasury buffers. Those preferreds are public securities, not insured deposits. They can trade below par, dividends can be reduced or suspended, preferred equity sits below debt, and liquidation recovery can be limited. This is structurally different from USDC, PYUSD, RLUSD, tokenized Treasury funds, and even Ethena-style synthetic dollars.
+
+The market data reinforces the caution. The Apyx apyUSD vault remains large enough to matter: [DeFiLlama yields](https://yields.llama.fi/chart/cb6139f9-4a68-4efd-8245-0312a92aee55) shows TVL growing from about **$52.7 million on April 9, 2026** to more than **$241.9 million on June 1**, then declining to about **$122.65 million on June 28**. APY moved from the 10-12% range to about **14.63%** after the TVL drawdown. That higher APY is not purely a sign of stronger collateral yield. The docs explain that monthly dollar yield is distributed across apyUSD not currently in cooldown; when the eligible base shrinks, the percentage APY can rise. A high APY after TVL contraction should be treated as a stress signal to investigate, not as a standalone bull case.
+
+The key source conflict is simple: the vault share looks close to $1, but the underlying apxUSD asset is deeply discounted in DeFiLlama's current price feed. On June 28, [DeFiLlama coins](https://coins.llama.fi/prices/current/ethereum:0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a,ethereum:0x98a878b1cd98131b271883b390f68d2c90674665) reports apyUSD at **$1.0126** and apxUSD at **$0.7420**. That can happen because apyUSD is a vault share whose accounting unit is apxUSD, while public pricing sources can infer different prices from different liquidity venues. But for risk management, the distinction matters. A holder exits apyUSD into apxUSD or apxUSD unlock receipts, not into risk-free dollars. If the market values apxUSD at a discount, the realized economic exit is weaker than the "yield-bearing stablecoin" label implies.
+
+APYX adds another layer. Official [APYX docs](https://docs.apyx.fi/product-overview/apyx.md) say APYX is the future governance token, with fixed 100 million supply, no future minting, no inflation, no VC allocation, TGE on **October 13, 2026**, and a reserve-growth model where 50% of monthly reserve growth initially goes to APYX stakers and 50% remains in the reserve. The idea is appealing: APYX could be a cash-flow-linked governance token tied to reserve growth, preferred equity income, issuance and redemption fees, and capital gains from discounted preferred offerings. But as of this memo date, APYX has not launched, the market cannot price the token, and tokenholder value capture is a future claim, not a live cash-flow history.
+
+My current verdict: **high-risk RWA stablecoin watchlist / avoid as core cash collateral**. apyUSD is intellectually important because it is trying to turn offchain public preferred-share dividends into an onchain savings product. It deserves monitoring. It does not yet deserve cash-equivalent treatment. The main upgrade trigger would be a sustained apxUSD recovery toward Redemption Value, transparent Accountable/Wolf collateral reporting that is easy to verify month after month, deeper USDC exit liquidity, and evidence that APYX staking can receive reserve growth without weakening overcollateralization. The main downgrade trigger is continued apxUSD discount, declining vault TVL, stale attestations, or any dividend/collateral impairment at STRC, SATA, or future DAT preferred holdings.
 
 ## Project Overview
 
-Apyx uses apxUSD as a synthetic dollar liquidity layer and apyUSD as the yield-bearing wrapper. The docs describe apxUSD as over-collateralized and dividend-backed, not a traditional fiat-backed stablecoin. Surf lists APYUSD on Ethereum with contract `0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a`, and apxUSD with contract `0x98a878b1cd98131b271883b390f68d2c90674665`.
+Apyx is a digital-credit stablecoin and savings protocol. The current product stack has three economically distinct assets:
 
-## Research Question
+| Layer | Asset | What it represents | Main risk |
+|---|---|---|---|
+| Base dollar layer | apxUSD | Synthetic dollar backed by DAT preferred shares, cash, and short-term Treasuries | collateral value, redemption value, whitelist, secondary-market discount |
+| Savings layer | apyUSD | ERC-4626 vault share over apxUSD, accruing dividend-funded yield through exchange-rate growth | apxUSD exit value, cooldown timing, yield variability |
+| Future governance / cash-flow layer | APYX | Fixed-supply governance token planned for October 13, 2026 TGE | reserve-growth capture, liquidity, governance risk, launch valuation |
 
-Can apyUSD deliver transparent yield from off-chain digital-credit income without introducing hidden collateral and redemption risk?
+The official [How Apyx Works](https://docs.apyx.fi/apyx-overview/how-apyx-works.md) page frames the system as four components: users, offchain treasury, onchain vault, and stock market. Users obtain apxUSD, optionally lock it into apyUSD, and receive yield. The offchain treasury acquires preferred shares and cash-equivalent assets through traditional market venues. Dividends are collected offchain, converted into apxUSD, and sent to the onchain vault. The stock market is the external venue where Apyx buys preferred assets such as STRC and SATA.
 
-## Architecture and Mechanism
+The product promise is differentiated. Most stablecoin yield comes from Treasury bills, DeFi lending rates, basis trades, liquidity incentives, or protocol subsidies. Apyx wants to bring a different income stream onchain: preferred equity dividends from Digital Asset Treasury companies. In the docs, initial examples include [STRC](https://docs.apyx.fi/solution-overview/example-collateral-allocation/strc.md), Strategy Inc variable-rate perpetual preferred stock, and [SATA](https://docs.apyx.fi/solution-overview/example-collateral-allocation/sata.md), Strive Inc variable-rate perpetual preferred stock. These instruments have stated amounts around $100, monthly cash dividends, issuer-adjusted dividend rates, and crypto/DAT exposure through the issuer's strategy.
 
-The simplified flow is: DAT preferred-share exposure produces dividend income; apxUSD acts as a synthetic dollar liquidity layer; apyUSD acts as a yield-bearing savings wrapper. This means the risk is not the same as USDC or T-bill-backed stablecoins. Users are exposed to asset quality, legal structure, dividend reliability, redemption mechanics, and oracle/accounting assumptions.
+That design makes apyUSD more like a structured digital-credit product than a normal stablecoin. A USDC holder primarily underwrites Circle, reserves, banks, Treasury bills, and regulatory risk. A BUIDL or USDY holder underwrites a tokenized money-market or Treasury wrapper. A USDe holder underwrites collateral, hedge execution, exchanges, and funding-rate/basis risk. An apyUSD holder underwrites Apyx vault mechanics, apxUSD exit mechanics, preferred-share credit, DAT issuer behavior, public preferred-share market liquidity, offchain custody, and the regulatory status of a yield-bearing digital-credit product.
 
-## Market Snapshot
+The core user is therefore not a payment user who needs a perfect dollar. It is a yield user who wants higher dollar-denominated return and accepts structured-credit risk. The problem is that the stablecoin label can blur that distinction. Apyx is explicit in its documentation that apxUSD is not a strict 1:1 peg instrument and apyUSD yield is not guaranteed. Any investment memo must keep that disclosure at the center.
 
-Data is from Surf market-ranking/project-detail on June 28, 2026, cross-checked against [CoinGecko apyUSD](https://www.coingecko.com/en/coins/apyusd).
+## Research Question and Investment Relevance
 
-| Metric | Snapshot |
-|---|---:|
-| Market-cap rank | ~223 |
-| Price | ~$1.013 |
-| Market cap / FDV | ~$123.1M / ~$123.1M |
-| 24h volume | ~$471.6K |
-| Circulating / total supply | ~121.5M / ~121.5M APYUSD |
-| 7d price change | ~-16.7% |
-| 30d price change | ~-25.8% |
-| ATH / ATL | ~$1.52 / ~$0.952 |
-| Reported funding | ~$3.0M strategic raise |
+The research question is:
+
+**Can apyUSD become a durable onchain savings primitive backed by real offchain dividend income, or is it mainly a high-yield wrapper over discounted structured-credit exposure?**
+
+The answer matters for three reasons.
+
+First, apyUSD competes for capital against stablecoin savings products. As of June 28, 2026, the most liquid yield-bearing dollar alternatives show lower headline APY but stronger category trust. [DeFiLlama yields](https://yields.llama.fi/pools) shows sUSDS around 3.6% on Ethereum with several billion dollars of TVL, sUSDe around 3.8% with a seven-day unstaking note, USDY around 3.55%, BUIDL around 3.2-3.5% across chains, and the Apyx apyUSD vault around 14.63%. The spread is not just an opportunity. It is the market asking users to accept a different risk stack.
+
+Second, Apyx can become strategically important if the Digital Asset Treasury theme persists. DAT companies have raised capital to accumulate crypto assets, and preferred equity can turn that theme into yield-bearing securities. If Apyx can acquire preferreds at attractive terms, manage collateral transparency, and distribute dividends onchain, it creates a new bridge between public capital markets and DeFi. That bridge is more novel than yet another points-based stablecoin farm.
+
+Third, APYX could become a tokenholder-cash-flow experiment worth tracking after TGE. The [APYX page](https://docs.apyx.fi/product-overview/apyx.md) says APYX stakers are intended to receive part of monthly reserve growth, with rewards in apxUSD or APYX. The [xAPYX](https://docs.apyx.fi/product-overview/apyx/xapyx.md) and [yAPYX](https://docs.apyx.fi/product-overview/apyx/yapyx.md) pages describe two staking vaults: xAPYX compounds APYX exposure, while yAPYX distributes apxUSD-denominated dividends. If implemented well, this gives APYX more direct value capture than many governance tokens. If implemented poorly, APYX cash flows could compete with the same reserve buffer needed to defend apxUSD confidence.
+
+The investable view is conditional. apyUSD becomes more compelling if Apyx proves recurring collateral income, sustained reserve coverage, reliable redemptions, and deep secondary liquidity. It stays watchlist-only if yields remain high mainly because TVL is falling, APYX is still pre-launch, and apxUSD trades at a large discount. It becomes avoid if collateral attestations become stale, preferred dividends are cut, apxUSD discount deepens, or the governance model prioritizes APYX payout over stablecoin resilience.
+
+## Architecture / Product Mechanism
+
+### Mechanism Walkthrough
+
+The Apyx flow starts with apxUSD, not apyUSD. Apyx says whitelisted participants in permitted jurisdictions may mint and redeem apxUSD through designated primary-market pathways, while general users can acquire apxUSD through external pools and swaps. New issuance is priced at $1, while redemptions occur at Redemption Value, which tracks the underlying basket of preferred shares and cash. Redemptions are settled in USDC; holders do not receive the preferred shares directly. In drawdown scenarios, the protocol would sell preferred-share positions into USDC to meet redemption obligations. This is described in the [apxUSD overview](https://docs.apyx.fi/product-overview/apxusd-overview.md).
+
+The next layer is apyUSD. A user deposits apxUSD into the apyUSD vault and receives apyUSD shares. The [apyUSD overview](https://docs.apyx.fi/product-overview/apyusd-overview.md) describes this as permissionless, no KYB/KYC required for the vault itself, non-rebasing, and accrual-based. Token balances do not grow. Instead, each apyUSD share should be redeemable for more apxUSD over time as the exchange rate increases. This means price charts and balance views can be deceptive. The economic question is not "how many apyUSD do I own?" but "how much apxUSD can I get when I exit, and what is apxUSD worth when I receive it?"
+
+Yield then enters through the offchain treasury. Apyx says the collateral stack holds preferred shares such as STRC and SATA, plus cash and short-term Treasuries. Dividends are paid in cash, converted into apxUSD, and credited to the apyUSD vault. The [yield distribution](https://docs.apyx.fi/solution-overview/apyusd-yield-distribution.md) page says proceeds are distributed through the `YieldDistributor` and a `LinearVestV0` linear vesting contract rather than as a one-time lump sum. The docs give an example where a monthly yield amount streams over a configurable period such as 20 days.
+
+The monthly mechanics are important. Apyx says the yield rate is set in dollar terms for the following month based on the prior month's collateral yield. That dollar amount is paid across apyUSD not currently in cooldown. New apyUSD that locks in immediately begins receiving yield and reduces the percentage APY for everyone else. apyUSD entering cooldown is removed from the yield-receiving base, increasing the percentage yield for remaining participants. This is exactly why a rising APY after TVL contraction should be interpreted carefully. It can reflect denominator shrinkage, not only better asset performance.
+
+Exit mechanics are the main user-experience risk. The [technical locking docs](https://docs.apyx.fi/technical-overview/locking.md) say deposits are synchronous: users can deposit apxUSD and immediately receive apyUSD. The [technical unlocking docs](https://docs.apyx.fi/technical-overview/unlocking.md) say withdrawals and redeems burn apyUSD shares and return `apxUSD_unlock` tokens, which are redeemable 1:1 for apxUSD after a 20-day cooldown. The docs also describe flexible unlocks: users receive an onchain Unlock Receipt NFT, claims become possible after three days, and early unlock fees decline linearly from 3.5% to 0.1%. This is not the same liquidity profile as selling USDC, redeeming PYUSD, or using a high-liquidity money-market token.
+
+The contracts published by Apyx confirm a multi-contract system. [Smart contract addresses](https://docs.apyx.fi/resources/smart-contract-addresses.md) list Ethereum mainnet apxUSD at `0x98A878b1Cd98131B271883B390f68D2c90674665`, apyUSD at `0x38EEb52F0771140d10c4E9A9a72349A329Fe8a6A`, UnlockToken at `0x93775E2dFa4e716c361A1f53F212c7AE031BF4e6`, and ApyUSDRateView at `0xCABa36EDE2C08e16F3602e8688a8bE94c1B4e484`. The docs also list Base and BNB Chain deployments for apxUSD and apyUSD. The existence of Base/BNB addresses matters for distribution, but the primary risk analysis still centers on Ethereum liquidity and the offchain collateral.
+
+The trust assumptions are therefore layered:
+
+| Step | User action | What must work | Main failure mode |
+|---|---|---|---|
+| Acquire apxUSD | Buy or mint apxUSD | secondary liquidity or whitelisted mint path | market discount, whitelist friction, thin USDC pools |
+| Lock | Deposit apxUSD into apyUSD | ERC-4626 vault and rate accounting | upgrade/admin bug, denylist/pause, share-price slippage |
+| Earn | Receive exchange-rate growth | dividends arrive, get converted, stream correctly | dividend cut, stale monthly setting, smaller eligible base creates misleading APY |
+| Unlock | Burn apyUSD for apxUSD_unlock | UnlockToken escrow and cooldown | 20-day timing risk, no yield during cooldown, early fee |
+| Exit dollars | Convert apxUSD to USDC or redeem | apxUSD peg/redeem path, collateral liquidation | apxUSD discount, preferred-share liquidity, RFQ/whitelist execution |
+
+The novelty is real. The fragility is also real. apyUSD is not merely a wrapper over a well-established dollar. It is a wrapper over a credit-linked synthetic dollar with primary redemption restrictions and offchain collateral.
+
+## Usage and Market Data
+
+The current data picture is mixed. apyUSD has meaningful scale for a new RWA-yield product, but the trend and price conflict are cautionary.
+
+| Metric | June 28, 2026 snapshot | Source / note |
+|---|---:|---|
+| apyUSD vault TVL | ~$122.65M | [DeFiLlama yields chart](https://yields.llama.fi/chart/cb6139f9-4a68-4efd-8245-0312a92aee55) |
+| apyUSD vault APY | ~14.63% | [DeFiLlama yields pools](https://yields.llama.fi/pools) |
+| 30d average APY | ~12.90% | DeFiLlama pool data |
+| apyUSD price | ~$1.0126 | [DeFiLlama coins](https://coins.llama.fi/prices/current/ethereum:0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a,ethereum:0x98a878b1cd98131b271883b390f68d2c90674665) |
+| apxUSD price | ~$0.7420 | same DeFiLlama coins query |
+| apxUSD circulating value | ~$275.7M | [DeFiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?includePrices=true) |
+| apxUSD previous month circulating value | ~$389.3M | DeFiLlama stablecoins |
+| Curve APYUSD-APXUSD TVL | ~$11.17M | [DeFiLlama yields pools](https://yields.llama.fi/pools) |
+| Curve APYUSD-APXUSD 24h volume | ~$222.9K | DeFiLlama yields pools |
+| Curve APXUSD-USDC TVL | ~$3.74M | DeFiLlama yields pools |
+| Curve APXUSD-USDC 24h / 7d volume | ~$264.6K / ~$17.64M | DeFiLlama yields pools |
+| Uniswap v4 APXUSD-USDC TVL / 24h volume | ~$3.14M / ~$109.9K | DeFiLlama yields pools |
+
+The TVL path is the first important signal. DeFiLlama's apyUSD vault history shows TVL at about **$52.7 million on April 9**, **$120.1 million on May 10**, **$241.9 million on June 1**, **$158.8 million on June 22**, and **$122.65 million on June 28**. The vault roughly doubled from April to early June, then lost about half its TVL from the June 1 high. A simple high-APY screen would call apyUSD attractive; a risk screen asks why the largest visible vault metric compressed so quickly.
+
+The APY path is the second signal. APY around 14.63% is much higher than major stablecoin savings alternatives. But Apyx itself explains that monthly dollar yield is paid across the eligible apyUSD base. If eligible TVL falls while a prior-month distribution is still streaming, percentage APY rises. This is not necessarily bad. It can reward sticky capital. But it means the observed APY is not a pure forward yield on fresh collateral income.
+
+The price conflict is the third and most important signal. DeFiLlama prices apyUSD near $1.0126 and apxUSD near $0.7420 in the same current query. Because apyUSD is a wrapper over apxUSD, a naive reader might expect the wrapper and the underlying to move more closely. The divergence can reflect liquidity source differences, vault share accounting, stale venue composition, and the fact that apyUSD/APXUSD pools are not the same as APXUSD/USDC exit pools. But from a portfolio-risk standpoint, the implication is conservative: do not treat apyUSD as cash until the apxUSD exit asset is demonstrably close to its intended redemption economics in live markets.
+
+The liquidity profile is not deep enough for core collateral use. The largest APYUSD/APXUSD pool in DeFiLlama is about $11.17 million TVL with about $222.9K daily volume. The main APXUSD/USDC Curve pool has about $3.74 million TVL, which is small relative to the combined apxUSD circulating value and apyUSD vault TVL. The stronger seven-day APXUSD/USDC volume around $17.64 million suggests trading is happening, but depth remains thin for a product that wants to be treated as a dollar layer.
+
+The usage picture is broader than spot liquidity. Apyx has Pendle markets, Curve pools, Morpho exposure, Uniswap v4 liquidity, Base deployments, and a points program. The [Apyx Pips](https://docs.apyx.fi/apyx-overview/apyx-pips-points-program.md) program explicitly rewards holding apxUSD, holding apyUSD, committing apxUSD, Curve liquidity, Pendle YT/LP positions, Morpho markets, and vault deposits. Season 2 started May 23, 2026 and runs until October 11, 2026, with **6,000,000 APYX**, equal to **6% of total APYX supply**, on top of Season 1's **5%** allocation. This can drive legitimate bootstrapping, but it also complicates traction quality. Some usage is yield demand. Some is APYX farming before TGE.
 
 ## Source Conflict Matrix
 
-| Metric | Surf snapshot | Public source | Working interpretation | Risk |
-|---|---:|---|---|---|
-| Peg / price | ~$1.013 | CoinGecko live page should be checked before use | Price near $1 but historical range is wide for a stablecoin | High |
-| Supply | ~121.5M circulating and total | Contract-level mint/redeem data should be checked | Supply looks simple, but collateral backing is off-chain linked | Medium |
-| Yield source | DAT preferred-share dividends | Apyx docs describe non-fiat-backed design | Yield depends on off-chain dividend reliability | High |
-| Volume | ~$471.6K 24h | Venue quality needs review | Liquidity is thin relative to supply | High |
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+|---|---:|---:|---:|---|---|
+| apyUSD price | DeFiLlama coins: ~$1.0126 on Jun 28 | Secondary pools are mostly APYUSD/APXUSD, not clean APYUSD/USDC | CoinGecko/CoinMarketCap direct API/page access was unreliable in this pass | Use DeFiLlama current price as a price signal, not as proof of dollar redeemability | High |
+| apxUSD price | DeFiLlama coins: ~$0.7420 on Jun 28 | DeFiLlama stablecoins lists apxUSD price at same level | Apyx docs describe Redemption Value and Total Collateral Value, but current Accountable numeric values were not machine-readable here | Treat apxUSD discount as the central market warning until dashboard and pools prove otherwise | High |
+| apyUSD size | DeFiLlama apyUSD vault: ~$122.65M TVL | Old Surf-style snapshot in prior short memo suggested ~$123M, directionally aligned | apyUSD supply is not the same as APXUSD circulating value because exchange-rate and vault accounting matter | Use DeFiLlama vault TVL for investable exposure size | Medium |
+| apxUSD circulating value | DeFiLlama stablecoins: ~$275.7M | Apyx Accountable docs define circulating supply as totalSupply less Inventory and POL | Explorer APIs timed out in this pass, so no independent holder count | Use DeFiLlama for market-level supply, but require Accountable dashboard for reserve-quality underwriting | Medium-High |
+| Yield | DeFiLlama: ~14.63% APY | Apyx docs: yield set monthly in dollar terms from prior collateral income | STRC/SATA docs show current preferred dividends around 11.25% / 12.25% before liquidity/capital-gain effects | High APY may reflect denominator shrinkage and distribution timing, not just asset yield | High |
+| Collateral composition | Apyx docs: STRC, SATA, cash/equivalents, Other categories | Accountable dashboard methodology exists but current numeric scrape was blocked | Wolf & Company attestations are listed for March, April, May 2026 | Collateral transparency direction is positive, but live values must be verified before sizing risk | Medium-High |
+| Security | Apyx audit page lists Quantstamp Feb/Apr, Certora Mar, Zellic Mar | Certora says 11 issues, one high, fixed and confirmed | Upgradeable contracts and pause/denylist controls remain governance dependencies | Audits reduce but do not eliminate implementation and admin risk | Medium |
+| APYX token | Official docs: 100M fixed supply, TGE Oct 13, 2026 | Pips docs: 11% community allocation across Seasons 1 and 2 before TGE | No live market price or circulating float as of Jun 28 | APYX value capture is a future design claim, not a priced public token history | Medium-High |
 
-## Economics and Value Capture
+The conflict matrix leads to the core view: the product is interesting because there are real docs, real contracts, real TVL, real audits, and a coherent yield mechanism. The risk is that the market is already assigning a discount to the underlying apxUSD asset while the wrapper's headline APY still looks attractive.
 
-apyUSD holders seek yield through a wrapper rather than price appreciation. The protocol captures value if it can source dividend-backed collateral, maintain trust, and scale liquidity. APYX governance may capture upside if protocol assets and adoption grow, but apyUSD itself should be evaluated as a risk-bearing savings asset.
+## Collateral and Yield Model
 
-## Team and Funding
+Apyx's collateral model is unusual. The [custody overview](https://docs.apyx.fi/collateral-and-custody/custody-overview.md) says the protocol backing is primarily TradFi assets such as preferred equity and Treasuries. Because these assets are offchain, Apyx accesses liquidity on venues like Nasdaq, buys preferred shares or Treasuries, and holds them in third-party prime brokerage accounts. The same page says Apyx intends to publish monthly third-party accounting attestations from a PCAOB-registered audit firm and to avoid lightweight proof methods such as custodian emails or dashboard screenshots. The [third-party attestation](https://docs.apyx.fi/collateral-and-custody/third-party-attestation.md) page lists Wolf & Company attestations for March, April, and May 2026.
 
-Surf reports about $3.0M in strategic funding in February 2026, with additional undisclosed/seed entries. Team data was not available in the Surf snapshot. That lowers confidence because yield-bearing stablecoins require unusually strong disclosure.
+The [Accountable Dashboard](https://docs.apyx.fi/collateral-and-custody/accountable-dashboard.md) page describes a live Proof-of-Reserves dashboard powered by Accountable. It says the dashboard groups reserves into STRC, SATA, Cash & Equivalents, and Other. It also distinguishes reserve assets from non-reserve supply categories such as circulating supply, inventory, and protocol owned liquidity. This is important because Apyx's definition of circulating supply excludes inventory and POL held by the Foundation. For a credit-backed stablecoin, total token supply alone is not enough. Investors need to know which tokens are backed, which are inventory, and which are deployed as liquidity.
 
-## Competitive Landscape
+STRC and SATA are not T-bills. They are preferred equity securities issued by public DAT companies. Apyx's [STRC page](https://docs.apyx.fi/solution-overview/example-collateral-allocation/strc.md) describes STRC as Strategy's variable-rate perpetual preferred stock, listed on Nasdaq, with a $100 stated amount, monthly cash dividends, a current annual dividend of 11.25%, and issuer discretion to adjust the dividend rate with the objective of encouraging trading near $100 par. Apyx's [SATA page](https://docs.apyx.fi/solution-overview/example-collateral-allocation/sata.md) describes SATA as Strive's variable-rate perpetual preferred stock with a current 12.25% annual dividend and similar monthly cash dividend mechanics.
 
-| Asset | Yield source | Key risk |
+Those terms are attractive compared with Treasury yields, but they are not guarantees. The Apyx docs themselves emphasize that Strategy or Strive dividend-rate intentions are subjective and issuer-controlled. Preferred shares can trade below par, can be less liquid than Treasuries, and rank below debt. As of the live finance check for June 28, 2026, STRC traded around **$74.57** and SATA around **$87.75**, both below the $100 stated/reference amount mentioned in the Apyx collateral docs. That does not automatically prove impairment, but it directly challenges any simple assumption that the preferred stabilization mechanism keeps collateral at par.
+
+The yield model has three moving pieces:
+
+| Driver | Bull interpretation | Bear interpretation |
 |---|---|---|
-| sDAI / Maker-style savings assets | On-chain or T-bill-linked system yield | Governance and collateral risk |
-| Ethena USDe/sUSDe | Basis and staking strategy | Funding-rate and market risk |
-| Ondo / tokenized T-bills | Treasury exposure | Issuer and jurisdiction risk |
-| apyUSD | DAT preferred-share dividends | Dividend, collateral, redemption, disclosure risk |
+| Preferred dividends | Recurring cash income funds apyUSD without rehypothecating user deposits | Dividend rates can change, dividends can be delayed, and preferred market value can fall |
+| Monthly dollar distribution | Predictable stream through YieldDistributor and LinearVestV0 | APY can rise because eligible TVL falls, creating a misleading headline |
+| Reserve spread and capital gains | APYX can capture excess reserve growth and discounted preferred issuance upside | Staker payouts compete with the overcollateralization buffer during stress |
 
-## Risk Matrix
+The most important underwriting question is whether the collateral stack can pay enough yield after buffers, fees, custody costs, slippage, inventory management, and risk reserve needs. If STRC and SATA yield around 11.25-12.25% on stated amount but trade below par, mark-to-market yield can be high. But high yield on discounted preferreds is compensation for risk. It should not be converted into a "safe 14%" narrative without acknowledging issuer, liquidity, and market-structure risk.
 
-| Risk | Severity | Why it matters |
-|---|---|---|
-| Collateral opacity | High | Off-chain dividend assets require strong reporting |
-| Redemption risk | High | Yield wrappers can trade below par if exit liquidity weakens |
-| Peg volatility | High | ATH/ATL range is not typical for low-risk stablecoin collateral |
-| Liquidity risk | High | 24h volume is small relative to supply |
-| Regulatory structure | Medium | RWA and yield products can face jurisdiction constraints |
+The second underwriting question is redemption. Apyx's [capitalization framework](https://docs.apyx.fi/solution-overview/capitalization-framework.md) says Redemption Value governs redemptions, Total Collateral Value includes the overcollateralization buffer, and apxUSD should trade between those two metrics. It also says the overcollateralization buffer is not consumed during routine redemptions and acts as a final backstop in catastrophic scenarios. That is a sensible framework. The current market test is whether arbitrage closes the apxUSD discount. If apxUSD trades at ~$0.742 while the documentation says Redemption Value and arbitrage should support convergence, either the market does not trust execution, the live redemption value is materially lower than users assume, access is constrained, or liquidity is insufficient. All four explanations are relevant risks.
+
+## Tokenomics / Value Capture
+
+apyUSD itself is not a governance token. It is a vault share. Its value capture is user yield: a holder deposits apxUSD, receives apyUSD, and expects the exchange rate to grow. The investment question for apyUSD is therefore not "will token price go up?" It is "will the vault share preserve principal in real exit terms while paying a risk-adjusted yield?"
+
+APYX is the future protocol-value token. The [APYX docs](https://docs.apyx.fi/product-overview/apyx.md) describe:
+
+| APYX parameter | Official design |
+|---|---|
+| Token role | Governance and economic rights to a portion of reserve growth |
+| TGE date | October 13, 2026 |
+| Total supply | 100,000,000 APYX |
+| Inflation | No inflation, fixed supply, no future minting |
+| VC overhang | Docs claim no venture capital allocations and no discounted Series A overhang |
+| Initial payout split | 50% of monthly reserve growth to APYX stakers, 50% retained in reserve |
+| Reward choice | Stakers may receive apxUSD or additional APYX |
+| Governance controls | Reserve allocation, payout ratio, risk parameters, protocol economic adjustments |
+
+The [Pips program](https://docs.apyx.fi/apyx-overview/apyx-pips-points-program.md) fills in the pre-TGE distribution story. Season 1 ended May 22, 2026 and allocated 5% of total APYX supply to early participants. Season 2 began May 23 and ends October 11, 2026, allocating another 6 million APYX, or 6% of supply. The program rewards holding apxUSD, holding apyUSD, committing apxUSD, providing Curve liquidity, Pendle positions, and certain lending/vault activity. This is a meaningful community distribution mechanism, but it also means current usage is partially incentive-shaped.
+
+APYX value capture could be strong if all of the following are true:
+
+1. Apyx grows apxUSD and apyUSD supply without persistent discount.
+2. The reserve earns a positive spread over apyUSD distributions, costs, and buffers.
+3. APYX governance does not overpay stakers at the expense of reserve health.
+4. The token launches with enough liquidity and not too much reflexive float scarcity.
+5. Regulatory constraints do not impair dividend-like token rewards.
+
+The attack on value capture is equally direct. If apxUSD requires more reserve support, if collateral losses consume the buffer, or if Apyx must cut apyUSD yield to rebuild trust, then APYX staker payouts can be delayed, reduced, or politically constrained. The same reserve growth cannot simultaneously maximize apyUSD APY, defend apxUSD Redemption Value, compound overcollateralization, and pay APYX stakers without tradeoffs.
+
+The xAPYX and yAPYX designs show those tradeoffs. [xAPYX](https://docs.apyx.fi/product-overview/apyx/xapyx.md) uses protocol revenue to buy APYX and compound exposure inside the staking vault, with a seven-day cooldown. [yAPYX](https://docs.apyx.fi/product-overview/apyx/yapyx.md) accumulates apxUSD and distributes it as dividends to stakers, also with a seven-day cooldown. xAPYX is reflexive: it works best if APYX has durable buy pressure and liquidity. yAPYX is cash-flow-like: it works best if reserve growth is real and apxUSD remains credible. Both depend on the base product remaining solvent and trusted.
+
+As of June 28, 2026, APYX should be treated as a future claim rather than a live valuation. There is no public APYX market price in this memo. Any FDV math before TGE would be speculative. The better approach is to track reserve growth, apxUSD discount, APY sustainability, Pips-driven TVL quality, and launch float.
+
+## Team, Funding, and Governance
+
+The official APYX page says the team behind Apyx also built [DeFi Development Corp.](https://defidevcorp.com/), described in the docs as the first non-bitcoin Digital Asset Treasury. [DeFiLlama protocol metadata](https://api.llama.fi/protocol/apyx-protocol) lists Apyx as an RWA protocol on Ethereum and records DeFi Dev Corp. as a lead investor/source entry, though the amount field is not disclosed in the API output. The old short memo mentioned a ~$3 million strategic raise from a Surf snapshot, but I am not treating that figure as primary evidence because it was not independently refreshed through a public source in this pass.
+
+Governance is currently more design than decentralized history. APYX has not launched yet. Apyx docs say governance will control reserve allocation, payout ratio, risk parameters, and protocol-level economic adjustments. That is powerful, but it also creates a future governance-risk surface: APYX holders may prefer higher payouts, while apxUSD holders may prefer higher buffers, lower risk, and deeper liquidity. The protocol needs a governance culture that prioritizes stablecoin solvency over tokenholder short-term yield.
+
+The current operational controls matter. The technical docs describe pause controls, denylist controls, UUPS upgradeability, and AccessManager-based governance. Those controls can protect the system during incidents, but they also make apyUSD less trust-minimized than a fully immutable token. For a regulated or compliance-aware product, denylist and frontend restrictions may be necessary. For DeFi composability, they are centralization and access risks.
+
+Jurisdictional restrictions are explicit. The [apyUSD overview](https://docs.apyx.fi/product-overview/apyusd-overview.md) says participation is restricted for users in certain jurisdictions and the frontend can prevent access. The Pips page specifically notes restrictions for users in the United States, the European Union, the European Economic Area, and sanctioned jurisdictions. This does not eliminate secondary-market transfer risk, but it limits frontend-based participation and can affect distribution quality.
+
+Security coverage is better than many new protocols. The [Apyx audits page](https://docs.apyx.fi/resources/audits.md) lists Quantstamp audits in February and April 2026, Certora in March 2026, and Zellic in March 2026. The [Certora report page](https://www.certora.com/reports/apyx-apxusd) says Certora reviewed Apyx apxUSD, which issues apxUSD and apyUSD, identified 11 issues including one high severity issue, and that the high issue was fixed and confirmed. The Zellic public report is linked from Apyx to [GitHub](https://github.com/Zellic/publications/blob/master/Apyx%20Stablecoin%20-%20Zellic%20Audit%20Report.pdf). Audits are a positive signal, but the product still has offchain custody, preferred-share liquidation, oracle/accounting, upgrade, and integration risks that audits cannot fully solve.
+
+## Competition
+
+apyUSD competes in three overlapping markets: stablecoin savings, tokenized Treasury/RWA yield, and high-yield synthetic dollar products.
+
+| Product | Model | Current scale / yield signal | apyUSD difference |
+|---|---|---:|---|
+| USDC | Fiat-backed stablecoin with regulated reserve reporting | [DeFiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?includePrices=true): ~$73.85B circulating, price near $1 | apyUSD offers yield, but much weaker cash-equivalent trust |
+| USDS / sUSDS | Sky ecosystem dollar and savings rate | DeFiLlama: USDS ~$8.22B circulating; sUSDS pool ~$5.86B TVL and ~3.6% APY | apyUSD has higher yield, but less battle-tested governance and collateral |
+| Ethena USDe / sUSDe | Synthetic dollar using collateral and hedging strategy | DeFiLlama: USDe ~$4.45B circulating; sUSDe ~$1.69B TVL and ~3.8% APY | apyUSD takes DAT preferred-share credit risk instead of derivatives/funding risk |
+| BUIDL / USYC / USDY | Tokenized money-market or Treasury/RWA exposure | DeFiLlama: BUIDL ~$3.05B, USYC ~$3.11B, USDY ~$2.16B circulating | apyUSD offers higher yield but lower reserve simplicity |
+| PYUSD / RLUSD | Regulated enterprise/payment stablecoins | DeFiLlama: PYUSD ~$2.72B, RLUSD ~$1.57B circulating | apyUSD is yield-first and credit-linked, not payment-first |
+| Frax / DeFi stablecoins | Crypto-backed or algorithmic stablecoin systems | Frax smaller and below peg in DeFiLlama snapshot | apyUSD risk is offchain credit plus vault liquidity, not only onchain collateral |
+
+The main advantage of apyUSD is yield differentiation. A 14%+ APY can attract capital in a market where mainstream stablecoin savings products cluster closer to 3-6%. The second advantage is narrative: DAT preferred shares are a new enough asset class that Apyx can become the default onchain wrapper if the segment grows. The third advantage is future APYX cash-flow design, which may give the ecosystem a clearer economic sink than pure points.
+
+The weaknesses are also clear. Tokenized Treasury products can explain their yield source more simply: T-bills or money-market funds. Ethena can explain its risk as hedged crypto collateral and derivatives venue exposure. Sky can point to long governance history. USDC/PYUSD/RLUSD can point to regulated payment distribution. Apyx has to ask users to understand preferred equity, DAT credit, public preferred-share liquidity, Redemption Value, Total Collateral Value, APYX governance, Accountable proofs, Wolf attestations, cooldowns, and apxUSD discounts. That is a lot of complexity for a stablecoin user.
+
+Switching costs are low. A yield user can leave apyUSD for sUSDe, sUSDS, USDY, Pendle fixed yield, Aave lending, or simple USDC if confidence weakens. apyUSD's moat must therefore come from either persistent superior risk-adjusted yield, superior APYX incentives, or unique access to DAT preferred returns that users cannot easily get elsewhere. If the yield spread compresses or the discount persists, the moat weakens quickly.
+
+## Catalysts
+
+The next six to twelve months have several concrete catalysts:
+
+| Catalyst | Timing | Bullish read | Bearish read |
+|---|---|---|---|
+| Season 2 Pips | May 23 to Oct 11, 2026 | Keeps capital engaged and broadens integrations before TGE | Usage may be points-driven and exit after rewards |
+| APYX TGE | Oct 13, 2026 | Converts points and reserve-growth design into a live token | Launch unlocks can reveal weak organic demand |
+| Monthly attestations | Ongoing | Builds reserve credibility if timely and detailed | Stale or hard-to-verify attestations damage trust |
+| apxUSD discount recovery | Immediate / ongoing | Confirms Redemption Value and arbitrage mechanics | Persistent discount invalidates stablecoin confidence |
+| New DAT preferred collateral | 2026 onward | Diversifies yield sources beyond STRC/SATA | Adds issuer complexity and correlation risk |
+| DeFi integrations | Ongoing | Pendle, Curve, Morpho, lending markets increase utility | More composability can spread risk if apxUSD depegs |
+
+The highest-signal catalyst is not TGE. It is apxUSD discount closure. APYX can launch and still be a weak investment if the base dollar layer trades at a structural discount. Conversely, even before TGE, Apyx can improve materially if Accountable/Wolf reporting becomes easy to verify and apxUSD secondary markets converge toward Redemption Value.
+
+## Valuation / Importance Framework
+
+apyUSD does not have normal equity valuation. It should be valued as a savings product where the relevant metrics are TVL, yield quality, redemption confidence, liquidity depth, and collateral transparency. APYX, once live, can be valued as a governance/cash-flow token, but only after public market price, circulating float, reserve growth, and payout history exist.
+
+For apyUSD, the main importance ratios are:
+
+| Ratio | June 28 read | Interpretation |
+|---|---:|---|
+| Vault TVL / APXUSD circulating value | ~$122.65M / ~$275.7M = ~44.5% | A large portion of system exposure sits in the yield wrapper |
+| Main APXUSD-USDC Curve TVL / apyUSD vault TVL | ~$3.74M / ~$122.65M = ~3.0% | Clean dollar exit liquidity is thin relative to savings exposure |
+| Main APYUSD-APXUSD Curve TVL / apyUSD vault TVL | ~$11.17M / ~$122.65M = ~9.1% | Wrapper-to-underlying liquidity is meaningful but still limited |
+| Current APY / sUSDe APY | ~14.63% / ~3.81% = ~3.8x | Market is paying a large risk premium |
+| Current APY / sUSDS APY | ~14.63% / ~3.6% = ~4.1x | Higher yield must be justified by higher risk |
+| June 28 TVL / June 1 TVL | ~$122.65M / ~$241.86M = ~50.7% | TVL has roughly halved from early-June high |
+
+The strongest bull valuation argument is that Apyx is building a new credit-yield category. If the protocol can keep $100-300 million of apyUSD TVL, stabilize apxUSD, and launch APYX with real reserve-growth distribution, then APYX could become a scarce governance token over an income-producing RWA stablecoin engine. A fixed 100 million supply and no VC overhang are attractive if cash flows are real.
+
+The strongest bear valuation argument is that high yield is compensation for structural uncertainty, not mispricing. If a user must accept a 20-day unlock, possible early-exit fees, apxUSD secondary-market discount, preferred-share mark-to-market drawdown, and restricted redemption access, then 14% may not be cheap. It may be the minimum price needed to keep capital in the system.
+
+My framework: do not assign APYX a pre-TGE FDV. Track operational proof first. Apyx becomes important if it proves that DAT preferred dividends can support onchain savings without persistent discount. Apyx remains niche if it relies on Pips and high APY while apxUSD discounts. Apyx becomes dangerous if DeFi protocols start using apyUSD or apxUSD as core collateral before redemption and liquidity are proven.
 
 ## Bull / Base / Bear Scenarios
 
-| Scenario | What must be true | Confirmation metric |
-|---|---|---|
-| Bull | apyUSD converts the narrative into recurring usage, integrations, and measurable token demand | Usage, fees, volume quality, and APYUSD utility improve for two quarters |
-| Base | The project remains liquid and visible, but value capture is only partially proven | Market cap and liquidity hold while product metrics are mixed |
-| Bear | Attention, incentives, or listings fade before durable demand appears | Volume, users, and token utility weaken together |
+| Scenario | Probability | What happens | Metrics that confirm |
+|---|---:|---|---|
+| Bull | 20% | apxUSD discount closes toward Redemption Value, apyUSD TVL stabilizes above $150M, APYX TGE launches with reasonable float, and monthly attestations make collateral easy to verify. Apyx becomes the leading DAT-credit savings protocol. | apxUSD >$0.97 for 30 days, apyUSD TVL >$200M without APY spike from shrinkage, USDC exit pools >$20M, attestations current |
+| Base | 45% | Apyx remains a high-yield watchlist product. APY stays attractive, TVL is volatile, APYX launches, but the market continues to price apxUSD at a discount until redemption and collateral reporting earn more trust. | apxUSD $0.80-$0.95, apyUSD TVL $75M-$175M, APY 8-16%, liquidity mixed |
+| Bear | 30% | apxUSD discount persists or deepens, TVL keeps falling after Pips, preferred-share prices weaken, and APYX launches into poor liquidity. apyUSD holders learn that vault accounting is not the same as dollar exit value. | apxUSD <$0.75, apyUSD TVL <$75M, stale attestations, widening USDC pool imbalance |
+| Tail risk | 5% | Collateral impairment, custodian issue, legal restriction, or smart-contract/admin incident creates permanent loss or locked liquidity. | dividend suspension, reserve shortfall, paused vault, redemption failure |
+
+The probabilities are judgmental, not model outputs. The base case is the most likely because Apyx has enough real infrastructure to avoid immediate dismissal but not enough market proof to earn stablecoin trust. The bull case requires discount closure. The bear case requires only inertia: if the underlying apxUSD discount stays visible, confidence can keep bleeding even without a single catastrophic event.
+
+## Risk Matrix
+
+| Risk | Severity | Evidence | What would improve it |
+|---|---|---|---|
+| apxUSD discount / peg risk | High | DeFiLlama prices apxUSD around $0.742 on Jun 28; Apyx docs say no strict 1:1 peg | sustained secondary price recovery, transparent Redemption Value, active arbitrage |
+| Collateral credit risk | High | Apyx collateral uses DAT preferred equity, not insured deposits | diversified issuers, strong asset coverage, stable dividends, public issuer filings |
+| Preferred-share liquidity risk | High | STRC/SATA are less liquid and can trade below stated amount | larger cash/Treasury buffer, lower concentration, visible liquidation capacity |
+| Yield sustainability risk | High | APY can rise when eligible TVL falls; yield set monthly in dollar terms | stable APY with stable/growing TVL, clear monthly yield reports |
+| Redemption timing risk | High | apyUSD unlocks require cooldown / early fee mechanics | shorter cooldown, lower fees, larger instant liquidity |
+| Offchain custody risk | Medium-High | collateral held in third-party prime brokerage accounts | timely Wolf attestations, Accountable live proof, custodian diversification |
+| Smart contract/admin risk | Medium | upgradeable UUPS pattern, pause and denylist controls, multiple audits | clear governance controls, timelocks, public incident response |
+| Regulatory risk | Medium-High | jurisdiction restrictions and yield-bearing product structure | clearer legal framework, compliant distribution, transparent terms |
+| APYX launch risk | Medium-High | TGE is future dated; Pips incentives shape current behavior | healthy post-TGE retention, reasonable float, disclosed unlock schedule |
+| Composability risk | Medium | integrations with Curve, Pendle, Morpho, lending markets | collateral limits, conservative LTVs, oracle risk controls |
+
+The dominant risk is not one technical bug. It is confidence mismatch. Users may treat apyUSD as a high-yield stablecoin while the product behaves like structured credit. In normal markets, the yield can feel smooth. In stress, the exit path runs through cooldowns, apxUSD market depth, and preferred-share liquidity.
 
 ## Confidence Score
 
 | Dimension | Rating | Notes |
 |---|---|---|
-| Source quality | Medium | Official docs exist, but third-party depth is still limited |
-| Data consistency | Low | Price history and stablecoin framing require caution |
-| Mechanism clarity | Medium | High-level flow is clear; legal/collateral details need more disclosure |
-| Value capture | Medium | Yield wrapper has a clear user value prop |
-| Liquidity quality | Low | Volume is thin for a stablecoin-like asset |
+| Source quality | Medium-High | Apyx docs are unusually detailed; DeFiLlama gives live data; audits are public; some dashboards/pages were not directly machine-readable |
+| Data consistency | Low-Medium | apyUSD near $1 and apxUSD near $0.742 is a major conflict; CoinGecko/CMC access was unreliable in this pass |
+| Mechanism clarity | Medium-High | ERC-4626, unlock, yield distribution, custody, APYX docs are clear enough to analyze |
+| Value capture | Medium | apyUSD user yield is clear; APYX reserve-growth capture is promising but pre-TGE |
+| Liquidity quality | Low-Medium | TVL is meaningful, but clean USDC exit depth is small relative to vault and supply |
 
-Overall confidence: Low to Medium.
+Overall confidence: **Medium on mechanism, Low-to-Medium on investability**.
+
+The source base is good enough to write a full memo. It is not good enough to treat apyUSD as low-risk collateral. The highest confidence facts are official mechanics, contract addresses, APYX TGE/token design, audit existence, and DeFiLlama TVL/APY/price snapshots. The lowest confidence areas are live reserve composition, holder concentration, exact primary-market redemption performance, and post-TGE APYX economics.
 
 ## Red-team Check
 
-The strongest bear case is that users price apyUSD like a stablecoin while the backing behaves like structured credit. The most gameable metric is headline APY if collateral risk is under-disclosed. The value-capture failure path is yield compression plus redemption friction. The zero path is collateral impairment, legal lockup, or loss of confidence in redemption.
+The strongest reason this memo could be too bearish is that DeFiLlama's apxUSD price feed may overstate the real economic discount if it is based on thin, imbalanced, or stale secondary-market sources while whitelisted primary redemption remains healthy. If Accountable shows strong Redemption Value, if institutional arbitrage is temporarily offline because of weekend/trading-hour constraints, and if the discount closes quickly, then the current market read may be too conservative.
+
+The strongest reason the bull case could be wrong is that Apyx is relying on a narrative translation: "preferred-share dividends" becomes "digital-credit yield" becomes "stablecoin APY" becomes "APYX cash flow." Each translation step can break. Preferred dividends can be real while apxUSD still trades at a discount. apxUSD can be backed while general users cannot efficiently redeem. apyUSD can accrue apxUSD while the realized dollar value is lower. APYX can have reserve-growth rights while governance decides to retain capital for solvency.
+
+The most gameable metric is APY. A high APY can result from a smaller eligible base, not from stronger forward collateral income. The second most gameable metric is TVL during points seasons. Pips multipliers can keep capital in the system before TGE even if organic demand is weaker.
+
+The value-capture failure path is straightforward. Apyx grows TVL using high yield and points. apxUSD trades at a discount. To defend confidence, the protocol retains more reserve growth and deploys liquidity support. That leaves less distributable growth for APYX stakers. APYX launches into a market that expected cash flow, but the real priority becomes buffer rebuilding. Tokenholders get governance exposure without immediate distributable economics.
+
+The plausible zero or permanent-impairment path is not a normal smart-contract rug. It is credit/custody/legal stress: a major DAT preferred issuer cuts dividends or suffers market distress, preferred liquidity disappears during a crypto drawdown, apxUSD redemptions slow, the market discounts the asset further, apyUSD holders rush to cooldown, and DeFi integrations amplify the liquidity squeeze. In that path, even audited contracts can perform as designed while users still take economic losses.
 
 ## Monitoring Dashboard
 
-| Metric | Current | Bull threshold | Bear threshold | Source |
+| Metric | Current / latest read | Bull threshold | Bear threshold | Source |
 |---|---:|---:|---:|---|
-| Price / peg | ~$1.013 | Tight $0.995-$1.01 range | Sustained <$0.98 | Surf / market pages |
-| 24h volume | ~$472K | >$5M | <$250K | Surf |
-| Supply | ~121.5M | Growth with attestations | Growth without disclosure | Surf / contracts |
-| Collateral reporting | Partial | Regular attestations | Missing or stale reports | Apyx docs |
+| apxUSD price | ~$0.742 | >$0.97 for 30 days | <$0.75 sustained | [DeFiLlama coins](https://coins.llama.fi/prices/current/ethereum:0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a,ethereum:0x98a878b1cd98131b271883b390f68d2c90674665) |
+| apyUSD price | ~$1.013 | close to exchange-rate fair value with liquid exits | diverges from apxUSD exit reality | DeFiLlama coins |
+| apyUSD vault TVL | ~$122.65M | >$200M after TGE without APY spike | <$75M | [DeFiLlama yields](https://yields.llama.fi/chart/cb6139f9-4a68-4efd-8245-0312a92aee55) |
+| apyUSD APY | ~14.63% | 8-12% with stable TVL and clear collateral income | >18% because TVL shrinks | [DeFiLlama pools](https://yields.llama.fi/pools) |
+| apxUSD circulating value | ~$275.7M | growth with current attestations | decline >30% month over month | [DeFiLlama stablecoins](https://stablecoins.llama.fi/stablecoins?includePrices=true) |
+| Main APXUSD-USDC pool TVL | ~$3.74M | >$20M balanced | <$2M or one-sided | DeFiLlama pools |
+| Accountable / Wolf reporting | March-May attestations listed | current monthly attestations and live reserve clarity | stale or missing reports | [Apyx transparency](https://docs.apyx.fi/collateral-and-custody/transparency.md) |
+| STRC / SATA prices | below $100 reference in live quote check | trade near stated/reference value | sustained large discounts | [Nasdaq STRC](https://www.nasdaq.com/market-activity/stocks/strc), [Nasdaq SATA](https://www.nasdaq.com/market-activity/stocks/sata) |
+| APYX TGE retention | not live yet | TVL/liquidity hold 30-60 days after Oct 13 | post-airdrop TVL cliff | [Apyx Pips](https://docs.apyx.fi/apyx-overview/apyx-pips-points-program.md) |
 
 ## Follow-up Triggers
 
 | Trigger | Why it matters | Action |
 |---|---|---|
-| New collateral attestation | Reduces opacity | Reassess confidence |
-| Price trades below $0.98 | Peg/liquidity stress | Downgrade |
-| Redemption mechanics change | Affects exit risk | Reopen immediately |
-| DAT dividend impairment | Direct yield-source hit | Downgrade |
+| apxUSD trades above $0.97 for 30 consecutive days with deeper USDC liquidity | Confirms redemption/arbitrage confidence | Upgrade from high-risk watchlist to active diligence |
+| apxUSD remains below $0.80 or falls below $0.70 | Signals structural market distrust | Downgrade and avoid all collateral use |
+| New Wolf/Accountable attestation reveals weak coverage, heavy inventory/POL reliance, or stale collateral | Reserve quality is the core underwriting variable | Reopen immediately and reassess impairment |
+| STRC or SATA dividend cuts, missed payments, or large price decline | Direct hit to yield source and collateral value | Downgrade yield sustainability |
+| APYX TGE launches with poor liquidity, unclear unlocks, or TVL collapse after Season 2 | Tests whether points usage was durable | Reassess APYX value capture and apyUSD demand |
+| apyUSD unlock terms change materially | Exit friction defines realized risk | Reopen mechanism and liquidity analysis |
 
 ## Final Investment View
 
-High-risk RWA stablecoin watchlist. apyUSD may become an interesting yield primitive, but it should not be treated as cash-equivalent collateral until collateral, redemption, and reporting quality are much stronger.
+apyUSD is a **high-risk RWA stablecoin watchlist asset**, not cash-equivalent collateral.
 
+The project is not vapor. Apyx has detailed docs, live contracts, visible DeFi integrations, multiple audits, a coherent APYX design, public collateral categories, Wolf attestations listed, and a real attempt to bring DAT preferred-share dividends onchain. That makes it a legitimate research target. It is more serious than a generic stablecoin farm.
+
+The investment conclusion is still skeptical. The June 28 data shows a large apyUSD vault and high APY, but also a sharp TVL drawdown, thin clean exit liquidity, and a deep apxUSD price discount. The product can only be understood by separating vault accounting from dollar exit value. If a holder exits apyUSD into apxUSD and apxUSD trades at a discount, the practical risk is not solved by a near-$1 apyUSD quote.
+
+The best use of this memo is as a monitoring framework. Track apxUSD price first, collateral reporting second, APYX launch third, and APY fourth. Apyx becomes investable only after the base dollar layer proves itself under stress. Until then, apyUSD is an experimental structured-credit yield product. It may deserve a small research allocation for users who fully understand the mechanics and jurisdictional limitations, but it should not be used as a treasury cash substitute, lending base collateral, or risk-free yield benchmark.
+
+## Sources
+
+- [Apyx apyUSD overview](https://docs.apyx.fi/product-overview/apyusd-overview.md)
+- [Apyx apxUSD overview](https://docs.apyx.fi/product-overview/apxusd-overview.md)
+- [Apyx How Apyx Works](https://docs.apyx.fi/apyx-overview/how-apyx-works.md)
+- [Apyx yield distribution](https://docs.apyx.fi/solution-overview/apyusd-yield-distribution.md)
+- [Apyx locking docs](https://docs.apyx.fi/technical-overview/locking.md)
+- [Apyx unlocking docs](https://docs.apyx.fi/technical-overview/unlocking.md)
+- [Apyx risk disclosures](https://docs.apyx.fi/risk-management/apyx-and-dat-risks.md)
+- [Apyx peg stability model](https://docs.apyx.fi/solution-overview/peg-stability-model.md)
+- [Apyx capitalization framework](https://docs.apyx.fi/solution-overview/capitalization-framework.md)
+- [Apyx custody overview](https://docs.apyx.fi/collateral-and-custody/custody-overview.md)
+- [Apyx transparency](https://docs.apyx.fi/collateral-and-custody/transparency.md)
+- [Apyx Accountable dashboard docs](https://docs.apyx.fi/collateral-and-custody/accountable-dashboard.md)
+- [Apyx third-party attestation page](https://docs.apyx.fi/collateral-and-custody/third-party-attestation.md)
+- [Apyx smart contract addresses](https://docs.apyx.fi/resources/smart-contract-addresses.md)
+- [Apyx APYX docs](https://docs.apyx.fi/product-overview/apyx.md)
+- [Apyx xAPYX docs](https://docs.apyx.fi/product-overview/apyx/xapyx.md)
+- [Apyx yAPYX docs](https://docs.apyx.fi/product-overview/apyx/yapyx.md)
+- [Apyx Pips program](https://docs.apyx.fi/apyx-overview/apyx-pips-points-program.md)
+- [Apyx audits page](https://docs.apyx.fi/resources/audits.md)
+- [Certora Apyx apxUSD report page](https://www.certora.com/reports/apyx-apxusd)
+- [Zellic Apyx stablecoin audit report](https://github.com/Zellic/publications/blob/master/Apyx%20Stablecoin%20-%20Zellic%20Audit%20Report.pdf)
+- [Quantstamp February 2026 Apyx certificate](https://certificate.quantstamp.com/full/apx-usd-stablecoin/2a5be074-3d9f-49e7-aa08-46fb5f1e5bd6/index.html)
+- [Quantstamp April 2026 Apyx certificate](https://certificate.quantstamp.com/full/apyx-apx-usd-apy-usd-bridged-token/22bc8135-312c-452d-b885-754645a97076/index.html)
+- [Apyx STRC collateral page](https://docs.apyx.fi/solution-overview/example-collateral-allocation/strc.md)
+- [Apyx SATA collateral page](https://docs.apyx.fi/solution-overview/example-collateral-allocation/sata.md)
+- [Strategy Stretch STRC page](https://www.strategy.com/stretch)
+- [Nasdaq STRC page](https://www.nasdaq.com/market-activity/stocks/strc)
+- [Nasdaq SATA page](https://www.nasdaq.com/market-activity/stocks/sata)
+- [Strive Bitcoin strategy page](https://strive.com/bitcoin-strategy)
+- [DeFiLlama apyUSD vault chart](https://yields.llama.fi/chart/cb6139f9-4a68-4efd-8245-0312a92aee55)
+- [DeFiLlama yield pools](https://yields.llama.fi/pools)
+- [DeFiLlama stablecoin data](https://stablecoins.llama.fi/stablecoins?includePrices=true)
+- [DeFiLlama current apyUSD/apxUSD prices](https://coins.llama.fi/prices/current/ethereum:0x38eeb52f0771140d10c4e9a9a72349a329fe8a6a,ethereum:0x98a878b1cd98131b271883b390f68d2c90674665)
+- [DeFiLlama Apyx protocol metadata](https://api.llama.fi/protocol/apyx-protocol)
+- [CoinGecko apyUSD page](https://www.coingecko.com/en/coins/apyusd)
+- [CoinGecko apxUSD page](https://www.coingecko.com/en/coins/apxusd)
+- [Circle USDC reserves](https://www.circle.com/en/transparency)
+- [Ethena USDe docs](https://docs.ethena.fi/)
+- [Sky docs](https://docs.sky.money/)
+- [Ondo USDY docs](https://docs.ondo.finance/ondo-products/usdy)
+- [BlackRock BUIDL fund page](https://www.blackrock.com/cash/en-us/products/334681/blackrock-usd-institutional-digital-liquidity-fund)

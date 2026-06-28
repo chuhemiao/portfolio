@@ -1,125 +1,261 @@
 ---
-title: 'AB: BNB-Listed L1, Community Economy, and Liquidity Risk'
+title: 'AB: Heterogeneous L1, AB Connect, and Liquidity Concentration Risk'
 publishedAt: '2026-06-28'
-summary: 'AB is high-performance heterogeneous blockchain and community economy with a June 28, 2026 Surf snapshot of $98.37M market cap, $98.37M FDV, and $2.08M 24h token volume. The investable question is whether high-performance heterogeneous blockchain and community economy can create durable token demand; the key risk is opaque traction and token value-capture risk. Verdict: watchlist unless usage, liquidity, and token value capture improve.'
+summary: 'AB is a live heterogeneous L1 network with AB Core, AB IoT, AB Connect, and a wrapped BSC market, but the June 28, 2026 data package points to a watchlist rather than high-conviction allocation: official AB Connect supply implies roughly 98.82B circulating AB, DefiLlama price implies about $98.1M working market cap, DefiLlama chain TVL is only about $330K, AB Core explorer shows 245K lifetime transactions and 111 transactions today, and BSC holder analytics show extreme wrapped-token concentration. The upside case is a credible multi-chain settlement and payment network; the core risk is that bridge movement, exchange liquidity, and community narrative do not become durable fee demand or token value capture.'
 slug: 'ab-ab-bnb-l1-community-economy-liquidity-risk'
 category: 'research'
 ---
 
 ## Pre-screen Decision
 
-Full research. AB is a live, market-ranked project with no local Research Map match before this batch. It deserves coverage because it sits in the L1 bucket and has enough market cap, exchange visibility, or strategic category relevance to affect portfolio screening.
+Full research. AB deserves a long-form memo because it is not just a micro-cap token page. It is a live network with an official site, AB Core and AB IoT documentation, public RPC endpoints, public explorers, a bridge-like AB Connect API, GitHub repositories, AIPs, audit files, BSC token exposure, and enough market capitalization to appear in portfolio screens. The earlier short note treated AB mostly as a "BNB-listed L1" narrative. That was too shallow. The investable question is more specific: can AB convert a heterogeneous chain design, AB Wallet distribution, and cross-chain token movement into durable economic activity that accrues to AB holders?
+
+The answer as of June 28, 2026 is still not strong enough for accumulation. The project has more real infrastructure than a pure narrative token: [AB Core technical docs](https://docs.ab.org/docs/) describe an EVM-compatible chain with chainId `36888`; [AB IoT docs](https://docs.ab.org/docs/iot) describe a NewChain-based IoT chain with chainId `1012`; [AB Connect docs](https://docs.ab.org/docs/abconnect) describe cross-chain transfer infrastructure between AB Core and AB IoT; and [ABWallet integration docs](https://docs.ab.org/docs/DApp-Connect-Wallet) show an app-facing wallet namespace for EVM and Tron. The [official homepage](https://www.ab.org/) frames AB as a modular heterogeneous blockchain network for stablecoin issuance, payment infrastructure, and decentralized philanthropy. That is enough to justify coverage.
+
+The problem is that the hard usage numbers do not yet support the market capitalization without a large strategic-premium assumption. On June 28, 2026, the [official AB Connect supply endpoint](https://api.connect.ab.org/v1/ab) showed 98.823661B circulating AB, 1.176338B burned AB, and 100B max supply. The [DefiLlama price endpoint for coingecko:newton-project](https://coins.llama.fi/prices/current/coingecko:newton-project?searchWidth=4h) returned about $0.000993 per AB at 2026-06-28 05:58:53 UTC, implying a working market cap near $98.1M if the official circulating number is used. But [DefiLlama chains](https://api.llama.fi/v2/chains) showed AB chain TVL of only about $329.9K. The [AB Core explorer stats endpoint](https://explorer.core.ab.org/api/v2/stats) showed 245,421 lifetime transactions, 65,200 total addresses, and 111 transactions today at the time checked. That is a real chain, but not yet a high-throughput economic network.
+
+Verdict: Watchlist / high-risk infrastructure option. The asset can be tracked because the official supply API, AB Connect activity, recent GitHub work, and CEX/DEX market presence are observable. It should not be treated as a core L1 allocation until three things improve together: sustained on-chain usage, lower concentration or clearer bridge-reserve accounting, and a token value-capture path that is stronger than "AB is the native asset across the ecosystem."
 
 ## TL;DR
 
-AB is high-performance heterogeneous blockchain and community economy. The project profile in Surf describes it as: AB is a high-performance heterogeneous blockchain network designed for decentralized applications (DApps) and diverse assets. It focuses on building a community economy with infrastructure supporting IoT, payments, gaming, finance, smart contracts, and more. The project includes features like AB Wallet for asset management, AB Connect for token integration, and initiatives in philanthropy through the AB Charity Foundation. The canonical web anchor is the [official site](https://ab.org/en/), with live market identity cross-checkable on [CoinGecko](https://www.coingecko.com/en/coins/ab).
+AB is better understood as a three-layer system than as a simple BSC token. The first layer is AB Core, an EVM-compatible chain. The second is AB IoT, a NewChain-based chain with different address and signature assumptions. The third is AB Connect, the transfer fabric that moves AB across AB IoT, AB Core, and BSC. The BSC contract at `0x95034f653D5D161890836Ad2B6b8cc49D14e029a` is the most visible public market representation, but it is not the whole network. The official [AB Connect network endpoint](https://api.connect.ab.org/v1/networks) currently reports BSC, AB Core, and AB IoT as supported networks, while [AB Connect pairs](https://api.connect.ab.org/v1/pairs) show two active pairs: ABIOT-ABCore and ABCore-BSC.
 
-As of the June 28, 2026 Surf snapshot, AB traded around $0.000995370, with $98.37M market cap, $98.37M FDV, and $2.08M 24h volume. The thesis is not simply that the token exists; it is whether high-performance heterogeneous blockchain and community economy can translate into sustained demand for AB. My base view is watchlist, with the main caveat being opaque traction and token value-capture risk.
+The core bull case is that AB becomes a cheap, modular settlement network for payments, stablecoin movement, IoT-like asset workflows, and philanthropy rails. There is enough product surface to make this non-zero. AB Core and AB IoT both target 3-second blocks and 20 confirmations for transaction security according to the official technical docs. AB Wallet gives DApps an integration surface through `window.abwallet.ethereum` and `window.abwallet.tron`, which means AB is at least trying to own user distribution, not only block production. AB Connect is measurable: on June 28, 2026, the [official `/v1/ab` API](https://api.connect.ab.org/v1/ab) showed 41,687 historical connect entries, 25.13B AB of global transfer volume, and 932,220 AB in total fees.
 
-## Research Question
+The base case is much more modest. If the 25.13B AB global connect volume is translated at the same DefiLlama price, it is roughly $25.0M of cumulative transfer volume. The 932,220 AB fee total is only about $926 at that price. This is useful operational data, but it is not yet protocol revenue. The bridge-like product appears to charge a fixed minimum fee of 15 AB per transfer on the live pairs endpoint. That is user-friendly, but it also means fee capture is tiny unless volume becomes very large or fee policy changes. AB can be valuable as a gas asset, governance asset, and ecosystem unit, but the current economic capture is not strong enough to justify a cash-flow style valuation.
 
-Is AB durable infrastructure with token value capture, or is it mainly cyclical/narrative beta inside L1?
+The strongest negative signal is concentration and data inconsistency. [BscScan's AB token page](https://bscscan.com/token/0x95034f653d5d161890836ad2b6b8cc49d14e029a) reported 31,139 holders and max total supply of 100B AB at 2026-06-28 07:01 UTC, while [GoPlus token security](https://api.gopluslabs.io/api/v1/token_security/56?contract_addresses=0x95034f653d5d161890836ad2b6b8cc49d14e029a) reported 26,600 holders, 100B total supply, `is_mintable=1`, and one top BSC holder with about 97.2% of the BSC token balance. BscScan holder analytics showed top 5 holders controlling 99.26% of BSC token supply and top 10 controlling 99.50%. Some of that may be bridge, treasury, exchange, or reserve structure rather than free-float ownership, but the data does not label it cleanly enough. For an investor, that is not a footnote; it is a position-sizing constraint.
 
-## Product and Mechanism
+The final view is watchlist. AB is investable only as a speculative infrastructure option where the upside depends on a large step-change in network usage and clearer token accounting. The proof required is concrete: AB Core daily transactions should move from low hundreds to persistent thousands or tens of thousands, DefiLlama TVL should grow from hundreds of thousands toward multi-million levels, AB Connect should show rising completed history and economically meaningful fees, and public dashboards should separate bridge reserves, treasury, exchanges, and circulating free float.
 
-AB is a high-performance heterogeneous blockchain network designed for decentralized applications (DApps) and diverse assets. It focuses on building a community economy with infrastructure supporting IoT, payments, gaming, finance, smart contracts, and more. The project includes features like AB Wallet for asset management, AB Connect for token integration, and initiatives in philanthropy through the AB Charity Foundation.
+## Project Overview
 
-Relevant chains: Binance Smart Chain. Key listings or venues from Surf: BINANCE ALPHA, BITGET. Contracts sampled from Surf: bsc AB: `0x95034f653d5d161890836ad2b6b8cc49d14e029a`.
+AB is the successor identity of what data aggregators still often map to "Newton Project." DefiLlama's chain listing uses `gecko_id: newton-project` and `cmcId: 3871`, which explains why some third-party pages and APIs do not resolve cleanly under the simple `ab` string. The official brand today is AB, and the canonical project domain is [ab.org](https://www.ab.org/). The official homepage describes the network as high-performance, modular, and heterogeneous, with AB deployed across chains through AB Connect and a focus on stablecoin issuance, payment network infrastructure, and decentralized philanthropy.
 
-The token value-capture path should be judged through three questions: who pays, what activity creates repeat demand, and whether AB is required for access, fees, staking, governance, collateral, rewards, or settlement. If that linkage remains vague, the token should be treated as narrative/liquidity beta rather than a cash-flow asset.
+That positioning matters because it shifts the research question away from "Is this another EVM L1?" toward "Does AB have a credible settlement niche that larger chains do not already own?" The L1 market is crowded. BSC has roughly $4.94B of TVL in the same DefiLlama chain dataset. Solana had about $4.78B. Tron had about $4.44B. TON, Sonic, and Vaulta sit closer to AB in parts of the long-tail competition set, but even there AB's $329.9K of chain TVL is small. If AB is judged only as a generic EVM-compatible L1, the comp set is brutal. It must either win a narrow vertical such as AB Wallet-led payments, IoT asset movement, community philanthropy, or BSC-adjacent cross-chain settlement, or it remains a liquid narrative token with infrastructure attached.
 
-## Market Snapshot
+The product surface has four pieces. AB Core is the EVM-like main chain. AB IoT is the dedicated sidechain layer built on NewChain assumptions. AB Connect moves AB between those chain contexts and BSC. AB Wallet is the user and DApp interface. The official docs make this explicit: AB Connect is described as the primary component connecting AB Core to dedicated sidechains and enabling AB token transfers across chains. The current live API adds BSC to that bridge graph. This is a real architecture, not just a token page.
 
-| Metric | June 28, 2026 snapshot |
-|---|---:|
-| Market-cap rank | ~269 |
-| Price | $0.000995370 |
-| Market cap | $98.37M |
-| FDV | $98.37M |
-| FDV / market cap | 1.00x |
-| 24h token volume | $2.08M |
-| Circulating supply | 98.82B AB |
-| Total supply | 98.82B AB |
-| Chains | Binance Smart Chain |
-| Tags | Cross-Chain & Bridge, Layer1, RWA (Real World Assets) |
+However, the project's public narrative still outruns public traction. The homepage gives broad vertical claims - stablecoins, payments, philanthropy, global value infrastructure - but there is no equivalent official dashboard showing stablecoin issuance volume, merchant payments, recurring active wallet users, protocol revenue, retained DApps, or foundation treasury flows. The closest hard operating dashboards are the AB Connect API and the AB Core explorer. Those show that the system works, but also show that it remains early in economic usage.
 
-## Source Conflict Matrix
+The right investment category is therefore "high-risk L1 / payment infrastructure watchlist." It is not a meme coin, because there is chain code, explorer data, wallet integration docs, API documentation, governance repositories, and audit artifacts. It is not yet a mature L1, because on-chain economic depth is thin. It is not a classic DeFi protocol, because token value capture is not expressed through protocol revenue, liquidation fees, swaps, lending spreads, or explicit buybacks. It is a network asset whose valuation must be tied to adoption, liquidity quality, reserve accounting, and the probability that AB becomes a useful settlement unit across its own heterogeneous stack.
 
-| Metric | Surf snapshot | Cross-check source | Working interpretation | Risk |
-|---|---:|---|---|---|
-| Valuation | $98.37M MC / $98.37M FDV | [CoinGecko](https://www.coingecko.com/en/coins/ab) live page | Dated snapshot is useful for research, not execution | Medium |
-| Supply | 98.82B circulating / 98.82B total | Token contract/explorer should be checked before sizing | Dilution or bridge assumptions can change the token view | Medium |
-| Liquidity | $2.08M 24h volume | Exchange order books and DEX pools | Token volume does not prove organic protocol usage | Medium |
-| Usage | Not fully quantified in this pass | Official dashboards, docs, GitHub, Dune/DefiLlama if available | Upgrade only when usage confirms the narrative | High |
+## Research Question and Investment Relevance
+
+The main debate is whether AB is durable infrastructure or narrative beta. A durable infrastructure asset has repeat users, recurring fees, visible developer adoption, a defensible reason for apps to deploy there, and a token that captures at least part of the network's growth. Narrative beta can still perform in markets, especially when it has exchange visibility and a recognizable L1 story, but it is harder to underwrite because price depends more on attention and liquidity cycles than on measurable economic demand.
+
+AB sits between those categories. On the positive side, the system has a live AB Core RPC, a live AB IoT RPC, an official AB Connect API, a public bridge history, a BSC representation, a wallet integration layer, GitHub repositories, and AIPs. The [ABFoundationGlobal GitHub organization](https://github.com/ABFoundationGlobal) is not empty. `abcore`, `abiot`, `ab-deploy`, `AIPs`, `audit`, `MultiSignatureWallet`, `abasset-generator`, and `abcore-v2` are all present. The [abcore-v2 repository](https://github.com/ABFoundationGlobal/abcore-v2) was pushed on 2026-06-16, and [ab-deploy](https://github.com/ABFoundationGlobal/ab-deploy) was pushed on 2026-05-11. That is a better signal than a dead website.
+
+On the negative side, the public traction base is thin relative to the implied valuation. At a working market capitalization near $98M and TVL near $330K, market cap to chain TVL is roughly 297x. That ratio is not automatically fatal for an L1 because L1s are not DeFi vaults, but it does say that investors are paying for future network importance rather than current on-chain capital. The AB Core explorer's 111 transactions today also does not look like a payment network with large active flow. Even if AB IoT has additional activity not visible through the same Blockscout-style endpoint, the official evidence package still lacks a consolidated usage dashboard.
+
+The investment relevance is timing. Small and mid-cap L1s can re-rate quickly when they receive exchange access, wallet distribution, bridge activation, or a new ecosystem program. They can also collapse when attention shifts, top-holder concentration unlocks, or the market realizes that nominal infrastructure did not create defensible demand. AB's current profile is exactly the kind of project that can look cheap if one only sees a sub-$100M L1 with a 100B max supply and "AB Anywhere" cross-chain story. It can look expensive if one compares that same market cap to $330K TVL and 111 AB Core daily transactions.
+
+This memo therefore uses a proof-based threshold. AB becomes more investable if the product's stated verticals show data: stablecoin supply on AB, payments volume, AB Wallet active users, DApp count, AB Connect completed transfers, developer deployment, fees, and clearer free-float accounting. It remains watchlist if market cap and exchange volume are the main visible signals. It becomes avoid if concentration, mintability, bridge dependency, or disclosure gaps worsen without a matching usage inflection.
+
+## Architecture / Product Mechanism
+
+AB's architecture has to be read as an asset flow rather than as a category label. The user-facing story is simple: a user holds AB, can interact with AB Wallet, can use AB Core for EVM-compatible transactions, can use AB IoT for the NewChain-based sidechain environment, and can use AB Connect to move AB across AB IoT, AB Core, and BSC. The investment implication depends on where control, fees, and accounting sit in that flow.
+
+AB Core is the EVM-compatible leg. The official [AB Core technical information](https://docs.ab.org/docs/) lists the mainnet explorer as `https://explorer.core.ab.org/`, the source code as [ABFoundationGlobal/abcore](https://github.com/ABFoundationGlobal/abcore), token precision as 18 decimals with `ISSAC` as the smallest unit, a 3-second block interval, 20 confirmations for transaction security, node deployment through [ABFoundationGlobal/ab-deploy](https://github.com/ABFoundationGlobal/ab-deploy), and chainId `36888`. It also states a key difference from Ethereum: AB Core is compatible with standard EVM contracts and developer tools, but currently supports up to the Berlin hard fork and does not implement EIP-1559, BaseFee, gas burning, London, Shanghai, or Dencun.
+
+That matters for value capture. Many L1 narratives rely on gas demand and fee burn. AB Core cannot be valued like a post-London Ethereum-style burn asset unless the protocol changes. AB may still capture value as a native gas token, staking/security token, bridge settlement asset, or ecosystem reserve unit, but the standard "more usage equals burned token supply" shortcut does not apply from the official docs. If AB eventually introduces fee burn or EIP-1559-like mechanics, that would be a major thesis update. As of this memo, the conservative assumption is no fee-burn value capture on AB Core.
+
+AB IoT is the second leg. The official [AB IoT technical information](https://docs.ab.org/docs/iot) lists explorer `https://explorer.ab.org/`, source code [ABFoundationGlobal/abiot](https://github.com/ABFoundationGlobal/abiot), chainId `1012`, mainnet RPC `https://global.rpc.iot.ab.org`, the same 3-second block interval, and 20 confirmations. The important technical difference is that Ethereum uses `secp256k1` while AB IoT uses `secp256r1`; user-visible addresses start with `NEW`; and the docs warn that developers must validate that the parsed ChainID matches the current network or risk transaction failure or asset loss.
+
+This suggests AB IoT is not just another EVM clone. It has different signature and address assumptions, which can be useful for specific device or identity workflows but also raises integration friction. EVM compatibility is a distribution advantage because developers can reuse tooling. New address formats and signature assumptions may support specialized use cases, but they also increase the need for SDK quality, wallet support, and developer education. If the IoT leg is central to AB's differentiation, AB must show that the tradeoff produces demand. Otherwise it becomes complexity without economic moat.
+
+AB Connect is the third leg and the most measurable product. The docs describe it as a distributed network of multiple nodes connecting AB Core and dedicated sidechains. The live [AB Connect networks endpoint](https://api.connect.ab.org/v1/networks) reports three networks: BSC chainId `56`, AB Core chainId `36888`, and AB IoT chainId `1012`. The [connects endpoint](https://api.connect.ab.org/v1/connects) reports two active edges: ABIoT-ABCore and ABCore-BSC. The [pairs endpoint](https://api.connect.ab.org/v1/pairs) shows AB assets on those networks, 18 decimals, minimum deposit amount of 20 AB in both directions, zero percentage fee, minimum fee of 15 AB, and auto-confirm deposit amount of 100,000,000 AB.
+
+The mechanism is therefore closer to a controlled bridge/connector than to permissionless arbitrary cross-chain messaging. A user moving AB from BSC to AB Core sends the BSC BEP-20 AB to a deposit route, AB Connect verifies source-side activity, charges the minimum fee, and releases or accounts for destination-side AB. The [history endpoint](https://api.connect.ab.org/v1/history?page_size=5) showed recent confirmed transfers between BSC, AB Core, and AB IoT on June 28, 2026, with source and destination timestamps only seconds apart for the sampled entries. That confirms operational function. It does not, by itself, prove decentralization, reserve safety, or third-party demand.
+
+AB Wallet is the fourth leg. The [DApp integration docs](https://docs.ab.org/docs/DApp-Connect-Wallet) say ABWallet exposes `window.abwallet`, supports EVM chains through `window.abwallet.ethereum` using MetaMask-style EIP-1193 flows, supports Tron through `window.abwallet.tron`, and lists Solana as "coming soon." That wallet layer can matter because many L1s struggle not with blocks but with distribution. If AB Wallet becomes a real user gateway for payments, stablecoins, philanthropy, and multi-chain signing, AB could own user intent instead of waiting for developers to deploy to its chain. The current docs, however, are integration-level rather than adoption-level. They show how a DApp can connect; they do not show how many DApps or users actually do.
+
+The trust assumptions are not fully disclosed in one place. The docs say AB Connect is operated in a distributed manner through multiple nodes, but the public API does not expose node identities, quorum rules, slashing, validator set, bridge reserve proofs, or admin-key controls. The GitHub organization has a [MultiSignatureWallet repository](https://github.com/ABFoundationGlobal/MultiSignatureWallet) and an [audit repository](https://github.com/ABFoundationGlobal/audit), which is positive, but bridge and admin risk need more transparency. For underwriting, the safe stance is to assume meaningful operational trust until AB publishes a more detailed validator, reserve, and governance dashboard.
+
+## Market Intelligence and Traction
+
+The market snapshot on June 28, 2026 is mixed. The best working price input in this run was DefiLlama's current price endpoint for `coingecko:newton-project`, which returned about $0.0009930969 per AB with 0.99 confidence and timestamp 2026-06-28 05:58:53 UTC. Official AB Connect circulating supply was 98.823661B AB. Multiplying those gives a working market capitalization of about $98.1M. The fully diluted value using 100B max supply is about $99.3M. This is broadly consistent with the earlier Surf snapshot and the [CoinGecko AB page](https://www.coingecko.com/en/coins/ab), which was also in the roughly $98M market cap range during the same day.
+
+The second source family is exchange-level. [Gate.io's AB_USDT ticker API](https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AB_USDT) returned last price `0.0009905`, 24h quote volume of about $262,428, 24h base volume of about 234.6M AB, and a wide 24h range from `0.000908` to `0.001813`. Gate is only one venue, but it is useful because it gives a live order-market read rather than an aggregator number. The earlier Surf snapshot listed Binance Alpha and Bitget as key venues; third-party pages such as [CoinMarketCap](https://coinmarketcap.com/currencies/newton/) and [CryptoRank](https://cryptorank.io/price/ab) are useful for cross-checking, but their supply assumptions differ. Thin or venue-concentrated volume should not be treated as protocol traction.
+
+The third source family is on-chain. The [AB Core stats endpoint](https://explorer.core.ab.org/api/v2/stats) showed 12,639,905 total blocks, 245,421 total transactions, 65,200 total addresses, 111 transactions today, average block time of 3000 milliseconds, and network utilization of 0% at the time checked. Recent [AB Core blocks](https://explorer.core.ab.org/api/v2/blocks) were arriving every three seconds, but the sampled blocks had zero gas used. This distinction matters: AB Core is alive and producing blocks, but current public activity appears light.
+
+The fourth source family is TVL. [DefiLlama chains](https://api.llama.fi/v2/chains) listed AB with about $329,917 in TVL, compared with roughly $4.94B for BSC, $4.78B for Solana, $4.44B for Tron, $68.2M for TON, $29.0M for Vaulta, and $15.1M for Sonic in the same pull. TVL is not the only metric for a payments or IoT network, but it is still a useful sanity check. If AB wants to be a stablecoin issuance and payment infrastructure chain, a sub-$1M DeFi/chain TVL footprint is not enough proof. It may be early; it may also mean the market is capitalizing future claims ahead of usage.
+
+The fifth source family is AB Connect. The official `/v1/ab` endpoint showed global total volume of 25.129851B AB, global total fees of 932,220 AB, and 41,687 history entries on June 28, 2026. At the DefiLlama price, that global transfer amount is roughly $25.0M of cumulative notional and the fee amount is roughly $926. This is the cleanest operating metric AB provides. It shows real movement, but the fee capture is tiny. If the protocol's goal is low-cost payments, low fees are good for adoption. If the investment thesis relies on AB token revenue, low fees delay value capture.
+
+### Source Conflict Matrix
+
+| Metric | Source A | Source B | Source C | Working interpretation | Risk |
+|---|---:|---:|---:|---|---|
+| Price | [DefiLlama price](https://coins.llama.fi/prices/current/coingecko:newton-project?searchWidth=4h): ~$0.000993 at 2026-06-28 05:58 UTC | [Gate.io API](https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AB_USDT): $0.0009905 last | [CoinGecko](https://www.coingecko.com/en/coins/ab): roughly same range on live page | Use $0.00099 as working price. | Low to Medium; price is current but volatile. |
+| Circulating supply | [AB Connect `/v1/ab`](https://api.connect.ab.org/v1/ab): 98.823661B circulating | [BscScan token page](https://bscscan.com/token/0x95034f653d5d161890836ad2b6b8cc49d14e029a): 100B max total BSC token supply | [CryptoRank](https://cryptorank.io/price/ab): materially lower circulating estimate around 44.88B in its methodology | Official AB Connect is the working truth for network-wide circulating supply, but third-party supply methods disagree. | High; market cap can be understated or overstated depending on float definition. |
+| Market cap | Official supply * DefiLlama price: ~$98.1M | [CoinGecko](https://www.coingecko.com/en/coins/ab): roughly $98M range | CryptoRank-style lower circulation can imply about $44-45M | Use ~$98M for network supply valuation, and disclose lower-float screens separately. | High; valuation multiples depend on the supply denominator. |
+| TVL | [DefiLlama chains](https://api.llama.fi/v2/chains): ~$329.9K AB chain TVL | Official site does not provide a comparable TVL dashboard | Explorer stats show `tvl: null` | Use DefiLlama as the working TVL source. | Medium; TVL may miss non-DeFi payment/bridge usage. |
+| AB Connect volume | [AB Connect `/v1/ab`](https://api.connect.ab.org/v1/ab): 25.13B AB global total volume | [AB Connect history](https://api.connect.ab.org/v1/history?page_size=5): 41,687 history entries | No independent bridge analytics dashboard found | Treat as official cumulative connect transfer metric, not audited revenue. | Medium; official API is useful but methodology is not externally explained. |
+| Fee capture | `/v1/ab`: 932,220 AB global total fee | `/v1/pairs`: 15 AB minimum fee, 0% percentage fee | No protocol revenue dashboard | Fee capture is currently economically tiny at current price. | High for token-value thesis. |
+| Holder count | [BscScan](https://bscscan.com/token/0x95034f653d5d161890836ad2b6b8cc49d14e029a): 31,139 BSC holders | [GoPlus](https://api.gopluslabs.io/api/v1/token_security/56?contract_addresses=0x95034f653d5d161890836ad2b6b8cc49d14e029a): 26,600 holders | BSC holder analytics endpoint shows tier concentration | Use BscScan for BSC holder count, GoPlus for security flags, and penalize consistency. | Medium; different indexing windows or holder definitions. |
+| Concentration | BscScan holder analytics: top 5 own 99.26%, top 10 own 99.50% of BSC token supply | GoPlus top holder: ~97.2% of BSC token balance | AB Connect says BSC chain supply only ~1.12B AB outstanding | BSC contract max supply is not the same as circulating bridge float, but visible concentration is severe. | High; bridge/treasury/exchange labels are unclear. |
+| Security flags | GoPlus: open source, non-proxy, non-honeypot, no buy/sell tax, mintable | [AB audit repo](https://github.com/ABFoundationGlobal/audit) includes Core/IoT CertiK and SlowMist PDFs | Docs list source code and node deployment | Token contract appears tradable, but mintability and bridge/admin details require caution. | High; mintability and bridge controls are under-disclosed. |
 
 ## Economics and Value Capture
 
-The positive case is that high-performance heterogeneous blockchain and community economy creates recurring activity and that AB captures part of it through fees, staking, governance, access, burns, collateral, or incentives. The weak case is that the product can grow while AB remains only a rewards or governance asset. For this reason, I would track usage and token sinks before treating AB as more than watchlist exposure.
+AB's token value capture has four possible paths: gas demand, bridge/connect demand, ecosystem reserve demand, and governance/community demand. The current evidence supports the existence of those paths but not their strength.
 
-## Team, Funding, and Governance
+Gas demand is the most straightforward. AB is the native asset on AB Core and AB IoT. Users need AB to pay transaction costs, and AB Connect moves AB across the system. If AB Core and AB IoT become active settlement layers, transactional demand for AB should rise. The problem is that current AB Core activity is low, and AB Core does not implement EIP-1559-style base fee burning. Gas demand can still matter if users need to hold AB for access, but it is not the same as a burn-driven scarcity loop.
 
-Surf lists reported funding of not disclosed. Team snapshot: Boris Tadić (CEO, Moderator), Moneef R. Zou'bi (Coordinator), Ma Xingli (External Partner), Zeng Junhao (Core Contributor). Governance/admin-key details were not fully verified in this batch, so smart-contract permissions, multisig controls, unlock schedules, and foundation treasury movements remain follow-up items.
+Bridge/connect demand is more visible. AB Connect has cumulative transfer volume and fees. The 15 AB minimum fee is a real token sink if fees are retained, burned, distributed, or otherwise removed from users. But the total fee line of 932,220 AB is small. At about $0.000993 per AB, it is less than $1,000 of notional. Even if the fee accounting is not meant as revenue, it shows that current fee capture is not a valuation anchor. For AB Connect to matter economically, the volume must scale by orders of magnitude or the fee model must evolve.
+
+Ecosystem reserve demand is plausible but not yet quantified. If AB is used for stablecoin issuance, payment routing, philanthropy settlement, merchant float, or foundation programs, AB could become a balance-sheet and collateral-like asset within the ecosystem. The official homepage points in that direction. But there is no public reserve attestation, stablecoin supply dashboard, merchant volume chart, or grants treasury dashboard linked from the official sources reviewed here. Without those, the reserve-demand path remains an inference rather than a proven driver.
+
+Governance and community demand are also possible. The [AIPs repository](https://github.com/ABFoundationGlobal/AIPs) describes AB Improvement Proposals covering economic model, personnel, technical, community governance, and business proposals. This is positive because it gives the ecosystem a formal proposal surface. But governance value capture is weak unless governance controls meaningful cash flows, emissions, protocol parameters, or treasury allocation. AIPs can coordinate the community; they do not automatically make the token valuable.
+
+The strongest value-capture argument is strategic optionality. AB is small enough that even a moderate increase in usage could matter. If AB Wallet distribution grows, if AB Connect becomes a reliable BSC-to-AB settlement route, and if stablecoin/payment use cases become visible, then the market can underwrite AB as a network asset rather than as a generic L1. The strongest counterargument is that all of those can happen with low token capture. A wallet can have users without AB appreciating. A bridge can process transfers with tiny fees. A chain can produce blocks without economic demand. A foundation can subsidize activity without creating organic retention.
+
+My working classification is low-to-medium value capture. AB is required for the network's own accounting and transfers, but the current fee, burn, revenue, and usage signals are not yet strong enough. The memo should be revisited if AB publishes a fee policy, burn mechanism, staking/slashing rules, validator economics, stablecoin reserve model, or treasury dashboard.
+
+## Tokenomics / Capital Structure
+
+The cleanest tokenomics source is the official AB Connect supply endpoint. On June 28, 2026 it reported max supply of 100,000,000,000 AB, total supply and circulating supply of 98,823,661,261.46 AB, burned amount of 1,176,338,738.54 AB, and unreleased supply of 0. It also broke supply across chains: about 92.997B AB on ABIoT, 4.705B AB on AB Core, and 1.122B AB on BSC. That is the supply model I use for working valuation.
+
+The BSC contract view is not identical. BscScan displays max total supply of 100B for the BEP-20 token, and GoPlus reports total supply of 100B. That creates a common aggregator trap: a wrapped token contract can have a max or total supply field that does not equal the economically circulating amount on that chain or across all chains. AB Connect's chain breakdown implies only about 1.12B AB supply on BSC, while BscScan/GoPlus read the token contract's 100B total. The correct interpretation is not "one source is wrong" but "token contract fields are insufficient for free-float analysis."
+
+The holder distribution is still a problem. BscScan holder analytics showed top 5 BSC holders controlling 99.26% and top 10 controlling 99.50% of BSC token supply. GoPlus showed a top address holding about 97.2% of the BSC token balance and PancakeV3 pools holding smaller amounts. This may be a bridge reserve, treasury, or operational wallet. It may not represent a whale able to dump 97% of supply. But unless those wallets are labeled and reconciled to AB Connect reserves, the investment risk remains. Concentration can affect governance, liquidity, perception, and market integrity even when some balances are operational.
+
+Liquidity is not deep enough to ignore that concentration. Gate's 24h quote volume of about $262K is useful but not large relative to a roughly $98M working market cap. Aggregator volume can be higher across venues, and the old Surf snapshot was around $2M daily volume, but the quality of volume matters more than the number. High volume on thin books, incentive-driven venues, or concentrated market maker flows does not de-risk exits. The monitoring dashboard should track venue-level depth, not only 24h volume.
+
+The tokenomics conclusion is conservative. The official supply cap is clear. Burned amount is clear. Chain-level supply through AB Connect is clear. But free float, bridge reserves, treasury, exchange wallets, unlock policy, mint authority, validator rewards, and long-term emissions require more disclosure. Until those are clear, the correct position size is small even if the narrative is interesting.
+
+## Team, Funding, Governance
+
+Public team and funding data were not strong enough in this run to support a high-confidence founder or investor section. The previous local snapshot listed several contributors and "funding not disclosed," but the official docs and public GitHub organization are better sources for this upgrade. I therefore treat execution credibility as repo-and-infrastructure based rather than founder-brand based.
+
+The GitHub picture is mixed but not dead. [ABFoundationGlobal/abcore](https://github.com/ABFoundationGlobal/abcore) was created in 2025, has minimal stars and forks, and was pushed on 2026-04-01. [ABFoundationGlobal/abiot](https://github.com/ABFoundationGlobal/abiot) was pushed on 2025-03-26. [ABFoundationGlobal/ab-deploy](https://github.com/ABFoundationGlobal/ab-deploy) was pushed on 2026-05-11. [ABFoundationGlobal/abcore-v2](https://github.com/ABFoundationGlobal/abcore-v2) was pushed on 2026-06-16. The small star counts mean there is not broad open-source developer mindshare. The recent pushes mean the project is still maintaining core infrastructure.
+
+Governance has a formal surface through [AIPs](https://github.com/ABFoundationGlobal/AIPs). The AIPs README says proposals cover economic model, personnel, technical, community governance, and business topics, and links to [aips.ab.org](https://aips.ab.org/). This is better than informal Telegram-only governance, but it does not prove token-holder control. The open question is whether AIPs are binding, who can merge them, what voting token or council is used, and how treasury, validator, fee, or protocol changes are authorized.
+
+Security documentation exists. The [AB audit repository](https://github.com/ABFoundationGlobal/audit) lists four PDF reports: AB Core CertiK, AB Core SlowMist, AB IoT CertiK, and AB IoT SlowMist. Because the local environment lacked `pdftotext`, this memo does not claim issue counts or remediation status from those PDFs. The fact that audit artifacts are public is positive, but the diligence bar is not just "has audits." A future update should parse each report, list audit dates, commits, severity counts, fixed/unfixed issues, and whether bridge contracts or only chain clients were in scope.
+
+Admin and bridge governance are the biggest missing pieces. GoPlus reports the BSC token as open-source, non-proxy, no buy/sell tax, and non-honeypot, but it also reports `is_mintable=1` and an owner address. That may be necessary for bridge operations. It still needs explicit disclosure. For a bridge-like token system, mint/burn authority, multisig policy, signer rotation, reserve proofs, and emergency pause rules are central risk variables. AB has some ingredients, such as MultiSignatureWallet and audit repos, but the public investor package should connect them into one control-plane document.
 
 ## Competitive Landscape
 
-| Comparison set | Why it matters |
-|---|---|
-| BNB Chain, TRON, TON, EOS/Vaulta, and smaller EVM L1s | These alternatives compete for the same users, liquidity, developers, or narrative budget |
-| CEX liquidity and passive beta | Major venue access can support price without proving product traction |
-| Native ecosystem substitutes | Users may prefer apps integrated directly into larger ecosystems |
+AB competes at three layers: L1 blockspace, payment/stablecoin settlement, and wallet/bridge distribution.
+
+| Competitor / substitute | Current advantage versus AB | AB's potential edge | AB weakness to monitor |
+|---|---|---|---|
+| [BSC](https://api.llama.fi/v2/chains) | Roughly $4.94B TVL, deep exchange integration, large DeFi ecosystem, strong retail distribution | AB can use BSC as a liquidity doorway through AB Connect rather than compete head-on immediately | BSC already owns the liquidity and developer mindshare AB wants |
+| Tron | Roughly $4.44B TVL and dominant stablecoin transfer habit in many markets | AB Wallet supports Tron-like integration and may target payments/stablecoins | Tron has entrenched USDT flow; AB must prove why users switch |
+| Solana | Roughly $4.78B TVL, high throughput, strong developer and consumer app ecosystem | AB Core/IoT can target specific payment or IoT workflows rather than broad consumer crypto | Solana's network effects are far stronger |
+| TON | Strong wallet/social distribution through Telegram ecosystem and about $68M TVL in the pulled dataset | AB Wallet could be its own distribution wedge if adoption grows | TON has clearer consumer distribution; AB needs AB Wallet metrics |
+| Sonic / Vaulta / other long-tail L1s | Similar mid/small-cap L1 competition for attention and incentives | AB has heterogeneous AB Core plus AB IoT architecture | Long-tail L1s are often valued by narrative cycles rather than usage |
+| Bridges and CEX transfer rails | Users can move value through established CEXs, LayerZero-style messaging, Stargate-style bridges, or direct exchange withdrawals | AB Connect is specialized to AB and can be cheap, fast, and integrated | Specialized bridges have concentration and trust assumptions |
+
+The competition analysis is harsh because the user does not need AB for generic EVM transactions. If a developer wants EVM liquidity, BSC, Base, Arbitrum, Polygon, and Ethereum L2s are stronger. If a user wants stablecoin transfers, Tron and CEX rails are stronger. If a consumer app wants distribution, TON and Solana have more mindshare. AB must win through specialization: AB Wallet access, low-cost AB Connect transfers, community economy programs, philanthropy credibility, or a niche stablecoin/payment stack.
+
+Switching costs are currently low. AB's 3-second blocks and 20-confirmation security target are not enough by themselves. Many chains are fast. The distinctive part is the AB Core plus AB IoT split and AB Connect across native and BSC assets. But that advantage becomes defensible only if AB has applications that actually need both sides. If most activity remains token bridging and exchange trading, AB will trade like a liquid small L1 rather than a defensible network.
+
+The most realistic competitive path is not to beat Solana or BSC head-on. It is to become a focused payments/community asset network with a small but sticky user base, then expand. That path requires public metrics the project does not yet show: AB Wallet MAU, completed payment count, merchant volume, stablecoin supply, active DApps, retention, and bridge failure/latency history. Without those, AB remains a speculative L1 option.
+
+## Catalysts
+
+The first catalyst is disclosure. AB would immediately become easier to underwrite if the foundation published a single live dashboard that reconciles max supply, burned supply, chain-level supply, BSC bridge reserve wallets, exchange wallets, treasury wallets, AB Connect total volume, fees, active users, and DApp count. The data exists in pieces. The official `/v1/ab` API is already useful. The gap is presentation and external validation. A clearer dashboard would reduce the discount applied for concentration and supply conflicts.
+
+The second catalyst is AB Connect expansion. Today the live connect graph is ABIoT-ABCore and ABCore-BSC. If AB Connect adds more credible networks, stablecoin routes, or third-party assets, then the "AB Anywhere" concept becomes more than a slogan. The key is not simply adding chains; it is whether added chains create recurring transfer flow and fees. A chain expansion with no volume is narrative. A chain expansion with rising completed transfers, lower failed transfers, and external integrations is substance.
+
+The third catalyst is AB Wallet adoption. Wallet distribution is one of the few ways a smaller chain can escape pure developer-incentive competition. ABWallet's DApp docs already support EVM and Tron namespaces. If AB Wallet publishes active wallet counts, transaction counts, supported DApps, merchant or philanthropy integrations, and retention cohorts, the market can begin to value AB as a distribution network rather than only a chain. Solana and TON show how consumer distribution can matter more than abstract architecture.
+
+The fourth catalyst is token utility improvement. A fee burn, validator staking disclosure, slashing economics, reward schedule, or protocol-level treasury policy would materially change value capture. AB currently has a native asset role but weak measurable economics. If an AIP formalizes fee use, bridge fee distribution, staking requirements, or treasury transparency, confidence can improve. Conversely, if token utility remains vague, market cap will remain mostly narrative.
+
+The fifth catalyst is exchange and liquidity quality. More venues can increase attention, but this catalyst cuts both ways. Additional listings can improve access; delistings or declining depth can accelerate reflexivity. The useful metric is not listing count but sustainable order-book depth, spread, and real volume across independent venues. Gate's 24h data showed price volatility and limited quote volume relative to valuation. Future market quality should be measured venue by venue.
+
+## Valuation / Importance Framework
+
+Cash-flow valuation is not credible today because AB does not publish protocol revenue and the visible AB Connect fee total is too small. A price-to-fees or FDV-to-revenue multiple would produce absurd results and would not be decision-useful. The better framework is strategic importance adjusted for traction and risk.
+
+Start with the working valuation. Official circulating supply of 98.823661B AB times DefiLlama price of about $0.000993 gives about $98.1M market cap. Fully diluted against 100B max supply gives about $99.3M. If a lower third-party circulating estimate such as CryptoRank's roughly 44.88B is used, the same price implies about $44.6M. That wide range is exactly why supply methodology matters. For portfolio sizing, I would use the higher official network-wide supply to avoid underestimating valuation.
+
+Against that valuation, hard traction is small. DefiLlama TVL of $329.9K implies about 297x market cap to TVL. AB Core total transactions of 245,421 imply a large market cap relative to lifetime public transaction count. AB Connect cumulative transfer notional of roughly $25M, if marked at current price, is meaningful for a small ecosystem but still not enough to anchor a $98M network valuation without future-growth assumptions. The fee total near $926 equivalent is not valuation support.
+
+The strategic option value is the part that can justify some premium. If AB becomes a payment/stablecoin bridge across AB Wallet, BSC, AB Core, and AB IoT, the current usage base could be early. Small L1s do not scale linearly; one successful distribution channel can change the curve. But investors should demand leading indicators: active AB Wallet users, daily connect transfers, non-foundation DApp deployments, stablecoin balances, and exchange liquidity. Without those, the valuation is a call option on execution.
+
+My valuation stance is therefore: watchlist below $100M only if risk is sized as venture-like optionality, not as undervalued fundamentals. An upgrade to tactical/accumulate would require at least three of five conditions: AB chain TVL above $5M, AB Core daily transactions above 5,000 for several weeks, AB Connect monthly volume above $25M equivalent, public wallet/DApp adoption data, and reconciled supply/holder labels. A downgrade to avoid would be appropriate if market cap remains near $100M while AB Core daily transactions stay in low hundreds, TVL stays below $1M, and concentration remains unexplained.
 
 ## Risk Matrix
 
-| Risk | Severity | Why it matters |
-|---|---|---|
-| opaque traction and token value-capture risk | High | This is the main path where the thesis fails |
-| Token value capture | High | Product adoption does not automatically accrue to token holders |
-| Liquidity quality | Medium | 24h volume can be incentive-driven or venue-concentrated |
-| Competition | Medium | The category has credible substitutes |
-| Execution and disclosure | Medium | Missing dashboards, audits, or unlock data should lower position sizing |
+| Risk | Severity | Evidence | What would reduce it |
+|---|---|---|---|
+| Supply/free-float ambiguity | High | Official AB Connect supply, BscScan max supply, GoPlus total supply, and third-party circulation screens do not tell the same story | Labeled bridge reserve wallets, exchange wallet labels, treasury dashboard, third-party attestation |
+| BSC holder concentration | High | BscScan top 5 at 99.26%, GoPlus top holder near 97.2% | Clear proof that concentrated wallets are bridge reserves or locked operational balances |
+| Token value capture | High | AB Core lacks EIP-1559 burn; AB Connect fees are tiny; revenue dashboard absent | Fee burn, staking economics, validator economics, explicit treasury policy |
+| Low current usage | High | AB Core 111 transactions today, $329.9K DefiLlama TVL | Persistent daily tx growth, TVL growth, active DApps, wallet users, payment volume |
+| Bridge/control risk | High | AB Connect is central to architecture but node quorum/reserve rules are under-disclosed | Public signer set, reserve proofs, audits of bridge contracts, incident history |
+| Developer adoption | Medium | GitHub active but low stars/forks and limited public DApp data | Hackathon output, grants, external repos, deployed contracts, docs improvements |
+| Liquidity quality | Medium | Gate quote volume modest; aggregator volume can be venue-concentrated | Deep order books across several venues, lower spreads, independent market makers |
+| Security | Medium | Audit PDFs exist but issue counts/remediation not parsed here; GoPlus reports mintability | Parsed audit summaries, remediation commits, bug bounty, admin-key disclosure |
+| Competition | High | BSC, Tron, Solana, TON, Base, and bridges have stronger user/liquidity networks | Niche use case where AB has measurable advantage |
+| Regulatory/payments risk | Medium | Stablecoin/payment positioning can invite compliance questions | Clear jurisdiction, compliance posture, reserve and partner disclosures |
 
 ## Bull / Base / Bear Scenarios
 
-| Scenario | What must be true | Confirmation metric |
-|---|---|---|
-| Bull | AB turns category relevance into repeat users, integrations, and measurable token sinks | Usage, revenue/fees, liquidity, and AB utility all trend higher for two quarters |
-| Base | The project remains liquid and visible but token accrual is only partially proven | Market cap and volume hold while usage data stays mixed |
-| Bear | Narrative, incentives, or listings fade before durable demand appears | Volume, users, and token utility weaken together |
+| Scenario | Probability | 6-12M outcome | What must be true | Confirmation metrics |
+|---|---:|---|---|---|
+| Bull | 20% | AB rerates as a focused payment/community L1 and liquidity improves | AB Wallet adoption becomes visible, AB Connect monthly volume grows materially, supply dashboard reduces concentration fear, and at least one stablecoin/payment integration gains traction | AB Core >5,000 daily tx for 30 days, DefiLlama TVL >$5M, AB Connect monthly volume >$25M equivalent, venue depth improves |
+| Base | 50% | AB remains a liquid small L1 watchlist asset around narrative cycles | Chain and bridge continue operating, but usage grows slowly and token capture remains weak | Daily tx remains low hundreds to low thousands, TVL <$2M, bridge history grows but fees stay tiny |
+| Bear | 30% | Market treats AB as overvalued narrative beta and liquidity fades | Concentration remains unexplained, exchange volume falls, no usage dashboard appears, or bridge/admin risk becomes visible | TVL <$250K, AB Core daily tx <100, top-holder concentration unchanged, price breaks while volume falls |
+
+The bull case is not impossible. AB has a coherent architecture and a measurable connect layer. The market cap is still small enough for upside if real adoption appears. But the base and bear cases are more evidence-supported today. The current data says infrastructure exists, not that demand has arrived.
 
 ## Confidence Score
 
 | Dimension | Rating | Notes |
 |---|---|---|
-| Source quality | Medium | Surf, official web anchor, and market pages provide identity and market data |
-| Data consistency | Medium | Market data is usable, but supply/usage needs ongoing cross-checks |
-| Mechanism clarity | Medium | Product narrative is understandable, token accrual needs proof |
-| Value capture | Low to Medium | Upgrade only if token sinks become measurable |
-| Liquidity quality | Medium | $2.08M 24h volume is enough for monitoring, not a fundamentals guarantee |
+| Source quality | Medium | Strong official docs and APIs; weaker team/funding disclosure; some third-party APIs blocked or inconsistent. |
+| Data consistency | Low to Medium | Official supply is clear, but BSC contract supply, holder counts, and third-party circulation data conflict. |
+| Mechanism clarity | Medium | AB Core, AB IoT, AB Connect, and ABWallet are explainable; bridge quorum/control details are not. |
+| Value capture | Low | AB is the native asset, but fee burn/revenue capture is weak or undisclosed. |
+| Liquidity quality | Low to Medium | Market exists, but venue-level depth and BSC holder concentration keep risk high. |
 
-Overall confidence: Medium for identity and market data; Low to Medium for durable investment quality.
+Overall confidence: Medium for identity and infrastructure existence; Low to Medium for investment quality. The project is real enough to monitor but not transparent or active enough to underwrite as a fundamentals-led L1 allocation.
 
 ## Red-team Check
 
-The strongest bear case is that AB grows attention or integrations without creating durable demand for AB. The most gameable metric is headline partnerships or volume without retained users. The token value-capture failure path is product usage that bypasses token sinks. The plausible impairment path is liquidity decline, token unlock pressure, weak usage data, or a better-funded competitor taking category share.
+The strongest reason this thesis could be wrong on the bearish side is that AB's real usage is happening in channels not captured by DefiLlama, AB Core explorer stats, or public DApp dashboards. If AB is mainly a payment, wallet, philanthropy, or IoT network, TVL and AB Core transaction counts may understate the actual business. The official AB Connect volume could be a better leading indicator than DeFi TVL. If AB Wallet has a large user base that is not publicly reported, the current memo could be too conservative.
+
+The strongest reason the bullish thesis could be wrong is simpler: the visible infrastructure may exist mainly to support token movement and narrative, not durable external demand. A chain can produce blocks forever. A bridge can move the native token between its own environments. A wallet can expose familiar provider namespaces. None of those automatically create a reason for third-party users to choose AB over BSC, Tron, Solana, TON, or CEX rails.
+
+The most gameable metric is bridge volume. AB Connect global volume sounds impressive at 25.13B AB, but if transfers are mostly internal, operational, treasury, exchange, or circular movement, it is not the same as organic payment demand. The second most gameable metric is exchange volume, especially when market makers or venue incentives dominate. The least gameable metrics would be retained active users, third-party app revenue, independently verified stablecoin supply, and on-chain fee-paying transactions from diverse addresses.
+
+The token value-capture failure path is clear: AB Wallet and AB Connect can function while token holders capture little. If fees remain fixed at 15 AB, if no burn or staking economics emerge, if AB is mainly a pass-through settlement unit, and if foundation or bridge wallets control most supply, then product adoption may not translate into token performance. The zero or permanent impairment path would involve a bridge/security incident, loss of exchange liquidity, regulatory pressure on payment/stablecoin claims, or a supply/accounting event that breaks market trust.
 
 ## Monitoring Dashboard
 
-| Metric | Current | Bull threshold | Bear threshold | Source |
+| Metric | Current value on 2026-06-28 | Bull threshold | Bear threshold | Source |
 |---|---:|---:|---:|---|
-| 24h token volume | $2.08M | 3x current level sustained | <25% of current level | Surf / exchanges |
-| FDV / MC | 1.00x | Gap compresses through adoption | Gap widens from unlock pressure | Surf / token unlocks |
-| Product usage | Not quantified here | Public dashboard shows growth | No usage disclosure | Official / Dune / DefiLlama |
-| Token utility | Needs verification | Fees, staking, or burns become material | Utility remains cosmetic | Docs / governance |
+| Working price | ~$0.000993 | Sustained price with rising usage, not only volume | Price falls while usage and liquidity fall | [DefiLlama price](https://coins.llama.fi/prices/current/coingecko:newton-project?searchWidth=4h), [Gate API](https://api.gateio.ws/api/v4/spot/tickers?currency_pair=AB_USDT) |
+| Working market cap | ~$98.1M | MC rises with TVL/tx/fees | MC stays high while traction flat | [AB Connect supply](https://api.connect.ab.org/v1/ab) + DefiLlama price |
+| DefiLlama TVL | ~$329.9K | >$5M | <$250K | [DefiLlama chains](https://api.llama.fi/v2/chains) |
+| AB Core daily transactions | 111 today | >5,000 for 30 days | <100 for 30 days | [AB Core stats](https://explorer.core.ab.org/api/v2/stats) |
+| AB Core total addresses | 65,200 | Rising with active addresses | Flat while market cap rises | AB Core stats |
+| AB Connect global history | 41,687 entries | Accelerating monthly growth | Stagnant or many failed transfers | [AB Connect history](https://api.connect.ab.org/v1/history?page_size=5) |
+| AB Connect global volume | 25.13B AB cumulative | >$25M equivalent monthly volume | Mostly stagnant | [AB Connect `/v1/ab`](https://api.connect.ab.org/v1/ab) |
+| AB Connect total fees | 932,220 AB cumulative | Fee policy creates meaningful value capture | Fees remain negligible | AB Connect `/v1/ab` and [pairs](https://api.connect.ab.org/v1/pairs) |
+| BSC holders | 31,139 on BscScan; 26,600 on GoPlus | Growth with lower concentration | Holder count falls or concentration rises | [BscScan](https://bscscan.com/token/0x95034f653d5d161890836ad2b6b8cc49d14e029a), [GoPlus](https://api.gopluslabs.io/api/v1/token_security/56?contract_addresses=0x95034f653d5d161890836ad2b6b8cc49d14e029a) |
+| Top-holder concentration | Top 5 BSC holders 99.26% | Labeled reserves and lower free-float risk | Unlabeled concentration persists | BscScan holder analytics |
+| Developer activity | abcore-v2 pushed 2026-06-16 | External repos and DApps appear | Core repos quiet for months | [ABFoundationGlobal](https://github.com/ABFoundationGlobal) |
 
 ## Follow-up Triggers
 
 | Trigger | Why it matters | Action |
 |---|---|---|
-| Major usage dashboard or revenue disclosure | Converts narrative into measurable fundamentals | Reopen and update confidence |
-| Token unlock, migration, or supply revision | Directly changes FDV and dilution risk | Recalculate valuation |
-| Exchange listing/delisting or volume shock | Changes liquidity and reflexivity | Reassess liquidity quality |
-| Security incident, bridge failure, or admin-key event | Permanent impairment risk | Downgrade immediately |
+| AB publishes a supply, reserves, treasury, and bridge-wallet dashboard | Directly addresses the biggest data-consistency risk | Recalculate market cap, free float, and concentration discount |
+| AB Core daily transactions exceed 5,000 for 30 consecutive days | Shows network use beyond block production | Upgrade from watchlist to tactical review if liquidity also improves |
+| DefiLlama AB TVL exceeds $5M or stablecoin supply becomes independently trackable | Converts payment/stablecoin narrative into capital footprint | Rebuild valuation framework with TVL and stablecoin metrics |
+| AB Connect monthly volume exceeds $25M equivalent with rising fees and diverse routes | Proves the connector is becoming an economic rail | Analyze fee capture and bridge risk in a dedicated update |
+| GoPlus/BscScan concentration remains extreme without labels or an admin/mint event occurs | Permanent impairment or trust-risk signal | Downgrade immediately until reserve/control facts are clear |
 
 ## Final Investment View
 
-Watchlist. AB has enough market presence to track, but AB needs stronger evidence of durable usage and token value capture before becoming high-conviction portfolio exposure.
+Watchlist / high-risk infrastructure option. AB is not a dismissible shell: it has official technical docs, live RPCs, explorers, a working AB Connect API, GitHub repositories, AIPs, audit artifacts, and market access. The architecture is coherent enough to deserve monitoring. But the current investment evidence is not strong enough for a core allocation. The main chain's public usage is low, DefiLlama TVL is tiny relative to market cap, AB Connect fees are economically small, and wrapped-token concentration plus supply methodology conflicts create a large diligence discount.
+
+The upgrade path is clear. AB needs to show that its heterogeneous design solves a real user problem at scale. That means visible AB Wallet users, payment/stablecoin flows, third-party DApps, growing AB Core and AB IoT transactions, higher AB Connect volume, and clean reserve accounting. If those appear together, AB can move from "interesting small L1" to "emerging payment infrastructure." Until then, the correct stance is to track, not chase.
