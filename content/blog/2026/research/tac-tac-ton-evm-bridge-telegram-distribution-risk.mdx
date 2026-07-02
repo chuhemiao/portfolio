@@ -1,125 +1,338 @@
 ---
-title: 'TAC: TON-EVM Bridge, Telegram Distribution, and App-Chain Risk'
-publishedAt: '2026-06-28'
-summary: 'TAC is EVM-compatible L1 connecting Ethereum dApps to TON and Telegram with a June 28, 2026 Surf snapshot of $99.02M market cap, $213.3M FDV, and $1.75M 24h token volume. The investable question is whether EVM-compatible L1 connecting Ethereum dApps to TON and Telegram can create durable token demand; the key risk is bridge security, Telegram distribution, and app adoption risk. Verdict: watchlist unless usage, liquidity, and token value capture improve.'
+title: 'TAC: TON-EVM Distribution Layer, Bridge Recovery, and Token Value-Capture Risk'
+publishedAt: '2026-07-02'
+summary: 'TAC is a high-beta infrastructure asset for moving Solidity dApps into the TON and Telegram distribution layer, with a July 2, 2026 Surf snapshot of about $177.3M market cap, $379.9M FDV, $22.4M 24h volume, +871.4% 90d price performance, and a sharp -39.5% 24h drawdown. The strongest thesis is Telegram-native distribution for EVM DeFi; the strongest bear case is that bridge risk, opaque real TVL, concentrated supply, and weak measurable token sinks leave TAC as narrative beta rather than a durable L1 cash-flow asset. Verdict: high-beta watchlist / tactical only until post-incident usage, bridge trust, and token value capture become independently measurable.'
 slug: 'tac-tac-ton-evm-bridge-telegram-distribution-risk'
 category: 'research'
 ---
 
 ## Pre-screen Decision
 
-Full research. TAC is a live, market-ranked project with no local Research Map match before this batch. It deserves coverage because it sits in the Interoperability bucket and has enough market cap, exchange visibility, or strategic category relevance to affect portfolio screening.
+Decision: full research, not a quick note.
 
-## TL;DR
+Local registry check before live market-data work returned an existing Research Map match for `TAC (TAC)` with this slug and file path. This report therefore upgrades the existing short TAC article instead of publishing a duplicate ticker page. The upgrade is still justified because the old article had only a compressed market snapshot, three links, and no full source-conflict, mechanism, tokenomics, bridge-security, scenario, or monitoring treatment. TAC is also exactly the kind of asset where a short profile is dangerous: the marketing story is easy to repeat, but the investment conclusion depends on current bridge status, market reflexivity, token distribution, and whether Telegram distribution becomes real DeFi usage rather than a one-time launch narrative.
 
-TAC is EVM-compatible L1 connecting Ethereum dApps to TON and Telegram. The project profile in Surf describes it as: TAC is a Layer-1 EVM-compatible blockchain that connects Ethereum dApps to The Open Network (TON) and Telegram, enabling developers to deploy Solidity apps and reach Telegram users inside the messenger. Its native token $TAC powers gas, staking, and governance; TAC launched mainnet with integrated DeFi primitives and liquidity bootstrapping programs. The canonical web anchor is the [official site](https://tac.build/), with live market identity cross-checkable on [CoinGecko](https://www.coingecko.com/en/coins/tac).
+TAC deserves full-depth coverage for four reasons. First, it sits at a strategic intersection: EVM developer supply, TON assets, Telegram Mini App distribution, and cross-chain DeFi. Second, it is live and liquid enough to matter, with Surf showing Bybit, Bitget, Binance Alpha, Binance perpetual exposure, and a July 2, 2026 market capitalization near `$177.3M`. Third, the token has moved violently: the 90-day Surf price series showed roughly `+871.4%` from the first point to the latest point, while the July 2 market snapshot also showed a `-39.5%` 24h drawdown. Fourth, the project had a material bridge incident in May 2026, which means the main investable question is not whether TAC has a narrative. It is whether TAC can rebuild trust and convert distribution into durable activity after a real security failure.
 
-As of the June 28, 2026 Surf snapshot, TAC traded around $0.0212623, with $99.02M market cap, $213.3M FDV, and $1.75M 24h volume. The thesis is not simply that the token exists; it is whether EVM-compatible L1 connecting Ethereum dApps to TON and Telegram can translate into sustained demand for TAC. My base view is watchlist, with the main caveat being bridge security, Telegram distribution, and app adoption risk.
+The research standard for this file is full Research Map depth: mechanism walkthrough, source-backed current metrics, source-conflict matrix, economics and token value capture, tokenomics, team and governance, competition, catalysts, valuation framework, risk matrix, scenarios, confidence score, red-team check, monitoring dashboard, follow-up triggers, and final investment view. The primary data snapshot is dated July 2, 2026 and comes from Surf where available; official TAC pages are used as primary sources for architecture, tokenomics, funding, mainnet, and the bridge post-mortem.
 
-## Research Question
+## TL;DR / Executive Summary
 
-Is TAC durable infrastructure with token value capture, or is it mainly cyclical/narrative beta inside Interoperability?
+TAC is best understood as an EVM distribution layer for TON and Telegram, not merely as another generic Layer 1. The project presents itself on the [official TAC site](https://tac.build/) and [TAC documentation](https://docs.tac.build/) as infrastructure that lets developers deploy Solidity logic while letting TON wallet users interact through Telegram-facing experiences. The project calls this model hybrid dApps: Ethereum-style smart contracts and tooling on one side, Telegram / TON user flow on the other. That is a real wedge. EVM developers already know Solidity, audits, wallets, indexing, and DeFi composability. Telegram and TON have distribution, social context, and consumer app surfaces. TAC tries to bridge those two worlds.
 
-## Product and Mechanism
+The bull case is therefore simple but not trivial. If TAC becomes the practical path for Ethereum DeFi protocols to reach TON and Telegram users without rewriting their contracts into TON-native smart-contract languages, it can become a high-beta application chain with real gas demand, staking demand, and governance relevance. Official mainnet materials say TAC launched with DeFi protocols including Curve, ZeroLend, Euler, and Morpho, and with Summoning liquidity commitments that TAC described as more than `$800M` across BTC, ETH, and stable assets in the [mainnet launch post](https://tac.build/blog/a-new-chapter-for-ton-defi-tac-mainnet-is-officially-live). A separate official Summoning post reported about `4k` unique addresses, `$790M` of assets, `26` asset partners, `4` vault providers, and `11` curators before launch in [The Summoning, and the day after](https://tac.build/blog/the-summoning-and-the-day-after). These numbers do not automatically equal stable post-mainnet TVL, but they show that TAC did not launch as an empty chain with only a token.
 
-TAC is a Layer-1 EVM-compatible blockchain that connects Ethereum dApps to The Open Network (TON) and Telegram, enabling developers to deploy Solidity apps and reach Telegram users inside the messenger. Its native token $TAC powers gas, staking, and governance; TAC launched mainnet with integrated DeFi primitives and liquidity bootstrapping programs.
+The market has already recognized the narrative. Surf project-detail data on July 2, 2026 showed TAC at about `$0.03793456`, market capitalization near `$177.29M`, FDV near `$379.87M`, 24h volume near `$22.44M`, circulating supply near `4.681B TAC`, and total supply near `10.030B TAC`. The same snapshot showed `+86.5%` over 7d, `+114.6%` over 30d, and `-39.5%` over 24h. The 90-day Surf market-price series showed a first value near `$0.003905`, a latest value near `$0.037935`, a high near `$0.064397`, and a low near `$0.003432`, producing about `+871.4%` over the window. That is not a quiet fundamentals rerating. It is a volatile, crowded, high-reflexivity trade around mainnet, listings, social attention, and recovery from an incident.
 
-Relevant chains: Binance Smart Chain, Tac, Ton. Key listings or venues from Surf: BYBIT, BINANCE ALPHA, BITGET. Contracts sampled from Surf: Ton TAC: `EQBE_gBrU3mPI9hHjlJoR_kYyrhQgyCFD6EUWfa42W8T7EBP`; bsc TAC: `0x1219c409fabe2c27bd0d1a565daeed9bd9f271de`; Tac WETH: `0x61d66bc21fed820938021b06e9b2291f3fb91945`.
+The core risk is bridge trust. TAC's own [bridge post-mortem](https://tac.build/blog/post-mortem-report-tac-bridge) says that on May 11, 2026 at about 02:20 UTC, the TON to TAC asset bridge suffered a code-hash verification exploit. A counterfeit jetton wallet mimicked a legitimate wallet; the system accepted invalid inputs as legitimate USDt from the bridge perspective; unbacked equivalent assets were issued on TAC; and bridge-locked TON-side assets were drained. TAC reported protocol loss of about `$2.854M` as of May 12, 2026 22:00 UTC. The post-mortem also says Hypernative flagged the balance mismatch, the team halted the sequencer set connecting TAC and TON, and roughly `90%` of the affected accessible assets were recovered. This is not a fatal event by itself, but it creates a permanent analytical discount: TAC's product is the bridge between user distribution and EVM execution, so the bridge cannot be treated as an auxiliary feature.
 
-The token value-capture path should be judged through three questions: who pays, what activity creates repeat demand, and whether TAC is required for access, fees, staking, governance, collateral, rewards, or settlement. If that linkage remains vague, the token should be treated as narrative/liquidity beta rather than a cash-flow asset.
+The token value-capture case is plausible but only partially proven. The [TAC tokenomics post](https://tac.build/blog/introducing-tac-token-utility-and-tokenomics-of-the-tac-protocol-token) describes three core utilities: TAC as the exclusive gas token for the TAC EVM, TAC as a delegated proof-of-stake security token, and TAC as governance over upgrades, inflation, incentives, treasury, grants, and similar parameters. It also argues that TON-user dApp activity can create TAC buy pressure in the background and that EIP-1559-style burning can be considered by governance over time. These are credible token-sink designs. But in July 2026, the investment case still needs measured fees, active users, retained TVL, bridge flows, staking participation, and direct evidence that users are not only farming incentives or trading the token.
 
-## Market Snapshot
+My current view is high-beta watchlist / tactical, not long-term core exposure. TAC is worth tracking because it is one of the few assets directly attacking the gap between Ethereum DeFi supply and Telegram distribution. It is not yet worth underwriting as a durable L1 cash-flow asset because Surf returned no current DeFi metric series for TAC, the official TVL and Summoning numbers are launch / campaign oriented, the bridge exploit was recent, BSC holder concentration is high under that contract-specific lens, and Surf returned no token unlock schedule for the next year even though official tokenomics describes meaningful investor, team, foundation, and ecosystem allocations. The right posture is to watch for post-incident net asset inflows, retained DeFi activity, public fee dashboards, deeper venue liquidity, and clean supply disclosure before upgrading conviction.
 
-| Metric | June 28, 2026 snapshot |
-|---|---:|
-| Market-cap rank | ~267 |
-| Price | $0.0212623 |
-| Market cap | $99.02M |
-| FDV | $213.3M |
-| FDV / market cap | 2.15x |
-| 24h token volume | $1.75M |
-| Circulating supply | 4.66B TAC |
-| Total supply | 10.03B TAC |
-| Chains | Binance Smart Chain, Tac, Ton |
-| Tags | Cross-Chain & Bridge, Developer Tooling, Layer1 |
+## Project Overview
 
-## Source Conflict Matrix
+TAC's project identity is straightforward. Surf resolves the project as `TAC`, symbol `TAC`, slug `tac`, with the official website at [tac.build](https://tac.build/), X handle `TacBuild`, and tags including Cross-Chain & Bridge, Developer Tooling, and Layer1. Surf lists relevant chains as Binance Smart Chain, Tac, and Ton. The main token contracts from the July 2 Surf snapshot are the TON TAC address `EQBE_gBrU3mPI9hHjlJoR_kYyrhQgyCFD6EUWfa42W8T7EBP`, the BSC TAC address `0x1219c409fabe2c27bd0d1a565daeed9bd9f271de`, and TAC-chain assets such as TON, USDT, and WTAC. The native chain is visible through [TAC Explorer](https://explorer.tac.build/), and the Summoning post gives chain configuration data including Chain ID `239`, native currency `TAC`, and the public explorer and RPC links; the same chain-id identity is also visible on [Chainlist](https://chainlist.org/chain/239).
 
-| Metric | Surf snapshot | Cross-check source | Working interpretation | Risk |
+The product problem is distribution. Ethereum has the deepest DeFi developer base and the most battle-tested Solidity application set, but consumer distribution remains weak. TON and Telegram have a large consumer-facing surface, but TON-native development does not automatically inherit Ethereum DeFi contracts, liquidity conventions, security tooling, or developer familiarity. TAC's pitch in [Deploy on EVM; Distribute on Telegram](https://tac.build/blog/deploy-evm-distribute-on-telegram) is that Ethereum developers should not need to abandon their Solidity stack to reach Telegram users. The [What are Hybrid dApps?](https://tac.build/blog/what-are-hybrid-dapps) article frames hybrid dApps as Ethereum applications that keep Solidity logic while extending reach into Telegram through TAC and the TON Adapter model.
+
+That framing matters because TAC is not trying to compete only on raw throughput or cheap gas. Most new L1s fail if their only claim is "faster EVM." TAC's sharper claim is "deploy on familiar EVM rails, distribute inside Telegram." This makes its primary competitive variable less like Solana TPS and more like product-channel fit. The key user is not only the crypto-native trader moving assets across chains. It is the developer or protocol that wants to reach a Telegram audience without rebuilding its core contracts, and the TON / Telegram user who wants access to DeFi without leaving familiar UX.
+
+However, the project should not be misclassified as an official Telegram chain. TAC is an independent EVM-compatible chain and cross-chain framework oriented around TON and Telegram distribution. The distinction is important. Telegram distribution potential can create a premium, but it should not be valued as if Telegram itself has guaranteed user acquisition, wallet integration, or exclusive traffic to TAC. The research question is whether TAC earns that distribution through working Mini App flows, real liquidity, and security, not whether it can borrow the Telegram brand in a pitch deck.
+
+Current basic profile:
+
+| Item | July 2, 2026 working view |
+|---|---|
+| Project | TAC |
+| Token | TAC |
+| Official site | [tac.build](https://tac.build/) |
+| Documentation | [docs.tac.build](https://docs.tac.build/) |
+| Sector | TON-EVM interoperability, appchain, Telegram distribution infra |
+| Native chain | TAC, EVM-compatible, Chain ID 239 |
+| Surf tags | Cross-Chain & Bridge, Developer Tooling, Layer1 |
+| Surf exchanges | Bybit, Binance Alpha, Bitget |
+| Main product | EVM-compatible L1 plus TON Adapter / cross-chain framework |
+| Core narrative | Ethereum DeFi apps can reach TON / Telegram users |
+| Core risk | Bridge security, post-incident trust, real usage conversion |
+
+## Research Question and Investment Relevance
+
+The research question is: is TAC durable infrastructure that can capture value from Telegram-native DeFi distribution, or is it mainly a high-beta narrative asset whose token price already front-ran unproven usage?
+
+The distinction matters because TAC can be directionally right and still be a poor investment at the wrong time. It is true that Telegram is one of crypto's most important social and distribution surfaces. It is true that TON has a consumer-app angle that many EVM ecosystems lack. It is true that EVM developers prefer familiar deployment environments. But none of those facts prove that TAC will generate retained users, stable TVL, fees, or token demand. The investment case has to pass through several gates: user distribution, asset bridging, DeFi utility, fee creation, staking demand, and token capture.
+
+TAC is strategically relevant now because multiple catalysts have converged. The token is post-TGE. Surf listing data shows TAC listing events clustered around July 15, 2025 on Bybit, Bitget, Binance Alpha, Binance perpetuals, and later Binance Alpha / Aster events in April 2026. The mainnet is live according to TAC's [official mainnet launch post](https://tac.build/blog/a-new-chapter-for-ton-defi-tac-mainnet-is-officially-live), with external mainnet coverage also available from [PANEWS](https://www.panewslab.com/en/articles/bne6epaz). The project has raised `$11.5M`, according to both the [official funding post](https://tac.build/blog/tac-raises-11-5m) and third-party coverage from [Odaily](https://www.odaily.news/en/post/5204470) and [BeInCrypto](https://beincrypto.com/tac-funding-ethereum-defi-telegram-ton/). The bridge incident has been publicly documented, which creates a cleaner evidence base for risk analysis than projects that hide incidents. And the price has moved far enough that the opportunity is no longer purely undiscovered.
+
+The investable bull case requires TAC to satisfy five conditions. First, the TON Adapter and bridge must run reliably after the May 2026 exploit fix. Second, blue-chip DeFi deployments must produce retained activity after campaign rewards and launch excitement fade. Third, users must actually interact from Telegram / TON flows rather than only from EVM power-user wallets. Fourth, TAC gas, staking, and governance must create measurable token demand or supply sinks. Fifth, liquidity must deepen across venues without the token becoming only a derivatives-driven momentum instrument.
+
+The avoid case is also clear. TAC should be avoided if post-incident trust does not recover, if TVL remains a launch-campaign number rather than current protocol liquidity, if exchange activity overwhelms onchain activity, if unlock / foundation supply becomes opaque, or if TON-native alternatives and general bridge protocols capture the flow without requiring TAC. In that world, TAC can keep the words "Telegram" and "EVM" in the narrative while tokenholders hold the risk.
+
+## Architecture / Product Mechanism
+
+TAC's architecture has three layers: an EVM-compatible execution layer, a TON-facing cross-chain / user interface layer, and an application distribution layer. The mainnet post describes TAC as a complete Layer 1 built on CosmosEVM vanilla, compatible with the Cancun EVM fork, and secured by delegated proof-of-stake using TAC. It also lists validators or infrastructure operators including P2P, Chorus One, Kiln, Kintsughi, ValidationCloud, Nodestake, and Polkachu, with a planned Babylon Bitcoin staking integration once that service is live. This makes TAC closer to an app-specific EVM chain with a TON adapter than to a simple bridge contract.
+
+The EVM layer is important because it lets existing Solidity applications and security practices transfer into TAC. Developers can reason about smart contracts, audits, liquidity primitives, ERC-style tokens, oracles, indexing, and wallets in a familiar environment. TAC's docs homepage summarizes this as building hybrid dApps that connect EVM smart contracts to TON users, and deploying Solidity code while TON wallet users interact directly. This is a strong product simplification if it works. Rewriting a large DeFi protocol for a new VM is costly; deploying EVM contracts to a compatible chain is much easier.
+
+The TON Adapter / cross-chain framework is the strategic layer. TAC's mainnet post describes a lock-and-mint mechanism and an "authoritative distributed sequencer consensus" that connects TON and TAC. The [TON bridges documentation](https://docs.ton.org/onboarding/bridges) explains the general bridge pattern: assets are typically locked on one chain and equivalent wrapped assets are minted on another; reverse movement burns the wrapped representation and unlocks the source assets. TAC's own post-mortem confirms that TAC's bridge uses a lock-and-mint style approach typical of Ethereum L2s or OFTs and that the system also supports native cross-chain messaging between TON and TAC.
+
+The user flow can be simplified as follows:
+
+| Step | Actor | What happens | Investment implication |
+|---|---|---|---|
+| 1 | DeFi protocol | Deploys Solidity contracts or app logic to TAC | Lowers developer migration friction |
+| 2 | TAC / TON Adapter | Connects TON-side user actions and assets to TAC EVM execution | Creates the bridge trust assumption |
+| 3 | Telegram / TON user | Interacts with a Mini App or TON wallet-facing experience | Converts distribution into potential usage |
+| 4 | TAC EVM | Executes contract logic with TAC as gas token | Creates network-fee demand if usage is real |
+| 5 | Validators / stakers | Secure the chain and collect fees / rewards | Creates staking and security demand for TAC |
+| 6 | Governance / treasury | Manages incentives, emissions, upgrades, grants, and treasury | Creates governance relevance but also admin / supply risk |
+
+This flow shows why TAC's product is interesting and fragile at the same time. The end-user dream is "DeFi as simple as a Telegram interaction." The system reality is a chain, validators, bridges, sequencers, asset representations, smart contracts, oracles, wallets, mini apps, and security monitors. If these layers work, TAC can compress user friction. If any layer fails, the user faces bridge loss, stuck assets, bad UX, or broken trust.
+
+The May 2026 exploit illustrates this fragility. The post-mortem says a counterfeit jetton wallet bypassed verification controls because the sequencer software did not verify the minter code of the sender jetton wallet. From an investment standpoint, this is an architecture-level lesson. In cross-chain systems, the security boundary is not only smart contract correctness on the EVM side. It is the full asset representation pipeline, including TON-specific token standards, wallet contracts, code-hash verification, sequencer validation, and emergency response. A single missing verification step can create unbacked assets and drain locked funds.
+
+The positive read is that TAC published a detailed post-mortem, described the root cause, disclosed approximate loss, said the TAC EVM layer remained operational, and reported recovery steps. The negative read is that the exploit happened in the exact system that defines TAC's value proposition. Bridge incidents in generic bridges are bad; bridge incidents in an EVM-to-TON distribution layer are thesis-critical.
+
+For token value capture, the mechanism depends on TAC being more than a governance token. The tokenomics post says TAC is the exclusive gas token for the TAC EVM, a delegated PoS staking token, and a governance token. It also states that TON users may pay fees in a familiar UX while background mechanics create TAC demand, and that the community may consider EIP-1559-style fee burning over time. If this design is implemented and used at scale, TAC can capture activity. If Telegram users are subsidized indefinitely, if fees are negligible, or if activity remains mostly farming, token demand will be weak.
+
+## Market Intelligence and Traction
+
+Data snapshot: July 2, 2026.
+
+Surf project-detail returned the following market snapshot for TAC: price near `$0.03793456`, market capitalization near `$177.29M`, FDV near `$379.87M`, 24h trading volume near `$22.44M`, circulating supply `4,681,115,042 TAC`, total supply `10,030,078,763 TAC`, 24h high `$0.062834`, 24h low `$0.03739726`, ATH `$0.066538`, ATL `$0.00134381`, 7d change `+86.53%`, 30d change `+114.64%`, and 24h change `-39.54%`. The [CoinGecko TAC page](https://www.coingecko.com/en/coins/tac) is a useful venue cross-check for live price and market pages, but this report uses Surf as the dated structured snapshot.
+
+| Metric | July 2, 2026 Surf snapshot | Interpretation |
+|---|---:|---|
+| Price | `$0.03793456` | Near the 24h low after a violent drawdown |
+| Market cap | `$177.29M` | Mid-small cap infrastructure valuation |
+| FDV | `$379.87M` | FDV / MC about `2.14x` |
+| 24h volume | `$22.44M` | High turnover relative to market cap |
+| 24h change | `-39.54%` | Strong evidence of short-term crowded positioning |
+| 7d / 30d change | `+86.53% / +114.64%` | Momentum remains strong despite drawdown |
+| 90d change | `+871.41%` | Narrative and event-driven rerating already occurred |
+| Circulating supply | `4.681B TAC` | About `46.7%` of total supply |
+| Total supply | `10.030B TAC` | Remaining supply and foundation / vesting control still matter |
+| ATH / ATL | `$0.066538 / $0.00134381` | Extreme range since market launch |
+
+The 90-day price structure is the first warning sign. Surf market-price data showed a first point near `$0.003905` and latest point near `$0.037935`, with a high near `$0.064397` and low near `$0.003432`. A token can be fundamentally interesting after an `871%` 90-day move, but the margin of safety is smaller. Any new buyer is underwriting not only fundamentals but also existing profit-taking, listing reflexivity, perp positioning, and the credibility of post-incident recovery.
+
+Venue data is adequate for monitoring but not yet a large-cap liquidity profile. Surf listing events showed nine TAC listing records in the January 2025 to July 2, 2026 window: Bitget perp, Bybit spot, Bitget spot, Binance Alpha spot, Binance perpetual, Bybit perpetual, Aster perpetual, and a later Binance Alpha record. This means TAC has enough exchange surface for tactical liquidity. It does not mean liquidity is as deep or as resilient as a Binance main spot listing with broad market-maker support. A large part of the short-term price action can still be driven by derivatives, Alpha venue attention, and campaign flow.
+
+Onchain activity is meaningful but should be interpreted narrowly. Surf's BSC transfer stats for the TAC BSC contract over 30 days showed `490,633` transfers, `1,312` unique senders, `1,405` unique receivers, `2.302B TAC` transferred, and about `$44.31M` in USD-enriched transfer amount with an enriched ratio of about `53.39%`. The peak day was June 29, 2026 with `125,891` transfers and about `771.49M TAC` transferred. This confirms a sudden activity spike, but it is BSC-token activity, not direct proof of TAC-chain product usage or Telegram Mini App retention.
+
+BSC holder data is more concerning. Surf token-holders on BSC showed the largest holder at `14.43%`, labeled Sablier Lockup NFT, and top-10 holders summing to about `73.94%` under the BSC contract lens. The calculated top-20 percentage exceeded `100%`, which likely reflects wrapper / bridge denominator quirks, labeling limitations, or a contract-specific holder base that should not be treated as global TAC supply truth. The correct interpretation is not "top 20 own more than all TAC." The correct interpretation is: BSC-contract distribution is concentrated and cannot be used as a clean global supply map without reconciling native TAC, TON, bridge, lockup, exchange, and foundation wallets.
+
+Social data shows attention but not a durable smart-money inflection. Surf social-detail showed 30-day sentiment score `0.1631` and `151` smart followers. Surf smart-follower history showed the count ranging from `147` to `159`, with `151` on July 1. That is stable, not explosive. Surf mindshare for June 2 to July 2 returned `19` daily points, total view count `498,672`, and a peak of `182,429` on June 30. This suggests event-driven visibility around price and recovery, but not necessarily an enduring improvement in high-quality follower base.
+
+The biggest data gap is current DeFi metrics. Surf `project-defi-metrics --q TAC --metric tvl` returned no matching DeFi project for TAC. This does not prove TAC has zero TVL. It proves that Surf did not expose a current DeFi metric series for TAC under that lookup. Official pages and media coverage discuss pre-mainnet / launch liquidity commitments: `$700M+`, `$790M`, or `$800M+` depending on source and date. Those are useful launch signals, but they are not equivalent to current, independently verified, retained protocol TVL after bridge incident and incentive cycles.
+
+### Source Conflict Matrix
+
+| Metric | Source A | Source B / conflict | Working interpretation | Risk |
 |---|---:|---|---|---|
-| Valuation | $99.02M MC / $213.3M FDV | [CoinGecko](https://www.coingecko.com/en/coins/tac) live page | Dated snapshot is useful for research, not execution | Medium |
-| Supply | 4.66B circulating / 10.03B total | Token contract/explorer should be checked before sizing | Dilution or bridge assumptions can change the token view | Medium |
-| Liquidity | $1.75M 24h volume | Exchange order books and DEX pools | Token volume does not prove organic protocol usage | Medium |
-| Usage | Not fully quantified in this pass | Official dashboards, docs, GitHub, Dune/DefiLlama if available | Upgrade only when usage confirms the narrative | High |
+| Price / market cap / FDV | Surf July 2: `$0.03793`, `$177.29M` MC, `$379.87M` FDV | [CoinGecko](https://www.coingecko.com/en/coins/tac) live page can differ by venue and timestamp | Use Surf as dated snapshot, do not treat as execution quote | Medium |
+| 90d price move | Surf market-price: about `+871.4%` | Shorter timeframes show `-39.5%` 24h drawdown | Momentum and drawdown both true; this is high reflexivity | High |
+| Circulating supply | Surf: `4.681B TAC` | Official tokenomics says `18%` at TGE and gradual vesting / foundation control | Current float is higher than TGE baseline; unlock path needs monitoring | High |
+| Total supply | Surf: `10.030B TAC` | Official tokenomics uses allocation percentages rather than a simple live supply table | Use Surf for market math; use official page for allocation risk | Medium |
+| Unlock schedule | Surf token-tokenomics returned no unlock events from July 2, 2026 to July 2, 2027 | Official tokenomics describes investor, advisor, and team cliffs / vesting | Empty Surf unlock data is a coverage gap, not proof of no unlock risk | High |
+| TVL / liquidity | Official funding post: `>$700M` pre-mainnet TVL; Summoning post: `$790M`; mainnet post: `>$800M` | Surf DeFi metric lookup returned no current TAC series | Treat launch liquidity as campaign commitment until current retained TVL is public | High |
+| Bridge incident loss | Official post-mortem: about `$2.854M` protocol loss | Third-party summaries such as PANEWS reported recovery status | Official post-mortem is primary source; security discount remains | High |
+| BSC holders | Surf BSC top 10: about `73.94%`; largest holder `14.43%` | Top-20 percentage abnormal under contract-specific denominator | Use as concentration warning only, not global supply truth | Medium-High |
+| Social traction | Surf mindshare peak `182,429`; smart followers flat `147-159` | X follower count around `38,690` in Surf project-detail | Event attention is real; quality of new attention is not yet proven | Medium |
+| Exchange liquidity | Surf listings include Bybit, Bitget, Binance Alpha, Binance perp / Aster perp | Major spot depth beyond those venues requires order-book checks | Tradable but not necessarily resilient institutional liquidity | Medium |
 
 ## Economics and Value Capture
 
-The positive case is that EVM-compatible L1 connecting Ethereum dApps to TON and Telegram creates recurring activity and that TAC captures part of it through fees, staking, governance, access, burns, collateral, or incentives. The weak case is that the product can grow while TAC remains only a rewards or governance asset. For this reason, I would track usage and token sinks before treating TAC as more than watchlist exposure.
+TAC value capture has a clean theoretical design and an unproven empirical base. The theoretical design is better than many governance-only tokens. The official tokenomics page defines TAC as gas, staking / security, and governance. It says TAC is the exclusive gas token for TAC EVM transactions, validators must purchase and stake TAC to produce blocks and validate transactions, delegators can share staking rewards, and governance can control upgrades, parameters, incentives, treasury use, and grants. It also states that TAC can support a background fee-flow design where TON-user activity produces TAC demand, and that EIP-1559-style burning could be considered by governance.
+
+The positive economic loop looks like this:
+
+| Flow | Bullish interpretation |
+|---|---|
+| EVM protocols deploy to TAC | Developer supply arrives without rewriting contracts |
+| TON / Telegram users interact with Mini Apps | Distribution becomes real user activity |
+| Transactions execute on TAC EVM | TAC is consumed as gas or acquired in the background |
+| Validators secure the chain | TAC is staked and partially locked for security |
+| DeFi apps create TVL / swaps / lending / fees | Network usage becomes repeatable rather than one-time |
+| Governance controls incentives and treasury | TAC holders influence long-term resource allocation |
+| Potential EIP-1559 burn | High activity can become a supply sink if implemented |
+
+The problem is that every arrow in the loop can weaken. EVM protocols may deploy but not attract users. Telegram users may open Mini Apps but not hold assets. Transactions may be subsidized. Gas fees may be too low to matter. Validators may stake because rewards are high, not because demand is strong. DeFi TVL may be campaign-driven and leave after incentives. Governance may be dominated by foundation / investor / treasury wallets. Potential burn may remain a future option rather than a current sink.
+
+For investors, the most important distinction is protocol usefulness versus token capture. TAC can be useful infrastructure even if TAC tokenholders do not capture much value. Suppose a user pays in TON or a stable asset through a Telegram-like UX, the protocol abstracts the TAC gas requirement, and the project subsidizes or rebates costs. That creates good UX, but it does not necessarily create material net buy pressure if subsidies exceed fees. Conversely, if every retained DeFi user creates recurring TAC gas demand, validators stake significant TAC, emissions decline, and locked-token staking rewards are burned as described in tokenomics, then token value capture improves.
+
+The tokenomics page includes a notable anti-emission design: locked tokens can be staked to restricted validators with high validator fees, and the foundation burns a large portion of staking rewards from locked tokens. The page frames this as a way to reduce effective token emission while preserving network security. This is thoughtful, but it needs transparent reporting. The market should track actual staking rate, reward source, burn amount, validator concentration, and whether locked-token rewards are indeed burned consistently.
+
+The bear case is not that TAC has no utility. The bear case is that utility is too small relative to FDV and volatility. At `$379.9M` FDV, the token does not need to become a top-10 chain to work, but it does need visible recurring usage. If current onchain data cannot separate real TAC-chain transactions from BSC token transfers, if TVL remains described by launch campaign posts rather than current dashboards, and if security recovery is measured mostly by announcements, then valuation is anchored to narrative rather than cash-flow-like evidence.
+
+My working economic classification: TAC is a usage-linked gas / staking token with credible design intent, but not yet a proven value-capture asset. It is stronger than a pure governance token and weaker than a fee-generating protocol with transparent revenue, burn, staking, and retained-user dashboards.
+
+## Tokenomics / Capital Structure
+
+TAC's tokenomics are attractive in structure but still require monitoring because a large part of supply is allocated to insiders, foundation, and ecosystem programs. The official tokenomics page describes a total allocation split across Investors & Advisors, Early Contributors, Foundation & Reserve, and Community & Ecosystem. It also says `18%` of total supply was in circulation at TGE, primarily from community incentives, exchange liquidity, and airdrop allocations, while the remaining tokens were locked or foundation controlled and would enter circulation gradually.
+
+Key official allocation points:
+
+| Allocation | Official percentage | Vesting / control notes | Investment implication |
+|---|---:|---|---|
+| Investors & Advisors | `20.0%` | Investors `16.6%`, advisors `3.4%`; 12-month cliff from TGE, then 24-month linear vesting | Major mid-term supply risk |
+| Early Contributors / Team | `22.1%` | Fully locked for 1 year from TGE, then vesting over 2-3 years | Execution alignment, but also future float growth |
+| Foundation & Reserve | `14.8%` | Foundation treasury, future hires, protocol reserve; unlocked at genesis but intended for gradual use | Governance and treasury trust risk |
+| Community & Ecosystem | `43.1%` | DAO treasury, incentives, liquidity, rewards, ecosystem programs | Can bootstrap growth or create farming pressure |
+| TGE circulation | `18.0%` | Community incentives, exchange liquidity, airdrop allocations | Low initial float can amplify post-TGE reflexivity |
+
+Surf's July 2 snapshot showed `4.681B` circulating supply and `10.030B` total supply, implying about `46.7%` circulating. That is materially above the official TGE circulation percentage, as expected for a token more than a year after the July 2025 listing cluster. The problem is not that supply increased. The problem is that investors need a clean forward unlock calendar. Surf token-tokenomics returned no unlock events in the July 2, 2026 to July 2, 2027 range, with an empty-result message. Because the official tokenomics page describes cliffs and vesting, I treat Surf's empty result as data coverage limitation, not as a fundamental conclusion that TAC has no unlock pressure.
+
+The FDV / market cap ratio is about `2.14x`, which means the market is already pricing significant future supply. This is not the worst structure in crypto, but it is not clean. If real usage accelerates faster than unlocks and foundation spend, the token can absorb supply. If activity is mostly launch-campaign TVL and price momentum, supply releases can cap the upside.
+
+The foundation / reserve category deserves special attention. Official tokenomics says these tokens are unlocked at genesis but intended to be deployed gradually and responsibly. That may be reasonable for a young chain funding development, partnerships, and ecosystem growth. It is also a governance trust assumption. Investors need to know wallet addresses, custody, spending policy, grant policy, market-making arrangements, and whether ecosystem incentives become recurring sell pressure.
+
+The BSC holder snapshot adds another caution. Under the BSC contract-specific lens, top-10 holders were highly concentrated, and the largest holder was labeled Sablier Lockup NFT. This likely reflects vesting, lockups, wrappers, bridges, exchanges, and contract-specific representation. It does not automatically imply free-floating whales can dump the token. But it does mean global supply analysis must reconcile all representations: native TAC, BSC TAC, TON TAC, bridge reserves, exchange wallets, lockup contracts, foundation wallets, and staking contracts.
+
+Tokenomics conclusion: TAC has a plausible token model, but it is not a low-dilution asset. Any serious position should be sized with vesting, foundation spend, and bridge-reserve concentration in mind.
 
 ## Team, Funding, and Governance
 
-Surf lists reported funding of $11.50M. Team snapshot: Pavel Altukhov (Co-Founder, CEO), Anton Bryantsev (Co-Founder, CTO), Marco Monaco (Co-Founder, Growth Lead), Natalia Kart (COO). Governance/admin-key details were not fully verified in this batch, so smart-contract permissions, multisig controls, unlock schedules, and foundation treasury movements remain follow-up items.
+Surf lists five visible team members: Pavel Altukhov as co-founder / CEO, Anton Bryantsev as co-founder / CTO, Marco Monaco as co-founder / Growth Lead, Natalia Kart as COO, and Aviral Avasthi as CMO. The funding profile is credible for a specialized infrastructure project. Surf and the official funding post both show total funding of `$11.5M`: a `$6.5M` seed round in November 2024 and a `$5M` strategic round in June 2025 led by Hack VC. Surf's seed investor list includes Animoca Brands, The Spartan Group, Bitscale Capital, CMT Digital, P2 Ventures, Hack VC, Sandeep Nailwal, Ankr, Primitive Ventures, Symbolic Capital, Paper Ventures, TON Ventures, and others. Third-party coverage from [Odaily](https://www.odaily.news/en/post/5204470) and [BeInCrypto](https://beincrypto.com/tac-funding-ethereum-defi-telegram-ton/) broadly confirms the funding narrative.
+
+The investor base is strong enough to support partnerships, market access, and credibility. It is not enough to remove execution risk. Infrastructure investors often back multiple competing chains, bridges, and app distribution plays. The real question is whether TAC can convert investor relationships into protocol deployments, liquidity, audits, validators, and distribution integrations.
+
+Governance is a key unknown. The tokenomics page says TAC holders can participate in governance over upgrades, parameters, inflation, incentives, grants, and treasury decisions. That is directionally positive. However, current governance power concentration is not fully clear from the public sources used in this report. With investors, team, foundation, and ecosystem allocations all material, governance decentralization should be treated as progressive rather than complete. For an L1 with a recent bridge incident, governance and admin controls are not abstract. They determine emergency halts, bridge reopening, upgrade cadence, treasury coverage of losses, validator parameters, and compensation decisions.
+
+Security posture is mixed. The mainnet post says TAC had audits by Halborn for the EVM layer, Trail of Bits for the TON Adapter, Quantstamp for proxy applications, and real-time protection through Hypernative and a dedicated SOC. The post-mortem shows those controls were not sufficient to prevent the May 2026 exploit, though Hypernative did flag the mismatch. This produces a nuanced view: TAC has invested in security, but bridge systems remain hard and the post-incident remediation must be judged by future reliability, not the existence of audit names.
 
 ## Competitive Landscape
 
-| Comparison set | Why it matters |
-|---|---|
-| TON, Base, BNB Chain, Linea, and Telegram mini-app infra | These alternatives compete for the same users, liquidity, developers, or narrative budget |
-| CEX liquidity and passive beta | Major venue access can support price without proving product traction |
-| Native ecosystem substitutes | Users may prefer apps integrated directly into larger ecosystems |
+TAC competes in several markets at once, which makes the competitive set broader than "other EVM chains." It competes for EVM developers, TON users, Telegram Mini App distribution, bridged liquidity, validator / staking capital, and investor attention. A narrow comparison misses the point.
+
+| Competitor / substitute | What it offers | TAC edge | TAC weakness |
+|---|---|---|---|
+| TON-native apps | Native alignment with TON wallets, contracts, and ecosystem | TAC can reuse EVM contracts and DeFi tooling | Native apps avoid part of TAC bridge / adapter complexity |
+| Ethereum L2s such as [Base](https://base.org/) or [Arbitrum](https://arbitrum.io/) | Deep EVM liquidity, mature developer tooling, existing DeFi | TAC has a Telegram / TON distribution wedge | L2s have stronger existing TVL, users, and security familiarity |
+| Cross-chain protocols such as [LayerZero](https://layerzero.network/), [Wormhole](https://wormhole.com/), and [Axelar](https://axelar.network/) | Messaging and asset movement across chains | TAC combines appchain execution with TON / Telegram UX | General messaging networks may capture bridge flow without TAC token demand |
+| Telegram Mini Apps without TAC | Direct consumer distribution in Telegram | TAC adds EVM DeFi execution and asset framework | Apps may integrate TON or other rails directly |
+| CEX / trading app access | Easy token access and UX for mainstream users | TAC offers onchain DeFi composability | CEX UX is simpler for trading and yield products |
+| Other new EVM appchains | Cheap gas and Solidity compatibility | TAC has a more differentiated distribution story | Appchain market is crowded and liquidity is scarce |
+
+TAC's most defensible edge is not technology in isolation. CosmosEVM, dPoS, lock-and-mint bridges, and Solidity compatibility are not unique by themselves. The edge is the bundled path: EVM code, TON assets, Telegram UX, DeFi protocols, and launch liquidity. If TAC becomes the default place where Ethereum DeFi meets Telegram users, it has a real moat. If it is merely one more EVM chain with a bridge, the moat is weak.
+
+The competitive risk from TON-native development is especially important. TON applications that do not require EVM compatibility may prefer native contracts and direct wallet integration. That route can avoid the complexity and trust assumptions of an external EVM chain. TAC's response is that much of DeFi already lives in Solidity and cannot easily migrate to TON-native logic. Whether that is enough depends on developer priorities. Large protocols may deploy to TAC if liquidity and users are there; smaller consumer apps may go native if UX is simpler.
+
+The competitive risk from LayerZero / Wormhole / Axelar-style systems is different. They are not Telegram distribution layers, but they can move assets and messages across chains. If all users need is bridging, TAC may be overbuilt. TAC must prove that the integrated appchain + Telegram UX creates more value than generic bridging.
+
+## Catalysts and Valuation / Importance Framework
+
+TAC cannot be valued cleanly with revenue multiples today because transparent current fees, revenue, retained TVL, and user dashboards are not yet available through the source package used here. A false-precision DCF would be performative. The better framework is strategic importance adjusted by measurable traction, security recovery, and token capture.
+
+Near-term catalysts:
+
+| Catalyst | Bullish confirmation | Bearish read |
+|---|---|---|
+| Bridge reopening and stable post-mortem operations | No repeat incident, clean third-party follow-up, asset flows recover | Any new bridge halt or unexplained imbalance |
+| DeFi protocol activity | Curve, Euler, Morpho, ZeroLend, and others show retained TVL / users | Launch integrations remain shallow or inactive |
+| Public dashboards | Current TVL, fees, users, transactions, bridge inflows, staking, burns | Data remains mostly marketing posts and campaign totals |
+| Liquidity improvement | Deeper spot venues, tighter spreads, healthier market depth | Volume remains mostly perp / event-driven |
+| Token sinks | Staking participation, burned rewards, fee usage, possible EIP-1559 path | Rewards / subsidies dominate demand |
+| Telegram Mini App UX | Real TON wallet users interact without complex bridge steps | Usage stays crypto-native and wallet-extension driven |
+| Supply disclosure | Forward unlocks and foundation wallets are clear | Unlocks remain opaque or surprise market |
+
+At `$379.9M` FDV, TAC sits in a middle zone. It is not priced like a mature L1 with billions in stable TVL, but it is also not priced like an undiscovered seed-stage token. The current valuation can be justified if TAC proves it is a real bridge between Ethereum DeFi and Telegram distribution. It is harder to justify if post-mainnet activity is mainly incentive migration, token trading, and social spikes.
+
+A rough importance framework:
+
+| Evidence level | What TAC would need | Valuation implication |
+|---|---|---|
+| Narrative only | Listings, social attention, Telegram framing, no current dashboards | High volatility, low fundamental support |
+| Launch traction | Summoning assets, blue-chip deployments, initial users | Supports optionality but still campaign-risked |
+| Retained usage | Current TVL, repeat users, bridge inflows, stable DeFi activity | Justifies mid-cap infra valuation |
+| Economic capture | Fees, staking sinks, burns, lower emissions, treasury discipline | Supports durable token premium |
+| Category leadership | TAC becomes default EVM-to-TON / Telegram DeFi path | Opens larger L1 / bridge-infra valuation range |
+
+The current evidence sits between launch traction and early retained-usage verification. It is not only narrative, but it is not yet clean category leadership. That is why the verdict is watchlist / tactical rather than accumulate.
 
 ## Risk Matrix
 
-| Risk | Severity | Why it matters |
-|---|---|---|
-| bridge security, Telegram distribution, and app adoption risk | High | This is the main path where the thesis fails |
-| Token value capture | High | Product adoption does not automatically accrue to token holders |
-| Liquidity quality | Medium | 24h volume can be incentive-driven or venue-concentrated |
-| Competition | Medium | The category has credible substitutes |
-| Execution and disclosure | Medium | Missing dashboards, audits, or unlock data should lower position sizing |
+| Risk | Severity | Why it matters | What would reduce it |
+|---|---|---|---|
+| Bridge / adapter security | High | TAC's core product depends on cross-chain asset trust | Independent follow-up audit, no repeat incidents, transparent bridge balances |
+| Current TVL opacity | High | Launch liquidity does not equal retained activity | Public current TVL / fees / users dashboards |
+| Token unlock / foundation supply | High | FDV / MC gap and official vesting imply future float growth | Clear unlock calendar, wallet labels, treasury policy |
+| Holder concentration | Medium-High | BSC contract top holders are concentrated and hard to interpret | Cross-chain holder reconciliation and lockup transparency |
+| Price reflexivity | Medium-High | 90d +871% and 24h -39.5% show crowded momentum | Lower volatility, deeper spot liquidity, sustained fundamentals |
+| Telegram over-extrapolation | Medium-High | Telegram users do not automatically become DeFi users | Retained Mini App activity and non-subsidized usage |
+| Competition | Medium | Native TON apps and general bridges may bypass TAC | Exclusive / sticky integrations and user retention |
+| Governance / admin control | Medium | Emergency halts and treasury coverage require trust | Clear governance process, multisig disclosure, upgrade policy |
+| Regulatory / UX risk | Medium | Telegram-based DeFi can attract compliance scrutiny | Jurisdictional clarity and consumer-protection controls |
+| Data availability | Medium | Missing Surf DeFi series reduces confidence | Multiple independent dashboards and explorer analytics |
+
+The highest-severity risk remains technical security because it can permanently impair trust. A second bridge incident would be much worse than the first because it would suggest process failure after explicit remediation. The second-highest risk is data opacity. Without current retained usage, investors can mistake launch commitments for ongoing demand.
 
 ## Bull / Base / Bear Scenarios
 
-| Scenario | What must be true | Confirmation metric |
-|---|---|---|
-| Bull | TAC turns category relevance into repeat users, integrations, and measurable token sinks | Usage, revenue/fees, liquidity, and TAC utility all trend higher for two quarters |
-| Base | The project remains liquid and visible but token accrual is only partially proven | Market cap and volume hold while usage data stays mixed |
-| Bear | Narrative, incentives, or listings fade before durable demand appears | Volume, users, and token utility weaken together |
+| Scenario | Probability | 6-12 month state | Confirmation metrics | Investment read |
+|---|---:|---|---|---|
+| Bull | 25% | TAC becomes the most visible EVM-to-TON DeFi route, with stable bridge operations, retained TVL, active Mini Apps, and better venue depth | Current TVL disclosed and retained, bridge inflows positive, smart followers rise above prior range, fees / staking / burns visible | TAC graduates from high-beta watchlist to selective accumulation |
+| Base | 45% | TAC remains a liquid Telegram / TON DeFi beta trade, but usage evidence is mixed and token capture is only partially proven | Price and volume remain active, some DeFi integrations continue, but dashboards remain incomplete | Tactical only; buy weakness if data improves, avoid chasing spikes |
+| Bear | 30% | Bridge trust remains discounted, TVL cannot be independently verified, social attention fades, and supply / unlock pressure caps rallies | Another incident, TVL or users disappoint, exchange volume falls, foundation / unlock concerns rise | Avoid or downgrade; narrative premium compresses |
+
+The bull scenario requires more than "Telegram has many users." It needs data. The strongest upgrade signal would be a public dashboard showing current TAC TVL, bridge assets, retained active users, protocol fees, staking, burn / reward mechanics, and Mini App origin of transactions. The bear scenario does not require the project to fail technically. It only requires activity to remain hard to verify while token supply and price volatility remain high.
 
 ## Confidence Score
 
 | Dimension | Rating | Notes |
 |---|---|---|
-| Source quality | Medium | Surf, official web anchor, and market pages provide identity and market data |
-| Data consistency | Medium | Market data is usable, but supply/usage needs ongoing cross-checks |
-| Mechanism clarity | Medium | Product narrative is understandable, token accrual needs proof |
-| Value capture | Low to Medium | Upgrade only if token sinks become measurable |
-| Liquidity quality | Medium | $1.75M 24h volume is enough for monitoring, not a fundamentals guarantee |
+| Source quality | Medium-High | Official site, tokenomics, mainnet, funding, post-mortem, docs, Surf structured data, CoinGecko, Odaily, BeInCrypto, PANEWS |
+| Data consistency | Medium-Low | Market data is usable; TVL, unlock schedule, and holder distribution need reconciliation |
+| Mechanism clarity | Medium | EVM + TON Adapter + dPoS model is understandable, but bridge trust assumptions are complex |
+| Value capture | Low-Medium | Gas / staking / governance are credible, but fees, burns, and retained usage are not yet transparent |
+| Liquidity quality | Medium | 24h volume is meaningful, but volatility and venue mix suggest tactical liquidity rather than mature depth |
+| Security confidence | Low-Medium | Public post-mortem is positive, but the bridge exploit was thesis-critical |
 
-Overall confidence: Medium for identity and market data; Low to Medium for durable investment quality.
+Overall confidence: Medium for identity, funding, token role, and market snapshot; Low to Medium for durable investment quality. The confidence penalty comes from post-incident bridge trust, missing current DeFi metrics, unclear unlock schedule, and concentration / representation issues across BSC, TON, and native TAC.
 
 ## Red-team Check
 
-The strongest bear case is that TAC grows attention or integrations without creating durable demand for TAC. The most gameable metric is headline partnerships or volume without retained users. The token value-capture failure path is product usage that bypasses token sinks. The plausible impairment path is liquidity decline, token unlock pressure, weak usage data, or a better-funded competitor taking category share.
+The strongest reason the thesis could be wrong is that TAC may be solving a real developer problem without owning the end-user relationship. Telegram distribution is valuable, but users may interact with simpler TON-native apps, CEX-like Mini Apps, or wallet-native flows that do not require TAC. Ethereum DeFi protocols may deploy experimentally but not commit liquidity or product roadmaps. In that case, TAC becomes a launchpad for announcements rather than a sticky financial network.
+
+The most gameable metric is launch TVL. Pre-mainnet liquidity, Summoning assets, and campaign participation can look impressive while still being mercenary. The difference between `$790M` in campaign assets and durable post-mainnet TVL is the difference between a strong launch and a strong protocol. The second most gameable metric is volume. A token with 24h volume equal to a large percentage of market cap can look liquid while much of the activity is high-turnover speculation.
+
+The token value-capture failure path is straightforward. TAC can abstract gas so well that users never think about TAC, subsidize usage heavily, pay validators through emissions, and distribute ecosystem incentives faster than fees grow. In that path, the chain may have users, but tokenholders face dilution and weak fee capture. Governance value alone is not enough.
+
+The plausible permanent impairment path is a repeat bridge incident or a delayed discovery that recovered assets / patched controls were insufficient. A second major bridge failure would likely reprice TAC from "recovering infrastructure" to "untrusted bridge risk." Other impairment paths include surprise unlock pressure, loss of core DeFi partners, Telegram / TON ecosystem policy changes, exchange delisting, or a better-funded competitor capturing the EVM-to-TON narrative.
 
 ## Monitoring Dashboard
 
-| Metric | Current | Bull threshold | Bear threshold | Source |
+| Metric | Current / latest baseline | Bull threshold | Bear threshold | Source |
 |---|---:|---:|---:|---|
-| 24h token volume | $1.75M | 3x current level sustained | <25% of current level | Surf / exchanges |
-| FDV / MC | 2.15x | Gap compresses through adoption | Gap widens from unlock pressure | Surf / token unlocks |
-| Product usage | Not quantified here | Public dashboard shows growth | No usage disclosure | Official / Dune / DefiLlama |
-| Token utility | Needs verification | Fees, staking, or burns become material | Utility remains cosmetic | Docs / governance |
+| Price | `$0.03793` | Holds above post-drawdown range with lower volatility | Breaks down while volume fades | Surf market snapshot |
+| 90d price change | `+871.4%` | Consolidates with fundamentals catching up | Momentum unwinds without usage data | Surf market-price |
+| Market cap / FDV | `$177.3M / $379.9M` | FDV / MC compresses through adoption | FDV gap widens due to supply concerns | Surf project-detail |
+| 24h volume | `$22.4M` | Deep spot-led volume persists | Volume collapses or stays derivatives-led | Surf / exchanges |
+| Current DeFi TVL | Surf no TAC DeFi series | Public current TVL is retained and independently visible | Only launch / campaign TVL is cited | Surf + official dashboards |
+| BSC transfers 30d | `490,633` transfers | Growth maps to native TAC activity | BSC token churn remains isolated | Surf token-transfer-stats |
+| Smart followers | `151`, range `147-159` | Breaks above range with quality accounts | Stays flat while price narrative fades | Surf social-detail |
+| Mindshare | 30d total `498,672`, peak `182,429` | Attention converts into users | Attention spikes only around price events | Surf social-mindshare |
+| Unlock data | Surf returned no events | Official forward vesting dashboard published | Surprise unlock / wallet movement | Surf token-tokenomics + official tokenomics |
+| Bridge health | May 2026 exploit disclosed and recovery reported | No repeat incidents, audited patch, public balances | New imbalance, halt, or unclear bridge state | TAC post-mortem |
+| Token sinks | Gas / staking / governance design disclosed | Fees, staking, burns, reward-burn reports visible | Utility remains mostly narrative | TAC tokenomics |
 
 ## Follow-up Triggers
 
 | Trigger | Why it matters | Action |
 |---|---|---|
-| Major usage dashboard or revenue disclosure | Converts narrative into measurable fundamentals | Reopen and update confidence |
-| Token unlock, migration, or supply revision | Directly changes FDV and dilution risk | Recalculate valuation |
-| Exchange listing/delisting or volume shock | Changes liquidity and reflexivity | Reassess liquidity quality |
-| Security incident, bridge failure, or admin-key event | Permanent impairment risk | Downgrade immediately |
+| TAC publishes a current TVL / fees / users / bridge-assets dashboard | Converts launch narrative into measurable fundamentals | Reopen report and update confidence |
+| Any new bridge incident, halt, sequencer issue, or balance mismatch | Directly attacks the core trust assumption | Immediate downgrade unless fully contained |
+| Official unlock calendar or large foundation / investor wallet movement appears | Changes FDV, float, and sell-pressure assumptions | Recalculate valuation and supply risk |
+| Major spot listing, delisting, or sustained order-book depth change | Changes liquidity quality and reflexivity | Reassess tactical sizing |
+| Smart followers and retained Mini App users break out together | Signals higher-quality attention, not only price-driven mindshare | Consider upgrading from watchlist to selective exposure |
+| Protocol fee / burn / staking data becomes material | Proves token value capture beyond gas-token narrative | Rebuild valuation framework around economics |
 
 ## Final Investment View
 
-Watchlist. TAC has enough market presence to track, but TAC needs stronger evidence of durable usage and token value capture before becoming high-conviction portfolio exposure.
+Verdict: high-beta watchlist / tactical, not core long-term accumulation yet.
+
+TAC is one of the more interesting TON / Telegram infrastructure assets because it targets a real structural gap: Ethereum has DeFi supply, Telegram has distribution, and TON has a consumer-facing crypto surface. The product thesis is coherent. The funding is credible. The mainnet and Summoning evidence show serious ecosystem preparation. The token has real utility design through gas, staking, governance, and possible burn mechanics. If TAC becomes the default route for Solidity DeFi to reach Telegram users, the current FDV can look reasonable in hindsight.
+
+But the current investment case still has too many unclosed loops. The bridge incident was recent and directly related to TAC's core product. Current retained TVL is not independently visible through the Surf DeFi endpoint used here. The price has already moved hundreds of percent in 90 days while also dropping nearly 40% in 24 hours. The unlock schedule is not cleanly represented in Surf despite official vesting. Holder concentration under the BSC contract lens is high and hard to reconcile. Social attention has spiked, but smart followers have not meaningfully broken out.
+
+I would upgrade TAC only after three conditions are met: stable post-incident bridge operations with transparent balances, current usage dashboards showing retained TVL / users / fees rather than launch liquidity, and measurable token sinks through gas, staking, burns, or reward-burn reporting. Until then, TAC belongs in a TON / Telegram DeFi watchlist and can be traded tactically around confirmed data, but it should not be treated as a de-risked L1 infrastructure hold.
