@@ -8,6 +8,7 @@ const CANDIDATES_FILE = path.join(ROOT, 'data/research-map/candidates.json');
 const REGISTRY_FILE = path.join(ROOT, 'data/research-map/registry.json');
 const OUT_DIR = path.join(ROOT, 'content/blog/2026/research');
 const DATE = '2026-07-06';
+const SURF_TIMEOUT_MS = 45000;
 
 const TARGET_COINGECKO_IDS = [
   'ssv-network',
@@ -134,11 +135,13 @@ function runSurf(args) {
     cwd: ROOT,
     encoding: 'utf8',
     maxBuffer: 8 * 1024 * 1024,
+    timeout: SURF_TIMEOUT_MS,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
 
   if (result.status !== 0 || !result.stdout.trim()) {
-    return { ok: false, error: result.stderr || result.stdout || `exit ${result.status}` };
+    const exitReason = result.error?.message || result.signal || `exit ${result.status}`;
+    return { ok: false, error: result.stderr || result.stdout || exitReason };
   }
 
   try {

@@ -93,24 +93,37 @@ async function fetchCoinGeckoMarkets(page) {
 }
 
 function fetchSurfRanking(offset) {
-  const stdout = execFileSync('surf', [
-    'market-ranking',
-    '--sort-by',
-    'market_cap',
-    '--order',
-    'desc',
-    '--limit',
-    '100',
-    '--offset',
-    String(offset),
-    '--json',
-  ], {
-    cwd: ROOT,
-    encoding: 'utf8',
-    stdio: ['ignore', 'pipe', 'pipe'],
-  });
-  const payload = JSON.parse(stdout);
-  return payload.data || [];
+  let lastError;
+
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const stdout = execFileSync('surf', [
+        'market-ranking',
+        '--sort-by',
+        'market_cap',
+        '--order',
+        'desc',
+        '--limit',
+        '100',
+        '--offset',
+        String(offset),
+        '--json',
+      ], {
+        cwd: ROOT,
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'pipe'],
+      });
+      const payload = JSON.parse(stdout);
+      return payload.data || [];
+    } catch (error) {
+      lastError = error;
+      if (attempt < 3) {
+        Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, attempt * 1500);
+      }
+    }
+  }
+
+  throw lastError;
 }
 
 function isDuplicate(coin, registryLookup, candidateLookup) {

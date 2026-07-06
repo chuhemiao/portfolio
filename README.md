@@ -36,7 +36,7 @@ Built with Next.js, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Vercel.
 | `/stack`    | Tools and tech stack                               |
 | `/fund`     | Fund tracker                                       |
 | `/fear`     | Crypto Fear & Greed index                          |
-| `/research` | Deep-dive research map — 511 local crypto project records |
+| `/research` | Deep-dive research map — 1011 local crypto project records |
 
 ## Content Management
 
@@ -90,13 +90,16 @@ pnpm check:research:logos
 
 Current local status as of 2026-07-06:
 
-- Registry: 511 research projects.
-- Candidate pool: 357 total, 59 pending new candidates.
+- Registry: 1011 research projects.
+- Candidate pool: 1215 total, 341 pending new candidates.
 - Upgrade queue: 0 reports in the latest generated depth queue.
-- Next new candidates start with Genius / GENIUS, Data Network / DATA, and Midas mF-ONE / MF-ONE.
+- Latest target-500 CMC/CGO batch: 500/500 recent reports pass full-depth audit.
+- Raw pending candidates may still include older targets already covered by registry; use the batch generator `--list-only` output as the write queue.
 - Next upgrade reports: none in the latest generated depth queue.
 
 For crypto data refresh, use Surf first: check `surf list-operations`, inspect the target command with `--help`, then fall back to CoinGecko, CMC, explorers, DefiLlama, official docs, or web search only when Surf is missing data or errors.
+
+For batch CMC/CGO research expansion, use `scripts/generate-cmc-cgo-research-batch.mjs` with `--from-pending --target-count=<n> --list-only` before writing. Surf child commands have a timeout so long-tail enrichment gaps are captured as article risk instead of hanging the run.
 
 ## Research Reports
 

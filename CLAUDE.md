@@ -44,8 +44,8 @@
   pnpm status:research:run # 查看研究长任务进度
   pnpm sync:telegram # 手动同步 Telegram 消息
   ```
-- **当前 Research 进度（2026-07-06）**：registry `511` projects；candidate total `357`，pending new candidates `59`；depth upgrade queue `0`。
-- **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。
+- **当前 Research 进度（2026-07-06）**：registry `1011` projects；candidate total `1215`，pending new candidates `341`；depth upgrade queue `0`；本轮最新 500 篇 depth audit 全部 full-depth pass。
+- **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起。
 - **快捷内容脚本**：`pnpm quick:add -- "内容描述" --category research` 默认 dry-run；加 `--write` 才创建 MDX。
 
 ### 2. Yamaswap
@@ -95,8 +95,8 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 至目标 500 篇。使用 Surf `market-ranking` 扩容候选池，分三批生成并同步：`200 + 200 + 1 + 99`，最终 registry `1011`、candidate total `1215`、pending new candidates `341`、upgrade queue `0`；最近 500 篇 depth audit `500/500 full-depth pass`。同步修复批量脚本：`seed-research-candidates` 增加 Surf retry/backoff，`generate-cmc-cgo-research-batch` 增加 Surf 子命令 `45s` timeout。残余风险：333 篇存在至少一个 Surf enrichment 缺口，主要为 long-tail/RWA/meme/Surf-only 项目的 project-detail 或 DeFi metrics。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 100 篇，并接入 `/research`、registry 与本地 logo；扩展 `scripts/generate-cmc-cgo-research-batch.mjs`，支持 `--from-pending`、`--target-count`、`--list-only` 和 registry 二次去重。当前 `pnpm status:research:run`：registry `511`、candidate total `357`、pending new candidates `59`、upgrade queue `0`；新增 100 篇均 full-depth pass。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 30 篇，并接入 `/research`、registry 与本地 logo；新增 `scripts/generate-cmc-cgo-research-batch.mjs`，支持 Surf-first refresh、display override、`--overwrite`。新增 30 篇均未进入 depth needs-upgrade。
 - **2026-07-06**：同步最新进度、当前 skill/workflow 与快捷添加内容脚本。新增 `scripts/quick-add-content.mjs` 与 `pnpm quick:add`，默认 dry-run、显式 `--write` 才写入 MDX；更新 `src/data/skill.md` 为 repo-local Portfolio Research Map workflow reference。当前安装目录未发现旧 `research-map-builder` skill。
 - **2026-03-31**：实现 `/thoughts` 页面 + Telegram 自动同步功能。使用 GitHub Actions 每天同步频道 @kkdemian2050 的消息到 `content/thoughts.json`，前端展示为 Twitter/X 风格时间线。Bot: fulipy_bot。
-- **2026-03-11**：研究 AI 长久记忆方案（mem.mdx），讨论了五层记忆架构（Vector/Hierarchical/KG/Compression/Reflection），推荐工程起点为 `CLAUDE.md + SESSION_LOG + Mem0`。

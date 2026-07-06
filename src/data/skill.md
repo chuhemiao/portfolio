@@ -18,10 +18,11 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 
 As of 2026-07-06:
 
-- Registry: 511 local research projects.
-- Candidate pool: 357 total; 59 pending new candidates.
+- Registry: 1011 local research projects.
+- Candidate pool: 1215 total; 341 pending new candidates.
 - Upgrade queue: 0 reports currently in the latest generated depth queue.
-- Next new candidates begin with `Genius / GENIUS`, `Data Network / DATA`, and `Midas mF-ONE / MF-ONE`.
+- Latest target-500 CMC/CGO batch: 500/500 recent reports pass full-depth audit.
+- Raw pending candidates may include older targets now covered by registry; use `scripts/generate-cmc-cgo-research-batch.mjs --from-pending --list-only` as the write queue.
 - The latest generated depth queue has no pending upgrade reports.
 - The old `research-map-builder` installed skill path is not present in the current Codex skill directories; this file is the repo-local workflow reference.
 
@@ -40,9 +41,14 @@ pnpm sync:research --add
 pnpm audit:research:depth -- --limit 100 --write
 pnpm check:research:logos
 pnpm content:check
+
+node scripts/generate-cmc-cgo-research-batch.mjs --from-pending --target-count=100 --list-only
+node scripts/generate-cmc-cgo-research-batch.mjs --from-pending --target-count=100
 ```
 
 `pnpm quick:add` defaults to dry-run. Add `--write` to create the MDX file. For research posts, pass `--sync-research` only when you want it to run `pnpm sync:research --add` immediately after writing.
+
+`generate-cmc-cgo-research-batch.mjs` is the current batch writer for CMC/CGO-oriented candidates. It performs registry filtering before selection and gives Surf child commands a bounded timeout so missing long-tail data becomes an explicit article risk instead of blocking the run.
 
 ## Add New Research
 
