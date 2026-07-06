@@ -36,7 +36,7 @@ Built with Next.js, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Vercel.
 | `/stack`    | Tools and tech stack                               |
 | `/fund`     | Fund tracker                                       |
 | `/fear`     | Crypto Fear & Greed index                          |
-| `/research` | Deep-dive research map — 72 crypto project reports |
+| `/research` | Deep-dive research map — 411 local crypto project records |
 
 ## Content Management
 
@@ -60,25 +60,43 @@ category: 'research'
 **Useful commands:**
 
 ```bash
-# Create a new post (auto-generates category, slug, and path)
-pnpm new:post -- "A deep research report about BTC and macro liquidity" --category  research
+# Fast content helper; dry-run by default
+pnpm quick:add -- "A deep research report about BTC and macro liquidity" --category research
 
+# Create a new post immediately
+pnpm quick:add -- "A deep research report about BTC and macro liquidity" --category research --write
 
+# Lower-level post generator
+pnpm new:post -- "A deep research report about BTC and macro liquidity" --category research
+
+# Research Map sync and status
+pnpm sync:research
+pnpm sync:research --add
+pnpm sync:research:registry -- --check "Project Symbol"
+pnpm status:research:run
+
+# Candidate and depth queues
+pnpm seed:research:candidates
+pnpm audit:research:depth -- --limit 100 --write
 
 # Validate content before publishing
 pnpm content:check
-
-# One-time batch organize root-level files into year folders
-pnpm content:organize
-
-# Check which research blog posts are missing from the Research Map
-pnpm sync:research
-
-# Auto-append scaffold entries for missing research projects
-pnpm sync:research --add
+pnpm check:research:logos
 ```
 
-`new:post` supports optional flags: `--title`, `--category`, `--date`, `--slug`, `--dry-run`
+`quick:add` defaults to dry-run. Add `--write` to create the file. `new:post` supports `--title`, `--category`, `--date`, `--slug`, and `--dry-run`.
+
+## Research Workflow
+
+Current local status as of 2026-07-06:
+
+- Registry: 411 research projects.
+- Candidate pool: 357 total, 158 pending new candidates.
+- Upgrade queue: 14 reports still need full-depth upgrades.
+- Next new candidates start with USDa / USDA, Tradable NA Rent Financing Platform SSTN, and Spiko US T-Bills Money Market Fund.
+- Next upgrade reports start with Golem / GLM, Kaito / KAITO, and Livepeer / LPT.
+
+For crypto data refresh, use Surf first: check `surf list-operations`, inspect the target command with `--help`, then fall back to CoinGecko, CMC, explorers, DefiLlama, official docs, or web search only when Surf is missing data or errors.
 
 ## Research Reports
 

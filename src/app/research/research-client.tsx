@@ -82,7 +82,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'hashKey_exchange',
     color: '#1B1B1B',
     initial: 'HK',
-    logoUrl: "/research-logos/hashKey_exchange.png",
+    logoUrl: "/research-logos/hashKey_exchange.svg",
   },
   {
     name: 'XT.COM',
@@ -216,7 +216,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'raydium-ray-solana-dex-clmm-launchpad-value-capture-gap',
     color: '#8C6CFF',
     initial: 'RAY',
-    logoUrl: "/research-logos/raydium-ray-solana-dex-clmm-launchpad-value-capture-gap.jpg",
+    logoUrl: "/research-logos/raydium-ray-solana-dex-clmm-launchpad-value-capture-gap.png",
   },
   {
     name: 'Aave',
@@ -753,7 +753,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ethereum-name-service-ens-onchain-identity-ensv2-value-capture',
     color: '#5298FF',
     initial: 'ENS',
-    logoUrl: "/research-logos/ethereum-name-service-ens-onchain-identity-ensv2-value-capture.jpg",
+    logoUrl: "/research-logos/ethereum-name-service-ens-onchain-identity-ensv2-value-capture.png",
   },
   {
     name: 'Definitive',
@@ -998,7 +998,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'chainlink-link-oracle-ccip-capital-markets-token-value-capture-risk',
     color: '#2A5ADA',
     initial: 'LINK',
-    logoUrl: "/research-logos/chainlink-link-oracle-ccip-capital-markets-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/chainlink-link-oracle-ccip-capital-markets-token-value-capture-risk.png",
   },
   {
     name: 'GenLayer',
@@ -1088,7 +1088,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'floki-floki-meme-distribution-valhalla-tokenfi-utility-value-capture-test',
     color: '#F59E0B',
     initial: 'FLOKI',
-    logoUrl: "/research-logos/floki-floki-meme-distribution-valhalla-tokenfi-utility-value-capture-test.svg",
+    logoUrl: "/research-logos/floki-floki-meme-distribution-valhalla-tokenfi-utility-value-capture-test.png",
   },
   {
     name: 'Zebec Network',
@@ -1098,7 +1098,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'zebec-network-zbcn-real-time-payroll-card-payfi-token-value-capture-gap',
     color: '#06B6D4',
     initial: 'ZBCN',
-    logoUrl: "/research-logos/zebec-network-zbcn-real-time-payroll-card-payfi-token-value-capture-gap.svg",
+    logoUrl: "/research-logos/zebec-network-zbcn-real-time-payroll-card-payfi-token-value-capture-gap.png",
   },
   {
     name: 'DoubleZero',
@@ -1118,7 +1118,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'grass-grass-ai-data-network-residential-bandwidth-token-value-capture-gap',
     color: '#16A34A',
     initial: 'GRASS',
-    logoUrl: "/research-logos/grass-grass-ai-data-network-residential-bandwidth-token-value-capture-gap.jpg",
+    logoUrl: "/research-logos/grass-grass-ai-data-network-residential-bandwidth-token-value-capture-gap.png",
   },
   {
     name: 'USDC',
@@ -1228,7 +1228,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bittensor-tao-permissionless-ai-coordination-durable-economic-infrastructure-or-narrative',
     color: '#EF4444',
     initial: 'BT',
-    logoUrl: "/research-logos/bittensor-tao-permissionless-ai-coordination-durable-economic-infrastructure-or-narrative.png",
+    logoUrl: "/research-logos/bittensor-tao-permissionless-ai-coordination-durable-economic-infrastructure-or-narrative.jpg",
   },
   {
     name: 'Global Dollar (USDG)',
@@ -1458,7 +1458,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'filecoin-fil-decentralized-storage-fvm-token-economics-risk',
     color: '#0090FF',
     initial: 'FIL',
-    logoUrl: "/research-logos/filecoin-fil-decentralized-storage-fvm-token-economics-risk.svg",
+    logoUrl: "/research-logos/filecoin-fil-decentralized-storage-fvm-token-economics-risk.png",
   },
   {
     name: 'Kaspa (KAS)',
@@ -1590,7 +1590,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'venice-token-vvv-private-ai-token-value-capture-risk',
     color: '#6366F1',
     initial: 'VVV',
-    logoUrl: "/research-logos/venice-token-vvv-private-ai-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/venice-token-vvv-private-ai-token-value-capture-risk.jpg",
   },
   {
     name: 'Beldex Unmasked',
@@ -1793,7 +1793,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk',
     color: '#3465A4',
     initial: 'crvUSD',
-    logoUrl: "/research-logos/crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk.svg",
+    logoUrl: "/research-logos/crvusd-curve-native-stablecoin-llamma-liquidation-peg-risk.png",
   },
   {
     name: 'Legacy Frax Dollar',
@@ -1853,7 +1853,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'the-sandbox-sand-metaverse-ugc-gaming-token-value-capture-gap',
     color: '#00ADEF',
     initial: 'SAND',
-    logoUrl: "/research-logos/the-sandbox-sand-metaverse-ugc-gaming-token-value-capture-gap.jpg",
+    logoUrl: "/research-logos/the-sandbox-sand-metaverse-ugc-gaming-token-value-capture-gap.png",
   },
   {
     name: 'Decentraland',
@@ -1863,7 +1863,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'decentraland-mana-virtual-world-land-dao-value-capture-gap',
     color: '#FF2D55',
     initial: 'MANA',
-    logoUrl: "/research-logos/decentraland-mana-virtual-world-land-dao-value-capture-gap.png",
+    logoUrl: "/research-logos/decentraland-mana-virtual-world-land-dao-value-capture-gap.jpg",
   },
   {
     name: 'Theta Network',
@@ -1893,7 +1893,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'thorchain-rune-native-cross-chain-dex-liquidity-security-value-capture',
     color: '#00CCB8',
     initial: 'RUNE',
-    logoUrl: "/research-logos/thorchain-rune-native-cross-chain-dex-liquidity-security-value-capture.png",
+    logoUrl: "/research-logos/thorchain-rune-native-cross-chain-dex-liquidity-security-value-capture.jpg",
   },
   {
     name: 'Basic Attention Token',
@@ -1952,7 +1952,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'hastra-prime-rwa-lst-figure-heloc-yield-liquidity-risk',
     color: '#2563EB',
     initial: 'PRIME',
-    logoUrl: "/research-logos/hastra-prime-rwa-lst-figure-heloc-yield-liquidity-risk.png",
+    logoUrl: "/research-logos/hastra-prime-rwa-lst-figure-heloc-yield-liquidity-risk.svg",
   },
   {
     name: 'Chiliz',
@@ -1982,7 +1982,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'eigencloud-eigen-restaking-avs-cloud-value-capture-gap',
     color: '#1B1B1F',
     initial: 'EIGEN',
-    logoUrl: "/research-logos/eigencloud-eigen-restaking-avs-cloud-value-capture-gap.jpg",
+    logoUrl: "/research-logos/eigencloud-eigen-restaking-avs-cloud-value-capture-gap.png",
   },
   {
     name: 'Monad',
@@ -2032,7 +2032,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'jasmycoin-jasmy-iot-data-sovereignty-token-value-capture-gap',
     color: '#F97316',
     initial: 'JASMY',
-    logoUrl: "/research-logos/jasmycoin-jasmy-iot-data-sovereignty-token-value-capture-gap.jpg",
+    logoUrl: "/research-logos/jasmycoin-jasmy-iot-data-sovereignty-token-value-capture-gap.png",
   },
   {
     name: 'Royal Dollar',
@@ -2142,7 +2142,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'terra-luna-classic-lunc-burn-staking-community-chain-recovery-risk',
     color: '#1D4ED8',
     initial: 'LUNC',
-    logoUrl: "/research-logos/terra-luna-classic-lunc-burn-staking-community-chain-recovery-risk.png",
+    logoUrl: "/research-logos/terra-luna-classic-lunc-burn-staking-community-chain-recovery-risk.svg",
   },
   {
     name: 'SPX6900',
@@ -2162,7 +2162,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'buildon-b-bnb-chain-usd1-meme-liquidity-narrative-risk',
     color: '#F5B800',
     initial: 'B',
-    logoUrl: "/research-logos/buildon-b-bnb-chain-usd1-meme-liquidity-narrative-risk.jpg",
+    logoUrl: "/research-logos/buildon-b-bnb-chain-usd1-meme-liquidity-narrative-risk.png",
   },
   {
     name: 'Velvet',
@@ -2172,7 +2172,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'velvet-velvet-ai-onchain-trading-terminal-token-value-capture-risk',
     color: '#7C3AED',
     initial: 'VELVET',
-    logoUrl: "/research-logos/velvet-velvet-ai-onchain-trading-terminal-token-value-capture-risk.jpg",
+    logoUrl: "/research-logos/velvet-velvet-ai-onchain-trading-terminal-token-value-capture-risk.png",
   },
   {
     name: 'Official Trump',
@@ -2210,7 +2210,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bonk-bonk-solana-meme-liquidity-ecosystem-value-capture-gap',
     color: '#F97316',
     initial: 'BONK',
-    logoUrl: "/research-logos/bonk-bonk-solana-meme-liquidity-ecosystem-value-capture-gap.jpg",
+    logoUrl: "/research-logos/bonk-bonk-solana-meme-liquidity-ecosystem-value-capture-gap.png",
   },
   {
     name: 'Stable',
@@ -2228,7 +2228,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'solstice-usx-solana-yield-stablecoin-liquidity-proof-of-solvency',
     color: '#EB6237',
     initial: 'USX',
-    logoUrl: "/research-logos/solstice-usx-solana-yield-stablecoin-liquidity-proof-of-solvency.png",
+    logoUrl: "/research-logos/solstice-usx-solana-yield-stablecoin-liquidity-proof-of-solvency.jpg",
   },
   {
     name: 'Kite AI',
@@ -2274,7 +2274,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'pancakeswap-cake-bnb-chain-dex-tokenomics-burn-value-capture',
     color: '#1FC7D4',
     initial: 'CAKE',
-    logoUrl: "/research-logos/pancakeswap-cake-bnb-chain-dex-tokenomics-burn-value-capture.svg",
+    logoUrl: "/research-logos/pancakeswap-cake-bnb-chain-dex-tokenomics-burn-value-capture.png",
   },
   {
     name: 'Curve DAO',
@@ -2311,7 +2311,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'lab-lab-trading-terminal-airdrop-valuation-liquidity-gap',
     color: '#22C55E',
     initial: 'LAB',
-    logoUrl: "/research-logos/lab-lab-trading-terminal-airdrop-valuation-liquidity-gap.png",
+    logoUrl: "/research-logos/lab-lab-trading-terminal-airdrop-valuation-liquidity-gap.jpg",
   },
   {
     name: 'Sei',
@@ -2320,7 +2320,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'sei-sei-parallelized-evm-trading-l1-value-capture-gap',
     color: '#C1121F',
     initial: 'SEI',
-    logoUrl: "/research-logos/sei-sei-parallelized-evm-trading-l1-value-capture-gap.svg",
+    logoUrl: "/research-logos/sei-sei-parallelized-evm-trading-l1-value-capture-gap.png",
   },
   {
     name: 'Artificial Superintelligence Alliance',
@@ -2329,7 +2329,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'artificial-superintelligence-alliance-fet-decentralized-ai-agent-stack-token-capture-gap',
     color: '#0F172A',
     initial: 'FET',
-    logoUrl: "/research-logos/artificial-superintelligence-alliance-fet-decentralized-ai-agent-stack-token-capture-gap.svg",
+    logoUrl: "/research-logos/artificial-superintelligence-alliance-fet-decentralized-ai-agent-stack-token-capture-gap.png",
   },
   {
     name: 'JUST',
@@ -2338,7 +2338,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'just-jst-tron-defi-governance-buyback-value-capture-gap',
     color: '#EF4444',
     initial: 'JST',
-    logoUrl: "/research-logos/just-jst-tron-defi-governance-buyback-value-capture-gap.svg",
+    logoUrl: "/research-logos/just-jst-tron-defi-governance-buyback-value-capture-gap.png",
   },
   {
     name: 'VeChain',
@@ -2466,7 +2466,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'usdgo-usdgo-stablecoin-liquidity-collateral-risk',
     color: '#0F766E',
     initial: 'USDGO',
-    logoUrl: "/research-logos/usdgo-usdgo-stablecoin-liquidity-collateral-risk.svg",
+    logoUrl: "/research-logos/usdgo-usdgo-stablecoin-liquidity-collateral-risk.png",
   },
   {
     name: 'Ondo USDY',
@@ -2538,7 +2538,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bnb-bnb-chain-exchange-utility-token-burn-validator-centralization-risk',
     color: '#F0B90B',
     initial: 'BNB',
-    logoUrl: "/research-logos/bnb-bnb-chain-exchange-utility-token-burn-validator-centralization-risk.svg",
+    logoUrl: "/research-logos/bnb-bnb-chain-exchange-utility-token-burn-validator-centralization-risk.png",
   },
   {
     name: 'Ethereum Classic',
@@ -2556,7 +2556,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'cosmos-hub-atom-interchain-security-value-accrual-gap',
     color: '#111827',
     initial: 'ATOM',
-    logoUrl: "/research-logos/cosmos-hub-atom-interchain-security-value-accrual-gap.png",
+    logoUrl: "/research-logos/cosmos-hub-atom-interchain-security-value-accrual-gap.svg",
   },
   {
     name: 'Render Network',
@@ -2646,7 +2646,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'flare-flr-data-l1-fassets-value-capture-test',
     color: '#F97316',
     initial: 'FLR',
-    logoUrl: "/research-logos/flare-flr-data-l1-fassets-value-capture-test.png",
+    logoUrl: "/research-logos/flare-flr-data-l1-fassets-value-capture-test.svg",
   },
   {
     name: 'XDC Network',
@@ -2763,7 +2763,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'injective-inj-finance-l1-burn-auction-value-capture-gap',
     color: '#06B6D4',
     initial: 'INJ',
-    logoUrl: "/research-logos/injective-inj-finance-l1-burn-auction-value-capture-gap.svg",
+    logoUrl: "/research-logos/injective-inj-finance-l1-burn-auction-value-capture-gap.png",
   },
   {
     name: 'Bitway',
@@ -2772,7 +2772,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bitway-btw-bitcoin-native-yield-lending-token-value-capture-risk',
     color: '#F59E0B',
     initial: 'BTW',
-    logoUrl: "/research-logos/bitway-btw-bitcoin-native-yield-lending-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/bitway-btw-bitcoin-native-yield-lending-token-value-capture-risk.png",
   },
   {
     name: 'LayerZero',
@@ -2781,7 +2781,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'layerzero-zro-omnichain-messaging-fee-switch-value-capture-gap',
     color: '#0B0F19',
     initial: 'ZRO',
-    logoUrl: "/research-logos/layerzero-zro-omnichain-messaging-fee-switch-value-capture-gap.svg",
+    logoUrl: "/research-logos/layerzero-zro-omnichain-messaging-fee-switch-value-capture-gap.png",
   },
   {
     name: 'Humanity',
@@ -2790,7 +2790,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'humanity-h-proof-of-humanity-token-swap-value-capture-risk',
     color: '#EC4899',
     initial: 'H',
-    logoUrl: "/research-logos/humanity-h-proof-of-humanity-token-swap-value-capture-risk.svg",
+    logoUrl: "/research-logos/humanity-h-proof-of-humanity-token-swap-value-capture-risk.jpg",
   },
   {
     name: 'MegaUSD',
@@ -2799,7 +2799,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk',
     color: '#FF4D00',
     initial: 'USDM',
-    logoUrl: "/research-logos/megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk.svg",
+    logoUrl: "/research-logos/megausd-usdm-megaeth-native-stablecoin-sequencer-yield-risk.png",
   },
   {
     name: 'OnRe',
@@ -2808,7 +2808,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'onre-onyc-tokenized-reinsurance-yield-collateral-risk',
     color: '#0F766E',
     initial: 'ONYC',
-    logoUrl: "/research-logos/onre-onyc-tokenized-reinsurance-yield-collateral-risk.svg",
+    logoUrl: "/research-logos/onre-onyc-tokenized-reinsurance-yield-collateral-risk.png",
   },
   {
     name: 'COCO',
@@ -2817,7 +2817,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'coco-coco-bnb-chain-meme-ai-agent-contract-risk',
     color: '#F0B90B',
     initial: 'COCO',
-    logoUrl: "/research-logos/coco-coco-bnb-chain-meme-ai-agent-contract-risk.svg",
+    logoUrl: "/research-logos/coco-coco-bnb-chain-meme-ai-agent-contract-risk.jpg",
   },
   {
     name: 'KOGE',
@@ -2826,7 +2826,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'koge-48-club-token-bnb-chain-infrastructure-liquidity-value-capture-risk',
     color: '#F0B90B',
     initial: 'KOGE',
-    logoUrl: "/research-logos/koge-48-club-token-bnb-chain-infrastructure-liquidity-value-capture-risk.svg",
+    logoUrl: "/research-logos/koge-48-club-token-bnb-chain-infrastructure-liquidity-value-capture-risk.png",
   },
   {
     name: 'RealLink',
@@ -2835,7 +2835,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'reallink-real-socialfi-payments-supply-liquidity-risk',
     color: '#1D4ED8',
     initial: 'REAL',
-    logoUrl: "/research-logos/reallink-real-socialfi-payments-supply-liquidity-risk.svg",
+    logoUrl: "/research-logos/reallink-real-socialfi-payments-supply-liquidity-risk.png",
   },
   {
     name: 'Amp',
@@ -2844,7 +2844,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'amp-amp-flexa-collateral-payments-network-adoption-risk',
     color: '#D946EF',
     initial: 'AMP',
-    logoUrl: "/research-logos/amp-amp-flexa-collateral-payments-network-adoption-risk.svg",
+    logoUrl: "/research-logos/amp-amp-flexa-collateral-payments-network-adoption-risk.png",
   },
   {
     name: 'Arcium',
@@ -2853,7 +2853,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'arcium-arx-confidential-computing-mpc-fhe-token-liquidity-risk',
     color: '#4F46E5',
     initial: 'ARX',
-    logoUrl: "/research-logos/arcium-arx-confidential-computing-mpc-fhe-token-liquidity-risk.svg",
+    logoUrl: "/research-logos/arcium-arx-confidential-computing-mpc-fhe-token-liquidity-risk.png",
   },
   {
     name: 'Collector Crypt',
@@ -2862,7 +2862,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'collector-crypt-cards-physical-card-rwa-gacha-liquidity-risk',
     color: '#0EA5E9',
     initial: 'CARD',
-    logoUrl: "/research-logos/collector-crypt-cards-physical-card-rwa-gacha-liquidity-risk.svg",
+    logoUrl: "/research-logos/collector-crypt-cards-physical-card-rwa-gacha-liquidity-risk.png",
   },
   {
     name: 'EVAA Protocol',
@@ -2871,7 +2871,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'evaa-protocol-evaa-ton-lending-telegram-liquidity-token-risk',
     color: '#0088CC',
     initial: 'EVAA',
-    logoUrl: "/research-logos/evaa-protocol-evaa-ton-lending-telegram-liquidity-token-risk.svg",
+    logoUrl: "/research-logos/evaa-protocol-evaa-ton-lending-telegram-liquidity-token-risk.png",
   },
   {
     name: 'GEODNET',
@@ -2889,7 +2889,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'kamino-kmno-solana-lending-liquidity-vaults-token-value-capture',
     color: '#14B8A6',
     initial: 'KMNO',
-    logoUrl: "/research-logos/kamino-kmno-solana-lending-liquidity-vaults-token-value-capture.svg",
+    logoUrl: "/research-logos/kamino-kmno-solana-lending-liquidity-vaults-token-value-capture.png",
   },
   {
     name: 'Nesa',
@@ -2898,7 +2898,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'nesa-nes-decentralized-ai-inference-zkml-token-launch-risk',
     color: '#7C3AED',
     initial: 'NES',
-    logoUrl: "/research-logos/nesa-nes-decentralized-ai-inference-zkml-token-launch-risk.svg",
+    logoUrl: "/research-logos/nesa-nes-decentralized-ai-inference-zkml-token-launch-risk.png",
   },
   {
     name: 'o1.exchange',
@@ -2907,7 +2907,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'o1-exchange-o-onchain-everything-exchange-ai-trading-token-risk',
     color: '#0891B2',
     initial: 'O',
-    logoUrl: "/research-logos/o1-exchange-o-onchain-everything-exchange-ai-trading-token-risk.svg",
+    logoUrl: "/research-logos/o1-exchange-o-onchain-everything-exchange-ai-trading-token-risk.png",
   },
   {
     name: 'Osmosis',
@@ -2916,7 +2916,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'osmosis-osmo-cosmos-dex-ibc-liquidity-token-value-capture-gap',
     color: '#A855F7',
     initial: 'OSMO',
-    logoUrl: "/research-logos/osmosis-osmo-cosmos-dex-ibc-liquidity-token-value-capture-gap.svg",
+    logoUrl: "/research-logos/osmosis-osmo-cosmos-dex-ibc-liquidity-token-value-capture-gap.png",
   },
   {
     name: 'peaq',
@@ -2925,7 +2925,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'peaq-peaq-depin-l1-machine-economy-token-demand-risk',
     color: '#16A34A',
     initial: 'PEAQ',
-    logoUrl: "/research-logos/peaq-peaq-depin-l1-machine-economy-token-demand-risk.svg",
+    logoUrl: "/research-logos/peaq-peaq-depin-l1-machine-economy-token-demand-risk.png",
   },
   {
     name: 'Pieverse',
@@ -2934,7 +2934,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'pieverse-pieverse-web3-ai-agent-payments-token-liquidity-risk',
     color: '#F97316',
     initial: 'PIE',
-    logoUrl: "/research-logos/pieverse-pieverse-web3-ai-agent-payments-token-liquidity-risk.svg",
+    logoUrl: "/research-logos/pieverse-pieverse-web3-ai-agent-payments-token-liquidity-risk.png",
   },
   {
     name: 'Ape and Pepe',
@@ -2943,7 +2943,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ape-and-pepe-apepe-polygon-meme-social-liquidity-risk',
     color: '#22C55E',
     initial: 'APEPE',
-    logoUrl: "/research-logos/ape-and-pepe-apepe-polygon-meme-social-liquidity-risk.svg",
+    logoUrl: "/research-logos/ape-and-pepe-apepe-polygon-meme-social-liquidity-risk.png",
   },
   {
     name: 'WeFi',
@@ -2952,7 +2952,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'wefi-wfi-self-custody-bank-payfi-fdv-liquidity-risk',
     color: '#2563EB',
     initial: 'WFI',
-    logoUrl: "/research-logos/wefi-wfi-self-custody-bank-payfi-fdv-liquidity-risk.svg",
+    logoUrl: "/research-logos/wefi-wfi-self-custody-bank-payfi-fdv-liquidity-risk.png",
   },
   {
     name: 'dogwifhat',
@@ -2961,7 +2961,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'dogwifhat-wif-solana-meme-liquidity-cultural-beta-risk',
     color: '#D97706',
     initial: 'WIF',
-    logoUrl: "/research-logos/dogwifhat-wif-solana-meme-liquidity-cultural-beta-risk.svg",
+    logoUrl: "/research-logos/dogwifhat-wif-solana-meme-liquidity-cultural-beta-risk.png",
   },
   {
     name: 'SwissBorg',
@@ -2970,7 +2970,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'swissborg-borg-crypto-wealth-app-token-buyback-liquidity-risk',
     color: '#0F766E',
     initial: 'BORG',
-    logoUrl: "/research-logos/swissborg-borg-crypto-wealth-app-token-buyback-liquidity-risk.svg",
+    logoUrl: "/research-logos/swissborg-borg-crypto-wealth-app-token-buyback-liquidity-risk.png",
   },
   {
     name: 'Zano',
@@ -2979,7 +2979,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'zano-zano-privacy-l1-hybrid-pow-pos-liquidity-risk',
     color: '#334155',
     initial: 'ZANO',
-    logoUrl: "/research-logos/zano-zano-privacy-l1-hybrid-pow-pos-liquidity-risk.svg",
+    logoUrl: "/research-logos/zano-zano-privacy-l1-hybrid-pow-pos-liquidity-risk.png",
   },
   {
     name: 'Onyxcoin',
@@ -2988,7 +2988,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'onyxcoin-xcn-modular-financial-l3-token-value-capture-risk',
     color: '#111827',
     initial: 'XCN',
-    logoUrl: "/research-logos/onyxcoin-xcn-modular-financial-l3-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/onyxcoin-xcn-modular-financial-l3-token-value-capture-risk.png",
   },
   {
     name: 'BTSE Token',
@@ -2997,7 +2997,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'btse-token-btse-exchange-utility-token-liquidity-risk',
     color: '#0284C7',
     initial: 'BTSE',
-    logoUrl: "/research-logos/btse-token-btse-exchange-utility-token-liquidity-risk.svg",
+    logoUrl: "/research-logos/btse-token-btse-exchange-utility-token-liquidity-risk.png",
   },
   {
     name: 'Kaito',
@@ -3006,7 +3006,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'kaito-kaito-ai-attention-infofi-token-value-capture-risk',
     color: '#7C3AED',
     initial: 'KAITO',
-    logoUrl: "/research-logos/kaito-kaito-ai-attention-infofi-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/kaito-kaito-ai-attention-infofi-token-value-capture-risk.png",
   },
   {
     name: 'ApeCoin',
@@ -3015,7 +3015,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'apecoin-ape-apechain-nft-ecosystem-token-value-capture-risk',
     color: '#1D4ED8',
     initial: 'APE',
-    logoUrl: "/research-logos/apecoin-ape-apechain-nft-ecosystem-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/apecoin-ape-apechain-nft-ecosystem-token-value-capture-risk.png",
   },
   {
     name: 'NEO',
@@ -3024,7 +3024,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'neo-neo-smart-economy-l1-gas-token-developer-traction-risk',
     color: '#00E599',
     initial: 'NEO',
-    logoUrl: "/research-logos/neo-neo-smart-economy-l1-gas-token-developer-traction-risk.svg",
+    logoUrl: "/research-logos/neo-neo-smart-economy-l1-gas-token-developer-traction-risk.png",
   },
   {
     name: 'dYdX',
@@ -3033,7 +3033,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'dydx-dydx-perp-dex-chain-token-staking-volume-risk',
     color: '#6966FF',
     initial: 'DYDX',
-    logoUrl: "/research-logos/dydx-dydx-perp-dex-chain-token-staking-volume-risk.svg",
+    logoUrl: "/research-logos/dydx-dydx-perp-dex-chain-token-staking-volume-risk.jpg",
   },
   {
     name: 'Fartcoin',
@@ -3042,7 +3042,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'fartcoin-fartcoin-solana-meme-liquidity-cultural-beta-risk',
     color: '#C2410C',
     initial: 'FARTCOIN',
-    logoUrl: "/research-logos/fartcoin-fartcoin-solana-meme-liquidity-cultural-beta-risk.svg",
+    logoUrl: "/research-logos/fartcoin-fartcoin-solana-meme-liquidity-cultural-beta-risk.png",
   },
   {
     name: 'apyUSD',
@@ -3051,7 +3051,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'apyusd-apyx-yield-bearing-stablecoin-dat-dividend-risk',
     color: '#0EA5E9',
     initial: 'APYUSD',
-    logoUrl: "/research-logos/apyusd-apyx-yield-bearing-stablecoin-dat-dividend-risk.svg",
+    logoUrl: "/research-logos/apyusd-apyx-yield-bearing-stablecoin-dat-dividend-risk.png",
   },
   {
     name: 'AWE Network',
@@ -3060,7 +3060,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'awe-network-awe-ai-agent-worlds-token-migration-risk',
     color: '#8B5CF6',
     initial: 'AWE',
-    logoUrl: "/research-logos/awe-network-awe-ai-agent-worlds-token-migration-risk.svg",
+    logoUrl: "/research-logos/awe-network-awe-ai-agent-worlds-token-migration-risk.jpg",
   },
   {
     name: 'Arweave',
@@ -3069,7 +3069,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'arweave-ar-permanent-storage-endowment-demand-risk',
     color: '#111827',
     initial: 'AR',
-    logoUrl: "/research-logos/arweave-ar-permanent-storage-endowment-demand-risk.svg",
+    logoUrl: "/research-logos/arweave-ar-permanent-storage-endowment-demand-risk.png",
   },
   {
     name: 'BNB Attestation Service',
@@ -3078,7 +3078,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bnb-attestation-service-bas-bnb-identity-attestation-fdv-risk',
     color: '#F0B90B',
     initial: 'BAS',
-    logoUrl: "/research-logos/bnb-attestation-service-bas-bnb-identity-attestation-fdv-risk.svg",
+    logoUrl: "/research-logos/bnb-attestation-service-bas-bnb-identity-attestation-fdv-risk.png",
   },
   {
     name: 'GoMining Token',
@@ -3087,7 +3087,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'gomining-token-gomining-bitcoin-hashpower-rwa-token-risk',
     color: '#F7931A',
     initial: 'GOMINING',
-    logoUrl: "/research-logos/gomining-token-gomining-bitcoin-hashpower-rwa-token-risk.svg",
+    logoUrl: "/research-logos/gomining-token-gomining-bitcoin-hashpower-rwa-token-risk.png",
   },
   {
     name: 'BitMart',
@@ -3096,7 +3096,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'bitmart-bmx-exchange-token-custody-volume-liquidity-risk',
     color: '#2563EB',
     initial: 'BMX',
-    logoUrl: "/research-logos/bitmart-bmx-exchange-token-custody-volume-liquidity-risk.svg",
+    logoUrl: "/research-logos/bitmart-bmx-exchange-token-custody-volume-liquidity-risk.png",
   },
   {
     name: 'GALA',
@@ -3105,7 +3105,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'gala-gala-gaming-l1-token-supply-traction-risk',
     color: '#111827',
     initial: 'GALA',
-    logoUrl: "/research-logos/gala-gala-gaming-l1-token-supply-traction-risk.svg",
+    logoUrl: "/research-logos/gala-gala-gaming-l1-token-supply-traction-risk.png",
   },
   {
     name: 'SoSoValue',
@@ -3114,7 +3114,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'sosovalue-soso-ai-crypto-research-index-token-value-capture-risk',
     color: '#14B8A6',
     initial: 'SOSO',
-    logoUrl: "/research-logos/sosovalue-soso-ai-crypto-research-index-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/sosovalue-soso-ai-crypto-research-index-token-value-capture-risk.png",
   },
   {
     name: 'WEMIX',
@@ -3123,7 +3123,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'wemix-wemix-gaming-l1-wemix-play-validator-liquidity-risk',
     color: '#111827',
     initial: 'WEMIX',
-    logoUrl: "/research-logos/wemix-wemix-gaming-l1-wemix-play-validator-liquidity-risk.svg",
+    logoUrl: "/research-logos/wemix-wemix-gaming-l1-wemix-play-validator-liquidity-risk.jpg",
   },
   {
     name: 'Avant',
@@ -3132,7 +3132,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'avant-savusd-yield-stablecoin-tranche-liquidity-risk',
     color: '#0EA5E9',
     initial: 'SAVUSD',
-    logoUrl: "/research-logos/avant-savusd-yield-stablecoin-tranche-liquidity-risk.svg",
+    logoUrl: "/research-logos/avant-savusd-yield-stablecoin-tranche-liquidity-risk.jpg",
   },
   {
     name: 'SafePal',
@@ -3141,7 +3141,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'safepal-sfp-wallet-cefi-defi-utility-token-risk',
     color: '#2563EB',
     initial: 'SFP',
-    logoUrl: "/research-logos/safepal-sfp-wallet-cefi-defi-utility-token-risk.svg",
+    logoUrl: "/research-logos/safepal-sfp-wallet-cefi-defi-utility-token-risk.png",
   },
   {
     name: 'Immutable',
@@ -3150,7 +3150,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'immutable-imx-gaming-l2-passport-token-fee-capture-risk',
     color: '#111827',
     initial: 'IMX',
-    logoUrl: "/research-logos/immutable-imx-gaming-l2-passport-token-fee-capture-risk.svg",
+    logoUrl: "/research-logos/immutable-imx-gaming-l2-passport-token-fee-capture-risk.png",
   },
   {
     name: 'eCash',
@@ -3159,7 +3159,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ecash-xec-digital-cash-l1-avalanche-consensus-adoption-risk',
     color: '#16A34A',
     initial: 'XEC',
-    logoUrl: "/research-logos/ecash-xec-digital-cash-l1-avalanche-consensus-adoption-risk.svg",
+    logoUrl: "/research-logos/ecash-xec-digital-cash-l1-avalanche-consensus-adoption-risk.png",
   },
   {
     name: 'ZKsync',
@@ -3168,7 +3168,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'zksync-zk-ethereum-l2-zk-stack-token-value-capture-risk',
     color: '#4F46E5',
     initial: 'ZK',
-    logoUrl: "/research-logos/zksync-zk-ethereum-l2-zk-stack-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/zksync-zk-ethereum-l2-zk-stack-token-value-capture-risk.png",
   },
   {
     name: 'Rollbit Coin',
@@ -3177,7 +3177,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'rollbit-rlb-crypto-casino-token-regulatory-liquidity-risk',
     color: '#F59E0B',
     initial: 'RLB',
-    logoUrl: "/research-logos/rollbit-rlb-crypto-casino-token-regulatory-liquidity-risk.svg",
+    logoUrl: "/research-logos/rollbit-rlb-crypto-casino-token-regulatory-liquidity-risk.png",
   },
   {
     name: 'Vaulta',
@@ -3186,7 +3186,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'vaulta-a-eos-rebrand-web3-banking-token-transition-risk',
     color: '#111827',
     initial: 'A',
-    logoUrl: "/research-logos/vaulta-a-eos-rebrand-web3-banking-token-transition-risk.svg",
+    logoUrl: "/research-logos/vaulta-a-eos-rebrand-web3-banking-token-transition-risk.png",
   },
   {
     name: 'Golem',
@@ -3195,7 +3195,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'golem-glm-decentralized-compute-marketplace-demand-risk',
     color: '#0EA5E9',
     initial: 'GLM',
-    logoUrl: "/research-logos/golem-glm-decentralized-compute-marketplace-demand-risk.svg",
+    logoUrl: "/research-logos/golem-glm-decentralized-compute-marketplace-demand-risk.png",
   },
   {
     name: 'TAC',
@@ -3204,7 +3204,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'tac-tac-ton-evm-bridge-telegram-distribution-risk',
     color: '#0284C7',
     initial: 'TAC',
-    logoUrl: "/research-logos/tac-tac-ton-evm-bridge-telegram-distribution-risk.svg",
+    logoUrl: "/research-logos/tac-tac-ton-evm-bridge-telegram-distribution-risk.jpg",
   },
   {
     name: 'Tagger',
@@ -3213,7 +3213,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'tagger-tag-ai-data-platform-fdv-utility-risk',
     color: '#7C3AED',
     initial: 'TAG',
-    logoUrl: "/research-logos/tagger-tag-ai-data-platform-fdv-utility-risk.svg",
+    logoUrl: "/research-logos/tagger-tag-ai-data-platform-fdv-utility-risk.png",
   },
   {
     name: 'AB',
@@ -3222,7 +3222,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ab-ab-bnb-l1-community-economy-liquidity-risk',
     color: '#F0B90B',
     initial: 'AB',
-    logoUrl: "/research-logos/ab-ab-bnb-l1-community-economy-liquidity-risk.svg",
+    logoUrl: "/research-logos/ab-ab-bnb-l1-community-economy-liquidity-risk.png",
   },
   {
     name: 'Cheems',
@@ -3231,7 +3231,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'cheems-cheems-bnb-meme-cultural-liquidity-risk',
     color: '#D97706',
     initial: 'CHEEMS',
-    logoUrl: "/research-logos/cheems-cheems-bnb-meme-cultural-liquidity-risk.svg",
+    logoUrl: "/research-logos/cheems-cheems-bnb-meme-cultural-liquidity-risk.png",
   },
   {
     name: '1inch',
@@ -3240,7 +3240,7 @@ const PROJECTS: ResearchProject[] = [
     slug: '1inch-1inch-dex-aggregator-intent-value-capture-risk',
     color: '#2563EB',
     initial: '1INCH',
-    logoUrl: "/research-logos/1inch-1inch-dex-aggregator-intent-value-capture-risk.svg",
+    logoUrl: "/research-logos/1inch-1inch-dex-aggregator-intent-value-capture-risk.png",
   },
   {
     name: 'Tokenize Xchange',
@@ -3249,7 +3249,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'tokenize-xchange-tkx-cex-token-liquidity-custody-risk',
     color: '#0F766E',
     initial: 'TKX',
-    logoUrl: "/research-logos/tokenize-xchange-tkx-cex-token-liquidity-custody-risk.svg",
+    logoUrl: "/research-logos/tokenize-xchange-tkx-cex-token-liquidity-custody-risk.png",
   },
   {
     name: 'GRXChain',
@@ -3258,7 +3258,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'grxchain-grx-grovex-l1-exchange-dependency-risk',
     color: '#334155',
     initial: 'GRX',
-    logoUrl: "/research-logos/grxchain-grx-grovex-l1-exchange-dependency-risk.svg",
+    logoUrl: "/research-logos/grxchain-grx-grovex-l1-exchange-dependency-risk.jpg",
   },
   {
     name: 'Derive',
@@ -3267,7 +3267,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'derive-drv-options-perp-dex-rollup-liquidity-risk',
     color: '#7C3AED',
     initial: 'DRV',
-    logoUrl: "/research-logos/derive-drv-options-perp-dex-rollup-liquidity-risk.svg",
+    logoUrl: "/research-logos/derive-drv-options-perp-dex-rollup-liquidity-risk.jpg",
   },
   {
     name: 'Sonic',
@@ -3276,7 +3276,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'sonic-s-l1-fee-monetization-defi-liquidity-risk',
     color: '#0EA5E9',
     initial: 'S',
-    logoUrl: "/research-logos/sonic-s-l1-fee-monetization-defi-liquidity-risk.svg",
+    logoUrl: "/research-logos/sonic-s-l1-fee-monetization-defi-liquidity-risk.png",
   },
   {
     name: 'Meteora',
@@ -3285,7 +3285,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'meteora-met-solana-liquidity-layer-dlmm-token-risk',
     color: '#F97316',
     initial: 'MET',
-    logoUrl: "/research-logos/meteora-met-solana-liquidity-layer-dlmm-token-risk.svg",
+    logoUrl: "/research-logos/meteora-met-solana-liquidity-layer-dlmm-token-risk.png",
   },
   {
     name: 'AI Rig Complex',
@@ -3294,7 +3294,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ai-rig-complex-arc-solana-ai-agent-framework-token-risk',
     color: '#8B5CF6',
     initial: 'ARC',
-    logoUrl: "/research-logos/ai-rig-complex-arc-solana-ai-agent-framework-token-risk.svg",
+    logoUrl: "/research-logos/ai-rig-complex-arc-solana-ai-agent-framework-token-risk.png",
   },
   {
     name: 'CoW Protocol',
@@ -3303,7 +3303,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'cow-protocol-cow-intent-dex-solver-mev-token-risk',
     color: '#7C3AED',
     initial: 'COW',
-    logoUrl: "/research-logos/cow-protocol-cow-intent-dex-solver-mev-token-risk.svg",
+    logoUrl: "/research-logos/cow-protocol-cow-intent-dex-solver-mev-token-risk.png",
   },
   {
     name: 'Aethir',
@@ -3312,7 +3312,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'aethir-ath-gpu-cloud-depin-token-supply-risk',
     color: '#06B6D4',
     initial: 'ATH',
-    logoUrl: "/research-logos/aethir-ath-gpu-cloud-depin-token-supply-risk.svg",
+    logoUrl: "/research-logos/aethir-ath-gpu-cloud-depin-token-supply-risk.png",
   },
   {
     name: 'Chutes',
@@ -3321,7 +3321,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'chutes-sn64-decentralized-ai-compute-liquidity-risk',
     color: '#9333EA',
     initial: 'SN64',
-    logoUrl: "/research-logos/chutes-sn64-decentralized-ai-compute-liquidity-risk.svg",
+    logoUrl: "/research-logos/chutes-sn64-decentralized-ai-compute-liquidity-risk.png",
   },
   {
     name: 'deBridge',
@@ -3330,7 +3330,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'debridge-dbr-cross-chain-liquidity-network-token-risk',
     color: '#0F766E',
     initial: 'DBR',
-    logoUrl: "/research-logos/debridge-dbr-cross-chain-liquidity-network-token-risk.svg",
+    logoUrl: "/research-logos/debridge-dbr-cross-chain-liquidity-network-token-risk.png",
   },
   {
     name: 'Synthetix',
@@ -3339,7 +3339,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'synthetix-snx-perps-liquidity-staking-fee-capture-risk',
     color: '#2563EB',
     initial: 'SNX',
-    logoUrl: "/research-logos/synthetix-snx-perps-liquidity-staking-fee-capture-risk.svg",
+    logoUrl: "/research-logos/synthetix-snx-perps-liquidity-staking-fee-capture-risk.png",
   },
   {
     name: 'Banana For Scale',
@@ -3348,7 +3348,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'banana-for-scale-bananas31-bnb-meme-ai-agent-risk',
     color: '#EAB308',
     initial: 'BANANAS31',
-    logoUrl: "/research-logos/banana-for-scale-bananas31-bnb-meme-ai-agent-risk.svg",
+    logoUrl: "/research-logos/banana-for-scale-bananas31-bnb-meme-ai-agent-risk.png",
   },
   {
     name: 'Walrus',
@@ -3357,7 +3357,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'walrus-wal-sui-storage-depin-token-unlock-risk',
     color: '#0EA5E9',
     initial: 'WAL',
-    logoUrl: "/research-logos/walrus-wal-sui-storage-depin-token-unlock-risk.svg",
+    logoUrl: "/research-logos/walrus-wal-sui-storage-depin-token-unlock-risk.png",
   },
   {
     name: 'NEXPACE',
@@ -3366,7 +3366,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'nexpace-nxpc-maplestory-universe-gaming-token-risk',
     color: '#16A34A',
     initial: 'NXPC',
-    logoUrl: "/research-logos/nexpace-nxpc-maplestory-universe-gaming-token-risk.svg",
+    logoUrl: "/research-logos/nexpace-nxpc-maplestory-universe-gaming-token-risk.png",
   },
   {
     name: 'Livepeer',
@@ -3375,7 +3375,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'livepeer-lpt-decentralized-video-ai-gpu-token-risk',
     color: '#0F766E',
     initial: 'LPT',
-    logoUrl: "/research-logos/livepeer-lpt-decentralized-video-ai-gpu-token-risk.svg",
+    logoUrl: "/research-logos/livepeer-lpt-decentralized-video-ai-gpu-token-risk.png",
   },
   {
     name: 'Aleo',
@@ -3384,7 +3384,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'aleo-aleo-private-zk-l1-prover-economics-value-capture-risk',
     color: '#7C3AED',
     initial: 'ALEO',
-    logoUrl: "/research-logos/aleo-aleo-private-zk-l1-prover-economics-value-capture-risk.svg",
+    logoUrl: "/research-logos/aleo-aleo-private-zk-l1-prover-economics-value-capture-risk.png",
   },
   {
     name: 'LEO Token',
@@ -3393,7 +3393,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'leo-token-leo-bitfinex-exchange-token-buyback-liquidity-risk',
     color: '#0891B2',
     initial: 'LEO',
-    logoUrl: "/research-logos/leo-token-leo-bitfinex-exchange-token-buyback-liquidity-risk.svg",
+    logoUrl: "/research-logos/leo-token-leo-bitfinex-exchange-token-buyback-liquidity-risk.png",
   },
   {
     name: 'AUSD',
@@ -3402,7 +3402,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ausd-ausd-agora-stablecoin-reserve-liquidity-risk',
     color: '#7C3AED',
     initial: 'AUSD',
-    logoUrl: "/research-logos/ausd-ausd-agora-stablecoin-reserve-liquidity-risk.svg",
+    logoUrl: "/research-logos/ausd-ausd-agora-stablecoin-reserve-liquidity-risk.png",
   },
   {
     name: 'USAT',
@@ -3411,7 +3411,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'usat-usat-stablecoin-reserve-liquidity-regulatory-risk',
     color: '#2563EB',
     initial: 'USAT',
-    logoUrl: "/research-logos/usat-usat-stablecoin-reserve-liquidity-regulatory-risk.svg",
+    logoUrl: "/research-logos/usat-usat-stablecoin-reserve-liquidity-regulatory-risk.png",
   },
   {
     name: 'Satoshi Stablecoin',
@@ -3420,7 +3420,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'satoshi-stablecoin-satusd-river-omni-cdp-collateral-peg-risk',
     color: '#0EA5E9',
     initial: 'satUSD',
-    logoUrl: "/research-logos/satoshi-stablecoin-satusd-river-omni-cdp-collateral-peg-risk.svg",
+    logoUrl: "/research-logos/satoshi-stablecoin-satusd-river-omni-cdp-collateral-peg-risk.png",
   },
   {
     name: 'EUR CoinVertible',
@@ -3429,7 +3429,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'eur-coinvertible-eurcv-societe-generale-euro-stablecoin-reserve-risk',
     color: '#059669',
     initial: 'EURCV',
-    logoUrl: "/research-logos/eur-coinvertible-eurcv-societe-generale-euro-stablecoin-reserve-risk.svg",
+    logoUrl: "/research-logos/eur-coinvertible-eurcv-societe-generale-euro-stablecoin-reserve-risk.png",
   },
   {
     name: 'Ultima',
@@ -3438,7 +3438,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ultima-ultima-ecosystem-token-liquidity-supply-risk',
     color: '#7C3AED',
     initial: 'ULTIMA',
-    logoUrl: "/research-logos/ultima-ultima-ecosystem-token-liquidity-supply-risk.svg",
+    logoUrl: "/research-logos/ultima-ultima-ecosystem-token-liquidity-supply-risk.png",
   },
   {
     name: 'OriginTrail',
@@ -3447,7 +3447,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'origintrail-trac-decentralized-knowledge-graph-ai-depin-token-risk',
     color: '#F59E0B',
     initial: 'TRAC',
-    logoUrl: "/research-logos/origintrail-trac-decentralized-knowledge-graph-ai-depin-token-risk.svg",
+    logoUrl: "/research-logos/origintrail-trac-decentralized-knowledge-graph-ai-depin-token-risk.png",
   },
   {
     name: 'Arkham',
@@ -3456,7 +3456,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'arkham-arkm-onchain-intelligence-exchange-token-value-capture-risk',
     color: '#10B981',
     initial: 'ARKM',
-    logoUrl: "/research-logos/arkham-arkm-onchain-intelligence-exchange-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/arkham-arkm-onchain-intelligence-exchange-token-value-capture-risk.png",
   },
   {
     name: 'Convex Finance',
@@ -3465,7 +3465,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'convex-finance-cvx-curve-yield-governance-bribe-value-capture-risk',
     color: '#EC4899',
     initial: 'CVX',
-    logoUrl: "/research-logos/convex-finance-cvx-curve-yield-governance-bribe-value-capture-risk.svg",
+    logoUrl: "/research-logos/convex-finance-cvx-curve-yield-governance-bribe-value-capture-risk.png",
   },
   {
     name: 'Cortex',
@@ -3474,7 +3474,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'cortex-cx-ai-blockchain-token-liquidity-identity-risk',
     color: '#DC2626',
     initial: 'CX',
-    logoUrl: "/research-logos/cortex-cx-ai-blockchain-token-liquidity-identity-risk.svg",
+    logoUrl: "/research-logos/cortex-cx-ai-blockchain-token-liquidity-identity-risk.png",
   },
   {
     name: 'Neutrl USD',
@@ -3483,7 +3483,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'neutrl-usd-nusd-delta-neutral-stablecoin-reserve-yield-risk',
     color: '#4F46E5',
     initial: 'NUSD',
-    logoUrl: "/research-logos/neutrl-usd-nusd-delta-neutral-stablecoin-reserve-yield-risk.svg",
+    logoUrl: "/research-logos/neutrl-usd-nusd-delta-neutral-stablecoin-reserve-yield-risk.png",
   },
   {
     name: 'Ozone Chain',
@@ -3492,7 +3492,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'ozone-chain-ozo-quantum-resistant-l1-liquidity-adoption-risk',
     color: '#7C3AED',
     initial: 'OZO',
-    logoUrl: "/research-logos/ozone-chain-ozo-quantum-resistant-l1-liquidity-adoption-risk.svg",
+    logoUrl: "/research-logos/ozone-chain-ozo-quantum-resistant-l1-liquidity-adoption-risk.png",
   },
   {
     name: 'Shuffle',
@@ -3501,7 +3501,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'shuffle-shfl-crypto-casino-token-revenue-liquidity-regulatory-risk',
     color: '#4F46E5',
     initial: 'SHFL',
-    logoUrl: "/research-logos/shuffle-shfl-crypto-casino-token-revenue-liquidity-regulatory-risk.svg",
+    logoUrl: "/research-logos/shuffle-shfl-crypto-casino-token-revenue-liquidity-regulatory-risk.png",
   },
   {
     name: '0x Protocol',
@@ -3519,7 +3519,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'allora-allo-decentralized-ai-inference-network-token-risk',
     color: '#F59E0B',
     initial: 'ALLO',
-    logoUrl: "/research-logos/allora-allo-decentralized-ai-inference-network-token-risk.svg",
+    logoUrl: "/research-logos/allora-allo-decentralized-ai-inference-network-token-risk.png",
   },
   {
     name: 'Cygnus Finance Global USD',
@@ -3537,7 +3537,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'felix-feusd-hyperliquid-stablecoin-collateral-redemption-risk',
     color: '#EF4444',
     initial: 'FEUSD',
-    logoUrl: "/research-logos/felix-feusd-hyperliquid-stablecoin-collateral-redemption-risk.svg",
+    logoUrl: "/research-logos/felix-feusd-hyperliquid-stablecoin-collateral-redemption-risk.png",
   },
   {
     name: 'Four',
@@ -3546,7 +3546,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'four-form-bnb-chain-launchpad-token-migration-liquidity-risk',
     color: '#F59E0B',
     initial: 'FORM',
-    logoUrl: "/research-logos/four-form-bnb-chain-launchpad-token-migration-liquidity-risk.svg",
+    logoUrl: "/research-logos/four-form-bnb-chain-launchpad-token-migration-liquidity-risk.png",
   },
   {
     name: 'Lista USD',
@@ -3555,7 +3555,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'lista-usd-lisusd-bnb-chain-collateral-stablecoin-redemption-risk',
     color: '#2563EB',
     initial: 'lisUSD',
-    logoUrl: "/research-logos/lista-usd-lisusd-bnb-chain-collateral-stablecoin-redemption-risk.svg",
+    logoUrl: "/research-logos/lista-usd-lisusd-bnb-chain-collateral-stablecoin-redemption-risk.png",
   },
   {
     name: 'Magma Finance',
@@ -3564,7 +3564,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'magma-finance-magma-liquid-staking-defi-token-liquidity-risk',
     color: '#0EA5E9',
     initial: 'MAGMA',
-    logoUrl: "/research-logos/magma-finance-magma-liquid-staking-defi-token-liquidity-risk.svg",
+    logoUrl: "/research-logos/magma-finance-magma-liquid-staking-defi-token-liquidity-risk.png",
   },
   {
     name: 'MultiversX',
@@ -3573,7 +3573,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'multiversx-egld-sharded-l1-appchain-token-value-capture-risk',
     color: '#0284C7',
     initial: 'EGLD',
-    logoUrl: "/research-logos/multiversx-egld-sharded-l1-appchain-token-value-capture-risk.svg",
+    logoUrl: "/research-logos/multiversx-egld-sharded-l1-appchain-token-value-capture-risk.png",
   },
   {
     name: 'Nexus Mutual',
@@ -3582,7 +3582,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'nexus-mutual-nxm-onchain-insurance-capital-pool-token-risk',
     color: '#D97706',
     initial: 'NXM',
-    logoUrl: "/research-logos/nexus-mutual-nxm-onchain-insurance-capital-pool-token-risk.svg",
+    logoUrl: "/research-logos/nexus-mutual-nxm-onchain-insurance-capital-pool-token-risk.png",
   },
   {
     name: 'Orca',
@@ -3591,7 +3591,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'orca-orca-solana-dex-whirlpools-fee-capture-risk',
     color: '#DC2626',
     initial: 'ORCA',
-    logoUrl: "/research-logos/orca-orca-solana-dex-whirlpools-fee-capture-risk.svg",
+    logoUrl: "/research-logos/orca-orca-solana-dex-whirlpools-fee-capture-risk.png",
   },
   {
     name: 'Reserve Rights',
@@ -3600,7 +3600,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'reserve-rights-rsr-rtoken-staking-governance-value-capture-risk',
     color: '#10B981',
     initial: 'RSR',
-    logoUrl: "/research-logos/reserve-rights-rsr-rtoken-staking-governance-value-capture-risk.svg",
+    logoUrl: "/research-logos/reserve-rights-rsr-rtoken-staking-governance-value-capture-risk.png",
   },
   {
     name: 'UnifAI Network',
@@ -3609,7 +3609,7 @@ const PROJECTS: ResearchProject[] = [
     slug: 'unifai-network-uai-ai-agent-network-token-liquidity-risk',
     color: '#10B981',
     initial: 'UAI',
-    logoUrl: "/research-logos/unifai-network-uai-ai-agent-network-token-liquidity-risk.svg",
+    logoUrl: "/research-logos/unifai-network-uai-ai-agent-network-token-liquidity-risk.png",
   },
   {
     name: 'WrappedM by M0',
@@ -3618,7 +3618,277 @@ const PROJECTS: ResearchProject[] = [
     slug: 'wrappedm-by-m0-wm-m-stablecoin-wrapper-reserve-liquidity-risk',
     color: '#0EA5E9',
     initial: 'WM',
-    logoUrl: "/research-logos/wrappedm-by-m0-wm-m-stablecoin-wrapper-reserve-liquidity-risk.svg",
+    logoUrl: "/research-logos/wrappedm-by-m0-wm-m-stablecoin-wrapper-reserve-liquidity-risk.png",
+  },
+  {
+    name: 'AILayer / AIL',
+    description: 'AILayer is treated as a Bitcoin L2 / farm watchlist candidate sourced from Co...',
+    type: 'L2',
+    slug: 'ailayer-ail-bitcoin-l2-farm-token-value-capture-risk',
+    color: '#2563EB',
+    initial: 'AA',
+    logoUrl: "/research-logos/ailayer-ail-bitcoin-l2-farm-token-value-capture-risk.png",
+  },
+  {
+    name: 'Babylon Protocol / BABY',
+    description: 'Babylon Protocol is treated as a Bitcoin staking / restaking watchlist candid...',
+    type: 'DeFi',
+    slug: 'babylon-protocol-baby-bitcoin-staking-restaking-token-value-capture-risk',
+    color: '#EF4444',
+    initial: 'BP',
+    logoUrl: "/research-logos/babylon-protocol-baby-bitcoin-staking-restaking-token-value-capture-risk.png",
+  },
+  {
+    name: 'Beefy Finance / BIFI',
+    description: 'Beefy Finance is treated as a Yield aggregator watchlist candidate sourced fr...',
+    type: 'Yield',
+    slug: 'beefy-finance-bifi-yield-aggregator-token-value-capture-risk',
+    color: '#EF4444',
+    initial: 'BF',
+    logoUrl: "/research-logos/beefy-finance-bifi-yield-aggregator-token-value-capture-risk.svg",
+  },
+  {
+    name: 'BENQI / QI',
+    description: 'BENQI is treated as a Avalanche lending / liquid staking watchlist candidate ...',
+    type: 'Lending',
+    slug: 'benqi-qi-avalanche-lending-liquid-staking-token-value-capture-risk',
+    color: '#7C3AED',
+    initial: 'BQ',
+    logoUrl: "/research-logos/benqi-qi-avalanche-lending-liquid-staking-token-value-capture-risk.png",
+  },
+  {
+    name: 'BlazeStake / BLZE',
+    description: 'BlazeStake is treated as a Solana liquid staking watchlist candidate sourced ...',
+    type: 'DeFi',
+    slug: 'blazestake-blze-solana-liquid-staking-token-value-capture-risk',
+    color: '#6366F1',
+    initial: 'BB',
+    logoUrl: "/research-logos/blazestake-blze-solana-liquid-staking-token-value-capture-risk.png",
+  },
+  {
+    name: 'Brickken / BKN',
+    description: 'Brickken is treated as a RWA tokenization watchlist candidate sourced from Co...',
+    type: 'RWA',
+    slug: 'brickken-bkn-rwa-tokenization-token-value-capture-risk',
+    color: '#10B981',
+    initial: 'BB',
+    logoUrl: "/research-logos/brickken-bkn-rwa-tokenization-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Concentrator / CTR',
+    description: 'Concentrator is treated as a Yield optimizer watchlist candidate sourced from...',
+    type: 'Yield',
+    slug: 'concentrator-ctr-yield-optimizer-token-value-capture-risk',
+    color: '#EC4899',
+    initial: 'CC',
+    logoUrl: "/research-logos/concentrator-ctr-yield-optimizer-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Dolomite / DOLO',
+    description: 'Dolomite is treated as a Money market / margin lending watchlist candidate so...',
+    type: 'Lending',
+    slug: 'dolomite-dolo-money-market-margin-lending-token-value-capture-risk',
+    color: '#4F46E5',
+    initial: 'DD',
+    logoUrl: "/research-logos/dolomite-dolo-money-market-margin-lending-token-value-capture-risk.png",
+  },
+  {
+    name: 'Enzyme Finance / MLN',
+    description: 'Enzyme Finance is treated as a Onchain asset management watchlist candidate s...',
+    type: 'DeFi',
+    slug: 'enzyme-finance-mln-onchain-asset-management-token-value-capture-risk',
+    color: '#059669',
+    initial: 'EF',
+    logoUrl: "/research-logos/enzyme-finance-mln-onchain-asset-management-token-value-capture-risk.svg",
+  },
+  {
+    name: 'f(x) Protocol / FXN',
+    description: 'f(x) Protocol is treated as a Stablecoin / structured liquidity watchlist can...',
+    type: 'Stablecoin',
+    slug: 'f-x-protocol-fxn-stablecoin-structured-liquidity-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'FP',
+    logoUrl: "/research-logos/f-x-protocol-fxn-stablecoin-structured-liquidity-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Frankencoin / ZCHF',
+    description: 'Frankencoin is treated as a CDP stablecoin watchlist candidate sourced from C...',
+    type: 'Stablecoin',
+    slug: 'frankencoin-zchf-cdp-stablecoin-token-value-capture-risk',
+    color: '#EC4899',
+    initial: 'FZ',
+    logoUrl: "/research-logos/frankencoin-zchf-cdp-stablecoin-token-value-capture-risk.svg",
+  },
+  {
+    name: 'KPK / KPK',
+    description: 'KPK is treated as a Risk curator / DeFi vault infrastructure watchlist candid...',
+    type: 'Infra',
+    slug: 'kpk-kpk-risk-curator-defi-vault-infrastructure-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'KK',
+    logoUrl: "/research-logos/kpk-kpk-risk-curator-defi-vault-infrastructure-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Merlin Chain / MERL',
+    description: 'Merlin Chain is treated as a Bitcoin L2 / bridge watchlist candidate sourced ...',
+    type: 'L2',
+    slug: 'merlin-chain-merl-bitcoin-l2-bridge-token-value-capture-risk',
+    color: '#4F46E5',
+    initial: 'MC',
+    logoUrl: "/research-logos/merlin-chain-merl-bitcoin-l2-bridge-token-value-capture-risk.png",
+  },
+  {
+    name: 'mETH Protocol / COOK',
+    description: 'mETH Protocol is treated as a Liquid staking watchlist candidate sourced from...',
+    type: 'DeFi',
+    slug: 'meth-protocol-cook-liquid-staking-token-value-capture-risk',
+    color: '#DC2626',
+    initial: 'MP',
+    logoUrl: "/research-logos/meth-protocol-cook-liquid-staking-token-value-capture-risk.png",
+  },
+  {
+    name: 'Obol / OBOL',
+    description: 'Obol is treated as a Distributed validator middleware watchlist candidate sou...',
+    type: 'DeFi',
+    slug: 'obol-obol-distributed-validator-middleware-token-value-capture-risk',
+    color: '#8B5CF6',
+    initial: 'OO',
+    logoUrl: "/research-logos/obol-obol-distributed-validator-middleware-token-value-capture-risk.png",
+  },
+  {
+    name: 'ORIGYN Foundation / OGY',
+    description: 'ORIGYN Foundation is treated as a ICP RWA / certification watchlist candidate...',
+    type: 'RWA',
+    slug: 'origyn-foundation-ogy-icp-rwa-certification-token-value-capture-risk',
+    color: '#059669',
+    initial: 'OF',
+    logoUrl: "/research-logos/origyn-foundation-ogy-icp-rwa-certification-token-value-capture-risk.svg",
+  },
+  {
+    name: 'PinkSale / PINKSALE',
+    description: 'PinkSale is treated as a Launchpad watchlist candidate sourced from CoinGecko...',
+    type: 'DeFi',
+    slug: 'pinksale-pinksale-launchpad-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'PP',
+    logoUrl: "/research-logos/pinksale-pinksale-launchpad-token-value-capture-risk.svg",
+  },
+  {
+    name: 'QuickSwap / QUICK',
+    description: 'QuickSwap is treated as a DEX watchlist candidate sourced from CoinGecko/CMC ...',
+    type: 'DEX',
+    slug: 'quickswap-quick-dex-token-value-capture-risk',
+    color: '#0EA5E9',
+    initial: 'QQ',
+    logoUrl: "/research-logos/quickswap-quick-dex-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Renzo / REZ',
+    description: 'Renzo is treated as a Liquid restaking watchlist candidate sourced from CoinG...',
+    type: 'DeFi',
+    slug: 'renzo-rez-liquid-restaking-token-value-capture-risk',
+    color: '#0891B2',
+    initial: 'RR',
+    logoUrl: "/research-logos/renzo-rez-liquid-restaking-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Rocket Pool / RPL',
+    description: 'Rocket Pool is treated as a Liquid staking watchlist candidate sourced from C...',
+    type: 'DeFi',
+    slug: 'rocket-pool-rpl-liquid-staking-token-value-capture-risk',
+    color: '#7C3AED',
+    initial: 'RP',
+    logoUrl: "/research-logos/rocket-pool-rpl-liquid-staking-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Savings xDAI / SDAI',
+    description: 'Savings xDAI is treated as a Yield-bearing stablecoin wrapper watchlist candi...',
+    type: 'Yield',
+    slug: 'savings-xdai-sdai-yield-bearing-stablecoin-wrapper-token-value-capture-risk',
+    color: '#8B5CF6',
+    initial: 'SX',
+    logoUrl: "/research-logos/savings-xdai-sdai-yield-bearing-stablecoin-wrapper-token-value-capture-risk.png",
+  },
+  {
+    name: 'SSV Network / SSV',
+    description: 'SSV Network is treated as a Distributed validator infrastructure watchlist ca...',
+    type: 'Infra',
+    slug: 'ssv-network-ssv-distributed-validator-infrastructure-token-value-capture-risk',
+    color: '#6366F1',
+    initial: 'SN',
+    logoUrl: "/research-logos/ssv-network-ssv-distributed-validator-infrastructure-token-value-capture-risk.png",
+  },
+  {
+    name: 'Stader / SD',
+    description: 'Stader is treated as a Liquid staking watchlist candidate sourced from CoinGe...',
+    type: 'DeFi',
+    slug: 'stader-sd-liquid-staking-token-value-capture-risk',
+    color: '#4F46E5',
+    initial: 'SS',
+    logoUrl: "/research-logos/stader-sd-liquid-staking-token-value-capture-risk.png",
+  },
+  {
+    name: 'Stake DAO / SDT',
+    description: 'Stake DAO is treated as a Yield / governance allocator watchlist candidate so...',
+    type: 'Yield',
+    slug: 'stake-dao-sdt-yield-governance-allocator-token-value-capture-risk',
+    color: '#0284C7',
+    initial: 'SD',
+    logoUrl: "/research-logos/stake-dao-sdt-yield-governance-allocator-token-value-capture-risk.png",
+  },
+  {
+    name: 'Staked USDT / stUSDT',
+    description: 'Staked USDT is treated as a RWA / yield-bearing stablecoin watchlist candidat...',
+    type: 'Yield',
+    slug: 'staked-usdt-stusdt-rwa-yield-bearing-stablecoin-token-value-capture-risk',
+    color: '#DC2626',
+    initial: 'SU',
+    logoUrl: "/research-logos/staked-usdt-stusdt-rwa-yield-bearing-stablecoin-token-value-capture-risk.png",
+  },
+  {
+    name: 'Tectonic / TONIC',
+    description: 'Tectonic is treated as a Lending market watchlist candidate sourced from Coin...',
+    type: 'Lending',
+    slug: 'tectonic-tonic-lending-market-token-value-capture-risk',
+    color: '#7C3AED',
+    initial: 'TT',
+    logoUrl: "/research-logos/tectonic-tonic-lending-market-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Tornado Cash / TORN',
+    description: 'Tornado Cash is treated as a Privacy infrastructure watchlist candidate sourc...',
+    type: 'Privacy',
+    slug: 'tornado-cash-torn-privacy-infrastructure-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'TC',
+    logoUrl: "/research-logos/tornado-cash-torn-privacy-infrastructure-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Treehouse Protocol / TREE',
+    description: 'Treehouse Protocol is treated as a Fixed income / DOR infrastructure watchlis...',
+    type: 'Infra',
+    slug: 'treehouse-protocol-tree-fixed-income-dor-infrastructure-token-value-capture-risk',
+    color: '#F59E0B',
+    initial: 'TP',
+    logoUrl: "/research-logos/treehouse-protocol-tree-fixed-income-dor-infrastructure-token-value-capture-risk.svg",
+  },
+  {
+    name: 'Yield Basis / YB',
+    description: 'Yield Basis is treated as a Leveraged LP / yield strategy watchlist candidate...',
+    type: 'Yield',
+    slug: 'yield-basis-yb-leveraged-lp-yield-strategy-token-value-capture-risk',
+    color: '#0EA5E9',
+    initial: 'YB',
+    logoUrl: "/research-logos/yield-basis-yb-leveraged-lp-yield-strategy-token-value-capture-risk.svg",
+  },
+  {
+    name: 'ZEROBASE / ZBT',
+    description: 'ZEROBASE is treated as a Basis trading / CeDeFi watchlist candidate sourced f...',
+    type: 'DeFi',
+    slug: 'zerobase-zbt-basis-trading-cedefi-token-value-capture-risk',
+    color: '#059669',
+    initial: 'ZZ',
+    logoUrl: "/research-logos/zerobase-zbt-basis-trading-cedefi-token-value-capture-risk.svg",
   },
 ];
 

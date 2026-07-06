@@ -1,332 +1,106 @@
 ```skill
 ---
-name: crypto-research
-description: Comprehensive cryptocurrency research and valuation analysis. Triggers when user asks to research, analyze, evaluate, or value a cryptocurrency/token/protocol. Covers fundamental analysis, on-chain metrics, tokenomics, competitive landscape, valuation (DCF + multiples), catalysts, and risk assessment. Includes specialized River chain-abstraction stablecoin research agent for deep-dive analysis of Omni-CDP, satUSD, cross-chain capital routing, and protocol-level economic design.
+name: portfolio-research-map-builder
+description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio Research Map content. Covers Surf-first crypto data refresh, local duplicate checks, MDX placement, /research card sync, logo sync, depth audit, candidate backlog, and quick content creation scripts.
 ---
 
-# Crypto Research Skill
+# Portfolio Research Map Builder
 
-## Workflow Checklist
+## First Rules
 
-Copy and track progress:
+- Read `AGENTS.md` before starting.
+- Use `pnpm`; do not use npm or yarn.
+- For crypto data refresh, use Surf first: run `surf list-operations`, then the target command `--help`, then collect fresh market, listing, tokenomics, social, DeFi, on-chain, or research data.
+- Use CoinGecko, CMC, explorers, exchanges, DefiLlama, official docs, and web search only when Surf has no data, errors, or the user explicitly asks for another source.
+- Do not create duplicate Research Map entries. Check local coverage before writing.
 
+## Current State
+
+As of 2026-07-06:
+
+- Registry: 411 local research projects.
+- Candidate pool: 357 total; 158 pending new candidates.
+- Upgrade queue: 14 reports still need full-depth upgrades.
+- Next new candidates begin with `USDa / USDA`, `Tradable NA Rent Financing Platform SSTN`, and `Spiko US T-Bills Money Market Fund`.
+- Next upgrade reports begin with `golem-glm-decentralized-compute-marketplace-demand-risk`, `kaito-kaito-ai-attention-infofi-token-value-capture-risk`, and `livepeer-lpt-decentralized-video-ai-gpu-token-risk`.
+- The old `research-map-builder` installed skill path is not present in the current Codex skill directories; this file is the repo-local workflow reference.
+
+## Quick Commands
+
+```bash
+pnpm quick:add -- "A short idea for a post" --category thoughts
+pnpm quick:add -- "Deep research on USDa stablecoin risk" --category research
+pnpm quick:add -- "Deep research on USDa stablecoin risk" --category research --write
+
+pnpm new:post -- "A deep research report about BTC and macro liquidity" --category research
+pnpm sync:research:registry -- --check "USDa USDA"
+pnpm sync:research:registry -- --next 10
+pnpm status:research:run
+pnpm sync:research --add
+pnpm audit:research:depth -- --limit 100 --write
+pnpm check:research:logos
+pnpm content:check
 ```
 
-Crypto Research: [Bitcoin]
-
-Phase 1 - Data Collection
-
-- [ ] 1.1 Protocol overview & sector classification
-- [ ] 1.2 On-chain metrics & usage data
-- [ ] 1.3 Revenue, fees & financial data
-- [ ] 1.4 Tokenomics & supply dynamics
-- [ ] 1.5 Team, funding & governance
-
-Phase 2 - Analysis
-
-- [ ] 2.1 Value accrual mechanism analysis
-- [ ] 2.2 Competitive landscape & moat
-- [ ] 2.3 Narrative & catalyst identification
-- [ ] 2.4 Risk assessment
+`pnpm quick:add` defaults to dry-run. Add `--write` to create the MDX file. For research posts, pass `--sync-research` only when you want it to run `pnpm sync:research --add` immediately after writing.
 
-Phase 3 - Valuation
+## Add New Research
 
-- [ ] 3.1 Comparable multiples analysis
-- [ ] 3.2 DCF / token flow valuation
-- [ ] 3.3 Sensitivity analysis
-- [ ] 3.4 Investment thesis & conclusion
+1. Check local duplicates:
 
-```
+   ```bash
+   pnpm sync:research:registry -- --check "Project Symbol"
+   ```
 
----
+2. If no high-confidence match exists, refresh live data:
 
-## Phase 1: Data Collection
-
-Use `WebSearch` as primary tool. Prioritize these data sources:
-- **DeFiLlama**: TVL, fees, revenue, protocol comparisons
-- **Token Terminal**: Revenue, P/S, P/E, active users
-- **Dune Analytics**: On-chain dashboards
-- **Messari / CoinGecko**: Tokenomics, market data
-- **Official docs**: Whitepaper, tokenomics page, governance forum
+   ```bash
+   surf list-operations
+   surf <operation> --help
+   ```
 
-### 1.1 Protocol Overview
+3. Create or edit the MDX under `content/blog/YYYY/research/`.
 
-**Queries:**
-- `"[Bitcoin] what is [PROTOCOL] how does it work"`
-- `"[Bitcoin] official documentation whitepaper"`
+4. Connect it to `/research`:
 
-**Extract:**
-- `sector`: L1 / L2 / DEX / Lending / Perps / Restaking / DA / Bridge / etc.
-- `mechanism`: How the protocol works in 2-3 sentences
-- `launch_date`: When mainnet launched
-- `chain`: Which chain(s) it operates on
+   ```bash
+   pnpm sync:research --add
+   pnpm check:research:logos
+   ```
 
-### 1.2 On-Chain Metrics & Usage
+5. Validate depth and project health:
 
-**Queries:**
-- `"[Bitcoin] daily active users monthly active users 2024 2025"`
-- `"[Bitcoin] transaction volume TVL DeFiLlama"`
-- `"[Bitcoin] on-chain activity growth Dune"`
+   ```bash
+   pnpm audit:research:depth -- --limit 100 --write
+   pnpm exec tsc --noEmit
+   git diff --check
+   ```
 
-**Extract:**
-| Metric | Value | 30d Trend | 90d Trend |
-|--------|-------|-----------|-----------|
-| DAU / MAU | | | |
-| Daily Transactions | | | |
-| TVL | | | |
-| Volume (if DEX/Perps) | | | |
-| Unique Addresses | | | |
+## Upgrade Existing Research
 
-### 1.3 Revenue & Fees
+1. Pick from the upgrade queue:
 
-**Queries:**
-- `"[Bitcoin] protocol revenue fees Token Terminal DeFiLlama"`
-- `"[Bitcoin] annualized revenue 2024 2025"`
+   ```bash
+   pnpm status:research:run
+   ```
 
-**Extract:**
-| Metric | Value | YoY Growth |
-|--------|-------|------------|
-| Gross Fees (annualized) | | |
-| Protocol Revenue (to treasury/token) | | |
-| Supply-side Revenue (to LPs/validators) | | |
-| Take Rate (Protocol Rev / Gross Fees) | | |
-
-### 1.4 Tokenomics & Supply
-
-**Queries:**
-- `"[Bitcoin] tokenomics supply schedule unlock vesting"`
-- `"[Bitcoin] token burn mechanism staking yield inflation"`
+2. Refresh current data with Surf and primary sources.
 
-**Extract:**
-| Metric | Value |
-|--------|-------|
-| Price / Market Cap / FDV | |
-| Circulating Supply / Max Supply | |
-| % Circulating (Circ / Max) | |
-| Annual Inflation Rate | |
-| Burn Mechanism | Yes/No + details |
-| Staking Yield (real, net of inflation) | |
-| Upcoming Unlocks (next 12 months) | |
-| Treasury Holdings | |
+3. Upgrade the MDX to full-depth format. Required sections include pre-screen decision, TL;DR, project overview, research question, architecture/mechanism, market intelligence, economics/value capture, tokenomics, team/funding/governance, competition, catalysts, risk matrix, valuation, bull/base/bear, confidence score, red-team check, monitoring dashboard, follow-up triggers, and final investment view.
 
-**Key question:** What % of max supply is still locked? Large future unlocks = dilution risk.
+4. Audit the result:
 
-### 1.5 Team, Funding & Governance
+   ```bash
+   pnpm audit:research:depth -- --limit 100 --write
+   ```
 
-**Queries:**
-- `"[Bitcoin] team founders background"`
-- `"[Bitcoin] funding rounds investors valuation"`
-- `"[Bitcoin] governance model DAO proposals"`
+Full-depth pass target: at least 6000 English words or comparable CJK length, 20 independent evidence links, 18 table lines, and no more than one missing required section.
 
-**Extract:**
-- **Team**: Key members, track record, anon vs doxxed
-- **Funding**: Total raised, key investors, last round valuation vs current FDV
-- **Governance**: Token-voted / multisig / hybrid, voter participation rate
-- **Investor unlock**: Are early investors still locked or already fully vested?
+## Candidate Pool
 
----
-
-## Phase 2: Analysis
-
-### 2.1 Value Accrual Mechanism
-
-This is the most critical question: **How does holding the token capture protocol value?**
-
-Classify the mechanism(s):
-
-| Mechanism | Example | Strength |
-|-----------|---------|----------|
-| Fee burn (deflationary) | ETH EIP-1559 | Strong - direct value |
-| Revenue share / dividends | GMX, SUSHI | Strong - cash flow |
-| Vote-escrow + bribes | CRV, AERO | Medium - governance premium |
-| Gas token (must hold to use) | ETH, SOL | Strong - demand-driven |
-| Staking yield (real yield) | ETH staking | Strong if yield > inflation |
-| Pure governance (no cash flow) | UNI (pre-fee switch) | Weak - speculative |
-| Collateral / security | LINK, EIGEN | Medium - utility-driven |
-
-**Assessment:** Rate value accrual as Strong / Medium / Weak with reasoning.
-
-### 2.2 Competitive Landscape
-
-**Query:** `"[Bitcoin] vs competitors comparison [SECTOR]"`
-
-Build a comparison table:
-
-| Protocol | TVL | Revenue | FDV | FDV/Rev | FDV/TVL | DAU | Edge |
-|----------|-----|---------|-----|---------|---------|-----|------|
-| [TARGET] | | | | | | | |
-| Comp 1 | | | | | | | |
-| Comp 2 | | | | | | | |
-| Comp 3 | | | | | | | |
-
-**Moat analysis:**
-- Network effects (liquidity, users, developers)?
-- Switching costs?
-- Brand / Lindy effect?
-- Technical differentiation?
-- Ecosystem lock-in?
-
-### 2.3 Narrative & Catalysts
-
-**Queries:**
-- `"[Bitcoin] upcoming catalysts roadmap 2025 2026"`
-- `"[Bitcoin] narrative trend crypto"`
-
-**Identify:**
-- **Positive catalysts**: Product launches, partnerships, upgrades, regulatory clarity, sector rotation
-- **Negative catalysts**: Token unlocks, competitor launches, regulatory action
-- **Narrative fit**: Is this token aligned with current crypto narratives? (AI, RWA, DePIN, restaking, modular, etc.)
-- **Timeline**: When are catalysts expected?
-
-### 2.4 Risk Assessment
-
-Rate each risk dimension (Low / Medium / High):
-
-| Risk | Rating | Notes |
-|------|--------|-------|
-| Smart contract risk | | Audit status, age of code, hack history |
-| Regulatory risk | | Token classification, jurisdiction |
-| Concentration risk | | Top holders %, single point of failure |
-| Competition risk | | Defensibility of market position |
-| Token unlock / dilution | | Upcoming vesting schedules |
-| Dependency risk | | Reliance on other protocols/chains |
-| Team / key person risk | | Anon team, single founder |
-| Market / liquidity risk | | Exchange listings, depth |
-
----
-
-## Phase 3: Valuation
-
-### 3.1 Comparable Multiples
-
-Using data from Phase 1 & 2, calculate and compare:
-
-| Multiple | [TARGET] | Sector Median | Premium/Discount |
-|----------|----------|---------------|------------------|
-| FDV / Annualized Rev | | | |
-| FDV / Annualized Fees | | | |
-| MC / TVL | | | |
-| FDV / DAU | | | |
-| P/E (if applicable) | | | |
-
-**Interpretation:**
-- Trading at a premium? Justify with growth rate, moat, or narrative.
-- Trading at a discount? Identify if it's warranted (risk) or an opportunity.
-- Use **PEG-like ratio**: (FDV/Rev) / Revenue Growth Rate. Below 1.0 = potentially undervalued.
-
-### 3.2 DCF / Token Cash Flow Valuation
-
-Only apply DCF when the token has **quantifiable value accrual** (fee burn, revenue share, real yield). Skip for pure governance or meme tokens.
-
-#### Discount Rate Selection
-
-| Sector | Base Rate | Notes |
-|--------|-----------|-------|
-| L1 Established (ETH, SOL) | 15-20% | Blue chip crypto |
-| L1 Emerging | 25-35% | High execution risk |
-| DeFi Blue Chip (UNI, AAVE) | 20-30% | Proven models |
-| DeFi Emerging | 35-50% | Hack/exploit risk |
-| Infrastructure / L2 | 20-30% | L1 dependency |
-| New Primitives (Restaking, AI) | 30-50% | Unproven category |
-
-**Adjustments:**
-- Regulatory uncertainty: +5-10%
-- Unaudited / new code: +5%
-- Lindy effect (>4 years): -5%
-- Strong treasury (>20% of MC): -2-5%
-
-#### Projection Model (5 years)
-
-| Year | Gross Fees | Growth % | Take Rate | Protocol Rev | Token Incentives | Net Value Accrual |
-|------|-----------|----------|-----------|-------------|-----------------|-------------------|
-| Y0 (Current) | | | | | | |
-| Y1 | | | | | | |
-| Y2 | | | | | | |
-| Y3 | | | | | | |
-| Y4 | | | | | | |
-| Y5 | | | | | | |
-
-**Growth rate guidance:**
-- Conservative: 10-20% (mature protocol)
-- Base: 30-50% (growing protocol)
-- Aggressive: >50% (use decay: e.g., 80% → 60% → 40% → 30% → 20%)
-
-**Terminal Value:**
-- Gordon Growth: TV = Y5 Net Accrual × (1 + g) / (r - g), where g = 2-4%
-- Or Exit Multiple: 15-25x Year 5 net accrual
-
-#### Fair Value Calculation
-
-```
-
-Enterprise Value = PV(Net Value Accrual Y1-Y5) + PV(Terminal Value)
-
-- Treasury Assets (stablecoins, ETH/BTC holdings)
-
-* Outstanding Debt/Liabilities
-
-Fair Value per Token = Enterprise Value / Fully Diluted Supply
-
-```
-
-### 3.3 Sensitivity Analysis
-
-Create a 3×3 matrix with your base case in the center:
-
-| | Growth -15% | Base Growth | Growth +15% |
-|---|-------------|-------------|-------------|
-| **Discount +5%** | | | |
-| **Base Discount** | | | |
-| **Discount -5%** | | | |
-
-### 3.4 Investment Thesis & Conclusion
-
-Structure the final output:
-
----
-
-## [Bitcoin] Research Report
-
-### Summary
-| Metric | Value |
-|--------|-------|
-| Current Price | |
-| Fair Value (Base) | |
-| Upside/Downside | |
-| Conviction | Low / Medium / High |
-| Time Horizon | |
-
-### Bull Case (probability: X%)
-- Key arguments for outperformance
-- Target price and multiple
-
-### Base Case (probability: X%)
-- Expected trajectory
-- Fair value and implied multiple
-
-### Bear Case (probability: X%)
-- Key risks that could drive underperformance
-- Downside target
-
-### Key Metrics Dashboard
-| Metric | Value | vs Peers |
-|--------|-------|----------|
-| FDV/Rev | | |
-| Revenue Growth | | |
-| Real Yield | | |
-| Value Accrual | | |
-
-### Catalysts to Watch
-1. [Catalyst + expected date]
-2. [Catalyst + expected date]
-3. [Catalyst + expected date]
-
-### Key Risks
-1. [Risk + mitigation or monitoring signal]
-2. [Risk + mitigation or monitoring signal]
-3. [Risk + mitigation or monitoring signal]
-
----
-
-
+- `data/research-map/candidates.json` is the backlog for not-yet-researched projects.
+- `data/research-map/registry.json` is generated local coverage and duplicate lookup.
+- `data/research-map/depth-upgrade-queue.json` is generated upgrade debt for already-published research.
+- `pnpm sync:research:registry` does local registry and candidate status sync only; it should not call live market APIs.
+- `pnpm seed:research:candidates` expands backlog from market-ranking sources and should be used deliberately.
 ```
