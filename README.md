@@ -36,7 +36,7 @@ Built with Next.js, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Vercel.
 | `/stack`    | Tools and tech stack                               |
 | `/fund`     | Fund tracker                                       |
 | `/fear`     | Crypto Fear & Greed index                          |
-| `/research` | Deep-dive research map — 411 local crypto project records |
+| `/research` | Deep-dive research map — 511 local crypto project records |
 
 ## Content Management
 
@@ -90,11 +90,11 @@ pnpm check:research:logos
 
 Current local status as of 2026-07-06:
 
-- Registry: 411 research projects.
-- Candidate pool: 357 total, 158 pending new candidates.
-- Upgrade queue: 14 reports still need full-depth upgrades.
-- Next new candidates start with USDa / USDA, Tradable NA Rent Financing Platform SSTN, and Spiko US T-Bills Money Market Fund.
-- Next upgrade reports start with Golem / GLM, Kaito / KAITO, and Livepeer / LPT.
+- Registry: 511 research projects.
+- Candidate pool: 357 total, 59 pending new candidates.
+- Upgrade queue: 0 reports in the latest generated depth queue.
+- Next new candidates start with Genius / GENIUS, Data Network / DATA, and Midas mF-ONE / MF-ONE.
+- Next upgrade reports: none in the latest generated depth queue.
 
 For crypto data refresh, use Surf first: check `surf list-operations`, inspect the target command with `--help`, then fall back to CoinGecko, CMC, explorers, DefiLlama, official docs, or web search only when Surf is missing data or errors.
 

@@ -5,6 +5,7 @@ import process from 'node:process';
 
 const ROOT = process.cwd();
 const CANDIDATES_FILE = path.join(ROOT, 'data/research-map/candidates.json');
+const REGISTRY_FILE = path.join(ROOT, 'data/research-map/registry.json');
 const OUT_DIR = path.join(ROOT, 'content/blog/2026/research');
 const DATE = '2026-07-06';
 
@@ -87,14 +88,23 @@ const DISPLAY_OVERRIDES = {
   zerobase: { name: 'ZEROBASE', symbol: 'ZBT' },
 };
 
+function parseNumberArg(name, fallback) {
+  const prefix = `--${name}=`;
+  const arg = process.argv.find((item) => item.startsWith(prefix));
+  if (!arg) return fallback;
+  const parsed = Number(arg.slice(prefix.length));
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
 function prepareCandidate(candidate) {
   const override = DISPLAY_OVERRIDES[candidate.coingeckoId] || {};
+  const rawSymbol = override.symbol || candidate.symbol;
   return {
     ...candidate,
     originalName: candidate.name,
     originalSymbol: candidate.symbol,
     name: override.name || candidate.name,
-    symbol: override.symbol || candidate.symbol,
+    symbol: rawSymbol === '-' ? '' : rawSymbol,
   };
 }
 
@@ -109,6 +119,10 @@ function normalize(value = '') {
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+function compactKey(value = '') {
+  return normalize(value).replace(/-/g, '');
 }
 
 function yamlSingleQuoted(value) {
@@ -235,9 +249,15 @@ function sourceLinks({ candidate, project, cg, searchResults }) {
   const social = project?.social || {};
   const contracts = project?.contracts?.contracts || [];
   const cgLinks = cg?.links || {};
+  const coinGeckoProfile = candidate.coingeckoId
+    ? `https://www.coingecko.com/en/coins/${candidate.coingeckoId}`
+    : `https://www.coingecko.com/en/search?query=${encodeURIComponent(candidate.name)}`;
+  const coinGeckoHistorical = candidate.coingeckoId
+    ? `https://www.coingecko.com/en/coins/${candidate.coingeckoId}/historical_data`
+    : '';
   const links = [
     { label: 'Official website', url: overview.website || cgLinks.homepage?.find(Boolean) },
-    { label: 'CoinGecko profile', url: `https://www.coingecko.com/en/coins/${candidate.coingeckoId}` },
+    { label: candidate.coingeckoId ? 'CoinGecko profile' : 'CoinGecko search', url: coinGeckoProfile },
     { label: 'CoinMarketCap discovery', url: `https://coinmarketcap.com/search/?q=${encodeURIComponent(candidate.name)}` },
     { label: 'DefiLlama protocol discovery', url: `https://defillama.com/search?query=${encodeURIComponent(candidate.name)}` },
     { label: 'Token Terminal discovery', url: `https://tokenterminal.com/explorer?search=${encodeURIComponent(candidate.name)}` },
@@ -276,8 +296,8 @@ function sourceLinks({ candidate, project, cg, searchResults }) {
     ['Google docs search', `https://www.google.com/search?q=${encodeURIComponent(`${candidate.name} docs`)}`],
     ['Google governance search', `https://www.google.com/search?q=${encodeURIComponent(`${candidate.name} governance proposal`)}`],
     ['Google audit search', `https://www.google.com/search?q=${encodeURIComponent(`${candidate.name} audit report`)}`],
-    ['CoinGecko historical data', `https://www.coingecko.com/en/coins/${candidate.coingeckoId}/historical_data`],
-    ['CoinGecko market chart', `https://www.coingecko.com/en/coins/${candidate.coingeckoId}`],
+    ['CoinGecko historical data', coinGeckoHistorical],
+    ['CoinGecko market chart', coinGeckoProfile],
     ['CoinMarketCap what-is guess', `https://coinmarketcap.com/cmc-ai/${normalize(candidate.name)}/what-is/`],
     ['CoinMarketCap price analysis guess', `https://coinmarketcap.com/cmc-ai/${normalize(candidate.name)}/price-analysis/`],
     ['CoinMarketCap currency guess', `https://coinmarketcap.com/currencies/${normalize(candidate.name)}/`],
@@ -821,7 +841,7 @@ async function enrichCandidate(candidate) {
   const search = runSurf(['search-web', '--q', `${candidate.name} ${candidate.symbol} CoinMarketCap CoinGecko official docs tokenomics`, '--limit', '5']);
 
   let cg = null;
-  if (process.argv.includes('--use-coingecko-api')) {
+  if (process.argv.includes('--use-coingecko-api') && candidate.coingeckoId) {
     try {
       cg = await fetchJson(`https://api.coingecko.com/api/v3/coins/${candidate.coingeckoId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
       await new Promise((resolve) => setTimeout(resolve, 1200));
@@ -848,17 +868,77 @@ async function enrichCandidate(candidate) {
   return payload;
 }
 
+function isCoveredByRegistry(candidate, registryProjects) {
+  const nameKey = compactKey(candidate.name);
+  const symbolKey = compactKey(candidate.symbol);
+  const cgKey = compactKey(candidate.coingeckoId);
+  if (!nameKey) return false;
+
+  return registryProjects.some((project) => {
+    const projectKeys = [
+      project.slug,
+      project.name,
+      project.title,
+      project.symbol,
+      ...(project.aliases || []),
+      ...(project.lookupKeys || []),
+    ].map(compactKey).filter(Boolean);
+    const keySet = new Set(projectKeys);
+    const projectSlugKey = compactKey(project.slug);
+    const projectSymbolKey = compactKey(project.symbol);
+    const sameName = keySet.has(nameKey) || (nameKey.length >= 6 && projectSlugKey.includes(nameKey));
+    const sameSymbol = symbolKey && projectSymbolKey === symbolKey;
+    const sameCg = cgKey && projectSlugKey.includes(cgKey);
+    return sameCg || (sameName && (sameSymbol || nameKey.length >= 6));
+  });
+}
+
+function selectCandidates(candidatesData, limit) {
+  if (!process.argv.includes('--from-pending')) {
+    return TARGET_COINGECKO_IDS.slice(0, limit).map((id) => {
+      const candidate = candidatesData.candidates.find((item) => item.coingeckoId === id);
+      if (!candidate) throw new Error(`Candidate not found for ${id}`);
+      return prepareCandidate(candidate);
+    });
+  }
+
+  const pending = candidatesData.candidates
+    .map((candidate, index) => ({ candidate, index }))
+    .filter(({ candidate }) => !['researched', 'skip'].includes(candidate.status));
+  const registryData = fs.existsSync(REGISTRY_FILE) ? readJson(REGISTRY_FILE) : { projects: [] };
+  const registryProjects = registryData.projects || [];
+
+  return pending
+    .sort((a, b) => {
+      const cgDelta = Number(!a.candidate.coingeckoId) - Number(!b.candidate.coingeckoId);
+      if (cgDelta !== 0) return cgDelta;
+      return a.index - b.index;
+    })
+    .filter(({ candidate }) => !isCoveredByRegistry(candidate, registryProjects))
+    .slice(0, limit)
+    .map(({ candidate }) => prepareCandidate(candidate));
+}
+
 async function main() {
   const dryRun = process.argv.includes('--dry-run');
   const overwrite = process.argv.includes('--overwrite');
-  const limitArg = process.argv.find((arg) => arg.startsWith('--limit='));
-  const limit = limitArg ? Number(limitArg.slice('--limit='.length)) : TARGET_COINGECKO_IDS.length;
+  const limit = parseNumberArg('target-count', parseNumberArg('limit', TARGET_COINGECKO_IDS.length));
   const candidatesData = readJson(CANDIDATES_FILE);
-  const candidates = TARGET_COINGECKO_IDS.slice(0, limit).map((id) => {
-    const candidate = candidatesData.candidates.find((item) => item.coingeckoId === id);
-    if (!candidate) throw new Error(`Candidate not found for ${id}`);
-    return prepareCandidate(candidate);
-  });
+  const candidates = selectCandidates(candidatesData, limit);
+
+  if (process.argv.includes('--list-only')) {
+    console.log(JSON.stringify({
+      count: candidates.length,
+      candidates: candidates.map((candidate) => ({
+        name: candidate.name,
+        symbol: candidate.symbol,
+        source: candidate.source,
+        status: candidate.status,
+        coingeckoId: candidate.coingeckoId || '',
+      })),
+    }, null, 2));
+    return;
+  }
 
   fs.mkdirSync(OUT_DIR, { recursive: true });
 

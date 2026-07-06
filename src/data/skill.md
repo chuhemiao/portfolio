@@ -18,11 +18,11 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 
 As of 2026-07-06:
 
-- Registry: 411 local research projects.
-- Candidate pool: 357 total; 158 pending new candidates.
-- Upgrade queue: 14 reports still need full-depth upgrades.
-- Next new candidates begin with `USDa / USDA`, `Tradable NA Rent Financing Platform SSTN`, and `Spiko US T-Bills Money Market Fund`.
-- Next upgrade reports begin with `golem-glm-decentralized-compute-marketplace-demand-risk`, `kaito-kaito-ai-attention-infofi-token-value-capture-risk`, and `livepeer-lpt-decentralized-video-ai-gpu-token-risk`.
+- Registry: 511 local research projects.
+- Candidate pool: 357 total; 59 pending new candidates.
+- Upgrade queue: 0 reports currently in the latest generated depth queue.
+- Next new candidates begin with `Genius / GENIUS`, `Data Network / DATA`, and `Midas mF-ONE / MF-ONE`.
+- The latest generated depth queue has no pending upgrade reports.
 - The old `research-map-builder` installed skill path is not present in the current Codex skill directories; this file is the repo-local workflow reference.
 
 ## Quick Commands
