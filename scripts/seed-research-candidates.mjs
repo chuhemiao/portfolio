@@ -1,9 +1,9 @@
 /**
  * pnpm seed:research:candidates
  *
- * Seeds local Research Map candidates from CoinGecko market data after checking
- * the local registry first. This is only a backlog builder; each full Research
- * still refreshes live CG/CMC/source data before writing.
+ * Seeds local Research Map candidates from CoinGecko or Surf after checking the
+ * local registry first. This is only a backlog builder; each full Research still
+ * refreshes live CG/CMC/source data before writing.
  */
 import fs from 'node:fs';
 import path from 'node:path';
@@ -92,6 +92,39 @@ async function fetchCoinGeckoMarkets(page) {
   return response.json();
 }
 
+async function fetchCoinGeckoList() {
+  const url = new URL('https://api.coingecko.com/api/v3/coins/list');
+  url.searchParams.set('include_platform', 'false');
+
+  const response = await fetch(url, {
+    headers: {
+      accept: 'application/json',
+      'user-agent': 'kkdemian-research-map-candidate-seeder',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`CoinGecko list request failed: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+async function fetchDefiLlamaProtocols() {
+  const response = await fetch('https://api.llama.fi/protocols', {
+    headers: {
+      accept: 'application/json',
+      'user-agent': 'kkdemian-research-map-candidate-seeder',
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`DefiLlama protocols request failed: ${response.status} ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
 function fetchSurfRanking(offset) {
   let lastError;
 
@@ -136,6 +169,29 @@ function isDuplicate(coin, registryLookup, candidateLookup) {
   return identityKeys.some((key) => registryLookup.has(key) || candidateLookup.has(key));
 }
 
+function isUsefulListCoin(coin) {
+  const id = String(coin.id || '');
+  const name = String(coin.name || '');
+  const symbol = String(coin.symbol || '');
+  const readableName = /[A-Za-z]{2,}/.test(name) || /[\u4e00-\u9fff]{2,}/.test(name);
+  const reasonableSymbol = /^[A-Za-z0-9.$_-]{1,16}$/.test(symbol);
+  const reasonableId = id.length <= 80 && /[a-z]/i.test(id) && !/^\d+$/.test(id);
+
+  return readableName && reasonableSymbol && reasonableId;
+}
+
+function isUsefulDefiLlamaProtocol(protocol) {
+  const symbol = String(protocol.symbol || '');
+  const category = String(protocol.category || '').toLowerCase();
+  const name = String(protocol.name || '').toLowerCase();
+
+  if (!symbol || symbol === '-') return false;
+  if (category === 'cex') return false;
+  if (/\bcex\b/.test(name)) return false;
+
+  return true;
+}
+
 function makeCandidate(coin, index) {
   const rank = coin.market_cap_rank || coin.rank || null;
   const marketCapValue = coin.market_cap ?? coin.market_cap_usd;
@@ -149,7 +205,19 @@ function makeCandidate(coin, index) {
   const source = coin.__source || 'coingecko';
   const target = source === 'surf'
     ? `surf:${coin.slug || coin.id || coin.name}`
-    : `https://www.coingecko.com/en/coins/${coin.id}`;
+    : source === 'defillama'
+      ? `https://defillama.com/protocol/${coin.slug || coin.id || normalize(coin.name)}`
+      : `https://www.coingecko.com/en/coins/${coin.id}`;
+  const sourceLabel = source === 'surf'
+    ? 'Surf market-ranking'
+    : source === 'coingecko-list'
+      ? 'CoinGecko coins list'
+      : source === 'defillama'
+        ? 'DefiLlama protocols'
+        : 'CoinGecko markets';
+  const tvl = typeof coin.tvl === 'number'
+    ? `$${Math.round(coin.tvl).toLocaleString('en-US')}`
+    : 'not disclosed';
 
   const candidate = {
     status: index < 20 ? 'next' : 'backlog',
@@ -158,10 +226,12 @@ function makeCandidate(coin, index) {
     name: coin.name,
     symbol: String(coin.symbol || '').toUpperCase(),
     priority: rank && rank <= 500 ? 'high' : 'normal',
-    notes: `Seeded ${today()} from ${source === 'surf' ? 'Surf market-ranking' : 'CoinGecko markets'}; rank ${rank || 'n/a'}, market cap ${marketCap}, 24h volume ${volume}. Local registry duplicate check passed; refresh CG/CMC/Surf and primary sources before writing.`,
+    notes: `Seeded ${today()} from ${sourceLabel}; rank ${rank || 'n/a'}, market cap ${marketCap}, 24h volume ${volume}, TVL ${tvl}, category ${coin.category || 'n/a'}. Local registry duplicate check passed; refresh CG/CMC/Surf and primary sources before writing.`,
   };
 
-  if (source === 'coingecko') candidate.coingeckoId = coin.id;
+  if (source === 'coingecko' || source === 'coingecko-list') candidate.coingeckoId = coin.id;
+  if (source === 'defillama' && coin.gecko_id) candidate.coingeckoId = coin.gecko_id;
+  if (source === 'defillama') candidate.defillamaSlug = coin.slug || '';
   if (source === 'surf') candidate.surfSlug = coin.slug || '';
 
   return candidate;
@@ -185,6 +255,18 @@ async function main() {
   let usedProvider = provider;
   let sourcePages = [];
 
+  if (provider === 'coingecko-list') {
+    const coins = await fetchCoinGeckoList();
+    sourcePages.push(coins.map((coin) => ({ ...coin, __source: 'coingecko-list' })));
+    usedProvider = 'coingecko-list';
+  }
+
+  if (provider === 'defillama') {
+    const protocols = await fetchDefiLlamaProtocols();
+    sourcePages.push(protocols.map((protocol) => ({ ...protocol, id: protocol.gecko_id || protocol.slug, __source: 'defillama' })));
+    usedProvider = 'defillama';
+  }
+
   if (provider === 'coingecko' || provider === 'auto') {
     try {
       for (let page = 1; page <= pages; page += 1) {
@@ -194,9 +276,25 @@ async function main() {
       usedProvider = 'coingecko';
     } catch (error) {
       if (provider === 'coingecko') throw error;
-      console.warn(`CoinGecko seed failed, falling back to Surf: ${error.message}`);
+      console.warn(`CoinGecko markets seed failed, falling back to CoinGecko list: ${error.message}`);
       sourcePages = [];
-      usedProvider = 'surf';
+      try {
+        const coins = await fetchCoinGeckoList();
+        sourcePages.push(coins.map((coin) => ({ ...coin, __source: 'coingecko-list' })));
+        usedProvider = 'coingecko-list';
+      } catch (listError) {
+        console.warn(`CoinGecko list seed failed, falling back to DefiLlama: ${listError.message}`);
+        sourcePages = [];
+        try {
+          const protocols = await fetchDefiLlamaProtocols();
+          sourcePages.push(protocols.map((protocol) => ({ ...protocol, id: protocol.gecko_id || protocol.slug, __source: 'defillama' })));
+          usedProvider = 'defillama';
+        } catch (defiError) {
+          console.warn(`DefiLlama seed failed, falling back to Surf: ${defiError.message}`);
+          sourcePages = [];
+          usedProvider = 'surf';
+        }
+      }
     }
   }
 
@@ -211,6 +309,8 @@ async function main() {
     for (const coin of coins) {
       if (additions.length >= limit) break;
       if (!(coin?.id || coin?.slug || coin?.name) || !coin?.name) continue;
+      if (coin.__source === 'coingecko-list' && !isUsefulListCoin(coin)) continue;
+      if (coin.__source === 'defillama' && !isUsefulDefiLlamaProtocol(coin)) continue;
       if (isDuplicate(coin, registryLookup, candidateLookup)) continue;
 
       const candidate = makeCandidate(coin, additions.length);
@@ -220,6 +320,7 @@ async function main() {
         candidate.name,
         candidate.target,
         candidate.coingeckoId,
+        candidate.defillamaSlug,
         candidate.surfSlug,
       ]) {
         candidateLookup.add(normalize(key));

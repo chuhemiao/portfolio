@@ -9,6 +9,7 @@ const REGISTRY_FILE = path.join(ROOT, 'data/research-map/registry.json');
 const OUT_DIR = path.join(ROOT, 'content/blog/2026/research');
 const DATE = '2026-07-06';
 const SURF_TIMEOUT_MS = 45000;
+let surfUnavailableError = '';
 
 const TARGET_COINGECKO_IDS = [
   'ssv-network',
@@ -122,6 +123,14 @@ function normalize(value = '') {
     .replace(/^-|-$/g, '');
 }
 
+function slugPart(value = '', fallback = 'asset') {
+  const normalized = normalize(value);
+  if (normalized) return normalized;
+  const source = String(fallback || value || 'asset');
+  const hash = Buffer.from(source, 'utf8').toString('hex').slice(0, 10) || 'asset';
+  return `asset-${hash}`;
+}
+
 function compactKey(value = '') {
   return normalize(value).replace(/-/g, '');
 }
@@ -131,6 +140,10 @@ function yamlSingleQuoted(value) {
 }
 
 function runSurf(args) {
+  if (surfUnavailableError) {
+    return { ok: false, error: surfUnavailableError };
+  }
+
   const result = spawnSync('surf', [...args, '--json'], {
     cwd: ROOT,
     encoding: 'utf8',
@@ -141,7 +154,11 @@ function runSurf(args) {
 
   if (result.status !== 0 || !result.stdout.trim()) {
     const exitReason = result.error?.message || result.signal || `exit ${result.status}`;
-    return { ok: false, error: result.stderr || result.stdout || exitReason };
+    const error = result.stderr || result.stdout || exitReason;
+    if (String(error).includes('PAID_BALANCE_ZERO')) {
+      surfUnavailableError = error;
+    }
+    return { ok: false, error };
   }
 
   try {
@@ -160,6 +177,47 @@ async function fetchJson(url) {
   });
   if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
   return response.json();
+}
+
+function isSurfCreditError(...results) {
+  return results.some((result) =>
+    !result.ok && String(result.error || '').includes('PAID_BALANCE_ZERO')
+  );
+}
+
+function coinGeckoCandidateScore(coin, candidate) {
+  const idKey = normalize(coin.id);
+  const nameKey = normalize(coin.name);
+  const symbolKey = normalize(coin.symbol);
+  const candidateIdKey = normalize(candidate.coingeckoId);
+  const candidateNameKey = normalize(candidate.name);
+  const candidateSymbolKey = normalize(candidate.symbol);
+  let score = 0;
+
+  if (candidateIdKey && idKey === candidateIdKey) score += 100;
+  if (candidateSymbolKey && symbolKey === candidateSymbolKey) score += 40;
+  if (candidateNameKey && nameKey === candidateNameKey) score += 40;
+  if (candidateNameKey && idKey === candidateNameKey) score += 25;
+  if (candidateNameKey && nameKey.includes(candidateNameKey)) score += 10;
+
+  return score;
+}
+
+async function resolveCoinGeckoId(candidate) {
+  const query = candidate.coingeckoId || candidate.name || candidate.symbol;
+  if (!query) return '';
+
+  const search = await fetchJson(
+    `https://api.coingecko.com/api/v3/search?query=${encodeURIComponent(query)}`
+  );
+  await new Promise((resolve) => setTimeout(resolve, 1200));
+
+  const ranked = (search.coins || [])
+    .map((coin) => ({ coin, score: coinGeckoCandidateScore(coin, candidate) }))
+    .filter((item) => item.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  return ranked[0]?.coin?.id || '';
 }
 
 function compact(value) {
@@ -501,7 +559,10 @@ function article({ candidate, projectPayload, cg, searchPayload, defiPayload }) 
   const name = candidate.name || overview.name;
   const symbol = candidate.symbol || tokenInfo.symbol || overview.token_symbol || '';
   const type = TYPE_OVERRIDES[candidate.coingeckoId] || inferThesisType(candidate, project);
-  const slug = `${normalize(name)}-${normalize(symbol)}-${normalize(type).split('-').slice(0, 5).join('-')}-token-value-capture-risk`;
+  const nameSlug = slugPart(name, candidate.originalName || candidate.coingeckoId || name);
+  const symbolSlug = slugPart(symbol, candidate.originalSymbol || candidate.coingeckoId || symbol || name);
+  const typeSlug = slugPart(type, 'defi').split('-').slice(0, 5).join('-');
+  const slug = `${nameSlug}-${symbolSlug}-${typeSlug}-token-value-capture-risk`;
   const title = `${name} / ${symbol}: ${type} value capture, liquidity, and token risk`;
   const summary = `${name} is treated as a ${type} watchlist candidate sourced from CoinGecko/CMC discovery and refreshed with Surf, with emphasis on product durability, token value capture, liquidity, supply, and execution risk.`;
   const market = {
@@ -844,12 +905,23 @@ async function enrichCandidate(candidate) {
   const search = runSurf(['search-web', '--q', `${candidate.name} ${candidate.symbol} CoinMarketCap CoinGecko official docs tokenomics`, '--limit', '5']);
 
   let cg = null;
-  if (process.argv.includes('--use-coingecko-api') && candidate.coingeckoId) {
+  const useCoinGecko = process.argv.includes('--use-coingecko-api');
+  let cgId = candidate.coingeckoId;
+  if (useCoinGecko && !cgId && isSurfCreditError(project, price, defi, search)) {
     try {
-      cg = await fetchJson(`https://api.coingecko.com/api/v3/coins/${candidate.coingeckoId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
+      cgId = await resolveCoinGeckoId(candidate);
+    } catch (error) {
+      console.warn(`CoinGecko search failed for ${candidate.name}: ${error.message}`);
+    }
+  }
+
+  if (useCoinGecko && cgId) {
+    try {
+      cg = await fetchJson(`https://api.coingecko.com/api/v3/coins/${cgId}?localization=false&tickers=false&market_data=true&community_data=true&developer_data=true&sparkline=false`);
+      candidate = { ...candidate, coingeckoId: cgId };
       await new Promise((resolve) => setTimeout(resolve, 1200));
     } catch (error) {
-      console.warn(`CoinGecko fetch failed for ${candidate.coingeckoId}: ${error.message}`);
+      console.warn(`CoinGecko fetch failed for ${cgId}: ${error.message}`);
     }
   }
 
@@ -875,7 +947,13 @@ function isCoveredByRegistry(candidate, registryProjects) {
   const nameKey = compactKey(candidate.name);
   const symbolKey = compactKey(candidate.symbol);
   const cgKey = compactKey(candidate.coingeckoId);
-  if (!nameKey) return false;
+  const nameSymbolKey = compactKey(`${candidate.name || ''} ${candidate.symbol || ''}`);
+  const fallbackPrefixKey = compactKey(
+    `${slugPart(candidate.name, candidate.originalName || candidate.name)}-${slugPart(
+      candidate.symbol,
+      candidate.originalSymbol || candidate.symbol || candidate.name
+    )}`
+  );
 
   return registryProjects.some((project) => {
     const projectKeys = [
@@ -888,11 +966,19 @@ function isCoveredByRegistry(candidate, registryProjects) {
     ].map(compactKey).filter(Boolean);
     const keySet = new Set(projectKeys);
     const projectSlugKey = compactKey(project.slug);
+    const projectNameKey = compactKey(project.name);
     const projectSymbolKey = compactKey(project.symbol);
-    const sameName = keySet.has(nameKey) || (nameKey.length >= 6 && projectSlugKey.includes(nameKey));
+    const sameName = nameKey && (keySet.has(nameKey) || (nameKey.length >= 6 && projectSlugKey.includes(nameKey)));
+    const sameNameSymbol = nameSymbolKey && keySet.has(nameSymbolKey);
     const sameSymbol = symbolKey && projectSymbolKey === symbolKey;
     const sameCg = cgKey && projectSlugKey.includes(cgKey);
-    return sameCg || (sameName && (sameSymbol || nameKey.length >= 6));
+    const sameFallback = fallbackPrefixKey.length >= 6 && projectSlugKey.startsWith(fallbackPrefixKey);
+    const sameSymbolNameFamily = sameSymbol && projectNameKey.length >= 4 && (
+      nameKey.startsWith(projectNameKey) ||
+      projectNameKey.startsWith(nameKey) ||
+      nameKey.includes(projectNameKey)
+    );
+    return sameCg || sameFallback || sameNameSymbol || sameSymbolNameFamily || (sameName && (sameSymbol || nameKey.length >= 6));
   });
 }
 

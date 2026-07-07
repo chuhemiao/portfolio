@@ -36,7 +36,7 @@ Built with Next.js, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Vercel.
 | `/stack`    | Tools and tech stack                               |
 | `/fund`     | Fund tracker                                       |
 | `/fear`     | Crypto Fear & Greed index                          |
-| `/research` | Deep-dive research map — 1011 local crypto project records |
+| `/research` | Deep-dive research map — 2811 local crypto project records |
 
 ## Content Management
 
@@ -88,18 +88,19 @@ pnpm check:research:logos
 
 ## Research Workflow
 
-Current local status as of 2026-07-06:
+Current local status as of 2026-07-07:
 
-- Registry: 1011 research projects.
-- Candidate pool: 1215 total, 341 pending new candidates.
+- Registry: 2811 research projects.
+- Candidate pool: 3815 total, 381 pending new candidates.
 - Upgrade queue: 0 reports in the latest generated depth queue.
-- Latest target-500 CMC/CGO batch: 500/500 recent reports pass full-depth audit.
+- Latest target-1000 CMC/CGO batch: 1000/1000 recent reports pass full-depth audit.
 - Raw pending candidates may still include older targets already covered by registry; use the batch generator `--list-only` output as the write queue.
 - Next upgrade reports: none in the latest generated depth queue.
+- Known data-quality risk: the latest batch includes 1000 reports generated after Surf returned `PAID_BALANCE_ZERO` and CoinGecko APIs returned `429 Too Many Requests`; DefiLlama protocol list was used as fallback candidate expansion. These pass structural depth audit but should be live-data refreshed before high-conviction investment use.
 
 For crypto data refresh, use Surf first: check `surf list-operations`, inspect the target command with `--help`, then fall back to CoinGecko, CMC, explorers, DefiLlama, official docs, or web search only when Surf is missing data or errors.
 
-For batch CMC/CGO research expansion, use `scripts/generate-cmc-cgo-research-batch.mjs` with `--from-pending --target-count=<n> --list-only` before writing. Surf child commands have a timeout so long-tail enrichment gaps are captured as article risk instead of hanging the run.
+For batch CMC/CGO research expansion, use `scripts/generate-cmc-cgo-research-batch.mjs` with `--from-pending --target-count=<n> --list-only` before writing. Surf child commands have a timeout and credit-error short-circuit so long-tail enrichment gaps are captured as article risk instead of hanging the run; the generator also supports registry filtering, non-Latin slug fallback, an opt-in CoinGecko API fallback, and DefiLlama-backed candidate expansion through `pnpm seed:research:candidates`.
 
 ## Research Reports
 

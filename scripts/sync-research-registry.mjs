@@ -36,6 +36,14 @@ function normalize(value = '') {
     .replace(/[^a-z0-9]+/g, '');
 }
 
+function slugPartKey(value = '', fallback = 'asset') {
+  const normalized = normalize(value);
+  if (normalized) return normalized;
+  const source = String(fallback || value || 'asset');
+  const hash = Buffer.from(source, 'utf8').toString('hex').slice(0, 10) || 'asset';
+  return `asset${hash}`;
+}
+
 function cleanAlias(value = '') {
   return value
     .replace(/\s+/g, ' ')
@@ -254,12 +262,17 @@ function readCandidates() {
 }
 
 function candidateAliases(candidate) {
+  const name = candidate.name || candidate.target || '';
+  const symbol = candidate.symbol || '';
   return uniq([
-    candidate.name,
+    name,
+    name && symbol ? `${name} / ${symbol}` : '',
+    name && symbol ? `${name} ${symbol}` : '',
+    name || symbol ? `${slugPartKey(name, name)} ${slugPartKey(symbol, symbol || name)}` : '',
     candidate.coingeckoId,
     candidate.coinmarketcapSlug,
     candidate.contract,
-    candidate.symbol,
+    symbol,
     candidate.target,
     candidate.surfSlug,
   ]);
@@ -271,6 +284,14 @@ function matchProject(projects, aliases) {
 
   for (const key of keys) {
     const match = projects.find((project) => project.lookupKeys.includes(key));
+    if (match) return match;
+  }
+
+  for (const key of keys) {
+    if (key.length < 6) continue;
+    const match = projects.find((project) =>
+      project.lookupKeys.some((lookupKey) => lookupKey.startsWith(key))
+    );
     if (match) return match;
   }
 

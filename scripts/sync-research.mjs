@@ -19,6 +19,7 @@ const RESEARCH_CLIENT = path.join(
 );
 
 const ADD_FLAG = process.argv.includes('--add');
+const SKIP_LOGOS_FLAG = process.argv.includes('--skip-logos');
 
 // Color palette for auto-generated entries
 const COLORS = [
@@ -70,7 +71,7 @@ function makeName(title) {
     .replace(/comprehensive.*$/i, '')
     .replace(/analysis.*$/i, '')
     .replace(/report.*$/i, '')
-    .replace(/[:—–-].*$/, '')
+    .replace(/[:—–].*$/, '')
     .trim();
   return clean || title.split(/[:—–-]/)[0].trim();
 }
@@ -120,18 +121,22 @@ function buildScaffold(post) {
   const initial = makeInitial(name);
 
   return `  {
-    name: '${name}',
-    description: '${description.replace(/'/g, "\\'")}',
-    type: '${type}',
-    slug: '${post.slug}',
-    color: '${color}',
-    initial: '${initial}',
+    name: ${JSON.stringify(name)},
+    description: ${JSON.stringify(description)},
+    type: ${JSON.stringify(type)},
+    slug: ${JSON.stringify(post.slug)},
+    color: ${JSON.stringify(color)},
+    initial: ${JSON.stringify(initial)},
   },`;
 }
 
 function appendToProjects(scaffolds) {
   let src = fs.readFileSync(RESEARCH_CLIENT, 'utf-8');
-  const insertBefore = '];\n\nconst ALL_TYPES';
+  const typedInsertBefore = '] as ResearchProject[];\n\nconst ALL_TYPES';
+  const legacyInsertBefore = '];\n\nconst ALL_TYPES';
+  const insertBefore = src.includes(typedInsertBefore)
+    ? typedInsertBefore
+    : legacyInsertBefore;
   const idx = src.indexOf(insertBefore);
   if (idx === -1) {
     console.error('Could not find insertion point in research-client.tsx');
@@ -150,7 +155,7 @@ async function main() {
   if (missing.length === 0) {
     console.log('✓ research-client.tsx is in sync — no missing entries.');
 
-    if (ADD_FLAG) {
+    if (ADD_FLAG && !SKIP_LOGOS_FLAG) {
       console.log('↻ Syncing local research logos...');
       await syncResearchLogos();
     }
@@ -176,8 +181,12 @@ async function main() {
   if (ADD_FLAG) {
     appendToProjects(scaffolds);
     console.log(`✓ Appended ${scaffolds.length} scaffold entry(s) to PROJECTS.`);
-    console.log('↻ Syncing local research logos...');
-    await syncResearchLogos();
+    if (SKIP_LOGOS_FLAG) {
+      console.log('↻ Skipping local research logo sync.');
+    } else {
+      console.log('↻ Syncing local research logos...');
+      await syncResearchLogos();
+    }
     console.log('↻ Syncing local research registry...');
     syncResearchRegistry();
   } else {

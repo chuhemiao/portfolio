@@ -16,14 +16,15 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 
 ## Current State
 
-As of 2026-07-06:
+As of 2026-07-07:
 
-- Registry: 1011 local research projects.
-- Candidate pool: 1215 total; 341 pending new candidates.
+- Registry: 2811 local research projects.
+- Candidate pool: 3815 total; 381 pending new candidates.
 - Upgrade queue: 0 reports currently in the latest generated depth queue.
-- Latest target-500 CMC/CGO batch: 500/500 recent reports pass full-depth audit.
+- Latest target-1000 CMC/CGO batch: 1000/1000 recent reports pass full-depth audit.
 - Raw pending candidates may include older targets now covered by registry; use `scripts/generate-cmc-cgo-research-batch.mjs --from-pending --list-only` as the write queue.
 - The latest generated depth queue has no pending upgrade reports.
+- Data-quality note: the latest target-1000 run generated 1000 reports after Surf returned `PAID_BALANCE_ZERO` and CoinGecko APIs returned `429 Too Many Requests`; DefiLlama protocol list was used as fallback candidate expansion. They are acceptable for structural coverage but should be live-data refreshed before high-conviction publication reuse.
 - The old `research-map-builder` installed skill path is not present in the current Codex skill directories; this file is the repo-local workflow reference.
 
 ## Quick Commands
@@ -48,7 +49,7 @@ node scripts/generate-cmc-cgo-research-batch.mjs --from-pending --target-count=1
 
 `pnpm quick:add` defaults to dry-run. Add `--write` to create the MDX file. For research posts, pass `--sync-research` only when you want it to run `pnpm sync:research --add` immediately after writing.
 
-`generate-cmc-cgo-research-batch.mjs` is the current batch writer for CMC/CGO-oriented candidates. It performs registry filtering before selection and gives Surf child commands a bounded timeout so missing long-tail data becomes an explicit article risk instead of blocking the run.
+`generate-cmc-cgo-research-batch.mjs` is the current batch writer for CMC/CGO-oriented candidates. It performs registry filtering before selection, gives Surf child commands a bounded timeout and credit-error short-circuit, handles non-Latin slug fallback, and can use an opt-in CoinGecko API fallback when Surf has no data or credit. Candidate seeding supports Surf, CoinGecko markets/list, and DefiLlama fallback.
 
 ## Add New Research
 

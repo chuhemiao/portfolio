@@ -44,8 +44,8 @@
   pnpm status:research:run # 查看研究长任务进度
   pnpm sync:telegram # 手动同步 Telegram 消息
   ```
-- **当前 Research 进度（2026-07-06）**：registry `1011` projects；candidate total `1215`，pending new candidates `341`；depth upgrade queue `0`；本轮最新 500 篇 depth audit 全部 full-depth pass。
-- **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起。
+- **当前 Research 进度（2026-07-07）**：registry `2811` projects；candidate total `3815`，pending new candidates `381`；depth upgrade queue `0`；本轮最新 1000 篇 depth audit 全部 full-depth pass。
+- **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起，并已补 registry 二次过滤、非拉丁 slug fallback、CoinGecko API 兜底开关、DefiLlama fallback seeding、Surf credit-error 短路、`sync:research --skip-logos` 与大型 `/research` typed array 同步兼容。
 - **快捷内容脚本**：`pnpm quick:add -- "内容描述" --category research` 默认 dry-run；加 `--write` 才创建 MDX。
 
 ### 2. Yamaswap
@@ -95,6 +95,8 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-07-07**：修复 3 篇 2019 旧文 `publishedAt` 格式，并继续新增 CMC/CGO-oriented full-depth Research 至目标 `1000` 篇。Surf-first 探测显示 `PAID_BALANCE_ZERO`，CoinGecko markets/list 返回 `429 Too Many Requests`，因此用 DefiLlama protocol list fallback 扩容候选池并分 5 批 `200*5` 生成/同步；最终 registry `2811`、candidate total `3815`、pending new candidates `381`、upgrade queue `0`；最近 1000 篇 depth audit `1000/1000 full-depth pass`。同步增强：CoinGecko list / DefiLlama seeding、候选噪声过滤、同族去重、Surf credit-error 短路、`sync-research --skip-logos`，并修正 OSL logo 引用。残余风险：1000 篇 live enrichment 均受 Surf 余额和 CG 429 影响，后续应批量补 live market / primary sources。
+- **2026-07-07**：继续新增 CMC/CGO-oriented full-depth Research 至目标 800 篇。使用 Surf `market-ranking` 扩容候选池，分四轮生成并同步：`200 + 198 + 200 + 202`，最终 registry `1811`、candidate total `2215`、pending new candidates `355`、upgrade queue `0`；最近 800 篇 depth audit `800/800 full-depth pass`。同步修复批量和同步脚本：安全字符串转义、超大 `PROJECTS` typed assertion、非拉丁 slug fallback、registry/short-name 去重、CoinGecko API fallback 开关。残余风险：batch3/4 共 `402` 篇生成时 Surf 返回 `PAID_BALANCE_ZERO`，CoinGecko API fallback 返回 `429 Too Many Requests`，后续应批量刷新 live market / primary sources。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 至目标 500 篇。使用 Surf `market-ranking` 扩容候选池，分三批生成并同步：`200 + 200 + 1 + 99`，最终 registry `1011`、candidate total `1215`、pending new candidates `341`、upgrade queue `0`；最近 500 篇 depth audit `500/500 full-depth pass`。同步修复批量脚本：`seed-research-candidates` 增加 Surf retry/backoff，`generate-cmc-cgo-research-batch` 增加 Surf 子命令 `45s` timeout。残余风险：333 篇存在至少一个 Surf enrichment 缺口，主要为 long-tail/RWA/meme/Surf-only 项目的 project-detail 或 DeFi metrics。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 100 篇，并接入 `/research`、registry 与本地 logo；扩展 `scripts/generate-cmc-cgo-research-batch.mjs`，支持 `--from-pending`、`--target-count`、`--list-only` 和 registry 二次去重。当前 `pnpm status:research:run`：registry `511`、candidate total `357`、pending new candidates `59`、upgrade queue `0`；新增 100 篇均 full-depth pass。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 30 篇，并接入 `/research`、registry 与本地 logo；新增 `scripts/generate-cmc-cgo-research-batch.mjs`，支持 Surf-first refresh、display override、`--overwrite`。新增 30 篇均未进入 depth needs-upgrade。
