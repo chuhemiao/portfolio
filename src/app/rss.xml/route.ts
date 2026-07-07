@@ -1,6 +1,8 @@
 import { getBlogPosts } from '@/data/blog';
 import { DATA } from '@/data/resume';
 
+export const revalidate = 3600;
+
 function escapeXml(value: string) {
   return value
     .replace(/&/g, '&amp;')

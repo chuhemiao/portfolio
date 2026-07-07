@@ -43,9 +43,18 @@ function toIsoOrNow(value: string) {
   return date.toISOString();
 }
 
+const STATIC_PARAMS_LIMIT = 300;
+
+export const dynamicParams = true;
+
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
-  return posts.map((post) => ({ slug: post.slug }));
+  const sorted = [...posts].sort(
+    (a, b) =>
+      new Date(b.metadata.publishedAt).getTime() -
+      new Date(a.metadata.publishedAt).getTime()
+  );
+  return sorted.slice(0, STATIC_PARAMS_LIMIT).map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({

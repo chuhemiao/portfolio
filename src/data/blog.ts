@@ -1,6 +1,7 @@
 import fs from 'fs';
 import matter from 'gray-matter';
 import path from 'path';
+import { cache } from 'react';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeStringify from 'rehype-stringify';
 import remarkGfm from 'remark-gfm';
@@ -139,7 +140,7 @@ function resolveSlug(filePath: string, metadata: Metadata): string {
   return slug;
 }
 
-function getPostIndex(includeDrafts = false): PostIndexEntry[] {
+const getPostIndex = cache((includeDrafts = false): PostIndexEntry[] => {
   const mdxFiles = getBlogMDXFiles();
   const slugToPath = new Map<string, string>();
   const entries: PostIndexEntry[] = [];
@@ -167,7 +168,7 @@ function getPostIndex(includeDrafts = false): PostIndexEntry[] {
   }
 
   return entries;
-}
+});
 
 function generateId(text: string): string {
   return text
@@ -269,7 +270,7 @@ async function getAllPosts() {
   );
 }
 
-function getAllPostsMetadata() {
+const getAllPostsMetadata = cache(() => {
   const postIndex = getPostIndex();
 
   return postIndex.map(({ slug, filePath }) => {
@@ -281,7 +282,7 @@ function getAllPostsMetadata() {
       source: ''
     };
   });
-}
+});
 
 export async function getBlogPosts() {
   return getAllPostsMetadata();
