@@ -40,7 +40,7 @@ function rehypeMermaid() {
   };
 }
 
-export type Category = 'thoughts' | 'research' | 'economics' | 'philosophy' | 'investing' | 'tech' | 'story';
+export type Category = 'thoughts' | 'research' | 'economics' | 'philosophy' | 'investing' | 'tech' | 'ai' | 'story';
 
 export type Metadata = {
   title: string;

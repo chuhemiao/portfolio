@@ -32,6 +32,7 @@ const CATEGORIES: CategoryInfo[] = [
   { key: 'all', label: 'All' },
   { key: 'thoughts', label: 'Thoughts' },
   { key: 'tech', label: 'Tech' },
+  { key: 'ai', label: 'AI' },
   { key: 'research', label: 'Research' },
   { key: 'investing', label: 'Investing' },
   { key: 'economics', label: 'Economics' },
