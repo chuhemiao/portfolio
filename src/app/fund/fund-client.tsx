@@ -5,6 +5,7 @@ import {
   assets,
   categoryLabels,
   philosophy,
+  type Asset,
   type AssetCategory
 } from '@/data/fund';
 import { BookOpenIcon, ExternalLinkIcon } from 'lucide-react';
@@ -20,6 +21,14 @@ const categories: Array<{ key: AssetCategory | 'all'; label: string }> = [
     label
   }))
 ];
+
+const tierClassNames = {
+  S: 'border-red-500/40 bg-red-500/10 text-red-600 dark:text-red-300',
+  A: 'border-orange-500/40 bg-orange-500/10 text-orange-600 dark:text-orange-300',
+  B: 'border-amber-500/40 bg-amber-500/10 text-amber-600 dark:text-amber-300',
+  C: 'border-lime-500/40 bg-lime-500/10 text-lime-600 dark:text-lime-300',
+  D: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300'
+} satisfies Record<NonNullable<Asset['tier']>, string>;
 
 export default function FundClient() {
   const [selectedCategory, setSelectedCategory] = useState<
@@ -80,13 +89,18 @@ export default function FundClient() {
                 <div className='flex items-start justify-between mb-2'>
                   <div>
                     <h3 className='text-[15px] font-semibold tracking-[-0.02em] text-foreground'>{asset.name}</h3>
-                    {asset.ticker && (
+                    {(asset.ticker || asset.handle) && (
                       <span className='text-xs text-muted-foreground'>
-                        {asset.ticker}
+                        {asset.ticker ?? asset.handle}
                       </span>
                     )}
                   </div>
                   <div className='flex flex-col items-end gap-1 shrink-0'>
+                    {asset.tier && (
+                      <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-[0.06em] ${tierClassNames[asset.tier]}`}>
+                        Tier {asset.tier}
+                      </span>
+                    )}
                     <span className='rounded-full border border-border/70 bg-background/80 px-2 py-0.5 text-[10px] font-medium tracking-[0.06em] text-muted-foreground'>
                       {categoryLabels[asset.category]}
                     </span>

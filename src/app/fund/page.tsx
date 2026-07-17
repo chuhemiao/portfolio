@@ -5,14 +5,14 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   title: 'Fund',
   description:
-    'Investment portfolio: crypto assets, L1s, infrastructure, US stocks, and trading platforms.',
+    'Investment portfolio: crypto assets, L1s, stablecoin crypto cards, infrastructure, US stocks, and trading platforms.',
   alternates: {
     canonical: `${DATA.url}/fund`
   },
   openGraph: {
     title: `Fund | ${DATA.name}`,
     description:
-      'Investment portfolio: crypto assets, L1s, infrastructure, US stocks, and trading platforms.',
+      'Investment portfolio: crypto assets, L1s, stablecoin crypto cards, infrastructure, US stocks, and trading platforms.',
     url: `${DATA.url}/fund`,
     siteName: DATA.name,
     locale: 'en_US',
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: `Fund | ${DATA.name}`,
     description:
-      'Investment portfolio: crypto assets, L1s, infrastructure, US stocks, and trading platforms.',
+      'Investment portfolio: crypto assets, L1s, stablecoin crypto cards, infrastructure, US stocks, and trading platforms.',
     creator: '@0xkkdemian',
     images: [`${DATA.url}/og?title=${encodeURIComponent('Fund')}`]
   }
@@ -41,7 +41,7 @@ export default function FundPage() {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
     name: 'kkdemian Fund — Capital Map',
-    description: 'Live capital allocation map covering crypto assets, L1s, DeFi infrastructure, US equities, and prediction markets.',
+    description: 'Live capital allocation map covering crypto assets, L1s, stablecoin crypto cards, DeFi infrastructure, US equities, and prediction markets.',
     url: 'https://kkdemian.com/fund',
     author: { '@type': 'Person', name: 'kkdemian', url: 'https://kkdemian.com' }
   };

@@ -8,11 +8,14 @@ export type AssetCategory =
   | 'crypto'
   | 'web3-stock'
   | 'prediction'
+  | 'crypto-card'
   | 'private';
 
 export type Asset = {
   name: string;
   ticker?: string;
+  handle?: string;
+  tier?: 'S' | 'A' | 'B' | 'C' | 'D';
   category: AssetCategory;
   description: string;
   link?: string;
@@ -32,7 +35,7 @@ export const philosophy = {
     'High growth over low valuation. AI exposure first. Platform companies first. The Coatue "Fantastic 40" framework — 30 publics + 10 privates & crypto.',
   thought:
     'Confirmed holdings: BTC, ETH — conviction positions, not speculation.',
-  lastUpdated: '2026/03/29'
+  lastUpdated: '2026/07/17'
 };
 
 export const assets: Asset[] = [
@@ -382,6 +385,161 @@ export const assets: Asset[] = [
     hasToken: false
   },
 
+  // Crypto Cards
+  {
+    name: 'Revolut',
+    handle: '@Revolut',
+    tier: 'S',
+    category: 'crypto-card',
+    description:
+      'Crypto card mode for Revolut balances, auto-converting crypto at spend time.',
+    link: 'https://www.revolut.com/crypto/crypto-card/'
+  },
+  {
+    name: 'Coinbase Card',
+    handle: '@coinbase',
+    tier: 'S',
+    category: 'crypto-card',
+    description:
+      'Visa debit card for spending cash or crypto from Coinbase with crypto rewards.',
+    link: 'https://www.coinbase.com/card'
+  },
+  {
+    name: 'RedotPay',
+    handle: '@RedotPay',
+    tier: 'S',
+    category: 'crypto-card',
+    description:
+      'Stablecoin card and payment app for everyday USDT/USDC-style spending.',
+    link: 'https://www.redotpay.com/'
+  },
+  {
+    name: 'KAST',
+    handle: '@KASTxyz',
+    tier: 'S',
+    category: 'crypto-card',
+    description:
+      'Stablecoin money app with instant cards for global Web3 spending.',
+    link: 'https://www.kast.xyz/crypto-cards'
+  },
+  {
+    name: 'ether.fi Cash',
+    handle: '@ether_fi',
+    tier: 'A',
+    category: 'crypto-card',
+    description:
+      'DeFi-native credit card connected to on-chain balances and yield-bearing stables.',
+    link: 'https://www.ether.fi/cash'
+  },
+  {
+    name: 'Holyheld',
+    handle: '@holyheld',
+    tier: 'A',
+    category: 'crypto-card',
+    description:
+      'Non-custodial account and card for turning wallet assets into everyday spend.',
+    link: 'https://holyheld.com/'
+  },
+  {
+    name: 'Wirex',
+    handle: '@wirexapp',
+    tier: 'A',
+    category: 'crypto-card',
+    description:
+      'Stablecoin payment infrastructure and card rails for consumer and B2B spend.',
+    link: 'https://www.wirexapp.com/stablecoin-and-crypto-card'
+  },
+  {
+    name: 'Gnosis Pay',
+    handle: '@gnosispay',
+    tier: 'B',
+    category: 'crypto-card',
+    description:
+      'Self-custodial Visa debit card linked to Safe smart accounts.',
+    link: 'https://gnosispay.com/card'
+  },
+  {
+    name: 'Kolo',
+    handle: '@KoloHub',
+    tier: 'B',
+    category: 'crypto-card',
+    description:
+      'Crypto Visa card and USDT wallet with stablecoin top-ups and BTC cashback.',
+    link: 'https://kolo.in/'
+  },
+  {
+    name: 'Krak',
+    handle: '@Krak',
+    tier: 'B',
+    category: 'crypto-card',
+    description:
+      'Kraken money app and card for spending cash or crypto with rewards.',
+    link: 'https://krak.app/'
+  },
+  {
+    name: 'Oobit',
+    handle: '@oobit',
+    tier: 'B',
+    category: 'crypto-card',
+    description:
+      'Tap-to-pay crypto app that converts wallet assets at the point of sale.',
+    link: 'https://www.oobit.com/crypto-card'
+  },
+  {
+    name: 'Avalanche Card',
+    handle: '@avax',
+    tier: 'C',
+    category: 'crypto-card',
+    description:
+      'Crypto-backed Visa card for spending AVAX, USDC, USDT, and WAVAX.',
+    link: 'https://www.avalanchecard.com/'
+  },
+  {
+    name: 'Avici',
+    handle: '@AviciMoney',
+    tier: 'C',
+    category: 'crypto-card',
+    description:
+      'Self-custodial crypto neobank with card spend and Apple Pay support.',
+    link: 'https://avici.money/'
+  },
+  {
+    name: 'Solflare Card',
+    handle: '@solflare',
+    tier: 'C',
+    category: 'crypto-card',
+    description:
+      'Solana self-custody debit card for spending USDC directly from the wallet.',
+    link: 'https://www.solflare.com/crypto-card/'
+  },
+  {
+    name: 'COCA',
+    handle: '@coca_card',
+    tier: 'C',
+    category: 'crypto-card',
+    description:
+      'Non-custodial wallet with virtual and physical cards for stablecoin and fiat spend.',
+    link: 'https://www.coca.xyz/'
+  },
+  {
+    name: 'Hawala',
+    handle: '@usehawala',
+    tier: 'D',
+    category: 'crypto-card',
+    description:
+      'Stablecoin-rails USD/EUR account and global card for cross-border workers.',
+    link: 'https://usehawala.com/card'
+  },
+  {
+    name: 'Hyperbeat',
+    handle: '@hyperbeat',
+    tier: 'D',
+    category: 'crypto-card',
+    description:
+      'Hyperliquid liquid-banking account with Hyperbeat Pay card and credit mode.',
+    link: 'https://hyperbeat.org/'
+  },
+
   // Private
   {
     name: 'OpenAI',
@@ -455,5 +613,6 @@ export const categoryLabels: Record<AssetCategory, string> = {
   crypto: 'Crypto',
   'web3-stock': 'Web3 Stocks',
   prediction: 'Prediction',
+  'crypto-card': 'Crypto Cards',
   private: 'Private'
 };
