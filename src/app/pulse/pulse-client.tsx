@@ -629,7 +629,7 @@ export default function PulseClient({ data }: { data: PulseData }) {
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_6%_12%,rgba(99,102,241,0.14),transparent_24%),radial-gradient(circle_at_88%_10%,rgba(14,165,233,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_6%_12%,rgba(139,92,246,0.16),transparent_24%),radial-gradient(circle_at_88%_10%,rgba(56,189,248,0.12),transparent_22%)]' />
 
-      <main className='relative mx-auto w-full max-w-6xl px-4 pb-28 pt-6 space-y-10 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+      <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 space-y-10 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Hero */}
         <div className='space-y-4'>
           <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground backdrop-blur'>

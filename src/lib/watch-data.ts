@@ -1,5 +1,6 @@
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
+import { AsyncLocalStorage } from 'node:async_hooks';
 
 export type SignalRating = 'S' | 'A' | 'B' | 'C' | 'D' | 'R';
 export type ListingType = 'spot' | 'perp' | 'both' | 'none';
@@ -65,6 +66,7 @@ export interface WatchData {
   global: GlobalMarket | null;
   listings: ListingCoin[];
   lookbackDays: number;
+  errors: string[];
 }
 
 const FETCH_TIMEOUT_MS = 12000;
@@ -78,6 +80,19 @@ const SURF_CANDIDATES = [
 const execFileAsync = promisify(execFile);
 let surfCommandPromise: Promise<string | null> | null = null;
 
+// ─── Error collection ─────────────────────────────────────────────────────────
+// Threads a per-request error list through the whole Promise.all fan-out in
+// getWatchData() without changing any of the ~15 fetcher helpers' signatures.
+
+const errorStore = new AsyncLocalStorage<{ errors: string[] }>();
+
+function recordError(source: string, detail: string) {
+  const store = errorStore.getStore();
+  if (!store) return;
+  const message = `${source}: ${detail}`;
+  if (!store.errors.includes(message)) store.errors.push(message);
+}
+
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
 async function fetchJson<T>(url: string, opts?: RequestInit & { revalidate?: number }): Promise<T | null> {
@@ -90,9 +105,13 @@ async function fetchJson<T>(url: string, opts?: RequestInit & { revalidate?: num
       signal: init.signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: { Accept: 'application/json', ...init.headers },
     });
-    if (!res.ok) return null;
+    if (!res.ok) {
+      recordError(url, `HTTP ${res.status}`);
+      return null;
+    }
     return res.json() as Promise<T>;
-  } catch {
+  } catch (err) {
+    recordError(url, err instanceof Error ? err.message : String(err));
     return null;
   }
 }
@@ -124,7 +143,10 @@ async function resolveSurfCommand(): Promise<string | null> {
 
 async function runSurfJson<T>(command: string, args: string[] = []): Promise<T | null> {
   const surf = await resolveSurfCommand();
-  if (!surf) return null;
+  if (!surf) {
+    recordError('surf', 'binary not found');
+    return null;
+  }
 
   try {
     const { stdout } = await execFileAsync(
@@ -141,7 +163,8 @@ async function runSurfJson<T>(command: string, args: string[] = []): Promise<T |
     );
 
     return JSON.parse(stdout) as T;
-  } catch {
+  } catch (err) {
+    recordError(`surf ${command}`, err instanceof Error ? err.message : String(err));
     return null;
   }
 }
@@ -536,6 +559,10 @@ function computeSequence(binanceSpot: boolean, anySpot: boolean, anyPerp: boolea
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
+  return errorStore.run({ errors: [] }, () => getWatchDataInner(lookbackDays));
+}
+
+async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
   const generatedAt = new Date().toISOString();
   const since = Date.now() - lookbackDays * 24 * 3600 * 1000;
 
@@ -759,5 +786,7 @@ export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
     return rd !== 0 ? rd : b.firstSeenAt - a.firstSeenAt;
   });
 
-  return { generatedAt, fearGreed, global, listings, lookbackDays };
+  const errors = errorStore.getStore()?.errors ?? [];
+
+  return { generatedAt, fearGreed, global, listings, lookbackDays, errors };
 }

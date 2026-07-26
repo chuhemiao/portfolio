@@ -22,6 +22,10 @@ const config = {
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
+      spacing: {
+        "dock-safe": "7rem",
+        "dock-safe-lg": "8rem",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

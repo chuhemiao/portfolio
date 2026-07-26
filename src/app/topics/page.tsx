@@ -18,7 +18,7 @@ export default function TopicsPage() {
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_50%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_50%,rgba(2,6,23,1)_100%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_20%_10%,rgba(14,165,233,0.12),transparent_26%),radial-gradient(circle_at_80%_15%,rgba(139,92,246,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(56,189,248,0.14),transparent_26%),radial-gradient(circle_at_80%_15%,rgba(139,92,246,0.14),transparent_22%)]' />
 
-      <main className='relative mx-auto w-full max-w-6xl px-4 pb-28 pt-6 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+      <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Header */}
         <BlurFade delay={BLUR_FADE_DELAY}>
           <div className='mb-8 space-y-4'>

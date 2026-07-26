@@ -151,7 +151,7 @@ function filterCoins(coins: ListingCoin[], tab: FilterTab): ListingCoin[] {
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function WatchClient({ data }: { data: WatchData }) {
-  const { fearGreed, global: g, listings, generatedAt, lookbackDays } = data;
+  const { fearGreed, global: g, listings, generatedAt, lookbackDays, errors } = data;
   const [tab, setTab] = useState<FilterTab>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [sortBy, setSortBy] = useState<'signal' | 'date' | 'mcap'>('signal');
@@ -191,7 +191,7 @@ export default function WatchClient({ data }: { data: WatchData }) {
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_8%_14%,rgba(14,165,233,0.14),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_8%_14%,rgba(56,189,248,0.16),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.14),transparent_22%)]' />
 
-      <main className='relative mx-auto w-full max-w-6xl px-4 pb-28 pt-6 space-y-8 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+      <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 space-y-8 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className='space-y-4'>
@@ -211,6 +211,11 @@ export default function WatchClient({ data }: { data: WatchData }) {
           <p className='text-[11px] text-muted-foreground/50'>
             Updated: {new Date(generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })} UTC
           </p>
+          {errors.length > 0 && (
+            <div className='rounded-xl border border-amber-500/40 bg-amber-500/20 px-4 py-2.5 text-[12px] leading-5 text-amber-600 dark:text-amber-400'>
+              Data temporarily unavailable — {errors.length} source{errors.length === 1 ? '' : 's'} failed to respond this update. Figures below may be incomplete.
+            </div>
+          )}
         </div>
 
         {/* ── Market Pulse ─────────────────────────────────────────── */}

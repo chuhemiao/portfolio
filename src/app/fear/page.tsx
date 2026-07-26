@@ -42,7 +42,7 @@ export const metadata: Metadata = {
 export default async function FearPage() {
   const data = await getFearDashboardData();
   return (
-    <div className='mx-auto w-full max-w-[1150px] px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8'>
+    <div className='mx-auto w-full max-w-[1150px] px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
       <FearClient data={data} />
     </div>
   );

@@ -44,7 +44,7 @@ export default function ThoughtsList({ thoughts }: { thoughts: Thought[] }) {
         {thoughts.slice(0, visible).map((t, i) => (
           <BlurFade key={t.id} delay={0.08 + i * 0.05}>
             <div className='rounded-lg border p-4'>
-              <p className='text-sm leading-7'>{parseLinks(t.text)}</p>
+              <p className='text-sm leading-7 whitespace-pre-line'>{parseLinks(t.text)}</p>
               <p className='text-xs text-muted-foreground text-right mt-2'>
                 {format(new Date(t.date), 'M月d日', { locale: zhCN })}
               </p>

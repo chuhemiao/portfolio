@@ -36,6 +36,29 @@ const ALL_TYPES = [
   'Infra'
 ];
 
+const TYPE_GROUPS: Record<string, string[]> = {
+  Exchanges: ['CEX', 'Perp DEX', 'DEX'],
+  Lending: ['Lending', 'Yield', 'BTCFi/Yield'],
+  Chains: ['L1', 'L2', 'L2 Infra', 'Interoperability'],
+  Privacy: ['ZK', 'FHE', 'Privacy'],
+  Consumer: ['GameFi', 'Consumer/Sports', 'SocialFi', 'Meme/AI'],
+  Markets: ['Prediction', 'Stablecoin', 'PayFi', 'RWA'],
+  Infra: ['Data/Infra', 'Restaking/Cloud', 'AI/DePIN', 'Identity/PoH', 'Wallet', 'Infra'],
+  Other: ['DeFi']
+};
+
+type CategoryFilter =
+  | { kind: 'all' }
+  | { kind: 'group'; label: string; types: string[] }
+  | { kind: 'type'; type: string };
+
+function fallbackColor(key: string): string {
+  let hash = 0;
+  for (let i = 0; i < key.length; i++) hash = (hash * 31 + key.charCodeAt(i)) >>> 0;
+  const hue = (hash * 137.508) % 360; // golden-angle rotation → near-uniform hue spread
+  return `hsl(${hue.toFixed(1)} 62% 46%)`;
+}
+
 function ProjectLogo({ project }: { project: ResearchProject }) {
   const [error, setError] = useState(false);
 
@@ -43,7 +66,7 @@ function ProjectLogo({ project }: { project: ResearchProject }) {
     return (
       <div
         className='relative flex w-full aspect-square items-center justify-center rounded-[1.15rem] text-base font-semibold text-white ring-1 ring-black/10 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.55)]'
-        style={{ backgroundColor: project.color }}>
+        style={{ backgroundColor: fallbackColor(project.slug) }}>
         <div className='absolute inset-0 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]' />
         <span className='relative tracking-tight'>{project.initial}</span>
       </div>
@@ -76,13 +99,24 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const PAGE_SIZE = 60;
 
 export default function ResearchClient() {
-  const [activeType, setActiveType] = useState('All');
+  const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>({ kind: 'all' });
+  const [showAllCategories, setShowAllCategories] = useState(false);
   const [query, setQuery] = useState('');
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
+  const countsByType = useMemo(() => {
+    const counts: Record<string, number> = {};
+    for (const p of PROJECTS) counts[p.type] = (counts[p.type] ?? 0) + 1;
+    return counts;
+  }, []);
+
   const filtered = useMemo(() => {
     return PROJECTS.filter((p) => {
-      const matchType = activeType === 'All' || p.type === activeType;
+      const matchType =
+        categoryFilter.kind === 'all' ||
+        (categoryFilter.kind === 'group'
+          ? categoryFilter.types.includes(p.type)
+          : p.type === categoryFilter.type);
       const q = query.trim().toLowerCase();
       const matchQuery =
         !q ||
@@ -92,12 +126,12 @@ export default function ResearchClient() {
         p.description.toLowerCase().includes(q);
       return matchType && matchQuery;
     }).sort((a, b) => a.name.localeCompare(b.name));
-  }, [activeType, query]);
+  }, [categoryFilter, query]);
 
   const visible = filtered.slice(0, visibleCount);
 
-  const handleTypeChange = (type: string) => {
-    setActiveType(type);
+  const handleCategoryChange = (filter: CategoryFilter) => {
+    setCategoryFilter(filter);
     setVisibleCount(PAGE_SIZE);
   };
 
@@ -166,7 +200,7 @@ export default function ResearchClient() {
         </div>
       </div>
 
-      <section className='relative mx-auto flex min-h-[100dvh] w-full max-w-[1150px] flex-col gap-8 px-4 pb-24 pt-6 sm:px-6 sm:pb-28 sm:pt-10 lg:px-8'>
+      <section className='relative mx-auto flex min-h-[100dvh] w-full max-w-[1150px] flex-col gap-8 px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         <header className='space-y-5 sm:space-y-6'>
           <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
             <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' />
@@ -202,28 +236,67 @@ export default function ResearchClient() {
         </div>
 
         <div className='flex flex-wrap gap-2.5'>
-          {ALL_TYPES.filter((t) => {
-            if (t === 'All') return true;
-            return PROJECTS.some((p) => p.type === t);
-          }).map((type) => {
-            const count = type === 'All' ? PROJECTS.length : PROJECTS.filter((p) => p.type === type).length;
+          <button
+            onClick={() => handleCategoryChange({ kind: 'all' })}
+            className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+              categoryFilter.kind === 'all'
+                ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
+                : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+            }`}>
+            All
+            <span className={`ml-1.5 text-[10px] ${categoryFilter.kind === 'all' ? 'opacity-70' : 'opacity-50'}`}>
+              {PROJECTS.length}
+            </span>
+          </button>
+
+          {Object.entries(TYPE_GROUPS).map(([label, types]) => {
+            const count = types.reduce((sum, t) => sum + (countsByType[t] ?? 0), 0);
+            if (count === 0) return null;
+            const isActive = categoryFilter.kind === 'group' && categoryFilter.label === label;
             return (
               <button
-                key={type}
-                onClick={() => handleTypeChange(type)}
+                key={label}
+                onClick={() => handleCategoryChange({ kind: 'group', label, types })}
                 className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
-                  activeType === type
+                  isActive
                     ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
                     : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
                 }`}>
-                {type}
-                <span className={`ml-1.5 text-[10px] ${activeType === type ? 'opacity-70' : 'opacity-50'}`}>
-                  {count}
-                </span>
+                {label}
+                <span className={`ml-1.5 text-[10px] ${isActive ? 'opacity-70' : 'opacity-50'}`}>{count}</span>
               </button>
             );
           })}
+
+          <button
+            onClick={() => setShowAllCategories((v) => !v)}
+            className='rounded-full border border-dashed border-border/70 bg-background/60 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'>
+            {showAllCategories ? 'Hide categories' : 'All categories'}
+          </button>
         </div>
+
+        {showAllCategories && (
+          <div className='flex flex-wrap gap-2.5'>
+            {ALL_TYPES.filter((t) => t !== 'All' && (countsByType[t] ?? 0) > 0).map((type) => {
+              const isActive = categoryFilter.kind === 'type' && categoryFilter.type === type;
+              return (
+                <button
+                  key={type}
+                  onClick={() => handleCategoryChange({ kind: 'type', type })}
+                  className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+                    isActive
+                      ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
+                      : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                  }`}>
+                  {type}
+                  <span className={`ml-1.5 text-[10px] ${isActive ? 'opacity-70' : 'opacity-50'}`}>
+                    {countsByType[type] ?? 0}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4'>
           {visible.map((project) => (

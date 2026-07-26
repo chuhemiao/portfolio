@@ -126,7 +126,7 @@ export default async function Page() {
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
       <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[36rem] bg-[radial-gradient(circle_at_10%_14%,rgba(14,165,233,0.16),transparent_26%),radial-gradient(circle_at_88%_12%,rgba(16,185,129,0.12),transparent_22%),radial-gradient(circle_at_48%_18%,rgba(59,130,246,0.10),transparent_28%)] dark:bg-[radial-gradient(circle_at_10%_14%,rgba(56,189,248,0.18),transparent_26%),radial-gradient(circle_at_88%_12%,rgba(16,185,129,0.16),transparent_22%),radial-gradient(circle_at_48%_18%,rgba(29,78,216,0.18),transparent_28%)]' />
 
-      <main className='relative mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col gap-6 px-4 pb-28 pt-6 sm:gap-8 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+      <main className='relative mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col gap-6 px-4 pb-dock-safe pt-6 sm:gap-8 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         <script
           type='application/ld+json'
           suppressHydrationWarning

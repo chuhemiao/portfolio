@@ -51,7 +51,7 @@ export default async function TopicDetailPage({ params }: Props) {
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
       <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_50%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_50%,rgba(2,6,23,1)_100%)]' />
 
-      <main className='relative mx-auto w-full max-w-5xl px-4 pb-28 pt-6 sm:px-6 sm:pb-32 sm:pt-10 lg:px-8'>
+      <main className='relative mx-auto w-full max-w-5xl px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Breadcrumb */}
         <BlurFade delay={BLUR_FADE_DELAY}>
           <div className='mb-6 flex items-center gap-2 text-xs text-muted-foreground'>

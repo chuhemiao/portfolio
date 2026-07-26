@@ -16,7 +16,7 @@ const DEFAULT_MAGNIFICATION = 60;
 const DEFAULT_DISTANCE = 140;
 
 const dockVariants = cva(
-  'mx-auto w-max h-full p-2 flex items-end rounded-full border'
+  'mx-auto w-max max-w-[calc(100vw-2rem)] h-full p-2 flex items-end rounded-full border overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden [-webkit-mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)] [mask-image:linear-gradient(to_right,transparent,black_12px,black_calc(100%-12px),transparent)]'
 );
 
 const Dock = React.forwardRef<HTMLDivElement, DockProps>(
