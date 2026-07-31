@@ -1,0 +1,91 @@
+---
+title: 'Hyperliquid：CFTC 事件合约新规能否转化为持久流动性？'
+publishedAt: '2026-07-31'
+summary: 'CFTC 拟议规则把事件合约纳入更清晰的联邦衍生品审查框架，为 prediction markets 打开机构化想象空间，但这条红利首先利好 Kalshi、Polymarket 这类合规/分发领先的平台。本报告拆解 Hyperliquid HIP-4 outcome markets 的需求侧流动性、结构优势、转化瓶颈，以及判断叙事是否兑现为持久流动性的关键观察信号。'
+category: 'research'
+---
+
+## TL;DR
+
+**可以转化，但更像"有上行期权"，还不是已验证的持久流动性飞轮。** CFTC 把事件合约纳入更清晰的联邦衍生品审查框架，确实扩大了 prediction markets 的机构化想象空间；但这条红利首先利好 Kalshi、Polymarket 这类有合规/前端/分发优势的平台，而不是自动流向 Hyperliquid。
+
+Hyperliquid 的机会在于：把 HIP-4 outcome markets 接入已有的高频交易用户、统一保证金、链上订单簿和 $HYPE staking/builder 体系。问题在于：**监管叙事 ≠ 监管许可，事件市场成交 ≠ 可持续深度，$HYPE 估值也已反映相当多执行预期。** 需要看到 30 日 HIP-4 成交、OI、做市深度、fee-paying volume 和外部 deployer 真实上链，才算叙事转化成功。
+
+---
+
+## 监管框架
+
+CFTC 的变化是行业级利好，但不是给 Hyperliquid 的无条件通行证。严格说，2026-06-10 CFTC 发布的是拟议规则：拟修订 Regulation 40.11 并新增 Appendix F，对涉及恐怖主义、暗杀、战争、博彩、违法行为等特定活动的事件合约建立逐合约审查框架，并设置最长 **90 天** 的审查流程。[CFTC](https://www.cftc.gov/PressRoom/PressReleases/9249-26)
+
+这件事的核心意义是：事件合约正在从"博彩/灰色预测"被重新包装为"受监管的衍生品市场结构"。CFTC 自身教育页面也将 event contracts 描述为常见的 swaps，并指出这类产品已在美国受监管市场存在超过二十年。[CFTC](https://www.cftc.gov/LearnandProtect/PredictionMarkets)
+
+但这同时带来一个关键分水岭：**CFTC 框架更直接保护/规范的是 CFTC-registered entities，而不是任何链上市场天然合规。** Hyperliquid Policy Center 与 Multicoin 在 2026-07-27 支持 CFTC prediction-market 框架，说明 Hyperliquid 阵营正在主动贴近监管叙事；但这只是政策姿态，不等同于 HIP-4 在美国面向所有用户的合规许可。[crypto.news](https://crypto.news/hyperliquid-multicoin-back-cftc-prediction-market-rules/)
+
+## 需求侧流动性
+
+事件合约的真实需求已经很大，问题是 Hyperliquid 能拿到多少。当前可观察的事件合约流动性主要集中在 Kalshi 与 Polymarket：截至最近可用日，二者合计 **30 日成交约 $41.73B**，**7 日成交约 $8.43B**，最新 OI 合计约 **$2.31B**。
+
+| 平台 | 7日成交额 | 30日成交额 | 最新 OI | 解读 |
+|---|---:|---:|---:|---|
+| Kalshi | **$8.03B** | **$38.78B** | **$788.2M** | 成交周转极强，显示受监管/法币入口优势 |
+| Polymarket | **$392.7M** | **$2.94B** | **$1.53B** | OI 更强，说明长尾事件和持仓沉淀仍有优势 |
+| 合计 | **$8.43B** | **$41.73B** | **$2.31B** | 赛道规模足够支撑新交易场景 |
+
+数据口径：Kalshi 最新趋势点截至 **2026-07-29 00:00 UTC**，Polymarket 截至 **2026-07-30 00:00 UTC**；该组数据衡量的是事件合约赛道的可寻址流动性，不等同于 Hyperliquid 已获得的 HIP-4 流动性。
+
+<chart item_id="event_contract_liquidity"></chart>
+
+这组数据给 Hyperliquid 的启示很直接：**监管框架会把更多成交引入事件合约赛道，但流动性会优先流向分发最强、合规摩擦最低、结算信任最高的场所。** Hyperliquid 要赢，不能只讲"CFTC narrative"；它必须把事件合约做成现有 perp 交易员愿意每天使用的交易工具。
+
+## Hyperliquid 优势
+
+Hyperliquid 的优势不是"更合规"，而是"更像专业交易终端"。HIP-4 把 outcome markets 做成 HyperCore 原生资产：合约完全抵押、固定区间结算、无杠杆/无强平，并可与 portfolio margin、HyperEVM 等组件组合；Yes/No 双边订单簿还会合并共享流动性。[Hyperliquid Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-4-outcome-markets)
+
+| 维度 | 当前状态 | 对持久流动性的意义 |
+|---|---:|---|
+| $HYPE 价格 | **$54.82**，截至 **2026-07-31 09:00 UTC** | 90 日仍 **+30.6%**，但已较高点回撤，说明叙事有热度也有兑现压力 |
+| 市值 / FDV | **$12.19B / $52.36B** | FDV 已很高，后续需要真实 fee 和锁仓需求兑现 |
+| 24h 现货成交 | **$419.5M** | $HYPE 本身具备足够市场关注度 |
+| 协议费用 | 30 日 **$47.5M**，截至 **2026-07-29** | 年化约 **$578M**；按市值约 **21x fee run-rate**，按 FDV 约 **91x** |
+| 活跃用户 | 7 日均值约 **65.9K/日** | 已有交易员基底，便于把事件合约嵌入现有行为 |
+| HIP-4 builder 门槛 | 报道称 deployer 需质押 **500,000 $HYPE**，按当前价约 **$27.4M** | 能形成 $HYPE 锁仓需求，但也会限制长尾市场创建者数量 |
+
+结构上，Hyperliquid 的最佳场景是：交易员在同一账户里同时持有 BTC perp、宏观事件、体育事件、token launch outcome，并用同一套抵押品管理风险。Finance Magnates 对其 validator-settled canonical outcome markets 的描述也强调了这点：事件合约、永续和其他头寸可在共享抵押环境里管理。[Finance Magnates](https://www.financemagnates.com/cryptocurrency/hyperliquid-launches-prediction-markets-with-validator-based-settlement/)
+
+此外，Hyperliquid 计划把 HIP-4 从 validator 控制的市场扩展到更 permissionless 的 deployment 模式：先在测试网，之后上主网；市场创建将基于 validator 认可的模板。[CoinDesk](https://www.coindesk.com/business/2026/07/20/hyperliquid-plans-to-add-decentralized-prediction-markets-in-upgrade-to-hip-4) The Defiant 报道称，deployer 需要质押 **500,000 $HYPE**，且可能因市场定义或结算问题被 validator vote slash。[The Defiant](https://thedefiant.io/news/defi/hyperliquid-to-open-hip-4-prediction-markets-behind-500-000-hype-stake)
+
+## 转化瓶颈
+
+当前证据还不足以说明 Hyperliquid 已经把叙事转成持久流动性。最强的早期信号来自 crypto-native 市场：Galaxy 研究称，HIP-4 上线第 25 天已拿到 BTC prediction-market 24h volume 的 **20.1%**，对应 HIP-4 **$2.38M** vs Polymarket **$9.46M**。[Galaxy](https://www.galaxy.com/insights/research/hyperliquid-hip-4-prediction-markets-polymarket-kalshi-analysis)
+
+但跨出 BTC price binaries 后，流动性仍很早期。比如其 CPI 事件市场早期成交约 **$3K**、OI 约 **$5K**，更像产品验证，不是规模化流动性。[crypto.news](https://crypto.news/hyperliquid-debuts-cpi-prediction-market-with-hip-4-outcome-contracts/)
+
+主要瓶颈有四个：
+
+| 瓶颈 | 为什么重要 |
+|---|---|
+| 监管红利不可直接迁移 | CFTC 框架利好 registered venues；Hyperliquid 若要承接美国合规流量，仍需要清晰法律包装、合作方或地域限制 |
+| 事件市场天然"到期即消失" | OI 与成交可能在热门事件前暴增、结算后归零；持久流动性要求可重复的宏观/体育/crypto 日历市场 |
+| 做市经济尚未完全验证 | Hyperliquid fee 文档显示 outcome trading 不是开仓即收费，而是关闭/结算等场景才产生 fee-paying volume，且 outcome 不支持 rebates；总成交未必等比例转化为协议收入。[Hyperliquid Docs](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees) |
+| 500K $HYPE 门槛双刃剑 | 高质押能减少垃圾市场、制造 token sink；但约 **$27.4M** 的单 deployer 门槛也可能压制长尾供给 |
+
+所以，**Hyperliquid 更可能先赢下 crypto-native 与专业交易员场景，而不是立刻从 Kalshi/Polymarket 手里抢走主流政治、体育和法币用户。**
+
+## 观察信号
+
+持久流动性要用数据验证，而不是用政策标题验证。下面是我会跟踪的确认信号；这些是分析阈值，不是当前已报告数据。
+
+| 信号 | 多头确认 | 反向信号 |
+|---|---|---|
+| HIP-4 30日成交 | **>$1B/月**，且日均 **>$50M** | 热点日冲高，结算后迅速回落 |
+| OI 沉淀 | Top markets 合计 OI **>$100M** 并维持数周 | 只有事件前短期 OI，没有长期持仓 |
+| 市场宽度 | 至少覆盖 crypto、macro、sports 三类，且单一 BTC binary 占比下降 | 主要仍是 BTC price binaries |
+| 做市质量 | 核心市场 spread 稳定在 **1–2 美分** 区间 | 盘口薄、成交滑点大 |
+| fee capture | outcome fee-paying volume 对协议 30 日费用贡献 **5–10%+**，即约 **$2.4M–$4.7M/月** | 成交增加但不产生可观费用 |
+| builder 实需 | 至少 **5 个外部 deployer** 质押合计 **2.5M $HYPE**，按当前价约 **$137M** | 门槛太高，市场创建仍依赖官方/validator |
+
+## 结论
+
+Hyperliquid 能把 CFTC 事件合约叙事转化为一部分流动性，但基础情形不是"监管框架一出，流动性自动迁移到 HIP-4"。更合理的判断是：**Hyperliquid 获得了一个高质量增长期权**——它有交易员、订单簿、保证金体系和 $HYPE 锁仓设计，适合承接 crypto-native 与专业交易型 outcome flow；但合规分发、消费者前端、事件结算信任和市场宽度仍是 Kalshi/Polymarket 的优势区。
+
+**底线。** 短期看，CFTC 叙事能支撑 $HYPE 的市场结构溢价；中期看，只有当 HIP-4 出现连续 30 日成交、可沉淀 OI、真实 fee-paying volume、外部 deployer 质押和跨类别市场深度时，才算从"监管叙事"进入"持久流动性"。
