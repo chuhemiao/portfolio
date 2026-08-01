@@ -10,7 +10,6 @@ export type ResearchProject = {
 
 // Synced by `pnpm sync:research:logos` into `public/research-logos/`.
 
-// @ts-expect-error TS2590: generated PROJECTS is too large for literal-union inference.
 export const PROJECTS = [
   // CEX
   {
@@ -283,6 +282,15 @@ export const PROJECTS = [
     logoUrl: "/research-logos/bitcoin_2026_report.png",
   },
   {
+    name: 'Bitcoin Self-Custody Wallet Standards',
+    description:
+      'COLDCARD entropy incident stress test for wallet standards, seed generation, descriptors, passphrase, and multisig defaults',
+    type: 'Wallet',
+    slug: 'bitcoin-self-custody-wallet-standards-stress-test',
+    color: '#F97316',
+    initial: 'BSC',
+  },
+  {
     name: 'Ethereum',
     description: 'Dominant programmable settlement layer with $69B DeFi TVL',
     type: 'L1',
@@ -455,6 +463,15 @@ export const PROJECTS = [
     logoUrl: "/research-logos/polymarket_kalshi_prediction_2026.png",
   },
   {
+    name: 'Alkimiya / 42 Protocol',
+    description:
+      'Outcome asset issuance and settlement protocol using dynamic payouts, Power Curve, Outcome Tokens, and crypto-native event markets',
+    type: 'Prediction',
+    slug: 'alkimiya-42-differentiation-traffic-moat',
+    color: '#7C3AED',
+    initial: '42',
+  },
+  {
     name: 'Opinion Labs',
     description:
       'Macro prediction exchange for institutional-grade market signals',
@@ -524,6 +541,15 @@ export const PROJECTS = [
     color: '#EF4444',
     initial: 'RDP',
     logoUrl: "/research-logos/redotpay_report_2026.png",
+  },
+  {
+    name: 'AEON.XYZ / AEON',
+    description:
+      'AI agent payment and crypto settlement layer linking x402, QR merchant payments, BNB Chain, and exchange-wallet distribution',
+    type: 'AI/PayFi',
+    slug: 'aeon-xyz-aeon-ai-agent-payment-stablecoin-settlement-risk',
+    color: '#10B981',
+    initial: 'AEON',
   },
   {
     name: 'USDG',
@@ -10386,11 +10412,11 @@ export const PROJECTS = [
   },
   {
     name: 'Mubarak / MUBARAK',
-    description: 'Mubarak is treated as a DeFi infrastructure watchlist candidate sourced from ...',
-    type: 'Infra',
+    description: 'BNB Chain community meme token driven by CZ, Middle East culture, and BNB Chain meme rotation, with high holder concentration and CEX-led liquidity risk',
+    type: 'Meme',
     slug: 'mubarak-mubarak-defi-infrastructure-token-value-capture-risk',
-    color: '#2563EB',
-    initial: 'MM',
+    color: '#F59E0B',
+    initial: 'MU',
     logoUrl: "/research-logos/mubarak-mubarak-defi-infrastructure-token-value-capture-risk.svg",
   },
   {
