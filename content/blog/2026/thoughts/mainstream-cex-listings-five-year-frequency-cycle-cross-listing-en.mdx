@@ -1,0 +1,130 @@
+---
+title: 'Major CEX Listings - Five-Year Frequency, Cycles, and Cross-Listings'
+publishedAt: '2026-08-10'
+summary: 'Over the past five years, major CEX listings have evolved from single-exchange announcements into multi-exchange cascades; Bybit acts most like early discovery, Binance has the most product events, OKX accelerated in 2025-2026, and Coinbase/Upbit are more selective confirmation signals.'
+slug: 'mainstream-cex-listings-five-year-frequency-cycle-cross-listing-en'
+category: 'thoughts'
+---
+
+## TL;DR
+
+Over the past five years, major CEX listings have shifted from “single exchange announcements” into **multi-exchange cascades**: Bybit looks most like the early discovery layer, Binance has the most trading-pair / product events, OKX accelerated meaningfully in 2025-2026, and Coinbase plus Upbit are more selective confirmation venues.
+
+Core data: from 2021-08-10 to 2026-08-10, the five exchanges produced **5,591 listing events**, equivalent to **2,372 token-exchange first listings**, covering **1,323 deduplicated token symbols**. Among them, **558 symbols** were cross-listed by at least two exchanges, and **192** completed multi-exchange cascades within 30 days. For trading, the most important signal is the **7-30 day linkage among Bybit / OKX / Binance**; Coinbase / Upbit are better used as secondary confirmation signals.
+
+## Data Scope
+
+This memo covers the five named exchanges: **Coinbase, Binance, OKX, Bybit, and Upbit**. The source is Surf Exchange Listing Events, counted by `effective_at`, with data through **2026-08-10 02:40 UTC**. The analysis window is **2021-08-10 to 2026-08-10**.
+
+| Metric | Definition | Why it matters |
+|---|---|---|
+| Listing event | Each trading-pair / product listing record, such as spot, perp, or different quote assets | Measures the frequency of announcements / market openings, but one token can have multiple records |
+| Token-level first listing | The first time a base symbol appears in that exchange’s listing history | Closer to the idea of “new token listed” |
+| Cross-listing | The same normalized token symbol first appearing across multiple exchanges | Measures multi-exchange diffusion speed |
+| Product scope | Spot and perp are included; Binance Alpha is not merged into Binance main venue scope | Avoids mixing display / Alpha assets into main venue listings |
+
+Note: this is a **symbol-level** analysis, not a contract-address-level analysis. Perp unit prefixes such as `1000PEPE / PEPE` are normalized, but same-name tokens and old tokens with new quote pairs can still create small amounts of noise.
+
+## Listing Frequency
+
+**Bybit is the most aggressive token-level listing venue, while Binance has the most trading-pair / product events.** Binance recorded **1,849** pair / product listing events over the past five years, far above other exchanges. But on token-level first listings, Bybit leads with **883**, about **1.9x** Binance.
+
+| Exchange | Pair / Product listing events | Monthly events | Spot / Perp events | Token-level first listings | Monthly new tokens | Median gap between new tokens | Read |
+|---|---:|---:|---:|---:|---:|---:|---|
+| Coinbase | **635** | 10.6 | 635 / 0 | **386** | 6.4 | 1.0 days | All spot; more compliance-filtered confirmation |
+| Binance | **1,849** | **30.8** | 1,482 / 367 | **459** | 7.6 | 1.0 days | Most pair / quote expansion; spot remains dominant |
+| OKX | **1,003** | 16.7 | 696 / 307 | **409** | 6.8 | 1.0 days | Accelerated in 2025-2026; active in both spot and perps |
+| Bybit | **1,439** | 24.0 | 669 / 770 | **883** | **14.7** | **0.9 days** | Most aggressive; high perp-first ratio; strong discovery attributes |
+| Upbit | **665** | 11.1 | 665 / 0 | **235** | 3.9 | 3.8 days | All spot; selective, more like regional liquidity confirmation |
+
+The product structure also differs clearly. Coinbase / Upbit are **spot-only** in this sample. Among Binance token first listings, about **67.5%** are spot-first and **32.5%** perp-first. OKX is about **58.4%** spot-first and **41.6%** perp-first. Bybit is **53.8% perp-first**, which shows it more often uses perpetual contracts to capture new-asset attention early.
+
+## Listing Cycles
+
+The past five years do not show a fixed “monthly listing” rhythm. They show **TGE / narrative-driven batch listings**. Event-level median gaps can be close to 0 because multiple quote pairs can open on the same day. Token-level data is clearer: excluding Upbit, Coinbase, Binance, OKX, and Bybit all have median new-token gaps close to **1 day**.
+
+<chart item_id="cex_new_assets_quarterly"></chart>
+
+| Exchange | 2021* | 2022 | 2023 | 2024 | 2025 | 2026 YTD* |
+|---|---:|---:|---:|---:|---:|---:|
+| Coinbase | 25 | 71 | 45 | 77 | **112** | 56 |
+| Binance | 51 | 57 | 46 | 73 | **119** | 113 |
+| OKX | 19 | 33 | 33 | 67 | 99 | **158** |
+| Bybit | 86 | 102 | 116 | 202 | **218** | 159 |
+| Upbit | 11 | 14 | 24 | 38 | **87** | 61 |
+
+\* 2021 only counts after August 10; 2026 counts through August 10.
+
+Several cycle patterns stand out:
+
+1. **2024 was the re-acceleration point, and 2025 was the broad expansion year.** Bybit went from **116** new tokens in 2023 to **202** in 2024 and **218** in 2025. Upbit jumped from **38** in 2024 to **87** in 2025.
+2. **OKX accelerated the most in 2026.** As of August 10, OKX already had **158** token-level first listings, above its full-year 2025 count of **99**.
+3. **The weekday effect is strong.** Across the five exchanges, new token listings concentrate from Tuesday to Friday: Thursday **24.2%**, Wednesday **20.5%**, Tuesday **19.7%**, Friday **18.7%**; Saturday + Sunday combined are only **3.7%**.
+4. **Burst months matter more than averages.** Typical peaks include OKX **2026-07: 79** new tokens, Bybit **2026-06: 46**, Binance **2026-07: 44**, Coinbase **2022-06: 34**, and Upbit **2025-09: 26**.
+5. **Lower-frequency exchanges have longer empty windows.** Longest token-listing gaps in the sample: Upbit **97 days**, OKX **88.9 days**, Coinbase **77.9 days**, Binance **74.4 days**, and Bybit **44.0 days**.
+
+## Cross-Listings
+
+**The core of cross-listing is high-frequency linkage among Bybit / OKX / Binance, while Coinbase / Upbit more often appear in the confirmation phase.** After deduplication, the five venues listed **1,323** new token symbols, of which **558** were listed by at least two exchanges, or **42.2%**.
+
+| Exchange coverage | Token count | Read |
+|---|---:|---|
+| Covered by all 5 | **56** | Top-tier TGE / high-consensus assets, usually listed quickly |
+| Covered by 4 | **88** | High-liquidity candidates, often Binance / OKX / Bybit plus Coinbase or Upbit |
+| Covered by 3 | **147** | Medium-high consensus assets |
+| Covered by 2 | **267** | Local consensus or early derivative-market testing |
+| Only 1 exchange | **765** | Long-tail, regional, or experimental listings |
+
+<chart item_id="cex_pairwise_overlap"></chart>
+
+| Exchange pair | Shared listed tokens | Cascaded within 30 days | Cascaded within 90 days | Median absolute time gap | Lead structure |
+|---|---:|---:|---:|---:|---|
+| Binance - Bybit | **285** | **154** | 186 | **14.9 days** | Bybit 161 vs Binance 105, 19 same-day / same-time |
+| OKX - Bybit | **273** | **166** | **204** | **9.0 days** | Bybit 152 vs OKX 106, 15 same-day / same-time |
+| Coinbase - Bybit | **237** | 91 | 114 | 102.3 days | Bybit 154 vs Coinbase 79 |
+| Bybit - Upbit | **200** | 73 | 101 | 80.9 days | Bybit 166 vs Upbit 25 |
+| Binance - OKX | **153** | 80 | 104 | 27.1 days | OKX 77 vs Binance 68 |
+| Coinbase - Upbit | 144 | 40 | 64 | 131.2 days | Coinbase 96 vs Upbit 48 |
+| Coinbase - Binance | 142 | 52 | 65 | 120.8 days | Binance 83 vs Coinbase 58 |
+| Binance - Upbit | 128 | 51 | 69 | 80.5 days | Binance 96 vs Upbit 26 |
+| OKX - Upbit | 119 | 43 | 65 | 60.9 days | OKX 90 vs Upbit 29 |
+| Coinbase - OKX | 115 | 40 | 57 | 94.0 days | OKX 70 vs Coinbase 45 |
+
+Among the **558** tokens cross-listed by multiple exchanges, the first-listing leaders are:
+
+| Leading exchange | Lead count | Read |
+|---|---:|---|
+| Bybit | **240** | Strongest early discovery signal, but also the noisiest |
+| Binance | **115** | High-liquidity confirmation, relevant across spot / perp |
+| OKX | **110** | Tightest linkage with Bybit / Binance, significantly stronger in 2026 |
+| Coinbase | **76** | Strong compliance-confirmation attribute |
+| Upbit | **17** | Rarely global first-listing; more like regional spot confirmation |
+
+Typical fast-cascade examples:
+
+| Token | Coverage | Cross-exchange span | Listing sequence |
+|---|---:|---:|---|
+| APT | 5 exchanges | **0.9 days** | OKX 2022-10-18 -> Coinbase / Binance / Bybit / Upbit 2022-10-19 |
+| MOVE | 5 exchanges | **1.5 days** | OKX / Bybit / Binance 2024-12-09 -> Upbit 2024-12-10 -> Coinbase 2024-12-11 |
+| ME | 5 exchanges | **14.7 days** | Bybit 2024-11-26 -> OKX / Binance / Coinbase 2024-12-10 -> Upbit 2024-12-11 |
+
+## Trading Implications
+
+**Listing alpha should be decomposed into “early discovery -> liquidity confirmation -> regional confirmation.”** If you only watch one exchange’s announcements, you miss the real diffusion path.
+
+1. **Early discovery layer: Bybit, OKX, Binance perps.**  
+   Bybit led **240** cross-listing cases, and **53.8%** of its token first listings are perp-first. The median time gap between OKX / Bybit shared listings is only **9.0 days**. This signal is useful for tracking whether an asset has entered the global derivatives field of view, but it is not the same as a low-risk entry.
+2. **Mainstream confirmation layer: Binance spot, Coinbase spot.**  
+   Binance has the most pair / product events, showing strong quote, product, and liquidity expansion capacity. Coinbase is all spot, and its cross-listing median gaps versus Bybit / Binance are usually above **100 days**, making it more like ex-post confirmation than early discovery.
+3. **Regional confirmation layer: Upbit.**  
+   Upbit has fewer new tokens, but its overlap rate is very high: among its **235** token-level first listings, about **221** also appear on at least one of the other four exchanges, an overlap rate of about **94%**. This means Upbit rarely lists in isolation and is better read as a Korean spot-liquidity confirmation signal.
+4. **Cascade window: focus on 7 days, 30 days, and 90 days.**  
+   Among the **558** cross-listed tokens, **192** completed multi-exchange diffusion within 30 days and **261** within 90 days. If a new asset first lists on Bybit / OKX / Binance and receives a second major-exchange confirmation within 7-30 days, its probability of entering a broader CEX pool is usually more worth monitoring.
+5. **Do not mechanically chase “same-day all-exchange listings.”**  
+   APT and MOVE being listed across five venues within 1-2 days shows strong consensus, but also means the listing premium is likely priced very quickly. A better trading framework is to also monitor spot depth, perp funding rates, OI, unlocks, and TGE float, not merely “another exchange listed it.”
+
+## Conclusion
+
+Over the past five years, CEX listing structure has become three-layered: **Bybit / OKX / Binance capture new narratives faster; Binance / Coinbase provide stronger mainstream confirmation; Upbit provides regional spot-liquidity confirmation**. By frequency, Bybit is the most aggressive. By event count, Binance is the largest. By trend, OKX accelerated the most in 2026. By cross-listing structure, Bybit has the tightest linkage with OKX / Binance.
+
+**Bottom line.** If you are building a listing monitor, the priority should be: first watch **Bybit / OKX / Binance perp / spot first listings**, then check whether a **second major exchange confirms within 7-30 days**, and finally use **Coinbase / Upbit** as stronger but more delayed confirmation signals.
