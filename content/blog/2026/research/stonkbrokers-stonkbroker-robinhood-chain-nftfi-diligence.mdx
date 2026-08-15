@@ -1,0 +1,206 @@
+---
+title: 'StonkBrokers ($STONKBROKER) - Diligence'
+publishedAt: '2026-08-15'
+summary: 'StonkBrokers is a live early-mainnet NFTFi app on Robinhood Chain, where the NFT is the real product and $STONKBROKER is the speculative chip used to buy it; the architecture is live, but sustainable economics are not proven.'
+slug: 'stonkbrokers-stonkbroker-robinhood-chain-nftfi-diligence'
+category: 'research'
+---
+
+## TL;DR
+
+StonkBrokers is a **live early-mainnet NFTFi app** on Robinhood Chain, not a paper roadmap. The NFT is the real product; $STONKBROKER is the speculative chip used to buy it. Token-bound wallets, Anvil AMM, Clock In stock drops, and a Cayman operator are confirmed. Sustainable economics are not.
+Treat this as a **speculative** Robinhood-chain beta, not investable tokenized-equity infrastructure. The NFT collection is priced at **~$100M** while lifetime stock-token distributions are only **$1.22M**, and official docs say holders have **no claim on revenue**.
+
+---
+
+## Project State
+
+StonkBrokers is an **early-mainnet / pre-PMF** experiment, not a mature financial protocol. Robinhood Chain itself only went live on **2026-07-01**, and $STONKBROKER’s observable tape starts around **2026-07-19**. The operator is **Clutch Labs LLC** (Grand Cayman), publicly tied to **Clutch Markets**, and the site labels the stack **experimental software**.
+
+The useful split is live versus promised:
+
+| Feature | Status | Evidence | Confidence |
+|---|---|---|---|
+| 4,444 broker NFTs | Live, minted out | Official docs; CoinGecko NFT page | Confirmed |
+| ERC-6551 broker wallets | Live | “Dedicated onchain wallets funded at mint”; in-app My Brokers | High |
+| Anvil NFT AMM | Live | Homepage swap desk; AMM Vault `buy/sell/snipe` | Confirmed |
+| Clock In / Overtime stock drops | Live | Homepage feed through DROP #772 / OVERTIME #220 | Confirmed |
+| ETH-fee loans | Live | Loan Vault `borrow/repay/liquidate` | High |
+| Safety Deposit Box (LP locker) | Live | Mainnet locker addresses published | High |
+| Stonk Exchange / $UP gauges | Partially live | Docs say up. ve(3,3) contracts are live; some LP mint UX still “coming soon” | Medium |
+| Stonk Launcher | Roadmap | Site countdown; `LauncherFactory` marked upcoming | Confirmed roadmap |
+| Covered calls / options | Roadmap | Gated until vDEX pools exist | Confirmed roadmap |
+
+The product thesis is real as a **composition**, not as a new primitive: NFT + ERC-6551 + Robinhood stock tokens + AMM. That is closer to “NFT as portfolio / financial account” than to an autonomous agent. The agent layer is still marketing language.
+
+On the progression the brief asked for, StonkBrokers sits here today:
+
+**collectible → asset container → early portfolio.** It is not yet a general-purpose financial account, and it is not an autonomous agent.
+
+## Architecture
+
+The ownership chain is the one part of the thesis that actually exists on mainnet.
+
+```text
+User
+  → StonkBroker ERC-721
+    → ERC-6551 token-bound account
+      → Robinhood stock tokens + other balances
+        → Clock In / Overtime / Broker Box flows
+```
+
+Canonical Robinhood Chain (ID **4663**) addresses from official docs:
+
+| Contract | Address |
+|---|---|
+| NFT collection | `0x539cdd042c2f3d93ebc5be7dfff0c79f3b4fabf0` |
+| $STONKBROKER | `0xe934e36a439c94017b64a3fece66af12099abf50` |
+| Activation Manager | `0xacd5ae3c060c1137fe2ee86b0ab2ef697456f664` |
+| Clock In v2 | `0x1f12fe622c11947f93f53d63f68f7f46b6d081c9` |
+| AMM Vault | `0xe302733accf4800146e55fc45b46b4e4ffc032d2` |
+| Loan Vault | `0xa7b9ac696b252b79568a5a01b2fd02177ef23664` |
+
+[StonkBrokers docs](https://www.stonkbrokers.cash/docs)
+
+Transfer semantics follow ERC-6551: control of the TBA should move with the NFT. That is **high-confidence architectural inference** from the standard plus the “funded at mint / view broker wallets” UX, not a line-by-line audit of the account implementation. No independent security review turned up in this pass.
+
+The stock tokens inside those wallets are **not shares**. Robinhood stock tokens are price-tracking derivatives on Robinhood Chain, oracled by Chainlink, offered outside the US, with **no shareholder rights and no direct company dividends**. StonkBrokers is explicit that Clock In / Overtime / Broker Box payouts are **marketing rewards**, not dividends, and that holding a broker or $STONKBROKER confers **no equity, no revenue share, and no shareholder rights**. US users are geo-restricted from stock-token swaps. [Official docs](https://www.stonkbrokers.cash/docs) · [TrustSwap explainer](https://trustswap.com/robinhood/stock-tokens)
+
+That distinction matters. The protocol is distributing a **derivative claim on US equity prices** into NFT wallets, then selling the NFT as if it were a portable brokerage account. Economically it is closer to a points/rewards wrapper than to tokenized DTCC shares.
+
+## Market Position
+
+$STONKBROKER is a high-turnover Robinhood-chain meme with a real NFT bid behind it. As of **2026-08-15 14:00 UTC**, the token last printed **$0.02984**, **+1,679%** over 30 days from **$0.00168**, and still **~23% below** the CoinGecko ATH of **$0.03885**.
+
+<chart item_id="stonkbroker_30d"></chart>
+
+| Metric | Value | Read |
+|---|---:|---|
+| Price | **$0.02984** | 30d high $0.0376, 7d +1.8% |
+| Circulating mcap | **$47.0M** | CoinGecko rank ~#439 |
+| FDV | **$81.1M** | Assumes ~2.7B max supply |
+| Circ / FDV | **58%** | Material uncirculated / locked float |
+| 24h volume | **$10.5M** | ~22% daily turnover |
+| On-chain holders | **25,643** | Blockscout |
+| On-chain total supply | **2.42B** | Blockscout; CoinGecko circ is 1.6B |
+
+[CoinGecko](https://www.coingecko.com/en/coins/stonkbroker) · [Blockscout](https://robinhoodchain.blockscout.com/token/0xe934e36a439c94017b64a3fece66af12099abf50)
+
+The NFT is the larger asset. CoinGecko marks the collection at a **$22,581** floor (**~12.0 ETH** at ETH **$1,882**), **$100.3M** market cap, **4,444** minted, **623** owners, and **106 ETH** (~$199K) 24h NFT volume. [CoinGecko NFT](https://www.coingecko.com/en/nft/stonkbrokers-434284142)
+
+That holder count is a red flag: **7.1 NFTs per owner** on average, and the whole “blue-chip” bid sits in a few hundred wallets. AMBCrypto reported the collection briefly flipping Pudgy Penguins on NFT market-cap tables in early August; that is a narrative print, not proof of durable demand. [AMBCrypto](https://ambcrypto.com/pudgy-penguins-loses-nft-crown-to-stonkbrokers-will-pengu-also-fall-to-0-005765/)
+
+$STONKBROKER’s verified utility is narrow:
+
+- medium of exchange to buy/sell brokers on Anvil
+- governance claim on the vDEX / gauge layer
+- no cash-flow right
+
+$UP, not $STONKBROKER, is the emission token for Stonk Exchange LPs. Growth in NFT trading creates **buy pressure** for $STONKBROKER only insofar as Anvil quotes brokers in it. That is reflexive demand, not fee capture.
+
+## Protocol Economics
+
+The advertised flywheel is live in form and weak in coverage.
+
+```text
+NFT / AMM activity
+  → fees + activation
+    → stock-token buys
+      → Clock In / Overtime into TBAs
+        → higher NFT utility / bid
+```
+
+Confirmed on the homepage as of this review: **$1,224,172** lifetime distributions, about **1,662** activated brokers, and a **$24.0K / 12.69 ETH** piggy bank marked “sent to Stock Booster.” [StonkBrokers](https://www.stonkbrokers.cash/)
+
+<chart item_id="stonk_value_stack"></chart>
+
+| Ratio | Estimate | Implication |
+|---|---:|---|
+| Activation rate | **37%** (1,662 / 4,444) | Most of the collection is still a collectible |
+| Lifetime dist. / NFT mcap | **1.22%** | Embedded rewards are a rounding error vs floor |
+| Dist. per activated broker | **~$737** | Versus a **$22.6K** floor |
+| Implied NAV coverage | **~3%** | NFT premium is almost entirely narrative |
+| Piggy bank / NFT mcap | **0.02%** | Current reserve cannot fund the bid |
+
+If one naively annualizes the **$1.22M** over the **~45 days** since Robinhood Chain mainnet, the run-rate is ~**$9.9M**, or ~**10%** on today’s NFT mcap. That annualization is **speculative**: funding mix is not fully disclosed, the piggy bank is tiny relative to payouts already made, and official copy says there is **no guarantee** of future drops.
+
+Two separations the market is blurring:
+
+1. **Corporate dividends vs protocol airdrops.** Clock In is a marketing program buying Robinhood stock tokens. It is not Apple or Nvidia paying StonkBroker holders.
+2. **Protocol volume vs protocol revenue.** $10.5M of token volume and 106 ETH of NFT volume are activity. They are not proven net protocol revenue accruing to a tokenholder claim.
+
+Flywheel rating: **Emerging**. The loop exists on-chain. It is not self-funding at current NFT valuation, and $STONKBROKER sits **beside** the value path rather than on it.
+
+Scoring, 1–5, then weighted:
+
+| Category | Score | Weight |
+|---|---:|---:|
+| ERC-6551 architecture | 4 | inside Tech 15% |
+| Tokenized-equity integration | 3 | inside Product 15% |
+| Product innovation | 4 | inside Product 15% |
+| Protocol revenue quality | 2 | inside Protocol 15% |
+| $STONKBROKER value capture | 2 | inside Token 15% |
+| NFTFi economics | 3 | inside Token / Product |
+| Liquidity quality | 3 | inside Protocol |
+| Community / distribution | 3 | 10% |
+| Robinhood Chain position | 4 | inside Opportunity 10% |
+| Regulatory resilience | 2 | inside Risk 10% |
+| Security | 2 | inside Risk 10% |
+| Network effects | 2 | 10% |
+
+| Composite | Score /100 |
+|---|---:|
+| Protocol quality | **58** |
+| Token quality | **42** |
+| Investment quality | **52** |
+| Speculation dependency | **78** |
+
+Token value-capture score: **35 / 100**. The token is useful. It is not a claim on the business.
+
+## Risks
+
+The thesis breaks for ordinary reasons, not exotic ones.
+
+| Risk | Severity | Why it matters |
+|---|---|---|
+| Securities / marketing-reward framing | Critical | Cayman LLC, US geo-block, “not dividends” copy is a legal shield, not a moat |
+| Unsustainable distributions | High | $100M NFT bid on $1.22M of lifetime drops and a $24K reserve |
+| No token cash-flow rights | High | Official docs disclaim revenue share |
+| Holder concentration | High | 623 NFT owners; token circ/FDV gap unexplained |
+| No public audit found | High | Experimental software, TBA custody, loan vault, upgrade-looking modules |
+| Roadmap inflation | Medium | Launcher and options are still unreleased |
+| Derivative-not-equity stocks | Medium | Oracle + product-terms risk, not share custody |
+| Reflexive $STONKBROKER bid | Medium | 22% daily turnover is casino liquidity |
+
+Scenarios:
+
+| Case | Prob. | What has to be true | Invalidation |
+|---|---:|---|---|
+| Bull — default RH-chain equity NFTFi rail | **20%** | Launcher ships, distributions stay funded by organic fees, TBA NAV becomes a real bid | Clock In slows while floor stays elevated, or a cleaner RH-native brokerage UI appears |
+| Base — sticky niche NFTFi + meme | **45%** | Community holds, Anvil keeps turning, token remains an AMM chip | Fine as a trade, not as infrastructure |
+| Bear — narrative unwind | **35%** | Fees cannot cover drops; floor mean-reverts toward embedded NAV | Floor compression + volume collapse is the tell |
+
+Red-flag engine, bluntly: wash-trading cannot be proven from public tape, but **22% daily token turnover**, a **sub-700 NFT holder set**, and a **marketing-funded yield** are enough to treat prints as speculative until proven otherwise. Insider allocations and unlock schedules are **not disclosed** in the materials reviewed.
+
+## Conclusion
+
+Answer the five questions the brief asked.
+
+1. **Is this a technically meaningful ERC-6551 implementation?** Yes. Wallets are live, funded, and receiving assets.
+2. **Does embedding tokenized equities inside NFTs create genuine financial utility?** Only partially. It creates a portable **derivative-stock container**, not a brokerage account and not legal equity.
+3. **Are protocol economics sustainable?** Not at this valuation. Activity is real; coverage is not.
+4. **Does $STONKBROKER capture ecosystem growth?** Weakly. It is the AMM quote asset and a governance token. $UP and NFT holders sit closer to the fee path.
+5. **Can this become autonomous tokenized-asset infrastructure?** Possible in a bull path. Today it is an NFT collection with a working rewards engine on a six-week-old chain.
+
+Separate books:
+
+| Book | Stance |
+|---|---|
+| Protocol | Interesting early mainnet app |
+| NFT collection | Speculative NFTFi, premium >> NAV |
+| $STONKBROKER | High-beta chip, not a cash-flow token |
+| Long-term infrastructure | Watchlist only |
+
+**Classification: SPECULATIVE.**
+
+**Bottom line.** Trade the reflexivity if you must; do not underwrite $STONKBROKER as tokenized-equity infrastructure until distributions are fee-funded, TBA NAV is a material share of floor, and the token has a disclosed claim on cash flow. Watch Clock In coverage, the launcher go-live, any independent audit, and whether the NFT floor can hold without the airdrop theater.

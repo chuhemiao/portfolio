@@ -690,6 +690,15 @@ export const PROJECTS = [
     logoUrl: "/research-logos/blockstreet-vc-grade-infrastructure-analysis-for-tokenized-capital-markets.png",
   },
   {
+    name: 'StonkBrokers / STONKBROKER',
+    description:
+      'Robinhood Chain NFTFi app using ERC-6551 broker NFTs, stock-token rewards, Anvil AMM liquidity, and a speculative STONKBROKER quote asset',
+    type: 'RWA',
+    slug: 'stonkbrokers-stonkbroker-robinhood-chain-nftfi-diligence',
+    color: '#22C55E',
+    initial: 'STK',
+  },
+  {
     name: 'Sky Token',
     description:
       'MakerDAO rebranded protocol with emission cut and buyback program',
