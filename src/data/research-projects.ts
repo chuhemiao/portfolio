@@ -387,6 +387,15 @@ export const PROJECTS = [
     logoUrl: "/research-logos/succinct_labs_zk_proof.png",
   },
   {
+    name: 'Aligned / ALIGN',
+    description:
+      'Shared ZK proof verification infrastructure using EigenLayer AVS and recursive proof aggregation',
+    type: 'ZK',
+    slug: 'aligned-align-zk-proof-verification-infrastructure-token-value-capture-risk',
+    color: '#4F46E5',
+    initial: 'ALN',
+  },
+  {
     name: 'Brevis',
     description:
       'ZK coprocessor and modular zkVM for on-chain data verification',
