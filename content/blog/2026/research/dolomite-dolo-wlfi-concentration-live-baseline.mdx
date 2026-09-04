@@ -1,0 +1,80 @@
+---
+title: 'Dolomite ($DOLO) — Research Brief Review & Live Baseline'
+publishedAt: '2026-08-28'
+summary: 'Dolomite looks cheap on revenue multiples, but the updated baseline reframes that cheapness as a WLFI concentration and dilution discount rather than a clean mispricing.'
+slug: 'dolomite-dolo-wlfi-concentration-live-baseline'
+category: 'research'
+---
+
+I've reviewed the file. It's not a research report — it's a **34-section institutional research spec** for Dolomite, with instructions to refresh all numbers at execution time. So I did two things: assessed the brief as a research design, and ran the live baseline it asks for.
+
+# Dolomite ($DOLO) — Research Brief Review & Live Baseline
+
+## TL;DR
+
+The brief is well-structured but **mis-specified for what Dolomite actually is today**. It frames the protocol as a multi-chain, virtual-liquidity "financial operating layer" and dedicates whole sections to Arbitrum/Berachain/Mantle expansion, DEX trading, and moat scoring — while the single decisive fact sits in one unweighted bullet at section 30: **Dolomite is now ~93% one chain and ~73% one counterparty ecosystem (World Liberty Financial's USD1/WLFICX)**.
+
+Live baseline as of **2026-08-28 UTC**: net TVL **$332.0M**, outstanding borrows **$315.9M** (~49% utilization on ~$648M gross deposits), annualized fees **~$12.3M**, annualized protocol revenue **~$2.45M**, market cap **$12.96M**, FDV **$25.35M**, DOLO **$0.0254** (**-89% YoY**). Cheap on revenue multiples (**5.3x MC/revenue**), but the cheapness is a concentration and dilution discount, not a mispricing.
+
+## Where the brief holds up, and where it breaks
+
+Three things the spec gets right: the evidence-tier hierarchy, the mandatory confidence labels, and the explicit instruction not to hard-code the numbers embedded in the prompt. Those are the parts that keep a long research template honest.
+
+But four design flaws would produce a wrong answer if executed literally:
+
+| Flaw | Why it matters | Evidence |
+|---|---|---|
+| Treats multi-chain expansion as a growth pillar (§1, §21) | Polygon zkEVM and Botanix are at **$0**, Mantle at **$0.08M**, Berachain **$5.3M**. Ethereum is **92.6%** of TVL | DefiLlama chain TVLs, 2026-08-28 |
+| Weighs "DEX / trading infrastructure" as co-equal to lending (§1, §31) | 30d DEX volume is **$2.35M**, down **-33%** vs the prior 30d, against **$215M** over the trailing year. The trading leg is effectively dormant | Surf DeFi metrics, 30d to 2026-08-26 |
+| Counterparty concentration is buried in the Red Flag section (§30), unweighted in the 15-factor scoring model (§31) | This is the dominant risk variable, not a footnote | See below |
+| No asset-level TVL decomposition is mandated anywhere | Without it, you'd score Dolomite on "broad collateral support" and miss that two WLFI assets are the balance sheet | — |
+
+The scoring model also has no political/regulatory weight, which is untenable when the largest depositor is a Trump-family-linked venture.
+
+## Protocol reality: one chain, one counterparty
+
+**Dolomite's 2026 recovery is a WLFI story, not a virtual-liquidity story.** After WLFI launched "World Liberty Markets" — a Dolomite-powered lending platform — on **2026-01-12**, Ethereum-side liquidity went from ~$12.6M (2026-01-01) to **$307.6M** today. WLFI's multisig deposited a reported $104M in February 2026; in April 2026 WLFI borrowed **$50.44M from its own platform** at a ~30% rate, triggering withdrawal-freeze concerns, then repaid $25M USD1 days later.
+
+<chart item_id="dolo_eth_mix"></chart>
+
+WLFICX (**$120.7M**, added in a single step on **2026-08-22**) plus USD1 (**$103.1M**) are **72.8%** of Ethereum net liquidity. The borrow side mirrors it: USD1 **$175.2M** and USDC **$106.9M** are 94% of all debt. The genuinely differentiated Dolomite — GMX GM/GLV positions, PENDLE, UNI, LINK as productive collateral in Isolation Mode — is the **$19.0M Arbitrum** deployment, i.e. 5.7% of the protocol. *(CONFIRMED — on-chain/DefiLlama, 2026-08-28)*
+
+So the answer to the brief's central question (§34.7): the architecture is real and technically differentiated, but **the business currently running on it is a single-counterparty stablecoin leverage venue**, not a generalized capital-efficiency layer.
+
+## Economics: real borrow demand, thin fee capture
+
+Utilization is the strongest number in this dataset. Borrows of **$315.9M** against ~$648M gross deposits = **48.8% utilization**, up from 8.1% in February 2025 — that is genuine leverage demand, not idle incentive-farmed TVL.
+
+<chart item_id="dolo_tvl_vs_price"></chart>
+
+The problem is conversion. Fees run **$1.01M/30d** (+7.0% vs prior 30d) but protocol revenue is only **$201.6k/30d** — a **~20% take rate**, or **0.38% annualized on gross deposits**. And activity breadth is shrinking while TVL grows: **2,814 users in 30d (~94/day), -11.2%** versus the prior period. TVL is going up because a few large balance sheets got bigger.
+
+| Protocol | TVL | Daily fees | Daily revenue | Mkt cap | MC / ann. revenue |
+|---|---:|---:|---:|---:|---:|
+| Aave | $30.3B | $1.08M | $154.3k | $1.94B | **34.5x** |
+| Compound | $2.08B | $99.9k | $8.9k | $192.7M | **59.1x** |
+| Fluid | $3.81B | $104.2k | $19.3k | $114.9M | **16.3x** |
+| Morpho | $14.2B | $778.4k | $0 | $1.64B | n/a |
+| **Dolomite** | **$952M** | **$37.4k** | **$7.5k** | **$12.96M** | **5.3x** |
+
+*Ranking-source TVL and latest-day fee/revenue snapshots, 2026-08-26. Note the definitional gap: this feed's Dolomite TVL ($952M) is deposit-inclusive, while DefiLlama's netted headline is $332M — the peer ratios are directionally right, the level is not comparable across both bases. Euler is excluded as an outlier (its reported daily fees of $967k against $481M TVL don't reconcile).*
+
+## Token: cheap multiple, structural overhang
+
+DOLO trades at **$0.0254** (Binance DOLO/USDT, **-1.09% 24h**), **+21.9% over 30d** but **-89.4% over 365d** and **-93% from its $0.366 ATH** (2025-08-31). Circulating supply is **510.4M of 998.4M** (51.1%).
+
+Three overhangs the brief's §26 tokenomics section should stress-test before any scoring:
+
+- **Vesting.** Team, investor and advisor tranches unlock at a flat **~14.25M DOLO/month** through ~March 2028 — about **2.8% of circulating supply per month** (~$362k/month at spot). *(HIGH CONFIDENCE — schedule shows 305.2M cumulative unlocked vs 510.4M reported circulating, so the schedule likely excludes ecosystem emissions; treat as a floor.)*
+- **Holder concentration.** On the Ethereum contract, three Binance addresses hold **~37.2%**, Coinbase **5.3%**, and a Uniswap v4 pool **7.4%** — real float is far thinner than market cap implies.
+- **Reflexive demand.** The 2025-2026 bid came from listings (Binance Alpha/HODLer airdrop), a $10M PIPE-funded DOLO treasury vehicle (Stewards, 2025-11-04), and WLFI headlines — none of it is fee-driven.
+
+At **5.3x MC / annualized revenue** versus Aave at 34.5x, DOLO is the cheapest lending token in the peer set. But $2.45M of annualized revenue is small enough that a single counterparty withdrawing resets the multiple, and the value-accrual path from revenue to veDOLO holders is exactly what the brief's §34.5-6 asks to verify — a claim I could not confirm from primary docs this turn (docs.dolomite.io blocked automated access). *(UNVERIFIED — do not score DOLO value capture without it.)*
+
+## Verdict
+
+Answering the brief's seven closing questions with the data above: architecture is **differentiated** (CONFIRMED); Isolation Mode does improve listing risk-adjustment (HIGH CONFIDENCE, visible in the Arbitrum book); Dolomite is **not demonstrably more capital efficient** than Aave/Morpho at the user level, it just runs a higher-utilization, narrower book (MEDIUM); revenue is **organic but thin and concentrated** (CONFIRMED); DOLO value capture is **unverified** (LOW); and the "financial operating layer" thesis is **not supported by current activity** — the trading, multi-chain and broad-collateral legs are all sub-scale.
+
+If I had to place the classification the brief demands: **SPECULATIVE**, not WATCHLIST-plus. The valuation is genuinely low, but you are underwriting one counterparty's balance sheet, not a diversified money market.
+
+**Bottom line.** Rewrite the brief around three falsifiable tests instead of 34 sections: (1) what share of TVL and borrows survives a full WLFI withdrawal, (2) how WLFICX is priced and liquidated under stress, and (3) whether any protocol revenue actually reaches veDOLO. Those three answers decide the thesis; the rest is scoring theater. Monitor asset-level Ethereum deposits weekly — a WLFICX/USD1 drawdown is the leading indicator, and it will move before the price does.
