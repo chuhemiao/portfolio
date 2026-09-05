@@ -1,0 +1,151 @@
+---
+title: 'Arcus: Reviewing the Research Brief Against Live Data'
+publishedAt: '2026-09-05'
+summary: 'Arcus is a live Robinhood Chain perps and tokenized-stock venue with real growth, but live data weakens the high-conviction moat case: distribution is shared, Lighter is larger on the same chain, and the asset remains a watchlist candidate until scale, token design, and adoption improve.'
+slug: 'arcus-research-brief-live-data-watchlist'
+category: 'research'
+---
+
+## TL;DR
+
+This memo reviews the Arcus research brief against refreshed live data. Arcus is the dYdX-team DEX on Robinhood Chain, with live perps, zero-fee tokenized-stock spot trading, and an early pToken primitive.
+
+Two findings stand out.
+
+**1. The brief's baseline numbers hold up.** I refreshed every headline metric against DefiLlama and Arcus primary sources (2026-09-05, ~05:15 UTC). TVL, 30d spot volume, and 30d revenue land within a few percent of the embedded baseline. Cumulative perp volume is *higher* (**$2.457B** vs ~$2.38B), while 24h perp volume is *lower* (**$75.4M** vs ~$93M). Nothing in the brief is stale enough to invalidate it.
+
+**2. The brief has one serious blind spot that changes the answer.** It never names **Lighter**, which runs **$5.86B in 30d perp volume on the same Robinhood Chain versus Arcus' $2.03B**, holds 3x the TVL, and is listed alongside Arcus, not instead of it, in Robinhood's own launch announcement. The brief's Section 3 asks whether Robinhood Chain gives Arcus a "distribution moat." Live data says **no**: the distribution is non-exclusive, and Arcus is currently the #2 perp venue on its own home chain.
+
+My verdict on the underlying asset: **WATCHLIST**, not "high-conviction market infrastructure."
+
+## Refreshed Project State Matrix
+
+Arcus went live on Robinhood Chain around **2026-07-10** (first DefiLlama TVL print: **$5.25M**). Volume has compounded fast: **83% of all-time perp volume occurred in the last 30 days**. But the absolute base is still small, and the growth is concentrated in perps, not the tokenized-equity spot product that the brief treats as the core thesis.
+
+| Product | Status | Volume (30d) | TVL | Revenue (30d) | Confidence |
+|---|---|---:|---:|---:|---|
+| Arcus Perps | Live, scaling | **$2.029B** | **$21.57M** | **$338.1K** | CONFIRMED (DefiLlama) |
+| Arcus Spot (Stock Tokens) | Live, 0% fee | **$206.3M** | n/a (RFQ) | **$0** | CONFIRMED |
+| Arcus pTokens | Live ~2026-08-25 | not tracked | **$926.5K** | n/a | CONFIRMED |
+| Cross-margin / stock collateral | Partial rollout | — | — | — | OFFICIAL ROADMAP |
+| Arcus token | Not launched | — | — | — | SPECULATIVE |
+
+<chart item_id="arcus_tvl"></chart>
+
+The curve is real growth, not a single deposit: TVL is **+13.8% over 30 days** and **4.1x since launch**, all denominated in USDG on Robinhood Chain.
+
+Supporting cuts, all as of 2026-09-05: perp volume **24h $75.4M / 7d $459.7M**, cumulative **$2.457B**; spot cumulative **$324.5M**; **1,621 active addresses / 145 new addresses / 159,072 transactions** in 24h. Open interest reads **~$13-15M** on DefiLlama's cached protocol page. I could not re-fetch it live, so treat that one as **MEDIUM CONFIDENCE**.
+
+The economics are healthier than the size suggests. Fees of **$366K** on **$2.029B** of perp notional imply a **~1.8 bps blended take rate**, and **$338K** of 30d revenue against **$21.6M** of TVL annualizes to **~19% revenue-on-TVL**, better capital efficiency than Lighter's ~12.7% on the same chain.
+
+DefiLlama's trailing annualization: **$4.46M fees / $4.11M revenue**. Note that spot generates **zero** revenue by design (0% fees), so 100% of protocol income is perps. The brief's Section 20-style "protocol revenue" question has a blunt answer: **Arcus is a perp exchange with a free stock-token loss leader attached.**
+
+## The Robinhood Question: Dependency Without a Moat
+
+This is where the brief's framing needs correcting. Robinhood Crypto has invested in Arcus and Stock Tokens are issued on Robinhood Chain infrastructure. But Robinhood's own mainnet announcement names **"Uniswap, Rialto, Lighter, Arcus, and 1inch"** as the DEXs serving Stock Token spot trading in the Robinhood Wallet. Arcus is one of five, and Uniswap was named a *day-one* liquidity partner.
+
+That is a distribution **channel**, not a distribution **moat**.
+
+The competitive scoreboard on Arcus' home chain, per DefiLlama:
+
+| Metric | Arcus | Lighter (RH Chain) | Read |
+|---|---:|---:|---|
+| Perp volume 30d | $2.029B | **$5.861B** | Arcus holds ~26% of the two-venue split |
+| TVL | $21.57M | **$61.80M** | Lighter TVL +462% in 30d |
+| Fees 30d | $366K | **$870K** | Arcus take rate is higher (1.8 vs 1.5 bps) |
+| Derivatives TVL rank | #14 | **#7** | Both sub-scale globally |
+
+<chart item_id="perp_vol_30d"></chart>
+
+Against the wider field, Arcus is **0.95% of Hyperliquid's $213.9B** 30d perp volume, but already **1.76x its own predecessor, dYdX v4** (**$1.152B**). That pairing is the honest read on the dYdX lineage: the team's new venue has outgrown the old one in two months, and still barely registers versus the category leader.
+
+Robinhood Chain itself is credible: **$865M TVL, the #10 chain globally**. But Arcus is only the **#6 protocol on it** (2.5% of chain TVL), behind Morpho Blue (**$505M**), Steakhouse (**$472M**), Uniswap (**$232M**), Lighter (**$61.8M**) and Spark (**$31.1M**).
+
+Scoring the brief's requested metrics:
+
+| Metric | Score |
+|---|---:|
+| Robinhood Dependency Score | ~85/100 |
+| Robinhood Distribution Advantage Score | ~45/100 |
+| Ecosystem Beta | Extreme |
+
+## Architecture and the pToken Primitive
+
+The brief asks whether pTokens are "a genuinely new and valuable financial primitive." The design is genuinely clean; the adoption is not there yet.
+
+Arcus deliberately runs **two execution models**: a CLOB for perps, where price discovery happens on the book, and **RFQ for Stock Tokens**, because a token's fair value is set on the underlying exchange, not on-chain. Resting orders go stale outside NYSE hours, and makers quote defensively wide. Traders sign an intent with a hidden minimum; makers return firm signed quotes; settlement is atomic.
+
+This is a more sophisticated answer to tokenized-equity market structure than the AMM approach most competitors use, and it is the strongest single argument in the bull case.
+
+**pTokens** wrap an entire Arcus perps account as an ERC-20: a leveraged-ETF structure with threshold-triggered rebalancing rather than a daily close, NAV oracle-signed and verified on-chain. First generation: pBTC (1x), pBTC3x, pHOOD3x.
+
+Ten days after launch, total pToken TVL is **$926.5K**, ranking #57 by TVL among 420 derivatives protocols.
+
+**Architectural inference:** the primitive is sound, and the composability story is coherent on a chain that has both a DEX layer and lending venues. Users can hold it in a wallet, trade it on Uniswap, or eventually post it in Morpho.
+
+**Current observation:** demand is negligible so far. Do not underwrite pTokens as a value driver on 10 days of sub-$1M data.
+
+## Red Flags the Brief Should Surface
+
+Running the brief's own falsification engine against live evidence:
+
+| Red flag | Why it matters |
+|---|---|
+| **Jurisdiction exclusion is structural, not temporary.** | Arcus states directly that it "is not available in the U.S., Canada, United Kingdom and other restricted jurisdictions." The venue built on US-equity exposure cannot serve US traders. Robinhood's 27.7M funded accounts are largely in exactly the markets Arcus is fenced out of. |
+| **Stock Tokens are not equity.** | Per Arcus' own disclosure, they are a **"contractual claim against the Issuer for a cash Redemption,"** carrying tracking divergence, redemption limits and issuer credit risk. This caps how far the "tokenized equity exchange" narrative can be pushed. |
+| **Spot volume is lumpy and unmonetized.** | 24h spot of **$5.28M** sits ~59% below the trailing 7d daily average of **$12.9M**. Zero-fee volume on an RFQ venue is also the easiest kind of volume to inflate. |
+| **Arcus is losing the home-chain perp race.** | Lighter is growing TVL faster (**+462% vs +13.8% in 30d**) on the same distribution. |
+| **No token, no way to express the thesis.** | No TGE or public sale exists in any dataset I queried. Reporting that dYdX holders receive a future Arcus token allocation is **SPECULATIVE** (Tier 4/5 only), and DYDX fell ~45% on the launch announcement. The market read Arcus as value leaving dYdX, not accruing to it. |
+| **Fee history is 30 days deep.** | Cumulative fees exactly equal 30d fees, meaning the tracking adapter is new. There is no multi-quarter revenue trend to underwrite. |
+
+## Scoring and Scenarios
+
+Applying the brief's weighted model to refreshed data:
+
+| Dimension | Weight | Score | Note |
+|---|---:|---:|---|
+| Technology & Architecture | 15% | 4.0 | RFQ/CLOB split, pTokens, dYdX pedigree |
+| Product / PMF | 15% | 3.0 | Perps working; spot and pTokens unproven |
+| Liquidity / Market Structure | 15% | 2.5 | ~$22M TVL, ~$13-15M OI, thin books |
+| Protocol Economics | 10% | 3.0 | $4.1M annualized revenue, 1.8 bps take |
+| Distribution | 15% | 3.0 | Robinhood-backed but non-exclusive, US/UK excluded |
+| Market Opportunity | 10% | 4.0 | Tokenized equities ~$2.3B market cap, doubling |
+| Network Effects | 10% | 2.0 | Ceding share to Lighter on home chain |
+| Risk / Security | 10% | 2.5 | Jurisdiction, issuer credit, unverified audits |
+
+**Protocol Quality 68/100 · Market Structure 48/100 · RWA Infrastructure 62/100 · Competitive Moat 38/100 · Investment Quality 61/100.**
+
+| Scenario | Prob. | Annualized perp volume | TVL | Revenue | Trigger |
+|---|---:|---:|---:|---:|---|
+| Bull | 20% | >$50B | >$150M | >$25M | Takes perp share back from Lighter; stock-collateral cross-margin ships; pTokens get real DeFi integrations |
+| Base | 50% | $20-30B | $30-60M | $5-10M | Differentiated but sub-scale niche venue; token launch is the main catalyst |
+| Bear | 30% | <$15B | flat/down | <$4M | Spot stays lumpy and unmonetized; Lighter/Uniswap absorb Robinhood Wallet flow |
+
+Leading indicators to watch weekly:
+
+1. **Arcus vs Lighter perp volume share on Robinhood Chain**.
+2. **Spot volume floor**: does the 7d daily average hold above ~$7M?
+3. **pToken TVL crossing $10M**.
+4. **Jurisdictional expansion**, the single item that would re-rate the distribution score.
+
+## Conclusion
+
+The original brief is well-constructed, and its embedded baseline is accurate as of today. Where it needs an edit is the premise: it asks whether Arcus can become "the dominant Robinhood Chain financial market" while assuming the Robinhood relationship is a moat.
+
+It is not. The chain hosts five competing DEXs, and the direct perp competitor is running **2.9x Arcus' volume** with **3x the TVL**. Section 3 should be rewritten around **contested distribution**, and a Lighter comparison belongs in Sections 27-29.
+
+On the seven final verdict questions:
+
+| Question | Verdict |
+|---|---|
+| PMF in tokenized stock trading | **Not yet proven**: unmonetized and lumpy |
+| Serious perp competitor | **Yes, regionally; no, globally** |
+| Durable Robinhood advantage | **No, it is shared** |
+| pTokens genuinely new | **Yes as design, no as adoption** |
+| Sustainable revenue | **Real but small at ~$4.1M annualized** |
+| On-chain prime brokerage | **Architecturally plausible, empirically distant** |
+| Global 24/7 capital markets layer | **SPECULATIVE** |
+
+**Bottom line.** Classify Arcus as **WATCHLIST**, not high-conviction infrastructure. It is the second-best perp venue on the tenth-largest chain, with the best market-structure design in tokenized equities and no token to buy. Re-underwrite if Arcus takes perp share back from Lighter, or if a token launch gives the thesis an instrument.
+
+*Data refreshed 2026-09-05 ~05:15 UTC from DefiLlama, arcus.xyz, and Robinhood's newsroom.*
