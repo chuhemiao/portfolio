@@ -186,8 +186,6 @@ type BlockchainChart = {
   values?: Array<{ x: number; y: number }>;
 };
 
-const REVALIDATE_SECONDS = 300;
-
 function asNumber(value: unknown): number | null {
   if (typeof value === 'number' && Number.isFinite(value)) return value;
   if (typeof value === 'string') {
@@ -263,7 +261,7 @@ async function fetchJson<T>(
   try {
     const res = await fetch(url, {
       ...init,
-      next: { revalidate: REVALIDATE_SECONDS }
+      signal: init?.signal ?? AbortSignal.timeout(12000)
     });
     if (!res.ok) return null;
     return (await res.json()) as T;
@@ -279,7 +277,7 @@ async function fetchText(
   try {
     const res = await fetch(url, {
       ...init,
-      next: { revalidate: REVALIDATE_SECONDS }
+      signal: init?.signal ?? AbortSignal.timeout(12000)
     });
     if (!res.ok) return null;
     return await res.text();

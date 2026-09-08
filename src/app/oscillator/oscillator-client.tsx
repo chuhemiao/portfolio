@@ -496,7 +496,7 @@ function BtcHeatTab() {
     fetch('/api/btc-score')
       .then((r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return r.json();
+        return r.json() as Promise<BtcScoreData>;
       })
       .then((json) => {
         setData(json);

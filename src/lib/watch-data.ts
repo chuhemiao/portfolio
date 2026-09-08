@@ -95,13 +95,10 @@ function recordError(source: string, detail: string) {
 
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
-async function fetchJson<T>(url: string, opts?: RequestInit & { revalidate?: number }): Promise<T | null> {
-  const { revalidate = 900, ...init } = opts ?? {};
-  const next = init.cache === 'no-store' ? undefined : { revalidate };
+async function fetchJson<T>(url: string, init: RequestInit = {}): Promise<T | null> {
   try {
     const res = await fetch(url, {
       ...init,
-      ...(next ? { next } : {}),
       signal: init.signal ?? AbortSignal.timeout(FETCH_TIMEOUT_MS),
       headers: { Accept: 'application/json', ...init.headers },
     });
@@ -292,8 +289,7 @@ async function fetchBinanceFutures(since: number): Promise<RawInstrument[]> {
 async function getBinanceSpotSet(): Promise<Set<string>> {
   type Item = { baseAsset: string; quoteAsset: string; status: string };
   type Resp = { symbols: Item[] };
-  // exchangeInfo is ~22MB — skip Next.js cache to avoid the 2MB limit error
-  const d = await fetchJson<Resp>('https://api.binance.com/api/v3/exchangeInfo', { cache: 'no-store' });
+  const d = await fetchJson<Resp>('https://api.binance.com/api/v3/exchangeInfo');
   const s = new Set<string>();
   for (const sym of d?.symbols ?? []) {
     if (sym.status === 'TRADING') s.add(sym.baseAsset.toUpperCase());
@@ -323,8 +319,7 @@ async function getBinanceAlphaSet(): Promise<Set<string>> {
   // Fetch up to 2 pages (250 tokens) — CoinGecko free tier allows this without a key
   await Promise.all([1, 2].map(async (page) => {
     const d = await fetchJson<Item[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`,
-      { revalidate: 1800 }
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`
     );
     for (const item of d ?? []) {
       const sym = (item.symbol || '').toUpperCase();
@@ -488,8 +483,7 @@ async function fetchCoinGeckoMarkets(): Promise<Map<string, { marketCap: number;
   const pages = [1, 2, 3];
   await Promise.all(pages.map(async (page) => {
     const d = await fetchJson<Item[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`,
-      { revalidate: 900 }
+      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`
     );
     for (const item of d ?? []) {
       const sym = item.symbol.toUpperCase();
@@ -516,8 +510,7 @@ async function fetchBinancePrices(symbols: string[]): Promise<Map<string, { pric
   await Promise.all(chunks.map(async (chunk) => {
     const pairs = chunk.map(s => `"${s}USDT"`).join(',');
     const d = await fetchJson<Item[]>(
-      `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`,
-      { revalidate: 300 }
+      `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`
     );
     for (const item of d ?? []) {
       const base = item.symbol.replace('USDT', '');

@@ -22,7 +22,7 @@
 ### 1.3 用户场景
 - 用户在 Telegram 频道 @kkdemian2050 发布想法
 - 每天自动同步到 GitHub 仓库
-- Vercel 自动部署更新
+- Cloudflare Pages 自动部署更新
 - 访客在网站上看到最新的 thoughts
 
 ---
@@ -69,7 +69,7 @@
 │  thoughts.json      │
 └────────┬────────────┘
          │
-         │ Vercel 部署
+         │ Cloudflare Pages 部署
          ▼
 ┌─────────────────────┐
 │  Next.js App        │
@@ -142,7 +142,7 @@ portfolio/
 3. 解析消息，转换为 JSON 格式
 4. 写入 `content/thoughts.json`
 5. 提交并推送到 GitHub
-6. Vercel 自动检测并部署
+6. Cloudflare Pages 自动检测并部署
 
 ### 5.2 需要的 GitHub Secrets
 - `TELEGRAM_BOT_TOKEN`: Telegram Bot Token
@@ -233,7 +233,7 @@ portfolio/
 
 ### 9.1 部署流程
 1. 代码推送到 GitHub main 分支
-2. Vercel 自动检测变更
+2. Cloudflare Pages 自动检测变更
 3. 构建并部署到生产环境
 4. 新页面立即可访问（kkdemian.com/thoughts）
 
@@ -246,7 +246,7 @@ portfolio/
 ### 9.3 成本分析
 - **Telegram Bot API**: 免费
 - **GitHub Actions**: 免费额度足够（每月 2000 分钟）
-- **Vercel**: 免费计划足够
+- **Cloudflare Pages**: 免费计划足够
 - **总成本**: $0/月
 
 ---
@@ -256,4 +256,3 @@ portfolio/
 本设计采用最简实现方案，通过 Telegram Bot + GitHub Actions + Next.js 实现从 Telegram 频道到网站的自动同步。方案简单可靠，零成本，易于维护，完全满足"碎碎念"的使用场景。
 
 **下一步**: 进入实施阶段，按照 Phase 1-4 的步骤逐步实现。
-

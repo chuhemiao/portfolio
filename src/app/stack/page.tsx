@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Stack')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} stack page`
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description:
       'My tech stack: crypto cards, recommended books, data sources, and AI tools.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Stack')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

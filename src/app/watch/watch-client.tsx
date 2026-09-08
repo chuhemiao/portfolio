@@ -7,7 +7,7 @@ import type {
   SignalRating,
   ListingSequence,
 } from '@/lib/watch-data';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RadioIcon, ZapIcon, SearchIcon, TrendingUpIcon } from 'lucide-react';
 
 // ─── Config ───────────────────────────────────────────────────────────────────
@@ -150,7 +150,9 @@ function filterCoins(coins: ListingCoin[], tab: FilterTab): ListingCoin[] {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function WatchClient({ data }: { data: WatchData }) {
+export default function WatchClient({ data: initialData }: { data: WatchData }) {
+  const [remoteData, setRemoteData] = useState<WatchData | null>(null);
+  const data = remoteData ?? initialData;
   const { fearGreed, global: g, listings, generatedAt, lookbackDays, errors } = data;
   const [tab, setTab] = useState<FilterTab>('all');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -185,6 +187,26 @@ export default function WatchClient({ data }: { data: WatchData }) {
   const fearColor = fearGreed
     ? fearGreed.value < 25 ? '#ef4444' : fearGreed.value < 45 ? '#f97316' : fearGreed.value < 55 ? '#eab308' : fearGreed.value < 75 ? '#22c55e' : '#10b981'
     : '#eab308';
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/watch-data')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<WatchData>;
+      })
+      .then((json) => {
+        if (!cancelled) setRemoteData(json);
+      })
+      .catch(() => {
+        // Keep the build-time snapshot when the Worker is unavailable.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>

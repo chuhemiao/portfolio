@@ -1,0 +1,15 @@
+name = "kkdemian-portfolio-api"
+main = "src/index.ts"
+compatibility_date = "2026-09-07"
+workers_dev = true
+routes = [
+  { pattern = "kkdemian.com/api/*", zone_name = "kkdemian.com" },
+  { pattern = "www.kkdemian.com/api/*", zone_name = "kkdemian.com" }
+]
+
+[triggers]
+crons = ["*/30 * * * *"]
+
+[vars]
+BTC_SCORE_UPSTREAM = "https://brief.day1global.xyz/api/btc-score"
+ALLOWED_ORIGIN = "https://kkdemian.com"

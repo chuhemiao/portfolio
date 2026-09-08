@@ -3,8 +3,6 @@ import { DATA } from '@/data/resume';
 import { getFearDashboardData } from '@/lib/fear-data';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Fear',
   description:
@@ -22,7 +20,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Fear')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} fear page`
@@ -35,7 +33,7 @@ export const metadata: Metadata = {
     description:
       'Bitcoin and crypto market observation dashboard across valuation, on-chain activity, sentiment, macro environment, leverage, and volatility risk.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Fear')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

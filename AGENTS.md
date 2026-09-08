@@ -21,7 +21,7 @@
 **后端**：Go、Rust、Node.js、Python
 **区块链**：Solana、Solidity、Motoko (ICP)、TON
 **数据库**：Supabase、Firebase、Weaviate
-**部署**：Vercel、Cloudflare
+**部署**：Cloudflare Pages、Cloudflare Workers、Cloudflare CDN、GitHub Actions
 **工具**：pnpm、Figma、Notion
 
 ---
@@ -32,7 +32,7 @@
 
 - **Repo**：chuhemiao/portfolio
 - **Stack**：Next.js 16 + TypeScript + Tailwind + MDX
-- **部署**：Vercel → kkdemian.com
+- **部署**：GitHub Actions → Cloudflare Pages / Workers → kkdemian.com
 - **内容管理**：`content/blog/` 目录，MDX 格式
 - **新功能**：`/thoughts` 页面，通过 Telegram Bot 自动同步频道消息
 - **常用命令**：
@@ -45,6 +45,9 @@
   pnpm sync:research # 同步 Research Map / registry
   pnpm status:research:run # 查看研究长任务进度
   pnpm sync:telegram # 手动同步 Telegram 消息
+  pnpm typecheck     # TypeScript 检查
+  pnpm worker:dev    # 本地运行 Cloudflare Worker API
+  pnpm preview       # 本地预览 Cloudflare Pages out/
   ```
 - **当前 Research 进度（2026-07-07）**：registry `2811` projects；candidate total `3815`，pending new candidates `381`；depth upgrade queue `0`；本轮最新 1000 篇 depth audit 全部 full-depth pass。注意 raw pending 中仍可能有已被 registry 覆盖的旧候选，新增前以 `generate-cmc-cgo-research-batch --list-only` / registry 过滤结果为准。
 - **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为当前 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起，并已补 registry 二次过滤、非拉丁 slug fallback、CoinGecko API 兜底开关、DefiLlama fallback seeding、Surf credit-error 短路、`sync:research --skip-logos` 与大型 `/research` typed array 同步兼容。
@@ -101,6 +104,7 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-09-07**：按用户要求将 Portfolio 从 Vercel 架构迁移到 Cloudflare 架构：`next.config.mjs` 启用 `output: 'export'` 并关闭 Next Image 优化以支持静态导出；删除 Next API/metadata route handlers（`/api/subscribe`、`/api/btc-score`、`/og`、`/rss.xml`、`/llms.txt`、`robots`、`sitemap`、manifest），改由 `scripts/generate-static-assets.mjs` 在 `predev/prebuild` 生成 `rss.xml`、`llms.txt`、`sitemap.xml`、`robots.txt`、`manifest.webmanifest`、`og.svg` 和 `_headers`；新增 Cloudflare Worker `workers/api/src/index.ts` 与 `workers/api/wrangler.toml`，承接 `POST /api/subscribe`、`GET /api/btc-score`、`GET /api/fear-data`、`GET /api/watch-data`，并通过 Worker Cache API + Cron 每 30 分钟刷新动态数据；`fear/watch/oscillator` 前端继续调用相同 `/api/*` 路径但由 Worker 响应；新增 `.github/workflows/deploy-cloudflare.yml`，main push 后执行 install/lint/typecheck/build/Worker deploy/Pages deploy；README、CLAUDE 与旧 thoughts 集成文档更新为 Cloudflare Pages/Workers/CDN + GitHub Actions。验证：`pnpm typecheck` 通过；`pnpm lint` 通过（30 个历史 warning，0 error）；`pnpm build` 通过并生成 `out/`，3026 个页面全静态/SSG；`pnpm exec wrangler deploy --config workers/api/wrangler.toml --dry-run --outdir /tmp/portfolio-worker-dry-run` 通过；源码扫描无 Next API route、`next/og`、`ImageResponse`、`force-dynamic`、`revalidate`、`@vercel`、`vercel.json`、Vercel Analytics/Speed Insights 残留；`git diff --check` 通过；未提交 commit。
 - **2026-09-05**：按用户要求新增 research 报告“pons.family Launchpad：机制拆解、单位经济与 $PONS 估值”，创建 `content/blog/2026/research/pons-family-launchpad-mechanism-unit-economics-pons-valuation.mdx`，frontmatter 为 `publishedAt: 2026-09-05`、`category: research`、slug `pons-family-launchpad-mechanism-unit-economics-pons-valuation`。正文基于用户提供附件，核心结论为 pons 已是全球手续费规模第一的代币发行平台，但协议收入留存率仅约 20.4%、收入质量明显弱于 pump.fun；$PONS 的价格主要由 80% 协议收入回购销毁形成的反身性驱动，而不是可持续现金流折现，适合作为 Robinhood Chain 注意力周期的高 Beta 交易工具而非配置型现金流资产。保留 `pons_fees_rev`、`pons_kline` 与 `rh_fees` chart 占位。本轮未调用 Surf skill/API，也未额外联网查询；运行 `pnpm sync:research:registry` 后 registry 为 `2825` projects，并可通过完整 slug 命中；验证：`pnpm content:check` 通过（scanned 3002 mdx files）、`git diff --check` 通过、敏感凭据关键词扫描无命中；未提交 commit。
 - **2026-09-05**：按用户要求新增 research 报告“Flap（flap.sh）：BNB Chain 可编程发射台深度研究”，创建 `content/blog/2026/research/flap-bnb-chain-programmable-launchpad-research.mdx`，frontmatter 为 `publishedAt: 2026-09-05`、`category: research`、slug `flap-bnb-chain-programmable-launchpad-research`。正文基于用户提供附件，核心结论为 Flap 是 BNB Chain 上最赚钱的代币发射台之一，也是“代币税 + 代币化美股”叙事的大规模实验；但增长高度依赖 bStocks 热潮和 BNB Chain 官方奖池活动，9 月费用暴涨部分来自统计口径扩容，真实协议日收入仍在 $30-47 万区间，且 Flap 无平台币承接现金流。保留 `flap_monthly`、`flap_fee_split` 与 `launchpad_fees` chart 占位。因 Flap 无平台币，本轮未新增 `src/data/research-projects.ts` 手写卡片；运行 `pnpm sync:research:registry` 后 registry 为 `2824` projects，并可通过完整 slug 命中；验证：`pnpm content:check` 通过（scanned 3001 mdx files）、`git diff --check` 通过、敏感凭据关键词扫描无命中；未提交 commit。
 - **2026-09-05**：按用户要求新增 research 报告“Arcus: Reviewing the Research Brief Against Live Data”，创建 `content/blog/2026/research/arcus-research-brief-live-data-watchlist.mdx`，frontmatter 为 `publishedAt: 2026-09-05`、`category: research`、slug `arcus-research-brief-live-data-watchlist`。正文基于用户提供附件，核心结论为 Arcus 是 Robinhood Chain 上已 live 的 dYdX-team perps + tokenized-stock venue，TVL、30d spot volume、30d revenue 等基线数据仍成立，但 Lighter 在同链 30d perp volume、TVL 与增长上明显领先，Robinhood 分发是 shared channel 而非 exclusive moat；Arcus 应归类为 WATCHLIST 而非 high-conviction infrastructure。保留 `arcus_tvl` 与 `perp_vol_30d` chart 占位。因 Arcus token 未上线且无可投资 token，本轮未新增 `src/data/research-projects.ts` 手写卡片；运行 `pnpm sync:research:registry` 后 registry 为 `2823` projects，并可通过完整 slug 命中；验证：`pnpm content:check` 通过（scanned 3000 mdx files）、`git diff --check` 通过、敏感凭据关键词扫描无命中；未提交 commit。
@@ -110,4 +114,3 @@
 - **2026-09-01**：按用户要求继续优化并新增 thoughts 文章“边际买家耗尽：从牛熊周期到 NVIDIA 信用利差预警”，创建 `content/blog/2026/thoughts/marginal-buyer-exhaustion-nvidia-credit-spread-framework.mdx`，frontmatter 为 `publishedAt: 2026-09-01`、`category: thoughts`、slug `marginal-buyer-exhaustion-nvidia-credit-spread-framework`。正文基于用户提供内容重组为一篇完整市场框架文章：先把金融资产需求从静态 `Qd = f(P)` 推进到包含预期收益、风险偏好、财富效应、杠杆、资金流和仓位空间的动态函数，再用牛市怀疑阶段、主升浪、边际买家耗尽、熊市去杠杆、边际卖家耗尽解释周期拐点；后半将 NVIDIA 2036 债信用利差从约 +86bp 收窄至约 +55bp 作为案例，结论为边际买家仍强但相对价值变贵，NVIDIA 2036 从“较有吸引力”调整为“Watch / 偏贵”。本轮未调用 Surf skill/API，也未额外联网查询；验证：`pnpm content:check` 通过（scanned 2996 mdx files）、`git diff --check` 通过、敏感凭据关键词扫描无命中；未提交 commit。
 - **2026-08-28**：按用户要求新增研究报告“Dolomite ($DOLO) — Research Brief Review & Live Baseline”，创建 `content/blog/2026/research/dolomite-dolo-wlfi-concentration-live-baseline.mdx`，frontmatter 为 `publishedAt: 2026-08-28`、`category: research`、slug `dolomite-dolo-wlfi-concentration-live-baseline`。正文基于用户提供附件，核心结论为 Dolomite 当前便宜的收入倍数更像 WLFI 单一对手方集中与稀释折价，而不是干净错定价；报告强调 Ethereum 占 TVL 约 92.6%、WLFICX + USD1 占 Ethereum net liquidity 约 72.8%、borrows 约 $315.9M、annualized protocol revenue 约 $2.45M、DOLO 约 5.3x MC/revenue，但 DOLO value capture 仍未验证。因本地已有 `Dolomite / DOLO` Research Map 手写卡片，本轮未新增 `src/data/research-projects.ts` 入口，只运行 `pnpm sync:research:registry`，registry 更新为 `2822` projects，并可通过完整 slug 与 `Dolomite DOLO WLFI` 命中。本轮未调用 Surf skill/API，也未额外联网查询；验证：`pnpm content:check` 通过（scanned 2995 mdx files）、`git diff --check` 通过、敏感凭据关键词扫描无命中；未提交 commit。
 - **2026-08-27**：按用户要求新增 thoughts 文章“Stripe 这笔100亿美元级别的下注，赌的不是 AI 谁赢，是流量本身”，创建 `content/blog/2026/thoughts/stripe-10b-ai-traffic-payment-infrastructure-bet.mdx`，frontmatter 为 `publishedAt: 2026-08-27`、`category: thoughts`、slug `stripe-10b-ai-traffic-payment-infrastructure-bet`。正文基于用户提供内容，核心结论为 Stripe 的 100 亿美元级赌注不是押 AI 模型层或应用层赢家，而是押支付、分发与结算这条流量管道；文章强调客户收入速度不等于收入质量、上探企业客户可能带来费率稀释、真实护城河在 92% 卡识别数据网络效应、Atlas 分发卡位和 Tempo 结算层卡位，同时将 Tempo 视为用高费率旧现金牛换取低费率新交易池的时间赛跑。本轮未调用 Surf skill/API，也未额外联网查询；验证：`pnpm content:check` 通过（scanned 2994 mdx files）、`git diff --check` 通过；未提交 commit。
-- **2026-08-25**：按用户要求新增研究文章“ANTH 是货架重启，护城河在 HIP-3 的可替换性，不在私募股权本身。”，创建 `content/blog/2026/research/anth-hip3-relaunch-replaceable-builder-moat.mdx`，frontmatter 为 `publishedAt: 2026-08-25`、`category: research`、slug `anth-hip3-relaunch-replaceable-builder-moat`。正文基于用户提供附件，核心结论为 Entropy 借 HIP-3 重启 Anthropic 永续，证明的是部署者可替换，而不是私募股权本身成为 Hyperliquid 新成交引擎；ANTH 24h 成交与持仓相对 Hyperliquid 全站很小，真正护城河在 HIP-3 的建设者市场、复用 HyperCore 订单簿、质押约束和 TradeXYZ 已跑通的公开股票/股指/商品盘口。保留 `hip3_vs_anth` chart 占位。未新增 `src/data/research-projects.ts` 手写卡片；运行 `pnpm sync:research:registry` 后 registry 为 `2821` projects。本轮未调用 Surf skill/API，也未额外联网查询；验证：`pnpm content:check` 通过（scanned 2993 mdx files）、`git diff --check` 通过、registry 可通过 `ANTH HIP-3` 与完整 slug 命中；未提交 commit。

@@ -6,11 +6,18 @@
     "node": "24.x"
   },
   "scripts": {
+    "predev": "node scripts/generate-static-assets.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/generate-static-assets.mjs",
     "build": "next build",
-    "start": "next start",
-    "fix": "pnpm i fix-react2shell-next@latest && npx fix-react2shell-next",
-    "lint": "next lint",
+    "start": "pnpm preview",
+    "preview": "wrangler pages dev out",
+    "fix": "pnpm dlx fix-react2shell-next@latest",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "pages:deploy": "wrangler pages deploy out --project-name kkdemian-portfolio",
+    "worker:dev": "wrangler dev --config workers/api/wrangler.toml",
+    "worker:deploy": "wrangler deploy --config workers/api/wrangler.toml",
     "audit:research:depth": "node scripts/audit-research-depth.mjs",
     "check:research:logos": "node scripts/check-research-logos.mjs",
     "content:check": "node scripts/content-check.mjs",
@@ -57,6 +64,7 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^5.20260907.1",
     "@tailwindcss/typography": "^0.5.16",
     "@types/node": "^25.0.3",
     "@types/react": "^19.0.6",
@@ -65,7 +73,8 @@
     "eslint-config-next": "^16.1.1",
     "postcss": "^8.5.3",
     "tailwindcss": "^3.4.19",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.129.0"
   },
   "packageManager": "pnpm@10.29.3+sha512.498e1fb4cca5aa06c1dcf2611e6fafc50972ffe7189998c409e90de74566444298ffe43e6cd2acdc775ba1aa7cc5e092a8b7054c811ba8c5770f84693d33d2dc"
 }

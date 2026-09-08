@@ -3,8 +3,6 @@ import { DATA } from '@/data/resume';
 import { getPulseData } from '@/lib/pulse-data';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Pulse',
   description:
@@ -22,7 +20,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Pulse')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} pulse page`
@@ -35,7 +33,7 @@ export const metadata: Metadata = {
     description:
       'Real-time Web3 market pulse — mindshare, prediction markets, news, risk.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Pulse')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

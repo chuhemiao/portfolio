@@ -47,6 +47,7 @@ export const metadata: Metadata = {
   authors: [{ name: DATA.name, url: DATA.url }],
   creator: DATA.name,
   publisher: DATA.name,
+  manifest: '/manifest.webmanifest',
   formatDetection: {
     email: false,
     address: false,
@@ -61,7 +62,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${DATA.url}/og`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} - Web3 Product Engineer & Crypto Expert`,
@@ -84,7 +85,7 @@ export const metadata: Metadata = {
     title: `${DATA.name} | Web3 Product Engineer`,
     description: DATA.description,
     creator: "@0xkkdemian",
-    images: [`${DATA.url}/og`],
+    images: [`${DATA.url}/og.svg`],
   },
   alternates: {
     canonical: DATA.url,

@@ -19,8 +19,6 @@ import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import NewsletterForm from '@/components/newsletter-form';
 
-export const revalidate = 3600;
-
 const BLUR_FADE_DELAY = 0.04;
 
 export const metadata: Metadata = {
@@ -36,14 +34,14 @@ export const metadata: Metadata = {
     siteName: 'kkdemian',
     locale: 'en_US',
     type: 'website',
-    images: [{ url: `${DATA.url}/og`, width: 1200, height: 630, alt: 'kkdemian Crypto Research Hub' }],
+    images: [{ url: `${DATA.url}/og.svg`, width: 1200, height: 630, alt: 'kkdemian Crypto Research Hub' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'kkdemian — Crypto Research Hub',
     description: 'Professional Crypto Research, Market Structure, and Thesis Discovery.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og`],
+    images: [`${DATA.url}/og.svg`],
   },
 };
 

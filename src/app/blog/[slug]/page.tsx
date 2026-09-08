@@ -19,9 +19,9 @@ const CATEGORY_KEYWORDS: Record<string, string[]> = {
   investing: ["Crypto Investment", "DeFi Investing", "Digital Assets", "ETF", "Bitcoin", "Ethereum"],
 };
 
-function resolveOgImageUrl(image: string | undefined, title: string) {
+function resolveOgImageUrl(image: string | undefined) {
   if (!image || image.trim().length === 0) {
-    return `${DATA.url}/og?title=${encodeURIComponent(title)}`;
+    return `${DATA.url}/og.svg`;
   }
 
   if (image.startsWith("http://") || image.startsWith("https://")) {
@@ -43,9 +43,7 @@ function toIsoOrNow(value: string) {
   return date.toISOString();
 }
 
-const STATIC_PARAMS_LIMIT = 300;
-
-export const dynamicParams = true;
+export const dynamicParams = false;
 
 export async function generateStaticParams() {
   const posts = await getBlogPosts();
@@ -54,7 +52,7 @@ export async function generateStaticParams() {
       new Date(b.metadata.publishedAt).getTime() -
       new Date(a.metadata.publishedAt).getTime()
   );
-  return sorted.slice(0, STATIC_PARAMS_LIMIT).map((post) => ({ slug: post.slug }));
+  return sorted.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
@@ -78,7 +76,7 @@ export async function generateMetadata({
     category,
   } = post.metadata;
   const description = summary || `${title} - ${DATA.name}`;
-  let ogImage = resolveOgImageUrl(image, title);
+  let ogImage = resolveOgImageUrl(image);
 
   const keywords = [
     "Web3",
@@ -170,7 +168,7 @@ export default async function Blog({
     t.matchKeywords.some((kw) => postText.includes(kw.toLowerCase()))
   ).slice(0, 3);
 
-  const ogImage = resolveOgImageUrl(post.metadata.image, post.metadata.title);
+  const ogImage = resolveOgImageUrl(post.metadata.image);
   const publishedAtIso = toIsoOrNow(post.metadata.publishedAt);
 
   const jsonLd = {

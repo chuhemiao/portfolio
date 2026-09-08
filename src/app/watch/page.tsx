@@ -3,8 +3,6 @@ import { DATA } from '@/data/resume';
 import { getWatchData } from '@/lib/watch-data';
 import type { Metadata } from 'next';
 
-export const dynamic = 'force-dynamic';
-
 export const metadata: Metadata = {
   title: 'Watch',
   description:
@@ -22,7 +20,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Watch')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} watch page`
@@ -35,7 +33,7 @@ export const metadata: Metadata = {
     description:
       'Crypto exchange listing intelligence — track new listings, signal ratings, and cross-exchange patterns.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Watch')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

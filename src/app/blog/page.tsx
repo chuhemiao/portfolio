@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Blog')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} blog`
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
     title: `Blog | ${DATA.name}`,
     description: 'My thoughts on software development, life, crypto, and more.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Blog')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

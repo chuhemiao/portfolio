@@ -1,9 +1,12 @@
+'use client';
+
 import type { FearDashboardData, SignalStatus } from '@/lib/fear-data';
 import {
   FEAR_CORE_STRATEGIES,
   FEAR_EXPANDED_STRATEGIES,
   FEAR_OPERATOR_GUIDELINES
 } from '@/data/fear-playbook';
+import { useEffect, useState } from 'react';
 
 function formatNumber(
   value: number | null,
@@ -156,12 +159,38 @@ function StrategyCard({
   );
 }
 
-export default function FearClient({ data }: { data: FearDashboardData }) {
+export default function FearClient({
+  data: initialData
+}: {
+  data: FearDashboardData;
+}) {
+  const [remoteData, setRemoteData] = useState<FearDashboardData | null>(null);
+  const data = remoteData ?? initialData;
   const activeSignals = data.bottomSignals.filter(
     (s) => s.status === 'on'
   ).length;
   const tl = trafficLight(activeSignals);
   const gaugeDeg = Math.round((data.compositeScore / 100) * 360);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch('/api/fear-data')
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json() as Promise<FearDashboardData>;
+      })
+      .then((json) => {
+        if (!cancelled) setRemoteData(json);
+      })
+      .catch(() => {
+        // Keep the build-time snapshot when the Worker is unavailable.
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   return (
     <section className='space-y-8 pb-8'>

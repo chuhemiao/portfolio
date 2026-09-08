@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     type: 'website',
     images: [
       {
-        url: `${DATA.url}/og?title=${encodeURIComponent('Fund')}`,
+        url: `${DATA.url}/og.svg`,
         width: 1200,
         height: 630,
         alt: `${DATA.name} fund page`
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     description:
       'Investment portfolio: crypto assets, L1s, stablecoin crypto cards, infrastructure, US stocks, and trading platforms.',
     creator: '@0xkkdemian',
-    images: [`${DATA.url}/og?title=${encodeURIComponent('Fund')}`]
+    images: [`${DATA.url}/og.svg`]
   }
 };
 

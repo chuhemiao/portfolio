@@ -21,7 +21,7 @@
 **后端**：Go、Rust、Node.js、Python
 **区块链**：Solana、Solidity、Motoko (ICP)、TON
 **数据库**：Supabase、Firebase、Weaviate
-**部署**：Vercel、Cloudflare
+**部署**：Cloudflare Pages、Cloudflare Workers、Cloudflare CDN、GitHub Actions
 **工具**：pnpm、Figma、Notion
 
 ---
@@ -31,7 +31,7 @@
 ### 1. Portfolio（本项目）
 - **Repo**：chuhemiao/portfolio
 - **Stack**：Next.js 16 + TypeScript + Tailwind + MDX
-- **部署**：Vercel → kkdemian.com
+- **部署**：GitHub Actions → Cloudflare Pages / Workers → kkdemian.com
 - **内容管理**：`content/blog/` 目录，MDX 格式
 - **新功能**：`/thoughts` 页面，通过 Telegram Bot 自动同步频道消息
 - **常用命令**：
@@ -43,6 +43,9 @@
   pnpm sync:research # 同步 Research Map / registry
   pnpm status:research:run # 查看研究长任务进度
   pnpm sync:telegram # 手动同步 Telegram 消息
+  pnpm typecheck     # TypeScript 检查
+  pnpm worker:dev    # 本地运行 Cloudflare Worker API
+  pnpm preview       # 本地预览 Cloudflare Pages out/
   ```
 - **当前 Research 进度（2026-07-07）**：registry `2811` projects；candidate total `3815`，pending new candidates `381`；depth upgrade queue `0`；本轮最新 1000 篇 depth audit 全部 full-depth pass。
 - **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起，并已补 registry 二次过滤、非拉丁 slug fallback、CoinGecko API 兜底开关、DefiLlama fallback seeding、Surf credit-error 短路、`sync:research --skip-logos` 与大型 `/research` typed array 同步兼容。
@@ -95,6 +98,7 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-09-07**：Portfolio 部署架构从 Vercel 迁移到 Cloudflare：Next.js 启用 `output: 'export'`，生产输出为 `out/`；删除 Next API/metadata route handlers 与动态 OG route；`scripts/generate-static-assets.mjs` 在 `predev/prebuild` 生成 RSS、llms、sitemap、robots、manifest、OG SVG 和 Cloudflare `_headers`；新增 Cloudflare Worker `workers/api/src/index.ts` 承接 `/api/subscribe`、`/api/btc-score`、`/api/fear-data`、`/api/watch-data`，并用 Worker Cache API + Cron 刷新动态数据；新增 `.github/workflows/deploy-cloudflare.yml`，main push 后 install/lint/typecheck/build/deploy Worker/deploy Pages。验证：`pnpm typecheck`、`pnpm lint`、`pnpm build`、Worker dry-run、源码动态/Vercel 关键词扫描与 `git diff --check` 均通过；未提交 commit。
 - **2026-07-07**：修复 3 篇 2019 旧文 `publishedAt` 格式，并继续新增 CMC/CGO-oriented full-depth Research 至目标 `1000` 篇。Surf-first 探测显示 `PAID_BALANCE_ZERO`，CoinGecko markets/list 返回 `429 Too Many Requests`，因此用 DefiLlama protocol list fallback 扩容候选池并分 5 批 `200*5` 生成/同步；最终 registry `2811`、candidate total `3815`、pending new candidates `381`、upgrade queue `0`；最近 1000 篇 depth audit `1000/1000 full-depth pass`。同步增强：CoinGecko list / DefiLlama seeding、候选噪声过滤、同族去重、Surf credit-error 短路、`sync-research --skip-logos`，并修正 OSL logo 引用。残余风险：1000 篇 live enrichment 均受 Surf 余额和 CG 429 影响，后续应批量补 live market / primary sources。
 - **2026-07-07**：继续新增 CMC/CGO-oriented full-depth Research 至目标 800 篇。使用 Surf `market-ranking` 扩容候选池，分四轮生成并同步：`200 + 198 + 200 + 202`，最终 registry `1811`、candidate total `2215`、pending new candidates `355`、upgrade queue `0`；最近 800 篇 depth audit `800/800 full-depth pass`。同步修复批量和同步脚本：安全字符串转义、超大 `PROJECTS` typed assertion、非拉丁 slug fallback、registry/short-name 去重、CoinGecko API fallback 开关。残余风险：batch3/4 共 `402` 篇生成时 Surf 返回 `PAID_BALANCE_ZERO`，CoinGecko API fallback 返回 `429 Too Many Requests`，后续应批量刷新 live market / primary sources。
 - **2026-07-06**：继续新增 CMC/CGO-oriented full-depth Research 至目标 500 篇。使用 Surf `market-ranking` 扩容候选池，分三批生成并同步：`200 + 200 + 1 + 99`，最终 registry `1011`、candidate total `1215`、pending new candidates `341`、upgrade queue `0`；最近 500 篇 depth audit `500/500 full-depth pass`。同步修复批量脚本：`seed-research-candidates` 增加 Surf retry/backoff，`generate-cmc-cgo-research-batch` 增加 Surf 子命令 `45s` timeout。残余风险：333 篇存在至少一个 Surf enrichment 缺口，主要为 long-tail/RWA/meme/Surf-only 项目的 project-detail 或 DeFi metrics。
