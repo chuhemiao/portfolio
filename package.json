@@ -6,9 +6,12 @@
     "node": "24.x"
   },
   "scripts": {
-    "predev": "node scripts/generate-static-assets.mjs",
+    "content:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-content.mjs",
+    "assets:build": "node scripts/generate-static-assets.mjs",
+    "content:prepare": "pnpm content:build && pnpm assets:build",
+    "predev": "pnpm content:prepare",
     "dev": "next dev",
-    "prebuild": "node scripts/generate-static-assets.mjs",
+    "prebuild": "pnpm content:prepare",
     "build": "next build",
     "start": "pnpm preview",
     "preview": "wrangler pages dev out",

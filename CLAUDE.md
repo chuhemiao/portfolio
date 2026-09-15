@@ -36,7 +36,10 @@
 - **新功能**：`/thoughts` 页面，通过 Telegram Bot 自动同步频道消息
 - **常用命令**：
   ```bash
-  pnpm dev          # 启动开发服务器
+  pnpm dev          # 启动开发服务器（predev 自动跑 content:prepare）
+  pnpm content:build # 增量编译 content/ → .generated/（hash 缓存）
+  pnpm assets:build  # 由 .generated/blog-index.json 生成 RSS/sitemap/llms 等
+  pnpm content:prepare # content:build + assets:build，prebuild/predev 调用
   pnpm quick:add    # 快捷新增内容，默认 dry-run
   pnpm new:post     # 底层创建新博客文章
   pnpm content:check # 检查内容格式
@@ -97,6 +100,8 @@
 ## SESSION_LOG
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
+
+- **2026-09-14**：重构内容构建管线，把 `O(N²)` 的 per-page MDX 全量扫描改成一次性增量编译。新增 `scripts/build-content.mjs` + `scripts/lib/content/`（discovery / markdown / indexes / 有界 worker pool），产物写入 gitignore 的 `.generated/`：`blog-index.json`、`category-index.json`、`topic-index.json`、`relations.json`、`cache-manifest.json` 和每篇一份 `posts/<sha256(slug)>.html|.json`。`src/data/blog.ts` 不再读 MDX、不再引入 shiki/unified，只读索引与 artifact；related posts / related topics / topic 列表全部预计算。`generate-static-assets.mjs` 改为消费 blog-index，并把 sitemap 拆成 `/sitemap.xml` 索引 + `/sitemaps/*.xml` 分片（每片 5000 URL）。GitHub Actions 用 `actions/cache` 持久化 `.generated`（key 含 commit sha，restore-keys 回退到上一次），并新增分阶段计时。实测（本机 18 核）：改造前 `pnpm build` 198s；改造后 cold 47.3s、warm 31.4s、改一篇文章 32.5s，内容编译从 3002 篇全量 15.6s 降到命中缓存 0.36s / 改一篇 0.5s。3025 个页面中 3013 个渲染文档与改造前逐字节一致；差异只有 10 个 topic 页（列表改为确定性 newest-first）与 fear/watch（构建时间戳）。顺带修复中文 slug 在静态导出时因 params 被 percent-encode 而 404 的历史问题。
 
 - **2026-09-07**：Portfolio 部署架构从 Vercel 迁移到 Cloudflare：Next.js 启用 `output: 'export'`，生产输出为 `out/`；删除 Next API/metadata route handlers 与动态 OG route；`scripts/generate-static-assets.mjs` 在 `predev/prebuild` 生成 RSS、llms、sitemap、robots、manifest、OG SVG 和 Cloudflare `_headers`；新增 Cloudflare Worker `workers/api/src/index.ts` 承接 `/api/subscribe`、`/api/btc-score`、`/api/fear-data`、`/api/watch-data`，并用 Worker Cache API + Cron 刷新动态数据；新增 `.github/workflows/deploy-cloudflare.yml`，main push 后 install/lint/typecheck/build/deploy Worker/deploy Pages。验证：`pnpm typecheck`、`pnpm lint`、`pnpm build`、Worker dry-run、源码动态/Vercel 关键词扫描与 `git diff --check` 均通过；未提交 commit。
 - **2026-07-07**：修复 3 篇 2019 旧文 `publishedAt` 格式，并继续新增 CMC/CGO-oriented full-depth Research 至目标 `1000` 篇。Surf-first 探测显示 `PAID_BALANCE_ZERO`，CoinGecko markets/list 返回 `429 Too Many Requests`，因此用 DefiLlama protocol list fallback 扩容候选池并分 5 批 `200*5` 生成/同步；最终 registry `2811`、candidate total `3815`、pending new candidates `381`、upgrade queue `0`；最近 1000 篇 depth audit `1000/1000 full-depth pass`。同步增强：CoinGecko list / DefiLlama seeding、候选噪声过滤、同族去重、Surf credit-error 短路、`sync-research --skip-logos`，并修正 OSL logo 引用。残余风险：1000 篇 live enrichment 均受 Surf 余额和 CG 429 影响，后续应批量补 live market / primary sources。

@@ -1,4 +1,4 @@
-import { getBlogPosts, getPost } from "@/data/blog";
+import { getBlogSlugs, getPost, getPostMeta, getRelatedPosts, getRelatedTopicSlugs } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import { TOPICS } from "@/data/topics";
 import { formatDate } from "@/lib/utils";
@@ -46,13 +46,7 @@ function toIsoOrNow(value: string) {
 export const dynamicParams = false;
 
 export async function generateStaticParams() {
-  const posts = await getBlogPosts();
-  const sorted = [...posts].sort(
-    (a, b) =>
-      new Date(b.metadata.publishedAt).getTime() -
-      new Date(a.metadata.publishedAt).getTime()
-  );
-  return sorted.map((post) => ({ slug: post.slug }));
+  return getBlogSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -63,7 +57,7 @@ export async function generateMetadata({
   }>;
 }): Promise<Metadata | undefined> {
   const { slug } = await params;
-  let post = await getPost(slug);
+  const post = getPostMeta(slug);
   if (!post) {
     return undefined;
   }
@@ -140,33 +134,12 @@ export default async function Blog({
     notFound();
   }
 
-  // Related posts: same category, excluding current
-  const allPosts = await getBlogPosts();
-  const relatedPosts = allPosts
-    .filter(
-      (p) =>
-        p.slug !== slug &&
-        p.metadata.category &&
-        p.metadata.category === post!.metadata.category
-    )
-    .sort(
-      (a, b) =>
-        new Date(b.metadata.publishedAt).getTime() -
-        new Date(a.metadata.publishedAt).getTime()
-    )
-    .slice(0, 3);
-
-  // Related topics: match post keywords against topic matchKeywords
-  const postText = [
-    post.metadata.title,
-    post.metadata.summary ?? "",
-    post.metadata.category ?? "",
-  ]
-    .join(" ")
-    .toLowerCase();
-  const relatedTopics = TOPICS.filter((t) =>
-    t.matchKeywords.some((kw) => postText.includes(kw.toLowerCase()))
-  ).slice(0, 3);
+  // Related posts and topics are precomputed by the content compiler.
+  const relatedPosts = getRelatedPosts(post.slug);
+  const relatedTopicSlugs = getRelatedTopicSlugs(post.slug);
+  const relatedTopics = relatedTopicSlugs
+    .map((topicSlug) => TOPICS.find((t) => t.slug === topicSlug))
+    .filter((t): t is (typeof TOPICS)[number] => Boolean(t));
 
   const ogImage = resolveOgImageUrl(post.metadata.image);
   const publishedAtIso = toIsoOrNow(post.metadata.publishedAt);

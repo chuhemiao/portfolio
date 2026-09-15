@@ -36,12 +36,9 @@ export const metadata: Metadata = {
 };
 
 export default async function BlogPage() {
+  // blog-index.json is already sorted newest-first by the content compiler.
   const posts = await getBlogPosts();
-  const sortedPosts = posts.sort(
-    (a, b) =>
-      new Date(b.metadata.publishedAt).getTime() -
-      new Date(a.metadata.publishedAt).getTime()
-  );
+  const sortedPosts = posts;
 
   const blogJsonLd = {
     '@context': 'https://schema.org',

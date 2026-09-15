@@ -13,6 +13,9 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  CONTENT_CACHE_PREFIX: content-cache-v1
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -32,6 +35,25 @@ jobs:
           node-version: 24
           cache: pnpm
 
+      # The primary key is unique per commit so every run saves a fresh cache,
+      # while restore-keys fall back to the most recent cache for this lockfile.
+      # The compiler then decides per file what actually needs recompiling, so a
+      # one-article change does not invalidate the other 3000 artifacts.
+      - name: Restore content cache
+        id: content-cache
+        uses: actions/cache@v4
+        with:
+          path: .generated
+          key: ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-
+
+      - name: Report content cache restore
+        run: |
+          echo "Content cache restore: hit=${{ steps.content-cache.outputs.cache-hit || 'false' }} matched-key=${{ steps.content-cache.outputs.cache-matched-key || 'none' }}"
+          echo "Content cache restore: hit=${{ steps.content-cache.outputs.cache-hit || 'false' }}" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
@@ -41,8 +63,21 @@ jobs:
       - name: Typecheck
         run: pnpm typecheck
 
+      # Incremental content compile + RSS/sitemap/llms.txt generation. This is
+      # the only full pass over content/**/*.mdx in the whole pipeline.
+      - name: Compile content and static assets
+        run: |
+          start=$(date +%s)
+          pnpm content:prepare
+          echo "Content prepare: $(( $(date +%s) - start ))s" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      # `next build` directly, not `pnpm build`: the prebuild hook would run the
+      # step above a second time.
       - name: Build static site
-        run: pnpm build
+        run: |
+          start=$(date +%s)
+          pnpm exec next build
+          echo "Next build: $(( $(date +%s) - start ))s" | tee -a "$GITHUB_STEP_SUMMARY"
 
       - name: Deploy API Worker
         run: pnpm worker:deploy
@@ -51,7 +86,10 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
 
       - name: Deploy Cloudflare Pages
-        run: pnpm pages:deploy
+        run: |
+          start=$(date +%s)
+          pnpm pages:deploy
+          echo "Cloudflare Pages deploy: $(( $(date +%s) - start ))s" | tee -a "$GITHUB_STEP_SUMMARY"
         env:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

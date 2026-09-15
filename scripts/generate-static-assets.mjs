@@ -1,12 +1,12 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import matter from 'gray-matter';
 
 const ROOT = process.cwd();
-const CONTENT_DIR = path.join(ROOT, 'content');
-const BLOG_CONTENT_DIR = path.join(CONTENT_DIR, 'blog');
+const GENERATED_DIR = path.join(ROOT, '.generated');
+const BLOG_INDEX_FILE = path.join(GENERATED_DIR, 'blog-index.json');
 const PUBLIC_DIR = path.join(ROOT, 'public');
-const DRAFT_DIRS = new Set(['drafts', '_drafts']);
+const SITEMAP_DIR = path.join(PUBLIC_DIR, 'sitemaps');
+const SITEMAP_SHARD_SIZE = 5000;
 
 const SITE = {
   name: 'kkdemian',
@@ -30,73 +30,6 @@ const SITE = {
   ],
 };
 
-async function pathExists(filePath) {
-  try {
-    await fs.access(filePath);
-    return true;
-  } catch {
-    return false;
-  }
-}
-
-async function getMdxFiles(dir) {
-  if (!(await pathExists(dir))) return [];
-  const entries = await fs.readdir(dir, { withFileTypes: true });
-  const files = [];
-
-  for (const entry of entries) {
-    const fullPath = path.join(dir, entry.name);
-    if (entry.isDirectory()) {
-      files.push(...(await getMdxFiles(fullPath)));
-    } else if (entry.isFile() && path.extname(entry.name) === '.mdx') {
-      files.push(fullPath);
-    }
-  }
-
-  return files;
-}
-
-async function getLegacyRootMdxFiles() {
-  if (!(await pathExists(CONTENT_DIR))) return [];
-  const entries = await fs.readdir(CONTENT_DIR, { withFileTypes: true });
-  return entries
-    .filter((entry) => entry.isFile() && path.extname(entry.name) === '.mdx')
-    .map((entry) => path.join(CONTENT_DIR, entry.name));
-}
-
-function normalizeSlug(slug) {
-  return String(slug ?? '').trim().replace(/^\/+|\/+$/g, '');
-}
-
-function isDraftPath(filePath) {
-  const relativePath = path.relative(CONTENT_DIR, filePath);
-  return relativePath
-    .split(path.sep)
-    .map((segment) => segment.toLowerCase())
-    .some((segment) => DRAFT_DIRS.has(segment));
-}
-
-function isDraftPost(metadata, filePath) {
-  return (
-    isDraftPath(filePath) ||
-    metadata.draft === true ||
-    (typeof metadata.status === 'string' &&
-      metadata.status.toLowerCase() === 'draft')
-  );
-}
-
-function resolveSlug(filePath, metadata) {
-  const fallback = path.basename(filePath, path.extname(filePath));
-  const slug = normalizeSlug(metadata.slug || fallback);
-  if (!slug) {
-    throw new Error(`Empty slug in ${path.relative(ROOT, filePath)}`);
-  }
-  if (slug.includes('/')) {
-    throw new Error(`Nested slug "${slug}" in ${path.relative(ROOT, filePath)}`);
-  }
-  return slug;
-}
-
 function escapeXml(value) {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -106,44 +39,29 @@ function escapeXml(value) {
     .replace(/'/g, '&apos;');
 }
 
-function sortNewestFirst(a, b) {
-  return (
-    new Date(b.metadata.publishedAt).getTime() -
-    new Date(a.metadata.publishedAt).getTime()
-  );
-}
-
+// The content compiler owns MDX discovery. This script only consumes its
+// index, so a build never scans content/ twice.
 async function loadPosts() {
-  const files = [...(await getLegacyRootMdxFiles()), ...(await getMdxFiles(BLOG_CONTENT_DIR))];
-  const seen = new Map();
-  const posts = [];
+  let index;
 
-  for (const filePath of files) {
-    const source = await fs.readFile(filePath, 'utf8');
-    const { data } = matter(source);
-    if (isDraftPost(data, filePath)) continue;
-
-    const slug = resolveSlug(filePath, data);
-    const existing = seen.get(slug);
-    if (existing) {
-      throw new Error(
-        `Duplicate slug "${slug}" in ${path.relative(ROOT, existing)} and ${path.relative(ROOT, filePath)}`
-      );
-    }
-
-    seen.set(slug, filePath);
-    posts.push({
-      slug,
-      metadata: {
-        title: data.title || slug,
-        publishedAt: data.publishedAt || new Date(0).toISOString(),
-        summary: data.summary || '',
-        category: data.category || 'tech',
-      },
-    });
+  try {
+    index = JSON.parse(await fs.readFile(BLOG_INDEX_FILE, 'utf8'));
+  } catch (error) {
+    throw new Error(
+      `Missing or unreadable ${path.relative(ROOT, BLOG_INDEX_FILE)}. Run "pnpm content:build" first.\n${String(error)}`
+    );
   }
 
-  return posts.sort(sortNewestFirst);
+  // blog-index.json is already sorted newest-first.
+  return index.posts.map((post) => ({
+    slug: post.slug,
+    metadata: {
+      title: post.title || post.slug,
+      publishedAt: post.publishedAt || new Date(0).toISOString(),
+      summary: post.summary || '',
+      category: post.category || 'tech',
+    },
+  }));
 }
 
 function renderRss(posts) {
@@ -243,7 +161,46 @@ ${SITE.skills.join(', ')}
 `;
 }
 
-function renderSitemap(posts) {
+function renderUrlSet(items) {
+  const body = items
+    .map(
+      (item) => `  <url>
+    <loc>${escapeXml(item.loc)}</loc>
+    <lastmod>${escapeXml(item.lastmod)}</lastmod>
+    <changefreq>${item.changefreq}</changefreq>
+    <priority>${item.priority}</priority>
+  </url>`
+    )
+    .join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</urlset>
+`;
+}
+
+function renderSitemapIndex(shards) {
+  const body = shards
+    .map(
+      (shard) => `  <sitemap>
+    <loc>${escapeXml(`${SITE.url}/sitemaps/${shard.name}`)}</loc>
+    <lastmod>${escapeXml(shard.lastmod)}</lastmod>
+  </sitemap>`
+    )
+    .join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${body}
+</sitemapindex>
+`;
+}
+
+// /sitemap.xml stays the single entry point but is now an index over shards of
+// at most SITEMAP_SHARD_SIZE URLs, so the blog can keep growing past the 50k
+// URL / 50MB per-file sitemap limits.
+function buildSitemapShards(posts) {
   const now = new Date().toISOString();
   const routes = [
     '',
@@ -259,35 +216,64 @@ function renderSitemap(posts) {
     '/topics',
   ];
 
-  const routeItems = routes.map((route) => ({
-    loc: `${SITE.url}${route}`,
-    lastmod: now,
-    changefreq: 'weekly',
-    priority: route === '' ? '1.0' : route === '/research' || route === '/oscillator' ? '0.95' : '0.85',
-  }));
-  const postItems = posts.map((post) => ({
-    loc: `${SITE.url}/blog/${post.slug}`,
-    lastmod: new Date(post.metadata.publishedAt).toISOString(),
-    changefreq: 'monthly',
-    priority: '0.8',
-  }));
+  const shards = [
+    {
+      name: 'pages.xml',
+      lastmod: now,
+      body: renderUrlSet(
+        routes.map((route) => ({
+          loc: `${SITE.url}${route}`,
+          lastmod: now,
+          changefreq: 'weekly',
+          priority:
+            route === '' ? '1.0' : route === '/research' || route === '/oscillator' ? '0.95' : '0.85',
+        }))
+      ),
+    },
+  ];
 
-  const items = [...routeItems, ...postItems]
-    .map(
-      (item) => `  <url>
-    <loc>${escapeXml(item.loc)}</loc>
-    <lastmod>${escapeXml(item.lastmod)}</lastmod>
-    <changefreq>${item.changefreq}</changefreq>
-    <priority>${item.priority}</priority>
-  </url>`
-    )
-    .join('\n');
+  for (let start = 0, shard = 1; start < posts.length; start += SITEMAP_SHARD_SIZE, shard += 1) {
+    const chunk = posts.slice(start, start + SITEMAP_SHARD_SIZE);
+    const items = chunk.map((post) => ({
+      loc: `${SITE.url}/blog/${post.slug}`,
+      lastmod: new Date(post.metadata.publishedAt).toISOString(),
+      changefreq: 'monthly',
+      priority: '0.8',
+    }));
 
-  return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${items}
-</urlset>
-`;
+    shards.push({
+      name: `blog-${String(shard).padStart(4, '0')}.xml`,
+      lastmod: items[0]?.lastmod ?? now,
+      body: renderUrlSet(items),
+    });
+  }
+
+  return shards;
+}
+
+async function writeSitemaps(posts) {
+  const shards = buildSitemapShards(posts);
+  const expected = new Set(shards.map((shard) => shard.name));
+
+  await fs.mkdir(SITEMAP_DIR, { recursive: true });
+
+  let existing = [];
+  try {
+    existing = await fs.readdir(SITEMAP_DIR);
+  } catch {
+    existing = [];
+  }
+
+  await Promise.all(
+    existing
+      .filter((name) => !expected.has(name))
+      .map((name) => fs.rm(path.join(SITEMAP_DIR, name), { force: true }))
+  );
+
+  await Promise.all(shards.map((shard) => fs.writeFile(path.join(SITEMAP_DIR, shard.name), shard.body, 'utf8')));
+  await fs.writeFile(path.join(PUBLIC_DIR, 'sitemap.xml'), renderSitemapIndex(shards), 'utf8');
+
+  return shards.length;
 }
 
 function renderRobotsTxt() {
@@ -372,6 +358,10 @@ function renderHeaders() {
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600
 
+/sitemaps/*
+  Content-Type: application/xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
 /robots.txt
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600
@@ -399,19 +389,24 @@ function renderHeaders() {
 }
 
 async function main() {
+  const started = Date.now();
   const posts = await loadPosts();
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
-  await Promise.all([
+
+  const [shardCount] = await Promise.all([
+    writeSitemaps(posts),
     fs.writeFile(path.join(PUBLIC_DIR, 'rss.xml'), renderRss(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'llms.txt'), renderLlmsTxt(posts), 'utf8'),
-    fs.writeFile(path.join(PUBLIC_DIR, 'sitemap.xml'), renderSitemap(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'robots.txt'), renderRobotsTxt(), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'manifest.webmanifest'), renderManifest(), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'og.svg'), renderOgSvg(), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, '_headers'), renderHeaders(), 'utf8'),
   ]);
 
-  console.log(`Generated static assets for ${posts.length} posts.`);
+  const elapsed = ((Date.now() - started) / 1000).toFixed(2);
+  console.log(
+    `Generated static assets for ${posts.length} posts (${shardCount} sitemap files) in ${elapsed}s.`
+  );
 }
 
 main().catch((error) => {

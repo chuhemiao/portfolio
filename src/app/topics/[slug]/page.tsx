@@ -1,5 +1,5 @@
 import BlurFade from '@/components/magicui/blur-fade';
-import { getBlogPosts } from '@/data/blog';
+import { getPostsForTopic } from '@/data/blog';
 import { getTopicBySlug, TOPICS } from '@/data/topics';
 import { ArrowRightIcon, ArrowUpRightIcon, BookOpenIcon, SearchIcon } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -31,21 +31,8 @@ export default async function TopicDetailPage({ params }: Props) {
   const topic = getTopicBySlug(slug);
   if (!topic) notFound();
 
-  const allPosts = await getBlogPosts();
-
-  // Filter posts by matching topic keywords in title, summary, tags, or category
-  const relatedPosts = allPosts
-    .filter((post) => {
-      const searchText = [
-        post.metadata.title,
-        post.metadata.summary,
-        post.metadata.category ?? '',
-      ]
-        .join(' ')
-        .toLowerCase();
-      return topic.matchKeywords.some((kw) => searchText.includes(kw.toLowerCase()));
-    })
-    .slice(0, 8);
+  // topic-index.json is precomputed by the content compiler.
+  const relatedPosts = getPostsForTopic(topic.slug, 8);
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>

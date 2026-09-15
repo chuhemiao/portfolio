@@ -19,11 +19,13 @@ export default defineConfig([
     },
   },
   globalIgnores([
+    '.generated/**',
     '.next/**',
     'out/**',
     'node_modules/**',
     'public/rss.xml',
     'public/llms.txt',
     'public/og.svg',
+    'public/sitemaps/**',
   ]),
 ]);

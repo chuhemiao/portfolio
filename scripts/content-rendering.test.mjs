@@ -5,7 +5,7 @@ import test from 'node:test';
 
 import matter from 'gray-matter';
 
-import { markdownToHTML } from '../src/data/blog.ts';
+import { markdownToHTML } from './lib/content/markdown.mjs';
 
 const bsbPostPath = path.join(
   process.cwd(),

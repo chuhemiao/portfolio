@@ -99,10 +99,8 @@ const HERO_CTAS = [
 ];
 
 export default async function Page() {
-  const allPosts = await getBlogPosts();
-  const latestPosts = allPosts
-    .sort((a, b) => new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime())
-    .slice(0, 4);
+  // blog-index.json is already sorted newest-first by the content compiler.
+  const latestPosts = (await getBlogPosts()).slice(0, 4);
   const weeklyBrief = WEEKLY_REPORTS[0];
 
   const websiteJsonLd = {
