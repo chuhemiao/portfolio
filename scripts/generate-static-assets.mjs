@@ -1,9 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
-const ROOT = process.cwd();
-const GENERATED_DIR = path.join(ROOT, '.generated');
-const BLOG_INDEX_FILE = path.join(GENERATED_DIR, 'blog-index.json');
+import { BLOG_INDEX_FILE, ROOT } from './lib/content/paths.mjs';
+
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const SITEMAP_DIR = path.join(PUBLIC_DIR, 'sitemaps');
 const SITEMAP_SHARD_SIZE = 5000;

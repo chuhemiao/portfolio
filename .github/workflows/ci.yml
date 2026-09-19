@@ -1,0 +1,74 @@
+name: CI
+
+# Deployment is handled by Vercel's Git integration, not by Actions.
+# This workflow only covers what a Vercel build does NOT: ESLint, and a check
+# that the content pipeline compiles cleanly (duplicate slugs, bad frontmatter,
+# broken markdown). It deliberately does not re-run `next build` — Vercel
+# already does that on every push, and TypeScript is checked there too.
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CONTENT_CACHE_PREFIX: content-cache-v1
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # No `version:` here on purpose: pnpm/action-setup@v4 reads the version
+      # from package.json "packageManager", and specifying both makes it fail.
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # Unique key per commit so every run saves a fresh cache; restore-keys
+      # fall back to the most recent one. The compiler then decides per file
+      # what to recompile, so a one-article change keeps the other 3000
+      # artifacts warm.
+      - name: Restore content cache
+        id: content-cache
+        uses: actions/cache@v4
+        with:
+          path: .generated
+          key: ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          restore-keys: |
+            ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}-
+            ${{ env.CONTENT_CACHE_PREFIX }}-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Compile content
+        run: |
+          start=$(date +%s)
+          pnpm content:prepare
+          echo "Content prepare: $(( $(date +%s) - start ))s" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Content tests
+        run: node --test scripts/content-rendering.test.mjs

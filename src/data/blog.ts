@@ -2,7 +2,23 @@ import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 
-const GENERATED_DIR = path.join(process.cwd(), '.generated');
+// Where compiled content artifacts live.
+// NOTE: scripts/lib/content/paths.mjs carries the same resolution and must stay
+// in sync. On Vercel, .next/cache is the only directory restored between
+// builds, so artifacts live there and survive as an incremental cache.
+function resolveGeneratedDir(): string {
+  if (process.env.CONTENT_CACHE_DIR) {
+    return path.resolve(process.cwd(), process.env.CONTENT_CACHE_DIR);
+  }
+
+  if (process.env.VERCEL) {
+    return path.join(process.cwd(), process.env.NEXT_DIST_DIR || '.next', 'cache', 'content');
+  }
+
+  return path.join(process.cwd(), '.generated');
+}
+
+const GENERATED_DIR = resolveGeneratedDir();
 const BLOG_INDEX_FILE = path.join(GENERATED_DIR, 'blog-index.json');
 const RELATIONS_FILE = path.join(GENERATED_DIR, 'relations.json');
 const TOPIC_INDEX_FILE = path.join(GENERATED_DIR, 'topic-index.json');
