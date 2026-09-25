@@ -1,0 +1,178 @@
+---
+title: 'Crypto Market Over the Past 24 Hours: Macro, Onchain, and Microstructure Monitor'
+publishedAt: '2026-09-25'
+summary: 'Prices and spot ETF inflows point to improving risk appetite, but rates and the dollar remain restrictive. Exchange balances are falling and funding rates are mild, making the move look more spot-driven than leverage-driven.'
+slug: 'crypto-market-past-24-hours-macro-onchain-microstructure-monitor-en'
+category: 'thoughts'
+---
+
+## TL;DR
+
+The market state over the past 24 hours is mixed: **prices and spot ETF inflows point to improving risk appetite, while macro rates and the dollar remain restrictive, and derivatives leverage is not visibly overheated**. BTC and ETH rose modestly, while SOL outperformed. BTC and ETH exchange balances continued to decline, ETFs remained in net inflow, BTC and ETH funding rates were positive but low, and SOL funding turned negative. The overall structure looks more spot-driven than leverage-driven.
+
+The most important tension is that **a lower Treasury General Account mechanically released liquidity, while the 10-year Treasury yield and DXY strengthened at the same time; onchain activity improved without corresponding evidence of gas congestion or abnormal MEV activity**. Current data supports the view that short-term risk appetite improved, but it does not support attributing the move to any single macro or onchain variable.
+
+**Data window:** Market data is current to approximately **2026-09-25 01:05 UTC**. The latest available US macro observations are primarily from **September 23-24**. Daily onchain data carries a lag of approximately **one to three days**.
+
+## Macro: Marginal Liquidity Is Positive, but Rates and the Dollar Are Restrictive
+
+| Variable | Latest available value | One-day change | Observation |
+|---|---:|---:|---|
+| US 10-year Treasury yield | Approximately **5.21%** | Approximately **+5-9bp** | Vendors differ on close and prior close, but all show an upward move |
+| DXY | Approximately **101.17-101.29** | Approximately **+0.13% to +0.19%** | The dollar strengthened, though it eased slightly intraday from the prior close |
+| ON RRP balance | **$0.630B**, September 24 | **+$0.169B, +36.7%** | Absolute size remains small; marginal liquidity absorption has limited impact |
+| TGA balance | **$947.317B**, September 23 | **-$10.092B, -1.05%** | A lower Treasury balance mechanically supports banking-system liquidity |
+
+The direction of the 10-year yield is clear, but vendor values conflict. Trading Economics reported approximately **5.21%** on September 24, up around 9bp on the day. A CNBC snapshot showed approximately **5.208%** versus a prior close near 5.162%, implying an increase of about 4.6bp. DXY vendors also differ by roughly 0.1 point, so a range is more appropriate than a single figure.
+
+Sources: [US Treasury yield curve](https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve&field_tdr_date_value=2026), [Trading Economics](https://tradingeconomics.com/united-states/government-bond-yield), [CNBC DXY](https://www.cnbc.com/quotes/.DXY), and [Investing.com DXY](https://www.investing.com/indices/usdollar-historical-data).
+
+A first-order mechanical combination of TGA and RRP shows a TGA decline of approximately **$10.09B** and an RRP increase of approximately **$0.17B**, implying a net liquidity-release tendency of about **$9.92B**. The observations do not share exactly the same timestamp, however, and the calculation does not account for quantitative tightening, Treasury settlement, reserve changes, or other flows. It therefore cannot be interpreted as the market receiving $9.92B of immediately tradable liquidity. Official TGA data is available in the [Daily Treasury Statement](https://fiscaldata.treasury.gov/datasets/daily-treasury-statement/), and RRP data is available through [FRED RRPONTSYD](https://fred.stlouisfed.org/series/RRPONTSYD).
+
+### Exceptional Liquidity Factors
+
+- **BTFP is not a current 24-hour variable.** The program ended in March 2024, and no new BTFP maturity shock was identified in this window. [Reuters](https://www.reuters.com/markets/us/fed-allow-emergency-bank-lending-program-expire-march-11-2024-01-25/)
+- No verifiable same-day change to the pace of quantitative tightening was available for this update.
+- The FOMC raised the federal funds target range to 3.75%-4.00% on September 16, but that action did not occur within the past 24 hours. The current crypto move therefore should not be directly attributed to a new Fed policy shock. [Federal Reserve](https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm)
+
+## Onchain: Exchange Balances Fell and Bridges Favored New Destinations
+
+### BTC and ETH Exchange Balances and Net Flows
+
+| Asset | Latest exchange reserve | Latest daily net flow | Reserve change | Interpretation |
+|---|---:|---:|---:|---|
+| BTC | **2,696,671.7 BTC** | **-6,213.4 BTC**, September 24 | Latest snapshot approximately flat day over day | Net outflow remains constructive, but the latest reserve data has daily alignment issues |
+| ETH | **14,647,818.7 ETH** | **-7,207.5 ETH**, September 24 | Down approximately 7,207.5 ETH day over day | ETH exchange inventory continued to decline, more strongly than BTC |
+
+Net flow is defined here as exchange inflows minus exchange outflows, so a negative value indicates net outflow. This metric alone does not prove long-term holding. It can also reflect custody migration, internal consolidation, staking, or derivatives settlement.
+
+### Stablecoin Market Capitalization and Cross-Chain Flows
+
+Major stablecoins in the current market ranking include:
+
+- **USDT: approximately $183.7B**
+- **USDC: approximately $75.1B**
+- **USDS: approximately $9.6B**
+- **USDe: approximately $4.9B**
+- **DAI: approximately $4.6B**
+
+The ten identifiable major stablecoins in the current ranking total approximately **$289.3B**. This is not a complete market total because the ranking interface covers only identified assets within the top 100, and different sources use different definitions for Tether and Circle market capitalization versus DeFi TVL.
+
+The latest available daily bridge data covers **September 22-24**. Major routes were:
+
+| Route | Bridged amount |
+|---|---:|
+| Ethereum → Plasma | **$61.9M** |
+| Ethereum → Lighter | **$14.8M** |
+| Ethereum → Polygon | **$13.1M** |
+| Ethereum → Arbitrum | **$12.9M** |
+| Plasma → Ethereum | **$12.8M** |
+| Lighter → Ethereum | **$10.9M** |
+| Polygon → Ethereum | **$10.9M** |
+
+Based on identified bridge flows, the net direction from Ethereum to Plasma was approximately **+$49.2M**. This is bridge-layer activity, not a complete measure of stablecoin transfers. Stablecoins such as USDT0 account for a large share of bridge activity, so the data should be interpreted as a signal of destination preference rather than total stablecoin net inflow.
+
+### Gas, Active Addresses, and Congestion
+
+| Network | Latest complete day | Active sending addresses | Versus available average | Daily average gas | Current gas snapshot |
+|---|---|---:|---:|---:|---:|
+| Ethereum | September 22 | **628.9K** | **+10.9%**, based on only six complete observations | **0.80 gwei**, about 9.1% below average | **0.40 gwei** |
+| Arbitrum | September 21 | **150.5K** | **+42.2%**, based on only five observations | **0.0202 gwei** | **0.0203 gwei** |
+| Base | September 24 | **338.0K** | **+7.9%**, based on a seven-day average | **0.0301 gwei** | **0.006 gwei** |
+
+Active addresses increased noticeably, especially on Arbitrum, but gas prices did not rise in parallel. This suggests that **higher activity has not yet created material blockspace scarcity**. Ethereum daily data is available only through September 22 and Arbitrum only through September 21, so these observations should not be treated as strict real-time 24-hour readings.
+
+**MEV and block congestion:** Available data does not provide a reliable 24-hour series for extracted MEV, builder profit, or block utilization. Low gas prices and low-congestion proxy variables do not indicate broad congestion anomalies, but that does not mean MEV was zero. The observation also does not cover Solana or L2 networks omitted from the dataset.
+
+## Market Microstructure: Mild Funding, Stronger SOL, and Short-Leaning Leverage
+
+### Perpetual Futures
+
+| Asset | Spot price | 24-hour change | Current Binance funding | Annualized funding | Open interest |
+|---|---:|---:|---:|---:|---:|
+| BTC | **$84,650** | **+0.47%** | **+0.00163% / 8h** | **+1.79%** | **$8.14B** |
+| ETH | **$2,694** | **+0.45%** | **+0.00341% / 8h** | **+3.73%** | **$6.12B** |
+| SOL | **$117.79** | **+2.18%** | **-0.000636% / 8h** | **-0.70%** | **$0.94B** |
+
+Funding rates are low across all three assets, with no clear evidence of crowded longs. SOL outperformed while its funding rate was negative, which looks more like **spot demand or pressure on short positions** than synchronized buying from perpetual-futures longs. BTC and ETH eight-hour rates rose briefly during the past 24 hours but had already fallen materially by the latest observation.
+
+### Options and 25 Delta Skew
+
+Available options data **does not include a historical series for 25 Delta skew**, so no substitute metric should be presented as skew. The available alternative is the Deribit put/call ratio:
+
+| Asset | Deribit put/call ratio | Options open interest |
+|---|---:|---:|
+| BTC | **0.615** | **$43.7B** |
+| ETH | **0.613** | **$5.39B** |
+| SOL | **0.576** | **$175.4M** |
+
+Ratios below 1 indicate that call positions or call trading are relatively dominant. Without a prior-day baseline, however, the data cannot establish whether skew is improving or simply remains at a structural level.
+
+### Spot ETF Creations and Redemptions
+
+The latest settled trading day was **2026-09-24**:
+
+| Underlying | ETF net inflow |
+|---|---:|
+| BTC | **+$28.1M** |
+| ETH | **+$39.3M** |
+| SOL | **+$32.8M** |
+
+ETFs remain a positive marginal source of spot demand. Settlement lags may still affect the current day, so unsettled figures should not be treated as final creation and redemption totals.
+
+### CEX Depth and Slippage
+
+A Binance spot-order-book snapshot showed:
+
+| Pair | Bid depth, top 20 levels | Ask depth, top 20 levels | Best bid-ask spread |
+|---|---:|---:|---:|
+| BTC / USDT | **1.16 BTC** | **4.89 BTC** | **0.00118%** |
+| ETH / USDT | **38.41 ETH** | **54.81 ETH** | **0.000371%** |
+| SOL / USDT | **14,651 SOL** | **17,179 SOL** | **0.00850%** |
+
+BTC and ETH ask depth exceeded bid depth, indicating some overhead supply. SOL's spread was materially wider than those of BTC and ETH, but without a historical baseline it can only be described as **relatively thin**, not as abnormal slippage. A single-exchange snapshot is insufficient to determine whether depth deteriorated across exchanges.
+
+## Narratives and Events: Strong TVL Expansion, but Few New 24-Hour Catalysts
+
+### Protocols With TVL Changes Above 10%
+
+Available daily onchain TVL data shows changes from the **latest complete day versus approximately seven days earlier**, not strict 24-hour changes:
+
+| Protocol | Chain | Current TVL | Seven-day change |
+|---|---|---:|---:|
+| Spark | Ethereum | **$5.79B** | **+17.7%** |
+| Lido | Ethereum | **$26.76B** | **+15.6%** |
+| Ether.fi | Ethereum | **$6.24B** | **+14.6%** |
+| EigenLayer | Ethereum | **$6.96B** | **+14.1%** |
+| Sky | Ethereum | **$5.67B** | **+11.4%** |
+| Morpho | Ethereum | **$3.30B** | **+12.2%** |
+| Uniswap | Ethereum | **$7.18B** | **+11.9%** |
+| Aave | Ethereum | **$15.90B** | **+10.1%** |
+| Centrifuge | Ethereum | **$718M** | **-34.6%** |
+| Securitize | Ethereum | **$746M** | **-28.5%** |
+
+Expansion concentrated in lending, staking, and yield protocols. TVL is denominated in dollars, however, so it reflects both real capital flows and changes in the prices of ETH and related assets. It should not be interpreted directly as pure net deposits. Arbitrum data was too sparse to produce a reliable screen for changes above 10%.
+
+### Financing, Unlocks, and Airdrops
+
+- **Token unlocks:** The latest verifiable weekly preview showed more than **$900M** in scheduled market-wide unlocks during the fourth week of September, led by **Plasma (XPL), Humanity (H), and SoSoValue (SOSO)**. This is better treated as a supply risk for the coming days than as selling pressure that already occurred in the past 24 hours. [BeInCrypto](https://beincrypto.com/token-unlocks-fourth-week-september-2026/)
+- **New project financing:** Available information did not produce a sufficiently reliable list of new financings clearly completed within the past 24 hours.
+- **Airdrop expectations:** No high-confidence event confirmed a new snapshot, TGE, or claim window during the past 24 hours. Unconfirmed social-media claims about airdrops should be discounted.
+- **Regulation, litigation, and policy:** No new lawsuit or policy statement with sufficient market-wide pricing impact was confirmed during the past 24 hours. The September 16 FOMC action occurred earlier and should not be treated as a new catalyst in this window.
+- **Technical breakthroughs:** No verifiable major zkVM, parallelization, or AI Agent release with sufficient market impact was identified in the past 24 hours.
+
+## Self-Check: Data Conflicts, Missing Baselines, and Causal Limits
+
+| Check | Conclusion |
+|---|---|
+| Conflicts across sources | **Present.** The 10-year yield differs by roughly 4-5bp across vendors; DXY closing values differ by about 0.1 point; macro and daily onchain updates have inconsistent timestamps |
+| Stablecoin methodology conflicts | **Present.** USDT and USDC market caps in market rankings differ from Tether and Circle figures in DeFi TVL rankings. The former is closer to circulating market capitalization, while the latter may include protocol assets and price-source differences |
+| Onchain data freshness | **Limited.** Ethereum's latest complete day is September 22, Arbitrum's is September 21, and Base's is September 24. Active addresses are HyperLogLog estimates with an error of approximately 2% |
+| Historical comparisons still needed | RRP and TGA need four-week and three-month ranges; 10Y and DXY need 20-day percentiles; funding, options skew, and CEX depth need 30-day baselines; TVL needs separation of price effects from net deposits |
+| Support for causal inference | **Not supported.** The data only confirms that rising prices coincided with ETF inflows, exchange net outflows, and low funding. It cannot prove that any one variable caused the price move |
+
+## Conclusion
+
+The current market is **moderately bullish but lacks macro confirmation**. Spot ETF inflows, falling BTC and ETH exchange balances, and low funding rates create a relatively healthy short-term structure. SOL was stronger while perpetual funding turned negative, suggesting that the move has not yet produced obvious leverage crowding. At the same time, stronger 10-year yields and DXY indicate that the macro discount rate is still constraining risk-asset valuations.
+
+**Bottom line:** Over the next 24 hours, prioritize three cross-checks: **whether ETFs remain in net inflow, whether BTC and ETH exchange reserves continue to fall, and whether funding rates suddenly rise while the 10-year yield and DXY remain strong**. If ETFs turn to net outflows while funding rises rapidly, the current spot-driven-rally thesis will be invalidated.
