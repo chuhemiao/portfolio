@@ -38,6 +38,8 @@ export type Metadata = {
   slug?: string;
   draft?: boolean;
   status?: string;
+  language?: 'zh' | 'en';
+  translationSlug?: string;
 };
 
 export type TocItem = {
@@ -66,6 +68,8 @@ type BlogIndexEntry = {
   summary: string;
   category?: Category;
   image?: string;
+  language?: 'zh' | 'en';
+  translationSlug?: string;
   artifact: string;
   contentHash: string;
   sourcePath: string;
@@ -106,6 +110,8 @@ function toMetadata(entry: BlogIndexEntry): Metadata {
 
   if (entry.category !== undefined) metadata.category = entry.category;
   if (entry.image !== undefined) metadata.image = entry.image;
+  if (entry.language !== undefined) metadata.language = entry.language;
+  if (entry.translationSlug !== undefined) metadata.translationSlug = entry.translationSlug;
 
   return metadata;
 }

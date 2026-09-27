@@ -31,7 +31,7 @@ import { runCompileJobs } from './lib/content/pool.mjs';
 
 // Bump when the markdown pipeline or artifact format changes: every cached
 // artifact from an older version is then recompiled instead of reused.
-export const CONTENT_COMPILER_VERSION = 1;
+export const CONTENT_COMPILER_VERSION = 2;
 
 function parseArgs(argv) {
   const options = { force: false, workers: undefined };
@@ -150,13 +150,32 @@ async function main() {
       title: entry.meta.title,
       publishedAt: entry.meta.publishedAt,
       summary: entry.meta.summary,
+      language: entry.meta.language,
       ...(entry.meta.category !== undefined ? { category: entry.meta.category } : {}),
       ...(entry.meta.image !== undefined ? { image: entry.meta.image } : {}),
+      ...(entry.meta.translationSlug !== undefined
+        ? { translationSlug: entry.meta.translationSlug }
+        : {}),
       artifact: entry.artifact,
       contentHash: entry.hash,
       sourcePath: entry.sourcePath
-    }))
-    .sort(sortNewestFirst);
+    }));
+
+  const postBySlug = new Map(posts.map((post) => [post.slug, post]));
+  for (const post of posts) {
+    if (post.translationSlug) continue;
+
+    if (post.slug.endsWith('-en')) {
+      const baseSlug = post.slug.slice(0, -3);
+      if (postBySlug.has(baseSlug)) post.translationSlug = baseSlug;
+      continue;
+    }
+
+    const englishSlug = `${post.slug}-en`;
+    if (postBySlug.has(englishSlug)) post.translationSlug = englishSlug;
+  }
+
+  posts.sort(sortNewestFirst);
 
   const expectedArtifacts = new Set();
   for (const entry of entries) {

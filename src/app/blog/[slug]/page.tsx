@@ -9,7 +9,7 @@ import Link from "next/link";
 import ScrollToTop from "@/components/blog/scroll-to-top";
 import TableOfContents from "@/components/blog/table-of-contents";
 import Mermaid from "@/components/mermaid";
-import { ArrowUpRightIcon, RssIcon, ArrowRightIcon } from "lucide-react";
+import { ArrowUpRightIcon, RssIcon, ArrowRightIcon, LanguagesIcon } from "lucide-react";
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
   thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
@@ -68,6 +68,8 @@ export async function generateMetadata({
     summary,
     image,
     category,
+    language,
+    translationSlug,
   } = post.metadata;
   const description = summary || `${title} - ${DATA.name}`;
   let ogImage = resolveOgImageUrl(image);
@@ -89,6 +91,14 @@ export async function generateMetadata({
     publisher: DATA.name,
     alternates: {
       canonical: `${DATA.url}/blog/${post.slug}`,
+      ...(translationSlug
+        ? {
+            languages: {
+              [language === "en" ? "en-US" : "zh-CN"]: `${DATA.url}/blog/${post.slug}`,
+              [language === "en" ? "zh-CN" : "en-US"]: `${DATA.url}/blog/${translationSlug}`,
+            },
+          }
+        : {}),
     },
     openGraph: {
       title,
@@ -97,7 +107,7 @@ export async function generateMetadata({
       publishedTime,
       url: `${DATA.url}/blog/${post.slug}`,
       siteName: DATA.name,
-      locale: "en_US",
+      locale: language === "zh" ? "zh_CN" : "en_US",
       authors: [DATA.name],
       images: [
         {
@@ -143,6 +153,10 @@ export default async function Blog({
 
   const ogImage = resolveOgImageUrl(post.metadata.image);
   const publishedAtIso = toIsoOrNow(post.metadata.publishedAt);
+  const language = post.metadata.language ?? "en";
+  const translation = post.metadata.translationSlug
+    ? getPostMeta(post.metadata.translationSlug)
+    : null;
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -176,7 +190,7 @@ export default async function Blog({
       ? [post.metadata.category, "Web3", "Blockchain", "Cryptocurrency", "DeFi"]
       : ["Web3", "Blockchain", "Cryptocurrency"],
     articleSection: post.metadata.category || "Technology",
-    inLanguage: "en-US",
+    inLanguage: language === "zh" ? "zh-CN" : "en-US",
   };
 
   const breadcrumbJsonLd = {
@@ -233,7 +247,7 @@ export default async function Blog({
             <h1 className="title max-w-[650px] text-2xl font-medium tracking-tighter">
               {post.metadata.title}
             </h1>
-            <div className="mt-2 mb-8 flex max-w-[650px] items-center justify-between text-sm">
+            <div className="mt-2 mb-8 flex max-w-[650px] items-center justify-between gap-3 text-sm">
               <Suspense fallback={<p className="h-5" />}>
                 <time
                   dateTime={publishedAtIso}
@@ -242,8 +256,28 @@ export default async function Blog({
                   {formatDate(post.metadata.publishedAt)}
                 </time>
               </Suspense>
+              {translation && (
+                <div className="inline-flex items-center gap-1 rounded-md border border-border/70 bg-background/70 p-1" aria-label="Article language">
+                  <LanguagesIcon className="mx-1 size-3.5 text-muted-foreground" />
+                  <Link
+                    href={language === "zh" ? `/blog/${post.slug}` : `/blog/${translation.slug}`}
+                    lang="zh-CN"
+                    className={`rounded px-2 py-1 text-xs font-medium ${language === "zh" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    中文
+                  </Link>
+                  <Link
+                    href={language === "en" ? `/blog/${post.slug}` : `/blog/${translation.slug}`}
+                    lang="en-US"
+                    className={`rounded px-2 py-1 text-xs font-medium ${language === "en" ? "bg-foreground text-background" : "text-muted-foreground hover:text-foreground"}`}
+                  >
+                    English
+                  </Link>
+                </div>
+              )}
             </div>
             <article
+              lang={language === "zh" ? "zh-CN" : "en-US"}
               className="prose max-w-none break-words dark:prose-invert [overflow-wrap:anywhere] prose-pre:max-w-full prose-pre:overflow-x-auto prose-img:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
               dangerouslySetInnerHTML={{ __html: post.source }}
             ></article>

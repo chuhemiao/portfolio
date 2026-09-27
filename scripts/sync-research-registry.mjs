@@ -143,7 +143,7 @@ function readResearchCards() {
 }
 
 function readResearchPosts() {
-  return walk(CONTENT_DIR)
+  const posts = walk(CONTENT_DIR)
     .map((filePath) => {
       const src = fs.readFileSync(filePath, 'utf8');
       const { data } = matter(src);
@@ -159,9 +159,18 @@ function readResearchPosts() {
         summary: data.summary || '',
         publishedAt: data.publishedAt || '',
         file: relative(filePath),
+        language: data.language || '',
+        translationSlug: data.translationSlug || '',
       };
     })
     .filter(Boolean);
+
+  const slugs = new Set(posts.map((post) => post.slug));
+  return posts.filter((post) => {
+    if (post.language === 'en' && post.translationSlug) return false;
+    if (!post.slug.endsWith('-en')) return true;
+    return !slugs.has(post.slug.slice(0, -3));
+  });
 }
 
 function buildAliases(post, card) {

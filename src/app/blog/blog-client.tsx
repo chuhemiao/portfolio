@@ -6,7 +6,7 @@ import { TOPICS } from '@/data/topics';
 import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { useState, useEffect, useCallback } from 'react';
-import { ArrowUpRightIcon, SearchIcon, XIcon } from 'lucide-react';
+import { ArrowUpRightIcon, LanguagesIcon, SearchIcon, XIcon } from 'lucide-react';
 
 const BLUR_FADE_DELAY = 0.04;
 const POSTS_PER_PAGE = 12;
@@ -18,6 +18,7 @@ type Post = {
     summary: string;
     image?: string;
     category?: Category;
+    language?: 'zh' | 'en';
   };
   slug: string;
   source: string;
@@ -46,6 +47,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const pathname = usePathname();
 
   const initialCategory = (searchParams.get('category') as Category | 'all') ?? 'all';
+  const initialLanguage = searchParams.get('lang');
   const validCategories = CATEGORIES.map((c) => c.key);
   const safeInitialCategory = validCategories.includes(initialCategory) ? initialCategory : 'all';
 
@@ -53,6 +55,9 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedLanguage, setSelectedLanguage] = useState<'all' | 'zh' | 'en'>(
+    initialLanguage === 'zh' || initialLanguage === 'en' ? initialLanguage : 'all'
+  );
 
   // Sync URL → state when user navigates back/forward
   useEffect(() => {
@@ -60,15 +65,22 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     if (cat && validCategories.includes(cat)) {
       setSelectedCategory(cat);
     }
+    const lang = searchParams.get('lang');
+    setSelectedLanguage(lang === 'zh' || lang === 'en' ? lang : 'all');
   }, [searchParams]);
 
   const updateUrl = useCallback(
-    (category: Category | 'all') => {
+    (category: Category | 'all', language: 'all' | 'zh' | 'en') => {
       const params = new URLSearchParams(searchParams.toString());
       if (category === 'all') {
         params.delete('category');
       } else {
         params.set('category', category);
+      }
+      if (language === 'all') {
+        params.delete('lang');
+      } else {
+        params.set('lang', language);
       }
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
@@ -79,6 +91,8 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
   const filteredPosts = posts.filter((post) => {
     const matchesCategory =
       selectedCategory === 'all' || post.metadata.category === selectedCategory;
+    const matchesLanguage =
+      selectedLanguage === 'all' || post.metadata.language === selectedLanguage;
 
     const matchesTopic = selectedTopic
       ? (() => {
@@ -101,7 +115,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
         })()
       : true;
 
-    return matchesCategory && matchesTopic && matchesSearch;
+    return matchesCategory && matchesLanguage && matchesTopic && matchesSearch;
   });
 
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
@@ -112,7 +126,7 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     setSelectedCategory(category);
     setSelectedTopic(null);
     setCurrentPage(1);
-    updateUrl(category);
+    updateUrl(category, selectedLanguage);
   };
 
   const handleTopicChange = (slug: string) => {
@@ -129,12 +143,16 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
     setSelectedCategory('all');
     setSelectedTopic(null);
     setSearchQuery('');
+    setSelectedLanguage('all');
     setCurrentPage(1);
-    updateUrl('all');
+    updateUrl('all', 'all');
   };
 
   const hasActiveFilter =
-    selectedCategory !== 'all' || selectedTopic !== null || searchQuery.trim().length > 0;
+    selectedCategory !== 'all' ||
+    selectedLanguage !== 'all' ||
+    selectedTopic !== null ||
+    searchQuery.trim().length > 0;
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -207,6 +225,33 @@ export default function BlogClient({ posts }: { posts: Post[] }) {
               }`}
             >
               {category.label}
+            </button>
+          ))}
+        </div>
+      </BlurFade>
+
+      <BlurFade delay={BLUR_FADE_DELAY * 1.65}>
+        <div className='flex items-center gap-2'>
+          <LanguagesIcon className='size-3.5 text-muted-foreground' />
+          {([
+            ['all', 'All languages'],
+            ['zh', '中文'],
+            ['en', 'English'],
+          ] as const).map(([key, label]) => (
+            <button
+              key={key}
+              onClick={() => {
+                setSelectedLanguage(key);
+                setCurrentPage(1);
+                updateUrl(selectedCategory, key);
+              }}
+              className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
+                selectedLanguage === key
+                  ? 'border-foreground/70 bg-foreground text-background'
+                  : 'border-border/60 bg-background/60 text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {label}
             </button>
           ))}
         </div>

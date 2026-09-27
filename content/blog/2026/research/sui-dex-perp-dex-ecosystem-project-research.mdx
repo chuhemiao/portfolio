@@ -1,0 +1,583 @@
+---
+title: 'Sui DEX 与 Perp DEX：生态项目研究报告'
+publishedAt: '2026-09-27'
+summary: 'Sui 现货市场已形成 Cetus、DeepBook 与 Bluefin 等分层格局，Perp 市场仍较分散；新团队更值得切入聚合路由、统一保证金、风险管理与新资产交易闭环。'
+slug: 'sui-dex-perp-dex-ecosystem-project-research'
+category: 'research'
+language: 'zh'
+translationSlug: 'sui-dex-perp-dex-ecosystem-project-research-en'
+---
+
+# Sui DEX 与 Perp DEX - 生态项目研究报告
+
+## TL;DR
+
+Sui 上的 DEX / Perp 生态已经不是空白市场，但仍处于“交易量集中、基础设施分层、Perp 竞争尚未完全定型”的阶段。
+
+我的核心判断：
+
+- **现货 DEX：Cetus 是当前流动性和交易量龙头；DeepBook 是最重要的底层订单簿基础设施；Bluefin Spot 和 Turbos 是主要竞争者。**
+- **Perp DEX：Astros 当前 30d 名义交易量最高，但其 TVL 极低，数据需要谨慎验证；Aftermath、DipCoin、Bluefin Pro、Sudo 和 ZO 形成第二梯队。**
+- **最值得长期关注的项目不是单纯交易量最高的项目，而是 DeepBook、Bluefin 和 Cetus。**
+  - Cetus：流动性、CLMM 和资产交易入口；
+  - DeepBook：Sui 的订单簿和共享流动性层；
+  - Bluefin：现货 + Perp + 交易终端的一体化产品。
+- **新团队不建议再做一个普通 AMM 或普通 BTC/ETH Perp。**更有机会的方向是：
+  1. Sui DEX 聚合与智能路由；
+  2. 跨协议统一保证金和清算层；
+  3. DeepBook / Cetus / Bluefin 的执行和做市基础设施；
+  4. 新资产发行到现货、Perp 的一体化交易平台；
+  5. Sui 原生的高性能订单簿 Perp。
+
+数据截点：**2026-09-27 UTC**。协议数据主要来自 DeFiLlama 当前协议页面；代币数据为当前市场快照。Perp 交易量是名义交易量，不等于保证金规模、收入或利润。
+
+---
+
+## Sui 市场位置
+
+Sui 当前链级 TVL 约 **$539.8M**，USD 稳定币供给约 **$483.6M**，过去 30 天现货 DEX 交易量约 **$1.36B**，24h 交易量约 **$52.9M**，过去 30 天交易量较此前周期增长约 **41.9%**。
+
+来源：[Sui DEX 链级数据](https://api.llama.fi/overview/dexs/sui?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true)、[DeFiLlama 链级 TVL](https://api.llama.fi/v2/chains)、[稳定币链级数据](https://stablecoins.llama.fi/stablecoinchains)。
+
+### Sui 的三个结构性优势
+
+#### 1. 适合订单簿和高频交易
+
+Sui 的对象模型允许不同对象之间的交易并行处理，对订单簿、撮合、账户和市场状态拆分具有吸引力。
+
+但需要注意：共享对象会产生竞争。如果大量订单、流动性或清算都集中到同一个共享对象上，并行执行优势会被热点状态争用削弱。[Sui Shared Objects 文档](https://docs.sui.io/develop/objects/object-ownership/shared)。
+
+因此，Sui 上的高性能交易协议不能只依赖“链很快”，还需要在合约层面设计：
+
+- 每个市场独立状态；
+- 分片订单簿；
+- 避免全局共享对象；
+- 并行清算；
+- 非阻塞资金费率更新；
+- 独立保险基金和风险引擎。
+
+#### 2. DEX 流量集中度较高
+
+当前主要协议报告的 30d 现货交易量：
+
+| 项目 | 机制 | TVL | 30d DEX 交易量 | 30d 手续费 | 30d 协议收入 | 交易量 / TVL |
+|---|---|---:|---:|---:|---:|---:|
+| **Cetus** | CLMM、聚合器、流动性基础设施 | $31.22M | **$471.82M** | $731.9K | $146.4K | 15.1x |
+| **DeepBook** | 全链上 CLOB、流动性层 | $13.45M | **$313.74M** | $26.3K | $21.4K | 23.3x |
+| **Bluefin Spot** | 订单簿现货交易 | $12.96M | **$231.00M** | $215.9K | $54.9K | 17.8x |
+| **Turbos** | CLMM、CLOB 路由、Launchpad | $3.94M | **$220.93M** | $142.1K | $42.6K | 56.1x |
+| **Aftermath AMM** | AMM、聚合器、综合 DeFi | $2.89M | $8.54M | $1.9K | $0 | 3.0x |
+
+来源：[Cetus](https://defillama.com/protocol/cetus)、[DeepBook](https://defillama.com/protocol/deepbook)、[Bluefin](https://defillama.com/protocol/bluefin)、[Turbos](https://defillama.com/protocol/turbos)、[Aftermath AMM](https://defillama.com/protocol/aftermath-amm)。
+
+<chart item_id="sui_dex_30d"></chart>
+
+上述五个协议合计报告约 **$1.25B** 的 30d 现货交易量，接近 Sui 链级 30d DEX 总量。不同协议和链级统计可能存在路由、聚合器和重复计量差异，因此不能简单把所有数据相加，但市场结构非常清楚：
+
+> **Sui 现货 DEX 市场已经有明显的头部集中度，新项目不能只靠“再增加一个池子”获得长期价值。**
+
+---
+
+## Sui 现货 DEX 项目研究
+
+### 1. Cetus：当前最强的现货流动性入口
+
+**综合评级：A**
+
+Cetus 是 Sui 上当前最成熟的现货 DEX 和 CLMM 基础设施之一，项目定位包括：
+
+- Concentrated Liquidity AMM；
+- Sui / Aptos 双链；
+- DEX 聚合器；
+- Intent orders；
+- Vault；
+- 流动性激励；
+- 面向开发者的集成工具。
+
+当前数据：
+
+- TVL：约 **$31.22M**；
+- 30d DEX 交易量：约 **$471.82M**；
+- 30d 手续费：约 **$731.9K**；
+- 30d 协议收入：约 **$146.4K**；
+- 过去 30 天 TVL 增长约 **21.6%**；
+- CETUS 市值约 **$27.4M**；
+- CETUS FDV 约 **$28.4M**；
+- 流通量约占总供应量 **96.5%**。
+
+Cetus 的优势：
+
+1. **交易量和手续费规模最大。**
+2. 资产池覆盖和 CLMM 机制成熟。
+3. 与 Sui 生态中的钱包、聚合器和新资产有较强连接。
+4. 代币流通比例较高，短期 FDV 稀释压力相对低于 DEEP 和 MMT。
+
+核心风险是安全历史。DeFiLlama 记录了 **2025 年 5 月约 $223M 的 Cetus 事件**，分类为 Move 合约中的算术错误和代币/份额记账问题。[Cetus 协议页面](https://defillama.com/protocol/cetus)。
+
+因此，Cetus 的基本面仍然强，但如果从长期合作或投资角度看，需要重点审查：
+
+- 合约升级权限；
+- 事故后的赔付与治理安排；
+- LP 资金隔离；
+- 新池子上线流程；
+- 预言机和价格边界；
+- 未来是否会被 DeepBook / 新路由器分流。
+
+**结论：Cetus 是 Sui 现货 DEX 的龙头，但已经不是一个容易挑战的普通 AMM。**
+
+---
+
+### 2. DeepBook：最值得关注的 Sui 底层交易基础设施
+
+**综合评级：A-，基础设施价值高于前端品牌价值**
+
+DeepBook 是 Sui 原生的全链上中央限价订单簿和流动性层。官方定位不仅是一个交易界面，而是为 Sui 上的现货、保证金和其他市场提供共享订单簿基础设施。[DeepBook 官方网站](https://www.deepbook.tech/)。
+
+当前数据：
+
+- TVL：约 **$13.45M**；
+- 30d DEX 交易量：约 **$313.74M**；
+- 30d 手续费：约 **$26.3K**；
+- 30d 协议收入：约 **$21.4K**；
+- 30d TVL 增长约 **12.2%**；
+- DEEP 市值约 **$56.8M**；
+- DEEP FDV 约 **$227.1M**；
+- 流通量：约 **2.5B / 10B**，流通比例约 **25%**。
+
+DeepBook 的关键特点是：
+
+- 交易量相对 TVL 很高；
+- 手续费率较低，可能更利于做市商和高频交易；
+- 订单簿可以作为其他协议的底层流动性；
+- 更适合被钱包、聚合器、Perp、保证金协议和交易终端集成。
+
+DeepBook 的商业模式更接近：
+
+> **交易基础设施 + 共享流动性层，而不是单一的 AMM 前端。**
+
+这使它对 Sui 生态有较强的战略价值，但也带来两个问题：
+
+1. DeepBook 的直接协议收入目前相对交易量仍偏低；
+2. DEEP 的 FDV 约为市值的 4x，未来解锁和供应稀释需要重点关注。
+
+**结论：如果你要在 Sui 上做新交易产品，DeepBook 是最值得研究的底层依赖之一；如果你要做一个新的通用现货 DEX，则必须说明为什么不直接使用 DeepBook 的流动性。**
+
+---
+
+### 3. Bluefin Spot：现货和衍生品一体化的交易平台
+
+**综合评级：A-，产品完整度高**
+
+Bluefin 是 Sui 上少数同时覆盖现货和衍生品的交易协议。其项目资料显示，它采用：
+
+- 订单簿交易；
+- 链下订单簿；
+- 链上结算；
+- 低延迟交易；
+- API；
+- 现货与 Perp 产品组合。
+
+当前数据：
+
+- Bluefin 总 TVL：约 **$14.79M**；
+- Bluefin Spot TVL：约 **$12.96M**；
+- Bluefin Pro TVL：约 **$1.59M**；
+- 30d 现货交易量：约 **$231M**；
+- 30d Perp 交易量：约 **$38.58M**；
+- 30d 总手续费：约 **$233.3K**；
+- 30d 协议收入：约 **$72.3K**；
+- BLUE 市值约 **$6.6M**；
+- BLUE FDV 约 **$10.9M**。
+
+[Bluefin 官方网站](https://bluefin.io/)；[Bluefin 协议数据](https://defillama.com/protocol/bluefin)；[Bluefin Pro 数据](https://defillama.com/protocol/bluefin-pro)。
+
+Bluefin 的优势：
+
+- 产品结构最接近一个完整的链上交易所；
+- 现货和 Perp 可以共享账户和用户；
+- 订单簿模型更适合专业交易员；
+- 有 API 和交易终端扩展空间；
+- 不需要完全依赖 AMM 的 LP 形态。
+
+但当前的挑战是：
+
+- 近期 Perp 交易量相比 Bluefin 的历史累计交易量已经明显下降；
+- spot 和 perp 都面对 DeepBook、Cetus、Astros、Aftermath 等竞争；
+- 订单簿交易需要持续做市，而不仅仅是激励 LP；
+- BLUE 代币市值较低，治理和激励体系仍需要验证。
+
+**结论：Bluefin 是目前最值得作为“新 Sui Perp DEX 产品原型”研究的项目之一，但其现有交易量并没有形成绝对垄断。**
+
+---
+
+### 4. Turbos：交易量效率高，但资本厚度较低
+
+**综合评级：B+**
+
+Turbos 结合了：
+
+- CLMM；
+- CLOB 路由；
+- Vault；
+- Launchpad；
+- TurboStar / Turbos.Fun；
+- 新资产交易和生态分发。
+
+[官方资料](https://turbos.finance/)；[Turbos 协议数据](https://defillama.com/protocol/turbos)。
+
+当前数据：
+
+- TVL：约 **$3.94M**；
+- 30d DEX 交易量：约 **$220.93M**；
+- 30d 手续费：约 **$142.1K**；
+- 30d 协议收入：约 **$42.6K**；
+- TURBOS 市值：约 **$925K**；
+- TURBOS FDV：约 **$1.40M**。
+
+Turbos 的 30d 交易量 / TVL 约 **56x**，是主要 Sui DEX 中最高的之一。但这既可以说明资本效率高，也可能说明：
+
+- 交易量更依赖少数活跃资产；
+- LP 深度不够；
+- 交易量与实际用户留存不匹配；
+- 激励或短期资产发行带来的周转可能较高。
+
+**结论：Turbos 更像“高周转资产交易 + Launchpad + 生态分发”平台，而不是最深的通用流动性中心。**
+
+---
+
+### 5. Momentum：长期金融操作系统方向，但当前交易数据不足
+
+**综合评级：B+，长期叙事强，当前交易数据弱于头部**
+
+Momentum 的项目定位已经从单纯 DEX 延伸到：
+
+- ve(3,3) DEX；
+- Vault；
+- Liquid Staking；
+- Treasury；
+- 资产管理；
+- RWA；
+- 跨链和 TradFi 接口。
+
+[Momentum 官方网站](https://www.mmt.finance/)；[Momentum 协议数据](https://defillama.com/protocol/momentum)。
+
+当前 TVL 约 **$4.2M**。相比 Cetus、DeepBook、Bluefin 和 Turbos，Momentum 当前被公开追踪的交易量不是主要优势，但其战略方向更加偏向：
+
+> **通过治理、激励、资产管理和 RWA 建立流动性操作系统。**
+
+风险是：
+
+- 业务线较多，产品聚焦度需要验证；
+- MMT 流通市值约 **$35.1M**，FDV约 **$172.0M**；
+- 流通比例约 **20.4%**；
+- 如果实际交易量和协议收入增长慢于代币估值，未来会存在较大的供给压力。
+
+**结论：Momentum 更适合关注其长期生态战略，不应仅根据代币上涨或融资背景判断其 DEX 竞争力。**
+
+---
+
+## Sui Perp DEX 项目研究
+
+Sui 的 Perp 市场目前比现货市场更分散。主要协议的公开 30d Perp 名义交易量如下：
+
+| 项目 | TVL | 30d Perp 交易量 | 30d 手续费 | 30d 协议收入 | 交易量 / TVL | 当前判断 |
+|---|---:|---:|---:|---:|---:|---|
+| **Astros Perp** | $271K | **$444.92M** | $38.6K | $38.6K | **1,642x** | 交易量最高，但资产池极薄 |
+| **Aftermath Perps** | 未报告 | $75.96M | 未报告 | 未报告 | — | 交易量可观，需重点审查安全事件 |
+| **DipCoin Perps** | $1.94M | $67.69M | $26.6K | $26.6K | 34.9x | Perp 聚焦明显 |
+| **Bluefin Pro** | $1.59M | $38.58M | $17.4K | $17.4K | 24.3x | 产品完整、订单簿路线 |
+| **Sudo Perps** | $2.91M | $23.80M | $5.5K | $1.3K | 8.2x | 资本基础较稳 |
+| **ZO Perps** | $140K | $23.59M | $5.7K | $1.4K | 168x | 高周转、高风险 |
+| **WaterX** | $465K | $1.93M | 未报告 | 未报告 | 4.1x | 目前规模较小 |
+| **Typus Perp** | $8.8K | $2.6K | $22 | $9.5 | 0.3x | 基本没有当前交易流 |
+
+来源：[Astros Perp](https://defillama.com/protocol/astros-perp)、[Aftermath Perps](https://defillama.com/protocol/aftermath-perps)、[DipCoin Perps](https://defillama.com/protocol/dipcoin-perps)、[Bluefin Pro](https://defillama.com/protocol/bluefin-pro)、[Sudo Perps](https://defillama.com/protocol/sudo-perps)、[ZO Perps](https://defillama.com/protocol/zo-perps)、[WaterX](https://defillama.com/protocol/waterx)、[Typus Perp](https://defillama.com/protocol/typus-perp)。
+
+<chart item_id="sui_perp_30d"></chart>
+
+### 1. Astros Perp：当前交易量第一，但不能简单视为最强项目
+
+Astros 的 30d Perp 名义交易量约 **$444.9M**，明显高于其他 Sui Perp 协议，但 TVL 只有约 **$271K**。
+
+这意味着交易量 / TVL 约 **1,642x**。这个比例非常高，可能来自：
+
+- 高杠杆；
+- 高资金周转；
+- 较低保证金要求；
+- 市场做市或内部流动性；
+- 交易量口径差异；
+- 活跃用户数量较少但交易频率高。
+
+Astros 官方将产品定位为高性能 Sui 交易引擎，强调 sub-second execution 和 Perp yield vault。[Astros 官方网站](https://astros.ag/)。
+
+Astros 值得研究的地方：
+
+- 交易量获取能力；
+- 是否形成了独特的用户群；
+- Vault 是否能稳定吸收资金；
+- 低 TVL 下如何实现交易深度；
+- 极端行情时的清算和保险机制。
+
+但如果要建立合作或进行投资，必须进一步拿到：
+
+- Open Interest；
+- 独立活跃交易者；
+- 日均交易者留存；
+- 清算损益；
+- 保险基金余额；
+- LP 或 Vault 的真实收益；
+- 交易量是否包含内部对冲或重复计量。
+
+**当前结论：Astros 是交易量领先者，但还不是风险调整后最稳健的 Perp 项目。**
+
+### 2. Aftermath Perps：全链上方向有差异化，但安全风险最高
+
+Aftermath Perps 是 Sui 上的全链上 Perp 协议，官方文档称其订单、成交和取消操作都基于 Sui 交易执行。[Aftermath Perpetuals 文档](https://docs.aftermath.finance/perpetuals/aftermath-perpetuals)。
+
+当前数据：
+
+- 30d Perp 交易量：约 **$75.96M**；
+- 7d 交易量：约 **$11.25M**；
+- 24h 交易量：约 **$806K**；
+- 累计 Perp 交易量：约 **$245.45M**。
+
+它的优点是全链上透明、架构原生化和综合 DeFi 产品组合。
+
+但 DeFiLlama 记录了 **2026 年 4 月 29 日约 $1.14M 的协议逻辑安全事件**。[Aftermath Perps 数据页](https://defillama.com/protocol/aftermath-perps)。
+
+因此 Aftermath 的核心研究问题不是交易量，而是：
+
+- 事故根因是否已经修复；
+- 是否经过独立审计；
+- 保险基金和用户赔付情况；
+- Perp 合约是否升级过；
+- 新版本是否与旧版本隔离；
+- 事件之后的真实用户留存。
+
+**当前结论：Aftermath 有产品和交易量，但必须把安全审计和事故复盘放在基本面研究之前。**
+
+### 3. DipCoin Perps：产品焦点正在转向 Perp 和 Vault
+
+DipCoin 30d Perp 交易量约 **$67.69M**，TVL约 **$1.94M**，协议收入约 **$26.6K**。
+
+DipCoin 官方目前强调：
+
+- CEX-like trading speed；
+- DEX transparency；
+- Perp；
+- Vault；
+- 自动化交易策略。
+
+其 Swap 和 Liquidity Pool 服务据搜索结果显示已于 **2026 年 7 月 13 日停止**，产品重点转向 Perp 和 Vault。[DipCoin 官方网站](https://www.dipcoin.io/)；[产品调整公告](https://medium.com/@dipcoinofficial/streamlining-the-product-dipcoin-has-sunset-its-swap-and-liquidity-pool-services-fe19aaa8dc1d)。
+
+这可能是积极信号，因为团队减少了产品线分散；也可能说明现货业务无法形成足够竞争力。
+
+**当前结论：DipCoin 是值得关注的 Perp 专注型项目，但需要验证停止现货后的用户是否真正迁移到 Perp，而不是整体流量下降。**
+
+### 4. Bluefin Pro：最完整的交易所式 Perp 竞争者
+
+Bluefin Pro 30d Perp 交易量约 **$38.58M**，TVL约 **$1.59M**。
+
+相比 Astros 的交易量，它不是当前第一名；但 Bluefin 的优势在于产品完整度：
+
+- 现货和 Perp 同时存在；
+- 订单簿架构；
+- 链下撮合、链上结算；
+- API；
+- 专业交易终端；
+- 长期累计交易量；
+- 机构和做市商更容易理解的产品形态。
+
+Bluefin 更像一个真正的交易平台，而不仅是一个资金池型 Perp。其挑战是当前交易量仍然不足以证明已经建立了强大的用户网络。
+
+**当前结论：如果要研究 Sui 上的 Perp 交易架构，Bluefin 是最值得作为基准项目的对象；如果单看当前交易量，Astros 更强，但 Bluefin 的结构和长期可扩展性更清晰。**
+
+### 5. Sudo 和 ZO：有用户体验差异化，但资本厚度仍有限
+
+Sudo Perps 当前：
+
+- TVL：约 **$2.91M**；
+- 30d Perp 交易量：约 **$23.8M**；
+- 30d 协议收入：约 **$1.3K**。
+
+Sudo 的官方叙事是 Sui 原生、Move 构建、sub-second 和零价格冲击交易。[Sudo 文档](https://docs.sudo.finance/)。
+
+ZO Perps 当前：
+
+- TVL：约 **$140K**；
+- 30d Perp 交易量：约 **$23.59M**；
+- 30d 协议收入：约 **$1.36K**。
+
+ZO 强调多抵押品、收益型保证金、预言机定价和零滑点交易。[ZO 官方网站](https://zofinance.io/)。
+
+两者的问题是交易量 / TVL 比例较高，尤其 ZO 达到约 **168x**。这可以体现资本效率，也可能意味着：
+
+- 真实资金规模不足；
+- LP 风险集中；
+- 交易量依赖少数账户；
+- 极端行情的坏账风险高；
+- 交易量和协议收入不匹配。
+
+---
+
+## 项目代币与经济性
+
+以下是主要 Sui 交易协议代币的当前快照。代币价格、交易量、市值和 FDV 均为 **2026-09-27 UTC 左右的冻结快照**，不代表协议价值或未来收益。
+
+<tokentable item_id="sui_protocol_tokens"></tokentable>
+
+### 代币层面的重要结论
+
+- **CETUS**：流通比例最高，协议本身交易量和手续费最强，但安全事件是长期折价因素。
+- **DEEP**：市值和交易量较高，具备基础设施叙事；但 FDV 约为市值 4 倍，解锁是重要风险。
+- **BLUE**：市值较低，FDV 稀释相对较小，但当前 Perp 交易量还不足以支撑非常强的价值捕获逻辑。
+- **TURBOS**：市值很小，协议交易量相对其 TVL 较高，但代币流动性和长期留存风险明显。
+- **MMT**：金融操作系统、RWA 和资产管理叙事较强，但 FDV 约为市值 4.9 倍，必须依靠协议收入和实际 TVL 增长消化估值。
+
+需要避免的误区是：
+
+> **协议交易量大，不代表代币一定有价值捕获；代币市值低，也不代表协议一定便宜。**
+
+需要单独研究：
+
+- 交易费用是否进入国库；
+- LP、做市商和代币持有者如何分配收入；
+- 是否存在回购、销毁或质押收益；
+- 代币解锁节奏；
+- 用户激励是否会造成短期交易量；
+- 交易量增长是否带来协议收入同步增长。
+
+---
+
+## 对新团队的机会判断
+
+### 不建议做：普通 AMM
+
+Sui 现货 DEX 已经有：
+
+- Cetus 的 CLMM；
+- DeepBook 的 CLOB；
+- Bluefin 的订单簿；
+- Turbos 的 CLMM + 路由 + Launchpad；
+- Momentum 的 ve(3,3) 与资产管理；
+- Aftermath 的综合 DeFi / 聚合器。
+
+因此，“低手续费 AMM”“更漂亮的前端”“新的流动性挖矿”都不足以形成长期护城河。
+
+### 更值得做的四个方向
+
+#### 1. Sui DEX 聚合与智能路由
+
+当前流动性分散在 Cetus、DeepBook、Bluefin Spot、Turbos 和其他协议之间。
+
+新协议可以做：
+
+- 多 DEX 智能路由；
+- CLOB + AMM 混合报价；
+- 价格和深度实时比较；
+- 订单拆分；
+- MEV / sandwich 保护；
+- Intent solver；
+- 钱包和交易机器人 API；
+- 自动选择最优 LP 池。
+
+这比建立新池子更合理，因为真正的痛点不是缺少 DEX，而是：
+
+> **交易者需要更好的统一流动性入口，做市商需要更好的订单流。**
+
+#### 2. 统一保证金与清算层
+
+Sui 上已有多个 Perp 交易平台，但资金和账户彼此隔离。
+
+可以研究：
+
+- 统一保证金账户；
+- 多 Perp 平台资产视图；
+- 跨协议风险监控；
+- 统一清算预警；
+- 保险基金；
+- 资金费率套利；
+- 交易员和 Vault 的风险分层；
+- 多抵押品借贷；
+- 现货、Perp、借贷和收益策略联动。
+
+这是比“再做一个 Perp 前端”更有价值的基础设施方向。
+
+#### 3. Sui 原生的高性能订单簿 Perp
+
+如果一定要做新 Perp，建议考虑：
+
+- 链下高频撮合；
+- 链上可验证结算；
+- 每个市场独立状态；
+- 分片订单簿；
+- 并行清算；
+- 统一保证金；
+- 做市商 API；
+- 深度和风险数据开放；
+- 与 DeepBook 的现货流动性连接。
+
+Bluefin 是这种架构的现实参考，但新项目必须在某个细分市场上拥有独占优势，例如：
+
+- 新资产 Perp；
+- Sui 原生资产；
+- RWA；
+- Meme；
+- 游戏资产；
+- 事件型市场；
+- 亚洲地区或特定语言用户；
+- 交易机器人和量化 API。
+
+#### 4. 新资产发行到交易的闭环
+
+Turbos 的 Launchpad、Cetus 的流动性、DeepBook 的订单簿和 Perp 协议之间仍有组合空间。
+
+可构建的闭环：
+
+1. 新资产发行；
+2. 自动创建现货池；
+3. 通过聚合器提供初始流动性；
+4. 达到交易量和持仓条件后自动上线 Perp；
+5. 交易者使用统一账户；
+6. LP、Vault 和做市商共享策略。
+
+这类产品的护城河不是合约本身，而是**资产来源和用户分发**。
+
+---
+
+## 风险与数据口径
+
+1. **协议页面数据不是全链统一审计数据。**不同协议的交易量可能受到聚合器、路由、重复交易、内部撮合和统计方式影响。
+
+2. **Perp 交易量是名义交易量。**Astros 的 $444.9M 交易量并不代表其拥有 $444.9M 的资产或保证金。
+
+3. **低 TVL / 高交易量项目需要特别谨慎。**Astros 和 ZO 的交易量 / TVL 极高，可能意味着高资本周转，也可能意味着清算和流动性风险被低估。
+
+4. **Cetus 的安全事件不能忽略。**即使当前交易量恢复，历史漏洞仍会影响合约信任、机构资金和 LP 风险溢价。
+
+5. **Sui 的稳定币规模仍然有限。**当前 USD 稳定币供给约 $483.6M，相比 Ethereum、Solana 或 BSC 仍小。Perp 生态未来能否继续增长，很大程度取决于稳定币、SUI 抵押品和跨链资产的进入。
+
+6. **DeepBook 的收入率较低。**高交易量并不自动转化为高协议收入。新项目需要明确是赚取交易费、路由费、做市费、清算费还是资产管理费。
+
+---
+
+## 结论
+
+Sui 上最值得关注的项目可以分为三类：
+
+**现货流动性龙头：Cetus。**  
+它拥有当前最大的交易量、TVL 和手续费规模，但受到安全历史和新竞争者的长期挑战。
+
+**底层交易基础设施：DeepBook。**  
+它更像 Sui 的订单簿和流动性层，而不是普通 DEX。对于未来的 Perp、保证金、预测市场和交易终端，DeepBook 具有较强的基础设施价值。
+
+**综合交易平台：Bluefin。**  
+它同时覆盖现货和 Perp，架构上更接近一个链上交易所，适合作为 Sui Perp 产品的对标对象。
+
+Perp 方面，**Astros 当前交易量最强，但风险调整后不能直接排第一；Bluefin 的产品结构更完整；Aftermath 和 DipCoin 的交易量也值得关注，但分别需要重点审查安全和产品迁移；Sudo、ZO 属于中小规模、高周转的成长型项目。**
+
+**底线判断。**如果你要在 Sui 上做新项目，我不会选择再做一个普通 AMM，也不会直接复制一个 BTC/ETH Perp。最有机会的方向是：
+
+> **Sui 原生 DEX 聚合 + 统一保证金 + Perp 风险管理 + 新资产交易闭环。**
+
+这会比单独和 Cetus、DeepBook 或 Bluefin 争夺同一批交易量，更有可能形成长期护城河。

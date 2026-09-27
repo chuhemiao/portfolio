@@ -1,0 +1,343 @@
+---
+title: 'Sui DEX and Perp DEX Ecosystem Research Report'
+publishedAt: '2026-09-27'
+summary: 'Sui spot liquidity has consolidated around Cetus, DeepBook, and Bluefin, while perpetual markets remain fragmented. The strongest opportunities are aggregation, unified margin, risk infrastructure, and new-asset trading loops.'
+slug: 'sui-dex-perp-dex-ecosystem-project-research-en'
+category: 'research'
+language: 'en'
+translationSlug: 'sui-dex-perp-dex-ecosystem-project-research'
+---
+
+# Sui DEX and Perp DEX: Ecosystem Project Research Report
+
+## TL;DR
+
+Sui's DEX and perpetual ecosystem is no longer an empty market. It is now in a phase defined by **concentrated spot volume, layered infrastructure, and a perpetual market whose competitive structure has not fully settled**.
+
+My core conclusions are:
+
+- **Spot DEX:** Cetus currently leads in liquidity and trading volume; DeepBook is the most important underlying order-book infrastructure; Bluefin Spot and Turbos are the main challengers.
+- **Perp DEX:** Astros has the highest reported 30-day notional volume, but its TVL is extremely low and the data requires careful verification. Aftermath, DipCoin, Bluefin Pro, Sudo, and ZO form the second tier.
+- **The most important long-term projects are not necessarily those with the highest headline volume.** DeepBook, Bluefin, and Cetus deserve the closest attention.
+  - Cetus: liquidity, CLMM infrastructure, and the asset-trading entry point.
+  - DeepBook: Sui's shared order-book and liquidity layer.
+  - Bluefin: an integrated spot, perpetual, and trading-terminal product.
+- **A new team should not build another generic AMM or another generic BTC/ETH perpetual venue.** More promising opportunities include:
+  1. Sui DEX aggregation and intelligent routing;
+  2. cross-protocol unified margin and liquidation infrastructure;
+  3. execution and market-making infrastructure for DeepBook, Cetus, and Bluefin;
+  4. an integrated path from new-asset issuance to spot and perpetual markets;
+  5. a Sui-native, high-performance order-book perpetual venue.
+
+Data cutoff: **2026-09-27 UTC**. Protocol data comes primarily from current DeFiLlama protocol pages, while token figures are frozen market snapshots. Perpetual volume is notional volume; it is not equivalent to collateral, revenue, or profit.
+
+---
+
+## Sui's Market Position
+
+Sui currently has approximately **$539.8M in chain TVL**, **$483.6M in USD stablecoin supply**, **$1.36B in 30-day spot DEX volume**, and **$52.9M in 24-hour volume**. Thirty-day volume increased roughly **41.9%** from the prior period.
+
+Sources: [Sui chain-level DEX data](https://api.llama.fi/overview/dexs/sui?excludeTotalDataChart=true&excludeTotalDataChartBreakdown=true), [DeFiLlama chain TVL](https://api.llama.fi/v2/chains), and [chain-level stablecoin supply](https://stablecoins.llama.fi/stablecoinchains).
+
+### Three Structural Advantages
+
+#### 1. An architecture suited to order books and high-frequency trading
+
+Sui's object model allows transactions involving independent objects to execute in parallel. This is attractive for order books, matching engines, accounts, and market-state separation.
+
+However, shared objects can become contention points. If orders, liquidity, or liquidations converge on one shared object, hot-state contention can erase part of the parallel-execution advantage. See the [Sui shared-object documentation](https://docs.sui.io/develop/objects/object-ownership/shared).
+
+High-performance trading protocols on Sui therefore still need contract-level designs such as:
+
+- isolated state for each market;
+- sharded order books;
+- limited global shared objects;
+- parallel liquidation;
+- non-blocking funding-rate updates;
+- separate insurance funds and risk engines.
+
+#### 2. High concentration in spot DEX flow
+
+The main protocols report the following 30-day spot volumes:
+
+| Project | Mechanism | TVL | 30d DEX volume | 30d fees | 30d protocol revenue | Volume / TVL |
+|---|---|---:|---:|---:|---:|---:|
+| **Cetus** | CLMM, aggregator, liquidity infrastructure | $31.22M | **$471.82M** | $731.9K | $146.4K | 15.1x |
+| **DeepBook** | Fully onchain CLOB and liquidity layer | $13.45M | **$313.74M** | $26.3K | $21.4K | 23.3x |
+| **Bluefin Spot** | Order-book spot exchange | $12.96M | **$231.00M** | $215.9K | $54.9K | 17.8x |
+| **Turbos** | CLMM, CLOB routing, launchpad | $3.94M | **$220.93M** | $142.1K | $42.6K | 56.1x |
+| **Aftermath AMM** | AMM, aggregator, integrated DeFi | $2.89M | $8.54M | $1.9K | $0 | 3.0x |
+
+Sources: [Cetus](https://defillama.com/protocol/cetus), [DeepBook](https://defillama.com/protocol/deepbook), [Bluefin](https://defillama.com/protocol/bluefin), [Turbos](https://defillama.com/protocol/turbos), and [Aftermath AMM](https://defillama.com/protocol/aftermath-amm).
+
+<chart item_id="sui_dex_30d"></chart>
+
+These five protocols report roughly **$1.25B** of combined 30-day spot volume, close to Sui's chain-level total. Protocol and chain statistics may differ because of routing, aggregation, and duplicate counting, so the numbers should not simply be added together. The market structure is nevertheless clear:
+
+> **Sui's spot DEX market already has meaningful concentration. A new project cannot create durable value merely by adding another pool.**
+
+---
+
+## Sui Spot DEX Projects
+
+### 1. Cetus: the leading spot-liquidity entry point
+
+**Overall rating: A**
+
+Cetus is one of Sui's most mature spot DEX and CLMM infrastructure projects. Its product scope includes concentrated-liquidity AMMs, Sui and Aptos deployment, aggregation, intent orders, vaults, liquidity incentives, and developer integrations.
+
+Current figures:
+
+- TVL: approximately **$31.22M**;
+- 30-day DEX volume: approximately **$471.82M**;
+- 30-day fees: approximately **$731.9K**;
+- 30-day protocol revenue: approximately **$146.4K**;
+- 30-day TVL growth: approximately **21.6%**;
+- CETUS market cap: approximately **$27.4M**;
+- CETUS FDV: approximately **$28.4M**;
+- circulating supply: approximately **96.5%** of total supply.
+
+Cetus leads in trading volume and fees, has mature CLMM mechanics and asset coverage, integrates broadly across the Sui ecosystem, and has relatively limited near-term dilution compared with DEEP and MMT.
+
+Its central risk is security history. DeFiLlama records a **roughly $223M Cetus incident in May 2025**, classified as an arithmetic and token/share accounting issue in Move contracts. See the [Cetus protocol page](https://defillama.com/protocol/cetus).
+
+Long-term partners and investors should examine upgrade authority, compensation and governance after the incident, LP-fund segregation, pool-listing procedures, oracle and price boundaries, and the risk of flow migrating to DeepBook or new routers.
+
+**Conclusion:** Cetus is Sui's spot DEX leader, but it is no longer a generic AMM that can be challenged easily.
+
+### 2. DeepBook: Sui's most important trading infrastructure
+
+**Overall rating: A-, with infrastructure value exceeding frontend brand value**
+
+DeepBook is Sui's native fully onchain central limit order book and shared-liquidity layer. It is designed to support spot, margin, and other markets rather than act only as a standalone trading interface. See the [DeepBook website](https://www.deepbook.tech/).
+
+Current figures:
+
+- TVL: approximately **$13.45M**;
+- 30-day DEX volume: approximately **$313.74M**;
+- 30-day fees: approximately **$26.3K**;
+- 30-day protocol revenue: approximately **$21.4K**;
+- 30-day TVL growth: approximately **12.2%**;
+- DEEP market cap: approximately **$56.8M**;
+- DEEP FDV: approximately **$227.1M**;
+- circulating supply: approximately **2.5B of 10B**, or **25%**.
+
+DeepBook's volume relative to TVL is high, its low fee rate can appeal to market makers and high-frequency traders, and its order books can serve wallets, aggregators, perpetual venues, margin protocols, and terminals.
+
+Its business model is best understood as:
+
+> **Trading infrastructure and shared liquidity, not a single AMM frontend.**
+
+The tradeoff is that direct protocol revenue remains low relative to volume, while DEEP's FDV is roughly four times its market cap, creating meaningful unlock and dilution risk.
+
+**Conclusion:** Any new Sui trading product should evaluate DeepBook as a core dependency. A new generic spot DEX must explain why it should not simply use DeepBook liquidity.
+
+### 3. Bluefin Spot: an integrated spot and derivatives platform
+
+**Overall rating: A-, with strong product completeness**
+
+Bluefin is one of the few Sui protocols combining spot and derivatives. It uses order-book trading, offchain matching, onchain settlement, low-latency execution, APIs, and an integrated spot/perpetual product suite.
+
+Current figures:
+
+- total Bluefin TVL: approximately **$14.79M**;
+- Bluefin Spot TVL: approximately **$12.96M**;
+- Bluefin Pro TVL: approximately **$1.59M**;
+- 30-day spot volume: approximately **$231M**;
+- 30-day perpetual volume: approximately **$38.58M**;
+- 30-day total fees: approximately **$233.3K**;
+- 30-day protocol revenue: approximately **$72.3K**;
+- BLUE market cap: approximately **$6.6M**;
+- BLUE FDV: approximately **$10.9M**.
+
+Sources: [Bluefin](https://bluefin.io/), [Bluefin protocol data](https://defillama.com/protocol/bluefin), and [Bluefin Pro](https://defillama.com/protocol/bluefin-pro).
+
+Bluefin most closely resembles a complete onchain exchange. Spot and perpetual products can share accounts and users, the order-book model is familiar to professional traders, and APIs create room for terminal integrations. Its challenges are declining recent perpetual volume relative to historical cumulative figures, competition across both product lines, continual market-making requirements, and an unproven governance and incentive system.
+
+**Conclusion:** Bluefin is one of the best product prototypes for a new Sui perpetual venue, but current volume does not establish monopoly power.
+
+### 4. Turbos: high turnover with limited capital depth
+
+**Overall rating: B+**
+
+Turbos combines a CLMM, CLOB routing, vaults, a launchpad, TurboStar/Turbos.Fun, new-asset trading, and ecosystem distribution. See [Turbos](https://turbos.finance/) and its [protocol data](https://defillama.com/protocol/turbos).
+
+Current figures:
+
+- TVL: approximately **$3.94M**;
+- 30-day DEX volume: approximately **$220.93M**;
+- 30-day fees: approximately **$142.1K**;
+- 30-day protocol revenue: approximately **$42.6K**;
+- TURBOS market cap: approximately **$925K**;
+- TURBOS FDV: approximately **$1.40M**.
+
+Its volume-to-TVL ratio of roughly **56x** may indicate capital efficiency, but it may also reflect concentration in a few active assets, shallow LP depth, weak retention, or short-lived issuance incentives.
+
+**Conclusion:** Turbos is better understood as a high-turnover asset-trading and launchpad platform than as Sui's deepest general liquidity center.
+
+### 5. Momentum: a financial operating-system thesis with limited current trading evidence
+
+**Overall rating: B+; strong long-term narrative, weaker current trading data**
+
+Momentum has expanded from a ve(3,3) DEX into vaults, liquid staking, treasury tools, asset management, RWA, cross-chain services, and TradFi interfaces. See [Momentum](https://www.mmt.finance/) and [protocol data](https://defillama.com/protocol/momentum).
+
+Current TVL is approximately **$4.2M**. Its strategy is best summarized as building a liquidity operating system through governance, incentives, asset management, and RWA.
+
+The risks are a broad product surface, uncertain focus, a roughly **$35.1M** circulating market cap against **$172.0M** FDV, and only **20.4%** circulating supply. If volume and protocol revenue lag token valuation, future supply pressure may be substantial.
+
+**Conclusion:** Momentum should be evaluated through its long-term ecosystem strategy, not token performance or funding pedigree alone.
+
+---
+
+## Sui Perpetual DEX Projects
+
+Sui's perpetual market is more fragmented than its spot market.
+
+| Project | TVL | 30d perp volume | 30d fees | 30d protocol revenue | Volume / TVL | Current assessment |
+|---|---:|---:|---:|---:|---:|---|
+| **Astros Perp** | $271K | **$444.92M** | $38.6K | $38.6K | **1,642x** | Highest volume, extremely thin asset base |
+| **Aftermath Perps** | Not reported | $75.96M | Not reported | Not reported | - | Meaningful volume; security review required |
+| **DipCoin Perps** | $1.94M | $67.69M | $26.6K | $26.6K | 34.9x | Clear perpetual focus |
+| **Bluefin Pro** | $1.59M | $38.58M | $17.4K | $17.4K | 24.3x | Complete order-book product |
+| **Sudo Perps** | $2.91M | $23.80M | $5.5K | $1.3K | 8.2x | More stable capital base |
+| **ZO Perps** | $140K | $23.59M | $5.7K | $1.4K | 168x | High turnover and high risk |
+| **WaterX** | $465K | $1.93M | Not reported | Not reported | 4.1x | Small current scale |
+| **Typus Perp** | $8.8K | $2.6K | $22 | $9.5 | 0.3x | Almost no current trading flow |
+
+Sources: [Astros Perp](https://defillama.com/protocol/astros-perp), [Aftermath Perps](https://defillama.com/protocol/aftermath-perps), [DipCoin Perps](https://defillama.com/protocol/dipcoin-perps), [Bluefin Pro](https://defillama.com/protocol/bluefin-pro), [Sudo Perps](https://defillama.com/protocol/sudo-perps), [ZO Perps](https://defillama.com/protocol/zo-perps), [WaterX](https://defillama.com/protocol/waterx), and [Typus Perp](https://defillama.com/protocol/typus-perp).
+
+<chart item_id="sui_perp_30d"></chart>
+
+### 1. Astros Perp: volume leader, but not automatically the strongest project
+
+Astros reports approximately **$444.9M** in 30-day notional volume but only **$271K** in TVL, producing a volume-to-TVL ratio of roughly **1,642x**. This may reflect high leverage, rapid capital turnover, low margin requirements, internal or concentrated market making, methodology differences, or a small number of highly active traders.
+
+Astros presents itself as a high-performance Sui trading engine with sub-second execution and a perpetual yield vault. See [Astros](https://astros.ag/).
+
+Before partnership or investment, diligence should obtain open interest, unique active traders, daily trader retention, liquidation PnL, insurance-fund balances, real vault returns, and an explanation of internal hedging or duplicated volume.
+
+**Conclusion:** Astros leads in reported volume, but is not yet the most robust venue on a risk-adjusted basis.
+
+### 2. Aftermath Perps: differentiated onchain design with the highest security burden
+
+Aftermath Perps is fully onchain; its documentation states that orders, fills, and cancellations execute through Sui transactions. See the [Aftermath perpetual documentation](https://docs.aftermath.finance/perpetuals/aftermath-perpetuals).
+
+It reports approximately **$75.96M** in 30-day volume, **$11.25M** in seven-day volume, **$806K** in 24-hour volume, and **$245.45M** in cumulative volume.
+
+DeFiLlama records a **roughly $1.14M protocol-logic incident on 2026-04-29**. See [Aftermath Perps data](https://defillama.com/protocol/aftermath-perps). Research must therefore prioritize root-cause remediation, independent audits, insurance and compensation, contract upgrades, version isolation, and post-incident retention.
+
+**Conclusion:** Aftermath has a differentiated product and meaningful volume, but security review comes before growth analysis.
+
+### 3. DipCoin Perps: narrowing toward perpetuals and vaults
+
+DipCoin reports approximately **$67.69M** in 30-day perpetual volume, **$1.94M** in TVL, and **$26.6K** in protocol revenue. It currently emphasizes CEX-like speed, DEX transparency, perpetuals, vaults, and automated strategies.
+
+Search results indicate that swap and liquidity-pool services ended on **2026-07-13**, shifting the product toward perpetuals and vaults. See [DipCoin](https://www.dipcoin.io/) and the [product update](https://medium.com/@dipcoinofficial/streamlining-the-product-dipcoin-has-sunset-its-swap-and-liquidity-pool-services-fe19aaa8dc1d).
+
+This may represent useful focus, or it may signal that spot products failed to gain traction. The key question is whether users migrated to perpetuals or left the platform entirely.
+
+### 4. Bluefin Pro: the most complete exchange-style perpetual competitor
+
+Bluefin Pro reports roughly **$38.58M** in 30-day volume and **$1.59M** in TVL. It does not lead on current volume, but its combined spot and perpetual products, order-book model, offchain matching, onchain settlement, API, and professional terminal create a clearer long-term architecture.
+
+**Conclusion:** Bluefin is the best benchmark for Sui perpetual product design. Astros is larger by current volume, but Bluefin has a more complete and extensible structure.
+
+### 5. Sudo and ZO: differentiated experiences with limited capital depth
+
+Sudo reports roughly **$2.91M** in TVL, **$23.8M** in 30-day volume, and **$1.3K** in protocol revenue. It markets a Sui-native Move implementation with sub-second and zero-price-impact trading. See [Sudo](https://docs.sudo.finance/).
+
+ZO reports roughly **$140K** in TVL, **$23.59M** in 30-day volume, and **$1.36K** in protocol revenue. It emphasizes multi-collateral accounts, yield-bearing margin, oracle pricing, and zero-slippage execution. See [ZO](https://zofinance.io/).
+
+ZO's volume-to-TVL ratio of roughly **168x** may show efficiency, but it can also indicate shallow real capital, concentrated LP risk, reliance on a small number of accounts, and underpriced bad-debt risk during extreme markets.
+
+---
+
+## Protocol Tokens and Economics
+
+The following component represents a frozen token snapshot around **2026-09-27 UTC**. Price, volume, market cap, and FDV do not by themselves establish protocol value.
+
+<tokentable item_id="sui_protocol_tokens"></tokentable>
+
+Key conclusions:
+
+- **CETUS:** highest circulating ratio and strongest protocol volume and fees, offset by the long-term discount from its security history.
+- **DEEP:** stronger infrastructure narrative and trading activity, but FDV is roughly four times market cap; unlocks matter.
+- **BLUE:** low market cap and relatively lower dilution, but current perpetual volume does not yet establish strong value capture.
+- **TURBOS:** very small market cap and high turnover relative to TVL, with material token-liquidity and retention risk.
+- **MMT:** ambitious financial operating-system, RWA, and asset-management narrative, but FDV is roughly 4.9 times market cap and requires real revenue and TVL growth.
+
+The central mistake to avoid is:
+
+> **High protocol volume does not guarantee token value capture, and a low token market cap does not make a protocol cheap.**
+
+Research must separately examine treasury fee flows, the split among LPs, market makers and token holders, buybacks or staking yield, unlock schedules, incentive-driven volume, and whether revenue grows with volume.
+
+---
+
+## Opportunities for New Teams
+
+### Do not build another generic AMM
+
+Sui already has Cetus CLMM liquidity, DeepBook CLOB infrastructure, Bluefin order books, Turbos routing and launchpad products, Momentum's ve(3,3) and asset management, and Aftermath's integrated DeFi stack. Lower fees, a prettier frontend, or another liquidity-mining program are not durable moats.
+
+### Four more promising directions
+
+#### 1. DEX aggregation and intelligent routing
+
+Liquidity is fragmented across Cetus, DeepBook, Bluefin Spot, Turbos, and smaller venues. A useful product could combine AMM and CLOB quotes, compare price and depth, split orders, protect against MEV and sandwich attacks, run intent solvers, expose wallet and trading-bot APIs, and select optimal LP venues.
+
+> **Traders need a unified liquidity entry point; market makers need better order flow.**
+
+#### 2. Unified margin and liquidation infrastructure
+
+Sui has several perpetual venues, but capital and accounts remain isolated. Opportunities include unified margin, cross-venue portfolio views, risk monitoring, liquidation alerts, insurance funds, funding-rate arbitrage, tiered trader and vault risk, multi-collateral lending, and combined spot, perpetual, lending, and yield strategies.
+
+#### 3. A Sui-native high-performance order-book perpetual venue
+
+A new venue should consider offchain high-frequency matching, verifiable onchain settlement, isolated market state, sharded order books, parallel liquidation, unified margin, market-maker APIs, open depth and risk data, and integration with DeepBook spot liquidity.
+
+Bluefin is the practical benchmark, so a challenger still needs an exclusive vertical such as new-asset perpetuals, Sui-native assets, RWA, memes, gaming assets, event markets, regional users, or quantitative APIs.
+
+#### 4. A closed loop from issuance to spot and perpetual trading
+
+There is still room to combine Turbos-style issuance, Cetus liquidity, DeepBook order books, and perpetual venues:
+
+1. issue a new asset;
+2. create a spot pool automatically;
+3. route initial liquidity through aggregators;
+4. list a perpetual market after volume and holder thresholds are met;
+5. use one trading account;
+6. share strategies across LPs, vaults, and market makers.
+
+The moat is not the contract itself. It is **asset sourcing and user distribution**.
+
+---
+
+## Risks and Data Methodology
+
+1. **Protocol pages are not a unified chain audit.** Aggregators, routers, repeated trades, internal matching, and different methodologies can affect reported volume.
+2. **Perpetual volume is notional.** Astros reporting $444.9M of volume does not mean it holds $444.9M in collateral or assets.
+3. **Low-TVL, high-volume projects need additional scrutiny.** Astros and ZO may have high capital velocity, or they may understate liquidity and liquidation risk.
+4. **The Cetus incident remains material.** Recovered volume does not erase the impact on contract trust, institutional capital, or LP risk premiums.
+5. **Sui's stablecoin base remains limited.** Approximately $483.6M is small relative to Ethereum, Solana, or BSC. Future perpetual growth depends on stablecoins, SUI collateral, and bridged assets.
+6. **DeepBook has a low revenue rate.** High volume does not automatically produce protocol revenue. A new project must identify whether it earns routing, trading, market-making, liquidation, or asset-management fees.
+
+---
+
+## Conclusion
+
+The leading Sui projects fall into three categories:
+
+**Spot-liquidity leader: Cetus.** It leads in current volume, TVL, and fees, but carries security-history and competition risk.
+
+**Trading infrastructure: DeepBook.** It is closer to Sui's shared order-book and liquidity layer than to a conventional DEX. Its strategic value extends to perpetuals, margin, prediction markets, and terminals.
+
+**Integrated trading platform: Bluefin.** It combines spot and perpetual products in an exchange-like architecture and is the clearest benchmark for Sui perpetual design.
+
+In perpetuals, **Astros leads in reported volume but should not rank first without risk adjustment; Bluefin has the most complete structure; Aftermath and DipCoin deserve attention but require security and migration diligence; Sudo and ZO remain smaller, high-turnover growth projects.**
+
+**Bottom line:** a new Sui project should not build another generic AMM or copy a BTC/ETH perpetual venue. The strongest opportunity is:
+
+> **Sui-native DEX aggregation + unified margin + perpetual risk management + a new-asset trading loop.**
+
+This has a better chance of creating a durable moat than competing directly with Cetus, DeepBook, or Bluefin for the same flow.

@@ -92,6 +92,7 @@ function main() {
   const files = getBlogMDXFiles();
   const errors = [];
   const slugToFile = new Map();
+  const translationLinks = [];
 
   for (const filePath of files) {
     const relativePath = path.relative(process.cwd(), filePath);
@@ -128,6 +129,31 @@ function main() {
 
     if (!isValidDate(metadata.publishedAt)) {
       errors.push(`${relativePath}: publishedAt must be YYYY-MM-DD`);
+    }
+
+    if (metadata.language !== undefined && !['zh', 'en'].includes(metadata.language)) {
+      errors.push(`${relativePath}: language must be "zh" or "en"`);
+    }
+
+    if (
+      metadata.translationSlug !== undefined &&
+      (typeof metadata.translationSlug !== 'string' || metadata.translationSlug.trim().length === 0)
+    ) {
+      errors.push(`${relativePath}: translationSlug must be a non-empty string`);
+    } else if (typeof metadata.translationSlug === 'string') {
+      translationLinks.push({
+        sourceSlug: slug,
+        targetSlug: normalizeSlug(metadata.translationSlug),
+        relativePath,
+      });
+    }
+  }
+
+  for (const link of translationLinks) {
+    if (link.sourceSlug === link.targetSlug) {
+      errors.push(`${link.relativePath}: translationSlug cannot reference the same post`);
+    } else if (!slugToFile.has(link.targetSlug)) {
+      errors.push(`${link.relativePath}: translationSlug "${link.targetSlug}" does not exist`);
     }
   }
 

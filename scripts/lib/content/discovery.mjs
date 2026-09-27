@@ -108,10 +108,14 @@ function toPlainValue(value) {
 }
 
 export function toIndexMetadata(data) {
+  const inferredLanguage = /[\u3400-\u9fff]/.test(`${data.title ?? ''} ${data.summary ?? ''}`)
+    ? 'zh'
+    : 'en';
   const meta = {
     title: toPlainValue(data.title),
     publishedAt: toPlainValue(data.publishedAt),
-    summary: toPlainValue(data.summary)
+    summary: toPlainValue(data.summary),
+    language: data.language === 'zh' || data.language === 'en' ? data.language : inferredLanguage
   };
 
   if (data.category !== undefined && data.category !== null) {
@@ -120,6 +124,10 @@ export function toIndexMetadata(data) {
 
   if (data.image !== undefined && data.image !== null) {
     meta.image = toPlainValue(data.image);
+  }
+
+  if (data.translationSlug !== undefined && data.translationSlug !== null) {
+    meta.translationSlug = toPlainValue(data.translationSlug);
   }
 
   return meta;

@@ -1,0 +1,584 @@
+---
+title: '主流公链上的新 DEX / Perp DEX：长期选链研究'
+publishedAt: '2026-09-27'
+summary: '新现货 DEX 应优先评估 Solana 与 Base，新 Perp DEX 更适合 Base、Solana 或 Hyperliquid HIP-3；真正决定长期胜率的不是 TPS，而是交易流、稳定币、做市商、分发与风险管理。'
+slug: 'mainstream-chain-dex-perp-dex-long-term-chain-selection-research'
+category: 'research'
+---
+
+# 主流公链上的新 DEX / Perp DEX - 长期选链研究
+
+## TL;DR
+
+如果你准备长期做一个新协议，我的结论不是“所有链都部署一遍”，而是：
+
+1. **新现货 DEX：优先考虑 Solana、Base，其次是 BSC。**
+   - **Solana**：当前交易流最强，适合高频交易、meme、新资产发行、聚合器和高性能 AMM。
+   - **Base**：适合 EVM、USDC、Coinbase 钱包和消费级用户分发，尤其适合做新型交易体验。
+   - **BSC**：用户和交易量非常大，但 PancakeSwap 与 Binance 生态的竞争壁垒也最高。
+
+2. **新 Perp DEX：优先考虑 Base 或 Solana；如果接受“基于现有基础设施构建”，则直接考虑 Hyperliquid HIP-3。**
+   - **Base**：适合 EVM、USDC 结算、合规友好、社交交易、RFQ/Intent 和半中心化撮合。
+   - **Solana**：适合低延迟订单簿、零售高频、长尾资产和高性能清算，但竞争已经很激烈。
+   - **Hyperliquid**：不建议正面复制一个新的 Hyperliquid；更合理的是利用 HIP-3 做垂直市场、指数、商品、股票或区域化交易产品。
+
+3. **Ethereum 最适合作为资本和流动性中心，而不是新的零售 Perp DEX 首发链。**
+
+4. **Monad 和 Sui 有较高的早期进入价值，但目前更适合作为第二下注或测试市场，不建议在没有做市商和流动性承诺时作为唯一主战场。**
+
+5. **Arbitrum、Avalanche、Aptos 不适合无差异化地再做一个通用 DEX/Perp DEX。**除非你已经拥有明确的做市商、钱包、交易员或协议分发渠道。
+
+数据截点：**2026-09-27 UTC**。链级 DEX 数据、TVL 和稳定币数据为访问时快照；趋势和链上协议数据不是同一统计口径，以下会明确区分。
+
+---
+
+## 市场地图：流动性、稳定币与真实交易流
+
+目前值得考虑的公链，可以先分成四类：
+
+- **流动性中心**：Ethereum、Solana、BSC、Base
+- **Perp 专用或交易型网络**：Hyperliquid
+- **高速新兴链**：Monad、Sui
+- **成熟但边际流量减弱的 EVM 链**：Arbitrum、Avalanche、Aptos
+
+下表使用过去 30 天现货 DEX 交易量、当前 TVL、USD 稳定币供给以及 DEX/TVL 周转率进行横向比较。DEX/TVL 是我根据两项数据计算的指标，只用于衡量资金周转和交易活跃度，不等同于协议收入。
+
+| 公链 | 当前 TVL | USD 稳定币供给 | 30d 现货 DEX 量 | 24h DEX 量 | DEX/TVL | 前一 30d 变化 |
+|---|---:|---:|---:|---:|---:|---:|
+| **Solana** | $6.63B | $17.56B | **$76.71B** | **$2.35B** | **11.57x** | -37.5% |
+| **Ethereum** | **$53.73B** | **$146.47B** | $41.94B | $929M | 0.78x | -51.8% |
+| **BSC** | $5.85B | $13.84B | $34.72B | $729M | 5.93x | -30.6% |
+| **Base** | $6.28B | $5.03B | $27.00B | $518M | 4.30x | -48.9% |
+| **Arbitrum** | $1.46B | $3.75B | $6.10B | $67.9M | 4.19x | -73.6% |
+| **Avalanche** | $630M | $1.45B | $3.28B | $109M | 5.21x | -14.5% |
+| **Monad** | $1.02B | $692M | $4.23B | $191M | 4.16x | **+77.6%** |
+| **Sui** | $541M | $484M | $1.36B | $52.9M | 2.50x | **+41.9%** |
+| **Aptos** | $55.6M | $970M | $270M | $6.0M | 4.85x | -65.0% |
+
+来源：DeFiLlama 的[链级 DEX 面板](https://defillama.com/dexs/chains)、[链级 TVL 数据](https://api.llama.fi/v2/chains)、[稳定币链级供给数据](https://stablecoins.llama.fi/stablecoinchains)。
+
+<chart item_id="chain_dex_tvl"></chart>
+
+### 关键观察一：Solana 是目前最强的“交易流公链”
+
+Solana 的 30d 现货 DEX 交易量约 **$76.7B**，显著高于 Ethereum、BSC 和 Base；同时 USD 稳定币供给达到 **$17.6B**，DEX/TVL 周转率约 **11.6x**。
+
+这说明 Solana 的优势不是单纯 TVL，而是：
+
+- 资产发行速度快；
+- 零售交易频率高；
+- 低手续费适合高频和小额交易；
+- 聚合器、钱包和交易终端的分发效率强；
+- Meme、新资产、短生命周期资产交易活跃。
+
+但这也是它的缺点：**交易流很大，竞争也最激烈。**新项目不能只做“另一个 Raydium、Orca 或 Jupiter 前端”。
+
+Solana 官方近期继续推进性能扩容，包括将区块计算容量提升至 100M CU，并持续推进更低延迟的网络升级。[Solana 100M CU 升级](https://solana.com/upgrades/100m-cu-blocks)；[Solana 2026 年 9 月更新](https://solana.com/news/solana-changelog-september-18-2026)。
+
+### 关键观察二：BSC 的用户和交易量非常强，但竞争壁垒也最高
+
+BSC 的 30d 现货 DEX 交易量约 **$34.7B**，USD 稳定币约 **$13.8B**。链上 DEX 活跃度进一步显示：
+
+| 协议 / 公链 | 30d 活跃交易者 | 交易笔数 | USD 交易量 | USD enrichment |
+|---|---:|---:|---:|---:|
+| PancakeSwap / BSC | **1.88M** | **136.6M** | **$37.3B** | 77.6% |
+| Aerodrome / Base | 144.7K | 16.5M | $9.42B | 72.0% |
+| Uniswap / Ethereum | 107.2K | 5.22M | $9.23B | 57.2% |
+| Uniswap / Arbitrum | 34.0K | 6.78M | $3.21B | 76.2% |
+
+BSC 的优点是：
+
+- 用户规模大；
+- 交易频率高；
+- Binance 生态具有强分发能力；
+- 低手续费适合零售、meme 和高杠杆交易；
+- 稳定币和交易资产供给较充足。
+
+但问题是：**PancakeSwap 已经占据强势入口，Binance 也拥有天然的中心化交易分发优势。**
+
+如果没有 Binance 生态、钱包入口、区域化用户或者独家资产，做一个通用 BSC DEX 的胜率并不高。BNB Chain 仍在持续推进更快出块和更高吞吐，官方路线图强调了 450ms 区块间隔、650ms 级最终性以及约 5,200 TPS 的性能目标。[BNB Chain H2 2026 技术路线图](https://www.bnbchain.org/en/blog/bnb-chain-h2-2026-tech-roadmap-doubling-down-on-speed)。
+
+### 关键观察三：Base 的绝对交易量不如 Solana/BSC，但更适合新团队做产品创新
+
+Base 的 30d DEX 交易量约 **$27.0B**，TVL **$6.28B**，稳定币约 **$5.03B**。Aerodrome 单协议在 30d 内有约 **14.5 万活跃交易者**和 **$9.42B** USD 交易量。
+
+Base 的核心价值不完全是当前交易量，而是：
+
+- EVM 兼容；
+- USDC 流动性较强；
+- Coinbase 钱包和用户分发具有潜在优势；
+- 更适合做交易终端、社交交易、RFQ、Intent、收益型 LP 和合规化产品；
+- Solidity 开发和现有基础设施迁移成本较低。
+
+Base 官方文档将其定位为由 Coinbase 推动的链上经济基础设施。[Base 官方文档](https://docs.base.org/get-started/base)。
+
+因此，**如果团队偏 EVM、USDC、美国用户、合规交易体验或消费级钱包入口，Base 可能是最好的首发链。**
+
+---
+
+## 新 DEX：Solana、Base、BSC 是第一梯队
+
+### 1. Solana：最适合做“高频、资产发行和交易体验”型 DEX
+
+**长期评级：A**
+
+适合的产品方向：
+
+- 新资产发行后的首发交易；
+- Meme 和长尾资产交易；
+- CLMM + 自动化 LP 管理；
+- 面向做市商的专业交易池；
+- Intent-based swap；
+- MEV 保护；
+- 钱包内置交易；
+- 面向交易员的专业订单路由；
+- 与 Perp、借贷、收益策略组合的现货入口。
+
+不适合的方向：
+
+- 仅仅复制 AMM；
+- 仅仅做一个更漂亮的 Jupiter 前端；
+- 没有独特资产来源和用户分发的通用 DEX；
+- 只靠短期挖矿补贴制造交易量。
+
+**Solana 上的新 DEX 必须拥有至少一个“独占流量来源”：**
+
+1. 独家发行平台；
+2. 钱包或交易终端入口；
+3. 独家资产或区域化资产；
+4. 专业做市商和更优价格；
+5. Meme/新资产发现机制；
+6. 与 Perp、借贷、社交交易联动。
+
+如果没有上述条件，Solana 的高交易量反而会成为幻觉：你可以获得短期交易，但很难获得稳定的 LP 和留存用户。
+
+### 2. Base：最适合做“EVM 原生的新一代交易产品”
+
+**长期评级：A-**
+
+Base 的优势不是简单的低费，而是它将几个要素结合在一起：
+
+- EVM 开发效率；
+- 稳定币结算；
+- Coinbase 相关用户和钱包分发；
+- 比 Ethereum L1 更适合零售交易；
+- 比 Arbitrum 更强的当前现货交易流；
+- 更适合把交易产品做成消费级应用。
+
+适合的 DEX 方向：
+
+- USDC 交易对和稳定币兑换；
+- RFQ / Intent / Solver 交易；
+- 机构或半机构 OTC；
+- 社交交易；
+- 钱包内嵌交易；
+- RWA 和合规资产交易；
+- 跨链资产统一交易账户；
+- 现货 + Perp + 借贷组合。
+
+Base 的风险是 Aerodrome 已经拥有较强的本地流动性，所以不应做“另一个 Aerodrome”。更好的方式是**利用 Aerodrome、Uniswap 或聚合器的流动性，自己控制前端、路由、用户关系和交易策略层**。
+
+### 3. BSC：适合有分发能力的团队，不适合纯技术创业
+
+**长期评级：B+**
+
+BSC 是非常强的交易市场，但不是容易切入的市场。
+
+适合：
+
+- 亚洲和新兴市场零售用户；
+- 高波动 altcoin；
+- Meme；
+- 低费高频交易；
+- 交易机器人；
+- 钱包和 CEX 联动；
+- 区域化或语言化交易产品。
+
+不适合：
+
+- 没有分发能力的纯技术团队；
+- 纯粹复制 PancakeSwap；
+- 只靠更低交易费；
+- 依赖补贴而没有真实用户来源。
+
+我的判断是：**如果你已经拥有 Binance 生态、钱包、KOL、交易机器人或某个区域市场，BSC 的优先级可以上升到第一梯队；如果没有，Base 往往更适合新团队做产品创新。**
+
+### 4. Ethereum：流动性中心，不是首发执行场
+
+**长期评级：资本层 A，零售新 DEX B，零售新 Perp C**
+
+Ethereum 仍然拥有：
+
+- 最大的 TVL；
+- 最大的 USD 稳定币供给；
+- 最深的蓝筹资产流动性；
+- 最强的机构和 DeFi 组合资金；
+- 最成熟的开发者和安全审计生态。
+
+但这些优势不代表适合在 Ethereum L1 上重新做一个面向零售的 DEX 或 Perp DEX。
+
+Ethereum L1 更适合：
+
+- 稳定币和 RWA；
+- 机构级交易；
+- 高价值资产；
+- 跨链流动性结算；
+- 协议金库；
+- 作为多链 DEX 的流动性中心。
+
+对于零售 Perp，手续费、确认速度、清算响应和用户体验都不是最优。更好的架构是：
+
+> Ethereum 作为资产和流动性来源，Base、Arbitrum、Solana 或 Hyperliquid 作为交易执行场。
+
+---
+
+## 新 Perp DEX：Base、Solana 和 Hyperliquid 的逻辑不同
+
+### 1. Base：新 Perp DEX 的综合平衡最好
+
+**长期评级：A-，尤其适合 EVM 原生团队**
+
+Base 适合构建：
+
+- USDC 结算；
+- 统一保证金；
+- 社交交易；
+- 复制交易；
+- RFQ 或订单簿撮合；
+- 面向专业交易员的 API；
+- 受监管地区的产品分层；
+- 现货 + Perp + 借贷组合账户。
+
+Base 的优势在于：你可以使用成熟的 EVM 工具链，同时获得相对充足的稳定币和现货交易流。它未必是当前 Perp 交易量最大的链，但对于一个新团队来说，**用户获取、开发速度、产品迭代和合规设计的重要性可能高于单纯 TPS。**
+
+推荐架构：
+
+- 链上保证金和清算；
+- 链下订单匹配；
+- 高频行情和风控服务；
+- 链上可验证结算；
+- USDC 为主保证金；
+- 外部指数价格 + 多源预言机；
+- 重要市场采用保险基金和风险分层。
+
+### 2. Solana：最适合高性能 Perp，但竞争最激烈
+
+**长期评级：A-**
+
+Solana 适合：
+
+- 高频交易；
+- 低延迟订单簿；
+- Meme/长尾 Perp；
+- 低价值高频用户；
+- 高性能清算；
+- 与现货新资产发行联动；
+- 交易机器人和专业 API。
+
+Solana Perp 的真正机会不是“再做一个 BTC/ETH 永续”，而是：
+
+- 新资产上线后快速提供 Perp；
+- 现货和 Perp 共享账户；
+- 低延迟订单簿；
+- 让做市商更容易管理库存；
+- 通过现货流量反哺 Perp；
+- 针对某类用户提供更好的资金费率、保证金或清算体验。
+
+不过，Solana 已经有成熟的 Perp 竞争，Jupiter、Drift 以及其他交易协议形成了较强的网络效应。你需要解决的不是“能不能部署合约”，而是：
+
+- 如何获得第一个 1,000 个高频交易员；
+- 谁来提供做市；
+- 如何控制毒性流量；
+- 如何避免清算价格被操纵；
+- 如何与 Jupiter 等聚合器合作而不是被聚合器抽走用户。
+
+### 3. Hyperliquid：不要竞争，应该利用其流动性和发行机制
+
+**长期评级：Perp 产品 A；新通用 Perp DEX C**
+
+Hyperliquid 当前的优势非常集中：
+
+- BTC/USDC Perp OI 约 **$3.13B**；
+- ETH/USDC Perp OI 约 **$2.99B**；
+- SOL/USDC Perp OI 约 **$680M**；
+- 仅 BTC、ETH、SOL 三个市场合计 OI 约 **$6.80B**；
+- 返回的市场列表中有 **317 个 active perpetual markets**；
+- 默认 maker/taker 费率约为 **0.015% / 0.045%**。
+
+这意味着它已经具备强烈的流动性、用户和交易习惯网络效应。一个新团队如果从零开始复制一个 Hyperliquid，通常要同时解决：
+
+- 订单簿；
+- 撮合；
+- 预言机；
+- 资金费率；
+- 保险基金；
+- 清算；
+- 做市；
+- 钱包；
+- API；
+- 用户分发；
+- 市场上币。
+
+这几乎是一个完整交易所级别的工程。
+
+更值得关注的是 Hyperliquid 的 **HIP-3 builder-deployed perpetuals**。官方文档显示，构建者可以许可式地部署新的 Perp 市场，并且相关部署者最多可以保留部分交易费用。[HIP-3 Builder-deployed Perpetuals](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals/hip-3-builder-deployed-perpetuals)；[Hyperliquid Fees](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees)。
+
+这带来一个更合理的创业路径：
+
+- 商品 Perp；
+- 指数 Perp；
+- 股票或 RWA 相关 Perp；
+- 区域市场；
+- 新兴资产；
+- 事件型市场；
+- 针对某个社区或交易团队的专属市场；
+- 在 Hyperliquid 流动性基础上做新前端、新账户层和新策略。
+
+结论是：
+
+> **Hyperliquid 适合做“建立在现有深度流动性之上的垂直交易产品”，不适合无资源地做一个正面竞争的全新 Perp DEX。**
+
+### 4. BSC：适合零售高杠杆，但不适合和 Binance/Pancake 正面竞争
+
+BSC 的交易用户数量和现货 DEX 交易量非常强，因此它具备 Perp 需求基础。
+
+但 Perp 产品需要额外解决：
+
+- 清算延迟；
+- 低流动性长尾资产；
+- 预言机更新；
+- 交易所级撮合；
+- 做市商库存；
+- 多链资产充值；
+- 防止羊群式爆仓；
+- 区域监管。
+
+BSC 更适合：
+
+- 零售 altcoin Perp；
+- 区域化交易；
+- 钱包内置杠杆；
+- 交易机器人；
+- 高风险高周转资产。
+
+但如果没有独立分发渠道，PancakeSwap 和中心化交易所的入口优势会显著压缩新平台空间。
+
+### 5. Monad：技术上适合 Perp，但资金和用户仍需要验证
+
+Monad 过去 30 天 DEX 交易量约 **$4.23B**，环比增长约 **77.6%**；但稳定币供给约 **$692M**，用户提供的链级数据快照约为 **19,889 名用户**，说明它仍处于早期阶段。
+
+Monad 官方文档给出的设计目标包括：
+
+- Ethereum compatibility；
+- 约 10,000 TPS；
+- 300ms block frequency；
+- 600ms finality；
+- 并行执行和异步执行。
+
+[Monad for Developers](https://docs.monad.xyz/introduction/monad-for-developers)；[Why Monad](https://docs.monad.xyz/introduction/why-monad)。
+
+这非常适合：
+
+- 高性能订单簿；
+- 高频清算；
+- 新型链上做市；
+- EVM 团队迁移；
+- 早期 Perp 基础设施。
+
+但目前的风险是：
+
+- 交易量可能受到激励驱动；
+- 稳定币流动性还不够深；
+- 做市商和专业用户需要重新迁移；
+- 交易量增长尚未证明长期留存；
+- 生态项目仍在形成。
+
+Monad 更适合做：
+
+> **提前卡位的第二市场、测试网、生态合作项目，而不是没有资源时的唯一主战场。**
+
+---
+
+## 第二梯队：Sui、Arbitrum、Avalanche、Aptos
+
+### Sui：适合做非 EVM、高性能和对象模型创新
+
+Sui 当前 30d DEX 交易量约 **$1.36B**，TVL 约 **$541M**，稳定币约 **$484M**，过去一个月 DEX 量增长约 **41.9%**。
+
+Sui 的对象模型允许独立交易并行处理，适合游戏、资产发行、高并发应用和特定订单簿设计；但共享对象会引入共识和并发争用问题。[Sui Object Ownership](https://docs.sui.io/develop/objects/object-ownership/)；[Sui Move Concepts](https://docs.sui.io/develop/write-move/sui-move-concepts)。
+
+Sui 的潜在机会：
+
+- Move 原生资产；
+- 游戏资产交易；
+- 高性能订单簿；
+- Sui 原生稳定币和收益；
+- 非 EVM 用户；
+- 特定应用专属交易市场。
+
+风险是：
+
+- EVM 迁移成本较高；
+- 流动性和用户绝对规模仍较小；
+- 通用 DEX 已有成熟玩家；
+- Perp 产品需要额外解决预言机、做市和保证金资产不足问题。
+
+**适合早期进入，但需要专注 Sui 原生资产和用户，不适合直接复制 EVM DEX。**
+
+### Arbitrum：成熟，但当前新增交易流偏弱
+
+Arbitrum 当前 30d DEX 量约 **$6.10B**，比 Solana、Ethereum、BSC、Base 都小；过去一个月 DEX 量下降约 **73.6%**。链上 DEX 活动中，Uniswap/Arbitrum 30d USD 量约 **$3.21B**，活跃交易者约 **3.4 万**。
+
+Arbitrum 仍有技术和开发者优势，Stylus 允许使用 Rust、C 和 C++ 等语言开发合约，且其链生态具备较成熟的 L2 工具链。[Arbitrum chains overview](https://docs.arbitrum.io/launch-arbitrum-chain/overview/introduction)。
+
+但对于新 DEX/Perp：
+
+- 过去的 DeFi 和衍生品品牌仍有影响力；
+- GMX 等协议已经形成认知；
+- 当前交易流相对减弱；
+- 新协议需要明确解释为什么不直接使用既有协议。
+
+除非你拥有：
+
+- 做市商；
+- 机构交易用户；
+- GMX 生态合作；
+- 专属资产；
+- Arbitrum Orbit 或 Appchain 战略；
+
+否则不建议把 Arbitrum 作为无差异化新 Perp 的第一链。
+
+### Avalanche：有交易流，但缺少足够强的新增势能
+
+Avalanche 30d DEX 量约 **$3.28B**，TVL 约 **$630M**，稳定币约 **$1.45B**。短期数据中 24h DEX 量较前一日增长，但过去一个月仍下降约 **14.5%**。
+
+Avalanche 更适合：
+
+- 游戏或应用专属链；
+- 机构/企业部署；
+- 特定资产和区域市场；
+- Subnet/L1 方向；
+- 与现有 Avalanche 用户深度绑定的 DEX。
+
+不适合无差异化地做一个通用 Perp DEX。
+
+### Aptos：技术有价值，但当前流动性不够
+
+Aptos 30d DEX 量约 **$270M**，TVL 约 **$55.6M**，过去一个月下降约 **65%**。即使稳定币供给约 **$970M**，当前 DEX 交易流和 DeFi TVL 仍不足以支撑一个大型通用 DEX 或 Perp DEX。
+
+Aptos 只有在以下情况下才值得考虑：
+
+- 已经获得 Aptos 基金会或核心生态支持；
+- 有独家资产；
+- 有稳定的做市商承诺；
+- 专注于 Move 原生应用；
+- 目标不是立刻追求巨大交易量，而是成为基础设施层。
+
+---
+
+## 落地路线与否决条件
+
+### 如果你只选择一条链
+
+| 产品类型 | 第一选择 | 第二选择 | 特殊选择 |
+|---|---|---|---|
+| 通用现货 DEX | **Solana** | Base | BSC |
+| 高性能现货 / 新资产 DEX | **Solana** | Monad | Sui |
+| EVM + USDC DEX | **Base** | BSC | Ethereum 作为流动性中心 |
+| 新 Perp DEX | **Base** | Solana | Monad |
+| 建立在现有流动性上做 Perp | **Hyperliquid HIP-3** | Solana 生态合作 | Base |
+| 机构、RWA、稳定币 DEX | Ethereum / Base | Arbitrum | Sui |
+
+### 我建议的产品架构
+
+#### 方案 A：Solana 原生交易协议
+
+适合团队：熟悉 Rust/Anchor、交易机器人、做市商和新资产生态。
+
+核心：
+
+- Solana 原生订单簿或混合撮合；
+- 现货、Perp 共用账户；
+- 新资产上线后自动生成市场；
+- 与钱包和聚合器深度合作；
+- LP 金库和做市策略自动化；
+- 重点解决毒性流量、清算和预言机。
+
+#### 方案 B：Base 上的 EVM Perp
+
+适合团队：熟悉 Solidity、USDC、钱包、交易产品和合规。
+
+核心：
+
+- USDC 保证金；
+- 链下撮合，链上结算；
+- 多源预言机；
+- 风险分层和保证金池；
+- API 优先；
+- 社交交易和复制交易；
+- 现货、借贷、收益策略组合；
+- 通过 Coinbase 钱包、第三方钱包和聚合器分发。
+
+#### 方案 C：Hyperliquid 上的垂直市场
+
+适合团队：不想重复搭建完整清算和撮合基础设施。
+
+核心：
+
+- HIP-3 市场；
+- 商品、指数、股票、区域资产；
+- 新市场发现和研究工具；
+- 交易策略、API 和终端；
+- 通过品牌和用户分发获得交易费；
+- 不与 Hyperliquid 的主流 BTC/ETH/SOL 市场正面竞争。
+
+### 建议的 Go / No-Go 门槛
+
+下面是我的创业判断框架，不是市场统计数据：
+
+**可以进入：**
+
+- 有至少一个明确的流量入口；
+- 有做市商签署真实流动性承诺；
+- 有明确的独家资产或交易场景；
+- 目标链存在足够的稳定币和现货交易流；
+- Perp 产品能够提供比现有产品更好的价格、速度、资产覆盖或用户体验；
+- 上线前已完成预言机、保险基金、清算和极端行情测试。
+
+**应该放弃或延后：**
+
+- 计划只是复制 Uniswap、PancakeSwap、Jupiter 或 Hyperliquid；
+- 没有任何钱包、交易员、协议或交易所分发渠道；
+- 交易量主要依赖代币激励；
+- 没有明确的做市商；
+- 只关注 TPS，而没有解决预言机、清算和风险引擎；
+- 计划一开始部署五条链，导致流动性被切碎；
+- 用单月交易量增长证明长期需求。
+
+### 风险与数据质量
+
+1. **DEX 交易量不是完全可比的。**不同数据源对聚合器、路由器、重复计算和 USD 定价的处理不同，链级数据与协议级数据不能简单相加。
+
+2. **链上活跃度存在 USD enrichment 限制。**上述协议级 DEX 数据的 USD enrichment 大约为 57%–78%，因此 USD 交易量应理解为保守或方向性估计，而不是精确审计数字。
+
+3. **Monad 和 Sui 的增长需要观察留存。**增长很快不代表用户会在激励结束后继续交易。最重要的是看 8–12 周后的自然交易量、活跃交易者留存和稳定币净流入。
+
+4. **Perp DEX 的主要风险不是合约部署，而是风险管理。**预言机延迟、极端行情、穿仓、保险基金不足、做市商撤单和资金费率操纵，都可能比链本身的性能问题更致命。
+
+5. **稳定币不是全部可用流动性。**链上存在 $5B 稳定币，并不代表这 $5B 都会进入你的交易池或保证金系统。
+
+---
+
+## 结论
+
+长期来看，**最值得研究的不是“哪条链 TPS 最高”，而是哪条链能够同时提供交易流、稳定币、用户入口、做市商和可持续的产品差异化。**
+
+我的最终排序是：
+
+- **做新现货 DEX：Solana > Base > BSC > Monad/Sui**
+- **做新 Perp DEX：Base ≈ Solana > Monad > BSC > Arbitrum**
+- **不想从零搭完整 Perp 基础设施：Hyperliquid HIP-3 优于另起炉灶**
+- **做机构、RWA、稳定币或跨链流动性：Ethereum + Base**
+- **不建议无资源地首发：Aptos、Avalanche、Arbitrum**
+
+**底线建议。**如果你是一个没有现成交易所流量的新团队，我会选择 **Base 做 EVM/USDC 型 Perp 或交易产品，Solana 做高频/新资产型 DEX；如果专注 Perp 且希望降低基础设施风险，则优先研究 Hyperliquid HIP-3，而不是复制一个新的 Hyperliquid。**
