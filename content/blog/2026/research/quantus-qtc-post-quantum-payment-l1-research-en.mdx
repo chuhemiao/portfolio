@@ -1,0 +1,313 @@
+---
+title: 'Quantus (QTC): Post-Quantum Payment L1 Research'
+publishedAt: '2026-10-12'
+summary: 'Quantus combines ML-DSA, ML-KEM, ZK Wormhole, and QPoW in a post-quantum private-payment network. Its architecture is substantive, but demand, mining security, cross-chain liquidity, and future unlock absorption remain unproven with only about 1.33% of maximum supply circulating.'
+slug: 'quantus-qtc-post-quantum-payment-l1-research-en'
+category: 'research'
+language: 'en'
+translationSlug: 'quantus-qtc-post-quantum-payment-l1-research'
+---
+
+## TL;DR
+
+Quantus is a new Layer 1 built around **post-quantum security, private payments, and Proof of Work**. The quantum-computing threat it addresses is real, and its technical design is more substantial than a purely promotional narrative: transactions use ML-DSA signatures, node communication uses ML-KEM, and private transfers are aggregated through a ZK Wormhole system.
+
+As of **2026-10-12 UTC**, however, Quantus remains a **high-risk protocol whose mainnet has been live for only about one month**. The central risk is not whether it uses post-quantum algorithms. The unresolved questions are:
+
+1. **Network effects and durable user demand remain unproven**;
+2. **Circulating QTC represents only about 1.33% of maximum supply**;
+3. **The 27% genesis allocation includes investor, team, and company tokens**, creating material future unlock pressure;
+4. Liquidity remains concentrated in early channels such as NEAR Intents, with limited depth and limited support from independent exchanges;
+5. The ZK circuits, PoW security model, cross-chain MPC, and privacy design need substantially more real-world operating history.
+
+My assessment is that **Quantus is a technically credible project worth monitoring, but it is not yet a mature “quantum hedge.”** It may fit a high-risk watchlist position, but not a core portfolio allocation.
+
+---
+
+## Positioning: A Real Problem, but a Narrow Product
+
+Quantus is not a general-purpose smart-contract platform in the mold of Ethereum or Solana. Its whitepaper positions the network closer to Bitcoin, Monero, or Zcash: electronic cash for the quantum era, focused on **value transfer, privacy, self-custody, and quantum-resistant signatures**, rather than DeFi, NFTs, or a broad application ecosystem. See the [Quantus Whitepaper](https://www.quantus.com/whitepaper/).
+
+| Dimension | Current Quantus design |
+|---|---|
+| Project type | Post-quantum payment Layer 1 |
+| Consensus | QPoW, a Poseidon2-based Proof-of-Work system |
+| Native asset | QTC |
+| Maximum supply | 21,000,000 QTC |
+| Smart contracts | Not a general-purpose smart-contract chain |
+| Privacy model | Wormhole addresses plus aggregated ZK proofs |
+| Mainnet | Launched 2026-09-09 |
+| Main distribution channel | NEAR Intents, Near.com, and related ecosystem routes |
+
+The core investment question is not whether Quantus can become the next application platform. It is:
+
+> If quantum computing gradually threatens the elliptic-curve signature schemes used by Bitcoin, Ethereum, and other networks, will the market pay a premium for a natively post-quantum asset before that threat becomes immediate?
+
+There is a reasonable basis for this thesis. Even if incumbent networks eventually migrate to quantum-resistant signatures, they would still face wallet migration, exchange upgrades, cross-chain infrastructure changes, and the problem of lost assets whose owners cannot migrate them. Quantus starts with post-quantum cryptography at genesis and therefore avoids a system-wide migration of legacy balances.
+
+The same design also narrows its addressable market. **Quantus must prove that users want to hold a payment asset with no mature application ecosystem or long distribution history simply because it offers native quantum resistance.**
+
+---
+
+## Architecture: Coherent Design, Concentrated Implementation Risk
+
+Quantus does more than replace ECDSA with Dilithium. It changes transaction signatures, node communication, wallet derivation, private transfers, and the scaling layer at the same time.
+
+### Core components
+
+| Module | Quantus approach | Assessment |
+|---|---|---|
+| Transaction signatures | ML-DSA-87 / Dilithium | NIST-standardized lattice signature targeting NIST Level 5 |
+| P2P encryption | ML-KEM-768 | Key establishment and protected communication between nodes |
+| ZK hash | Poseidon2 | Optimized for ZK circuits; not itself synonymous with quantum resistance |
+| Private transfers | Wormhole addresses, ZK proofs, nullifiers | Burn-and-remint flow breaks the direct onchain link between sender and recipient |
+| Proof system | Recursive STARK derived from Plonky2 | Aggregates batches of transaction proofs |
+| Consensus | QPoW | Poseidon2 nonce search with a target block time of roughly 12 seconds |
+
+Official documentation states that an ML-DSA-87 signature is approximately **4,627 bytes** and a public key approximately **2,592 bytes**, while Bitcoin-style ECDSA signatures and public keys are only tens of bytes. Quantus therefore relies on ZK aggregation to offset signature-size expansion. See the [Post-Quantum Cryptography documentation](https://docs.quantus.com/deep-dives/pqc/).
+
+The protocol publishes the following throughput figures:
+
+- Transparent ML-DSA-87 transactions: approximately **43 QTPS**;
+- Current two-layer ZK aggregation: approximately **430 QTPS**;
+- Theoretical ceiling: approximately **2,800 QTPS**.
+
+These are protocol-design and testing figures. They are not equivalent to sustained production throughput under high load on an open network. See the [Wormhole and ZK Scaling documentation](https://docs.quantus.com/deep-dives/wormhole/).
+
+### Privacy does not mean complete invisibility
+
+The Wormhole mechanism broadly works as follows:
+
+1. A user sends assets to a Wormhole address that cannot be spent directly;
+2. The user generates a local ZK proof showing possession of the corresponding secret;
+3. Multiple proofs are recursively aggregated;
+4. After the proof is submitted onchain, assets are reminted to a new exit address.
+
+This can obscure the direct relationship between sender and recipient. The wallet documentation nevertheless indicates that **amounts and parts of the transaction structure remain visible**, making privacy probabilistic rather than absolute. See the [Quantus Wallet documentation](https://www.quantus.com/wallet/).
+
+A more precise description is:
+
+> Quantus weakens direct address linkage, but it does not eliminate metadata risk arising from amounts, timing, exit addresses, transaction frequency, or cross-chain activity.
+
+It remains distinct from fully anonymous cash.
+
+### A technical inconsistency that needs clarification
+
+The main technical pages and deep-dive documentation emphasize ML-DSA-87 for transactions, while the current whitepaper's fee table separately lists:
+
+- Transparent ML-DSA-65 transactions;
+- Transparent ML-DSA-87 transactions;
+- Encrypted transactions.
+
+These entries may represent different transaction classes, account modes, or protocol versions. Security-level and throughput analysis should therefore rely on the current mainnet runtime and chain specification, rather than a single marketing-page description. Sources: [Quantus Whitepaper](https://www.quantus.com/whitepaper/) and [QPoW Consensus documentation](https://docs.quantus.com/deep-dives/qpow/).
+
+---
+
+## Network and Ecosystem: Mainnet Is Live, but Cold Start Is Not Over
+
+The official explorer showed the following approximate network state at the research cutoff:
+
+| Metric | Snapshot | Interpretation |
+|---|---:|---|
+| Latest block | #212,117 | The chain has an operating history, but remains very young |
+| Target block time | About 12 seconds | Consistent with official QPoW parameters |
+| Cumulative transactions | 332,331 | Real onchain activity exists |
+| Transactions in the past 24h | 16,492 | Daily activity is forming, but remains small |
+| Active accounts | 10,776 | Account count is not equivalent to unique users |
+| Cumulative transfers | 1,217,084.04 QTC | This should not be treated as economic settlement volume |
+| Transfers in the past 24h | 11,729.63 QTC | Roughly $1.6M in notional value at about $140 per QTC |
+| Current circulating supply | 278,569.68 QTC | Approximately 1.33% of maximum supply |
+| Maximum supply | 21,000,000 QTC | Hard cap |
+
+Source: [Quantus Explorer](https://explorer.quantus.com/).
+
+The homepage also displayed approximately **292 miners, 247 peers, 99.90% uptime, and 430 QTPS**. These are project-operated dashboard metrics. They demonstrate that the network is running, but they do not establish Bitcoin-like mining distribution, censorship resistance, or a durable security budget. See the [Quantus homepage](https://www.quantus.com/).
+
+### Liquidity and trading access
+
+QTC became tradable through NEAR Intents and Near.com in early October 2026. Project-related disclosures stated that users could reach QTC from more than 180 assets across more than 30 chains, without an initial listing on a traditional centralized exchange. See [The Quantum Insider](https://thequantuminsider.com/2026/10/07/quantus-launches-post-quantum-asset-qtc-on-near-com/).
+
+CoinGecko listed the Near Intents QTC/USDC route as the primary market and also displayed Rhea Finance and BigONE. The presence of these venues does not mean that each offers sufficient order-book or executable depth. See [CoinGecko: Quantus](https://www.coingecko.com/en/coins/quantus).
+
+The structure has two sides:
+
+- **Positive:** NEAR Intents reduces the friction of sourcing cross-chain liquidity for a new asset;
+- **Negative:** Aggregated access is not the same as deep liquidity, and a small amount of marginal capital may move the price materially;
+- **Key question:** Can QTC establish stable price discovery across multiple independent markets rather than remain dependent on one ecosystem entry point?
+
+The NEAR integration documentation still described MPC, cross-chain integration, and testnet work as under development or planned, while external reports had already announced QTC trading on Near.com. This suggests documentation lag. Investors should distinguish between an available trading route and a complete, audited bridge architecture. See the [NEAR Integration documentation](https://docs.quantus.com/deep-dives/near-integration/).
+
+---
+
+## Tokenomics and Valuation: The Main Near-Term Risk
+
+Quantus combines a Bitcoin-like hard cap with a relatively large genesis allocation. Those two features create clear tension.
+
+### Supply structure
+
+The current whitepaper discloses:
+
+- Maximum supply: **21,000,000 QTC**;
+- Genesis mint: **27%, or 5,670,000 QTC**;
+- Investors, founders, and team: **23%, or 4,830,000 QTC**;
+- Company allocation: **4%, or 840,000 QTC**;
+- Future PoW issuance: **73%, or 15,330,000 QTC**;
+- Of the 4% company allocation, approximately **1% was liquid at genesis**, with the remaining 3% locked;
+- Investor, team, and locked company tokens begin unlocking one year after mainnet launch and then vest linearly over 36 months.
+
+<chart item_id="quantus_supply_allocation"></chart>
+
+The chart reflects maximum-supply allocation disclosed in the current whitepaper. **It does not represent current circulating supply.** See the [Quantus Whitepaper](https://www.quantus.com/whitepaper/).
+
+Assuming mainnet launched on 2026-09-09, the main investor, team, and company unlock window should begin around **2027-09-09** and continue for approximately 36 months. Unless the protocol or vesting schedule changes, this creates sustained supply pressure.
+
+### Current market data
+
+As of **2026-10-12 UTC**, CoinGecko page caches and search snapshots showed inconsistent figures. Ranges are therefore more appropriate than false precision:
+
+| Metric | Current range | Assessment |
+|---|---:|---|
+| Price | Approximately **$136-$140** | CoinGecko search snapshot showed about $140.18 |
+| Market capitalization | Approximately **$38M-$41M** | Broadly consistent with about 279K circulating QTC |
+| 24h volume | Approximately **$11.1M-$15.7M** | High relative to market cap, indicating rapid turnover and speculative activity |
+| Circulating supply | **278.6K-280K QTC** | Only about 1.33% of maximum supply |
+| Current total supply | Approximately **5.7M QTC** | Mostly includes locked genesis allocations |
+| Maximum supply | **21M QTC** | Protocol hard cap |
+| All-time high | **$186.19** | Current price roughly 26% below the high |
+| Seven-day performance | **+35.3%** | Materially stronger than the broader market and L1 sector shown on CoinGecko |
+
+Sources: [CoinGecko](https://www.coingecko.com/en/coins/quantus), official circulating supply from the [Quantus Explorer](https://explorer.quantus.com/), and total-supply cross-check from [Coinbase Quantus](https://www.coinbase.com/en-mx/price/quantus).
+
+### The supply denominator materially changes valuation
+
+At a price of $140.18:
+
+- Circulating market capitalization is approximately **$39M**;
+- Valuation on CoinGecko's approximately 5.7M current total supply is about **$0.8B**;
+- Valuation at the 21M maximum supply is approximately **$2.94B**;
+- The 21M maximum supply is roughly **75.4 times** the current 278.6K circulating supply.
+
+The statement that “QTC has a market cap of only tens of millions of dollars” can therefore be misleading. The more important questions are:
+
+1. Can the market absorb future miner issuance?
+2. Can it absorb investor and team unlocks beginning in 2027?
+3. Will early holders sell together if liquidity deteriorates?
+4. Will the market assign a multibillion-dollar fully diluted valuation to a chain without general-purpose smart contracts?
+
+Public reporting puts total funding at approximately **$2.42M**, comprising roughly $1.65M at a $40M token valuation and approximately $770K at a $100M token valuation. The second round was reportedly led by Balaji Srinivasan, with participation from Babak Nivi, Mert, and others. See the [HTX / PANews report](https://www.htx.com/en-in/news/quantum-resistant-version-of-zcash-new-public-chain-quantus-GyZSVHMq/).
+
+Investor visibility can improve awareness, but it cannot substitute for real users, mining security, private-transfer activity, or cross-market liquidity.
+
+---
+
+## Security, Governance, and Principal Risks
+
+Quantus has invested meaningfully in audits. Audit coverage, however, is not the same as risk elimination.
+
+### Positive audit evidence
+
+The whitepaper lists work by Neodyme, Eiger/Equilibrium, Hashcloak, and Immunefi covering:
+
+- ML-DSA and HD wallets;
+- Poseidon2 and QPoW;
+- Wormhole ZK circuits;
+- Substrate runtime and nodes;
+- NEAR MPC;
+- A public whole-chain audit competition.
+
+The Immunefi page also lists several completed reports. See the [Quantus Immunefi Audit Competition](https://immunefi.com/audit-competition/audit-comp-quantus/information/).
+
+### Audit scope still requires careful interpretation
+
+Equilibrium's public case study describes an 82-page audit covering the Wormhole pallet, ZK circuits, Poseidon, transaction extensions, and onchain primitives. It also identified a concrete issue in which Poseidon gate deserialization could trigger an out-of-bounds runtime panic. See the [Equilibrium Quantus audit](https://equilibrium.co/projects/quantus-audit/).
+
+The same case study explicitly notes that:
+
+- Consensus was outside the scope of that audit;
+- Upstream Plonky2 code was outside scope;
+- The review focused primarily on code added or modified by Quantus.
+
+The Immunefi page also lists known issues or assumptions, including:
+
+- Miner-to-node connections are assumed to operate on a trusted network;
+- As transaction volume grows, ZK tree depth may reach the current limit and require future circuit and runtime upgrades;
+- Some Substrate governance behavior follows the upstream implementation.
+
+The appropriate conclusion is therefore:
+
+> Quantus has subjected important components to several professional reviews, but consensus security, bridge security, production mainnet safety, and long-term ZK scalability still require ongoing validation.
+
+### Risk matrix
+
+| Risk | Severity | Why it matters |
+|---|---|---|
+| Genesis supply and future unlocks | High | Circulating supply is extremely low, and future expansion may exceed market absorption |
+| PoW network security | High | Mainnet history is short, while public data on hashrate, miner concentration, and attack cost remains limited |
+| ZK implementation complexity | High | Circuits, recursive aggregation, Poseidon, and runtime logic create a broad attack surface |
+| Cross-chain MPC | High | NEAR is the main liquidity entry point, making MPC audits and complete bridge status important |
+| Privacy regulation | Medium-high | Private transfers may face restrictions from exchanges, jurisdictions, and regulated access points |
+| Liquidity concentration | Medium-high | High reported volume is not the same as depth; slippage can expand quickly |
+| Governance centralization | Medium | The Technical Collective retains significant technical authority while DAO control remains incomplete |
+| Product demand | High | Without a general-purpose application ecosystem, long-term demand depends heavily on the post-quantum money thesis |
+
+### Three scenarios
+
+**Bull case:**
+
+- NEAR Intents becomes a durable distribution channel;
+- Multiple wallets and trading platforms add QTC;
+- ZK aggregation remains stable under real traffic;
+- Miner count, hashrate, and active accounts continue to grow;
+- Post-quantum security becomes a mainstream market theme.
+
+In this outcome, Quantus could become the representative asset for the post-quantum, privacy, and PoW niche.
+
+**Base case:**
+
+- Mainnet continues to operate normally, but users remain concentrated among miners, speculators, and early privacy-coin participants;
+- Price remains highly sensitive to narrative rotation;
+- NEAR provides access without creating a strong network effect;
+- Valuation receives a supply discount as the 2027 unlock approaches.
+
+This is currently the most likely scenario.
+
+**Bear case:**
+
+- Privacy demand does not become persistent onchain activity;
+- Liquidity leaves the NEAR ecosystem;
+- A ZK, bridge, or node-layer security incident occurs;
+- PoW hashrate remains insufficient or excessively concentrated;
+- Unlocks and miner selling exceed market absorption.
+
+Under this scenario, QTC could quickly fall from a “post-quantum asset” narrative into the category of a low-liquidity thematic token.
+
+---
+
+## Conclusion
+
+Quantus has one important advantage: it is not inventing a nonexistent problem. **Quantum computing poses a real long-term threat to today's elliptic-curve cryptography, and migration by incumbent networks would carry genuine coordination costs.**
+
+Its technical program is also comparatively complete, including:
+
+- A live PoW mainnet;
+- ML-DSA and ML-KEM post-quantum cryptography;
+- A ZK Wormhole privacy model;
+- Public code repositories;
+- Several third-party audits;
+- NEAR Intents distribution and liquidity access.
+
+The central contradiction is equally clear:
+
+> Quantus has addressed how to build a post-quantum chain from genesis, but it has not yet demonstrated why enough people will use and hold that chain over the long term.
+
+Technical scarcity has not yet become network scarcity. Network activity has not yet become stable demand. Price appreciation driven by low circulating supply should not be confused with broad adoption.
+
+Five signals deserve continued monitoring:
+
+1. **Onchain holdings and sell pressure before and after the 2027 unlock**;
+2. **Miner count, hashrate, difficulty, and miner concentration**;
+3. **Whether genuinely deep trading markets emerge outside NEAR**;
+4. **Whether Wormhole private-transfer count, fees, and burned value grow consistently**;
+5. **Whether ZK, MPC, runtime, and consensus audit findings receive clear remediation records**.
+
+**Bottom line.** Quantus deserves a place on the watchlist for post-quantum cryptography and private payments, but today it resembles a high-risk infrastructure investment rather than a mature monetary network with proven product-market fit. Any exposure should be small and explicitly budgeted for unlock and liquidity risk.
