@@ -3,9 +3,9 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const resumeSource = fs.readFileSync(new URL('../src/data/resume.tsx', import.meta.url), 'utf8');
-const blogPageSource = fs.readFileSync(new URL('../src/app/blog/[slug]/page.tsx', import.meta.url), 'utf8');
+const blogPageSource = fs.readFileSync(new URL('../src/app/(legacy-articles)/blog/[slug]/page.tsx', import.meta.url), 'utf8');
 const oscillatorClientSource = fs.readFileSync(
-  new URL('../src/app/oscillator/oscillator-client.tsx', import.meta.url),
+  new URL('../src/app/(legacy)/oscillator/oscillator-client.tsx', import.meta.url),
   'utf8'
 );
 

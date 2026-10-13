@@ -15,6 +15,24 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 - Do not create duplicate Research Map entries. Check local coverage before writing.
 - For a separate research article about a project already in the registry, set `researchProjectSlug` to the canonical project's slug. The article remains publishable under `/research`, while registry generation keeps one project entry.
 
+## Multilingual Content
+
+- Supported article languages are `zh-CN`, `en`, and `ja`. Legacy `zh`, `en-US`, and `ja-JP` metadata is normalized at build time. Set `language` explicitly for new content, especially Japanese text without kana.
+- Keep one MDX file per language. Existing `translationSlug` pairs and matching `-en` / `-ja` / `-zh-CN` suffixes remain supported.
+- Use the same stable `translationKey` for all language variants. The original article can keep its existing slug. Set `sourceSlug` to that original slug when variants use unrelated slugs or the original is ambiguous.
+- Example: an original `bitcoin-research` article with `language: en` and `translationKey: bitcoin-research` may have `bitcoin-research-zh-CN` and `bitcoin-research-ja` variants with the same key. A Chinese original and its existing `-en` translation need no metadata migration.
+- Only published variants appear in article language links. Missing translations fall back to the original article's actual language. Related articles exclude other variants of the same article, and topic membership is shared across a translation group.
+- Research registry generation keeps the original article once per translation group, regardless of original language. Keep `researchProjectSlug` on topical report originals to exclude an additional project entry.
+- The site supports all three UI languages independently of historical article translation coverage; changing UI language does not translate article bodies.
+
+```bash
+pnpm quick:add -- "日本語の記事" --language ja
+pnpm quick:add -- "Translated research" --category research --language en --translation-key bitcoin-research --source-slug bitcoin-research
+pnpm content:check
+node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test scripts/lib/content/tests/multilingual.test.mjs
+pnpm content:build
+```
+
 ## Current State
 
 As of 2026-07-07:

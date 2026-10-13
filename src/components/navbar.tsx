@@ -12,10 +12,22 @@ import {
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { useI18n } from "@/components/locale-provider";
+import { stripLocale } from "@/lib/i18n";
 import { usePathname } from "next/navigation";
 
 export default function Navbar() {
-  const pathname = usePathname();
+  const pathname = stripLocale(usePathname());
+  const { t, href } = useI18n();
+  const labels: Record<string, string> = {
+    '/': t('Home', '首页', 'ホーム'),
+    '/blog': t('Blog', '文章', 'ブログ'),
+    '/fund': t('Fund', '投资', '投資'),
+    '/research': t('Research', '研究', 'リサーチ'),
+    '/thoughts': t('Thoughts', '思考', '考察'),
+    '/oscillator': t('Oscillator', '震荡指标', 'オシレーター'),
+    '/watch': t('Watch', '上币追踪', '上場ウォッチ'),
+  };
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-30 mx-auto mb-4 flex origin-bottom h-full max-h-14">
@@ -32,7 +44,8 @@ export default function Navbar() {
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Link
-                    href={item.href}
+                    href={href(item.href)}
+                    aria-label={labels[item.href] ?? item.label}
                     aria-current={isActive ? "page" : undefined}
                     className={cn(
                       buttonVariants({ variant: "ghost", size: "icon" }),
@@ -50,7 +63,7 @@ export default function Navbar() {
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>{item.label}</p>
+                  <p>{labels[item.href] ?? item.label}</p>
                 </TooltipContent>
               </Tooltip>
             </DockIcon>
@@ -65,6 +78,7 @@ export default function Navbar() {
                 <TooltipTrigger asChild>
                   <Link
                     href={social.url}
+                    aria-label={name}
                     className={cn(
                       buttonVariants({ variant: "ghost", size: "icon" }),
                       "size-10 sm:size-12"
@@ -86,7 +100,7 @@ export default function Navbar() {
               <ModeToggle />
             </TooltipTrigger>
             <TooltipContent>
-              <p>Theme</p>
+              <p>{t('Theme', '主题', 'テーマ')}</p>
             </TooltipContent>
           </Tooltip>
         </DockIcon>

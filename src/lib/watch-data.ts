@@ -1,5 +1,6 @@
-import { execFile } from 'node:child_process';
-import { promisify } from 'node:util';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
+import { isWatchData } from './watch-client-data';
 import { AsyncLocalStorage } from 'node:async_hooks';
 
 export type SignalRating = 'S' | 'A' | 'B' | 'C' | 'D' | 'R';
@@ -23,7 +24,7 @@ export interface ExchangeListing {
 
 export interface ListingCoin {
   symbol: string; // base coin, e.g. "CHIP"
-  firstSeenAt: number; // earliest listing timestamp in ms
+  firstSeenAt: number | null; // earliest listing timestamp in ms
   priceUsdt: number | null;
   priceChange24h: number | null;
   volume24h: number | null;
@@ -67,35 +68,38 @@ export interface WatchData {
   listings: ListingCoin[];
   lookbackDays: number;
   errors: string[];
+  sources?: { successful: string[]; failed: string[] };
 }
 
 const FETCH_TIMEOUT_MS = 12000;
-const SURF_BIN_DIR = `${process.env.HOME ?? ''}/.local/bin`;
-const SURF_CANDIDATES = [
-  process.env.SURF_BIN,
-  `${SURF_BIN_DIR}/surf`,
-  'surf',
-].filter(Boolean) as string[];
-
-const execFileAsync = promisify(execFile);
-let surfCommandPromise: Promise<string | null> | null = null;
-
 // ─── Error collection ─────────────────────────────────────────────────────────
 // Threads a per-request error list through the whole Promise.all fan-out in
 // getWatchData() without changing any of the ~15 fetcher helpers' signatures.
 
-const errorStore = new AsyncLocalStorage<{ errors: string[] }>();
+const errorStore = new AsyncLocalStorage<{ errors: string[]; successful: Set<string>; failed: Set<string>; requests: Map<string, Promise<unknown>> }>();
 
-function recordError(source: string, detail: string) {
+function recordError(source: string, detail: string, failed = true) {
   const store = errorStore.getStore();
   if (!store) return;
+  if (failed) store.failed.add(source);
   const message = `${source}: ${detail}`;
   if (!store.errors.includes(message)) store.errors.push(message);
 }
 
 // ─── Fetch helpers ────────────────────────────────────────────────────────────
 
-async function fetchJson<T>(url: string, init: RequestInit = {}): Promise<T | null> {
+function fetchJson<T>(url: string, init: RequestInit = {}): Promise<T | null> {
+  const requests = errorStore.getStore()?.requests;
+  const key = `${init.method ?? 'GET'}:${url}:${init.body ?? ''}`;
+  let pending = requests?.get(key);
+  if (!pending) {
+    pending = fetchJsonUncached<T>(url, init);
+    requests?.set(key, pending);
+  }
+  return pending as Promise<T | null>;
+}
+
+async function fetchJsonUncached<T>(url: string, init: RequestInit): Promise<T | null> {
   try {
     const res = await fetch(url, {
       ...init,
@@ -106,62 +110,18 @@ async function fetchJson<T>(url: string, init: RequestInit = {}): Promise<T | nu
       recordError(url, `HTTP ${res.status}`);
       return null;
     }
-    return res.json() as Promise<T>;
-  } catch (err) {
-    recordError(url, err instanceof Error ? err.message : String(err));
-    return null;
-  }
-}
-
-async function resolveSurfCommand(): Promise<string | null> {
-  if (surfCommandPromise) return surfCommandPromise;
-
-  surfCommandPromise = (async () => {
-    for (const candidate of SURF_CANDIDATES) {
-      try {
-        await execFileAsync(candidate, ['version'], {
-          env: {
-            ...process.env,
-            PATH: `${SURF_BIN_DIR}:${process.env.PATH ?? ''}`,
-          },
-          timeout: FETCH_TIMEOUT_MS,
-        });
-        return candidate;
-      } catch {
-        continue;
+    const data = await res.json() as T;
+    if (data && typeof data === 'object') {
+      const envelope = data as { code?: string | number; retCode?: number };
+      if ((envelope.code !== undefined && !['0', '00000'].includes(String(envelope.code))) || (envelope.retCode !== undefined && envelope.retCode !== 0)) {
+        recordError(url, 'source rejected the request');
+        return null;
       }
     }
-
-    return null;
-  })();
-
-  return surfCommandPromise;
-}
-
-async function runSurfJson<T>(command: string, args: string[] = []): Promise<T | null> {
-  const surf = await resolveSurfCommand();
-  if (!surf) {
-    recordError('surf', 'binary not found');
-    return null;
-  }
-
-  try {
-    const { stdout } = await execFileAsync(
-      surf,
-      [command, ...args, '-o', 'json', '-f', 'body.data'],
-      {
-        env: {
-          ...process.env,
-          PATH: `${SURF_BIN_DIR}:${process.env.PATH ?? ''}`,
-        },
-        timeout: FETCH_TIMEOUT_MS,
-        maxBuffer: 1024 * 1024 * 16,
-      }
-    );
-
-    return JSON.parse(stdout) as T;
+    errorStore.getStore()?.successful.add(url);
+    return data;
   } catch (err) {
-    recordError(`surf ${command}`, err instanceof Error ? err.message : String(err));
+    recordError(url, err instanceof Error ? err.message : String(err));
     return null;
   }
 }
@@ -177,63 +137,36 @@ interface RawInstrument {
 
 type ExchangeKey = 'binance' | 'okx' | 'bybit' | 'bitget' | 'coinbase' | 'upbit' | 'hyperliquid';
 
-interface SurfInstrument extends RawInstrument {
-  exchange: ExchangeKey;
-}
-
-interface SurfListingEvent {
-  base_symbol?: string;
-  effective_at?: number;
-  exchange_name?: string;
-  product?: string;
-  trading_pair?: string;
-}
-
-interface SurfMarketCoin {
-  symbol?: string;
-  price_usd?: number | null;
-  market_cap_usd?: number | null;
-  fdv?: number | null;
-  volume_24h_usd?: number | null;
-  change_24h_pct?: number | null;
-}
-
-interface SurfExchangeMarket {
-  active?: boolean;
-  base?: string;
-  pair?: string;
-}
-
-async function fetchOkxSpot(since: number): Promise<RawInstrument[]> {
-  type Item = { instId: string; listTime: string };
+async function fetchOkxSpot(): Promise<RawInstrument[]> {
+  type Item = { instId: string; listTime: string; state: string };
   type Resp = { data: Item[] };
   const d = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SPOT');
   return (d?.data ?? [])
-    .filter(x => x.listTime && parseInt(x.listTime) >= since)
+    .filter(x => x.instId && x.state === 'live')
     .map(x => {
       const [base] = x.instId.split('-');
       return { symbol: base.toUpperCase(), pair: x.instId, type: 'spot', listedAt: parseInt(x.listTime) };
     });
 }
 
-async function fetchOkxSwap(since: number): Promise<RawInstrument[]> {
-  type Item = { instId: string; listTime: string };
+async function fetchOkxSwap(): Promise<RawInstrument[]> {
+  type Item = { instId: string; listTime: string; state: string };
   type Resp = { data: Item[] };
   const d = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SWAP');
   return (d?.data ?? [])
-    .filter(x => x.listTime && parseInt(x.listTime) >= since)
+    .filter(x => x.instId && x.state === 'live')
     .map(x => {
       const [base] = x.instId.split('-');
       return { symbol: base.toUpperCase(), pair: x.instId, type: 'perp', listedAt: parseInt(x.listTime) };
     });
 }
 
-async function fetchBybitLinear(since: number): Promise<RawInstrument[]> {
-  type Item = { symbol: string; baseCoin: string; launchTime: string; contractType: string };
+async function fetchBybitLinear(): Promise<RawInstrument[]> {
+  type Item = { symbol: string; baseCoin: string; launchTime: string; contractType: string; status: string };
   type Resp = { result: { list: Item[] } };
   const d = await fetchJson<Resp>('https://api.bybit.com/v5/market/instruments-info?category=linear&limit=1000');
   return (d?.result?.list ?? [])
-    .filter(x => x.launchTime && parseInt(x.launchTime) >= since && x.contractType === 'LinearPerpetual')
+    .filter(x => x.contractType === 'LinearPerpetual' && x.status === 'Trading')
     .map(x => ({
       symbol: x.baseCoin.toUpperCase(),
       pair: x.symbol,
@@ -242,46 +175,58 @@ async function fetchBybitLinear(since: number): Promise<RawInstrument[]> {
     }));
 }
 
-async function fetchBitgetSpot(since: number): Promise<RawInstrument[]> {
-  type Item = { symbol: string; baseCoin: string; openTime: string };
+async function fetchBitgetSpot(): Promise<RawInstrument[]> {
+  type Item = { symbol: string; baseCoin: string; openTime: string; status: string };
   type Resp = { data: Item[] };
   const d = await fetchJson<Resp>('https://api.bitget.com/api/v2/spot/public/symbols');
   return (d?.data ?? [])
-    .filter(x => x.openTime && parseInt(x.openTime) >= since)
+    .filter(x => x.baseCoin && x.symbol && x.status === 'online')
     .map(x => ({
       symbol: x.baseCoin.toUpperCase(),
       pair: x.symbol,
       type: 'spot',
-      listedAt: parseInt(x.openTime),
+      listedAt: 0,
     }));
 }
 
-async function fetchCoinbaseSpot(since: number): Promise<RawInstrument[]> {
-  type Item = { product_id: string; base_currency_id: string; new_at: string | null; product_type: string };
+async function fetchCoinbaseSpot(): Promise<RawInstrument[]> {
+  type Item = { product_id: string; base_currency_id: string; new_at: string | null; product_type: string; is_disabled?: boolean; trading_disabled?: boolean };
   type Resp = { products: Item[] };
   const d = await fetchJson<Resp>('https://api.coinbase.com/api/v3/brokerage/market/products?product_type=SPOT&limit=500');
   return (d?.products ?? [])
-    .filter(x => x.new_at && new Date(x.new_at).getTime() >= since)
+    .filter(x => x.base_currency_id && x.product_id && !x.is_disabled && !x.trading_disabled)
     .map(x => ({
       symbol: x.base_currency_id.toUpperCase(),
       pair: x.product_id,
       type: 'spot',
-      listedAt: new Date(x.new_at!).getTime(),
+      listedAt: x.new_at ? new Date(x.new_at).getTime() : 0,
     }));
 }
 
-async function fetchBinanceFutures(since: number): Promise<RawInstrument[]> {
-  type Item = { symbol: string; baseAsset: string; onboardDate: number; contractType: string };
+async function fetchBinanceFutures(): Promise<RawInstrument[]> {
+  type Item = { symbol: string; baseAsset: string; onboardDate: number; contractType: string; status: string };
   type Resp = { symbols: Item[] };
   const d = await fetchJson<Resp>('https://fapi.binance.com/fapi/v1/exchangeInfo');
   return (d?.symbols ?? [])
-    .filter(x => x.onboardDate && x.onboardDate >= since && x.contractType === 'PERPETUAL')
+    .filter(x => x.contractType === 'PERPETUAL' && x.status === 'TRADING')
     .map(x => ({
       symbol: x.baseAsset.toUpperCase(),
       pair: x.symbol,
       type: 'perp',
       listedAt: x.onboardDate,
     }));
+}
+
+async function fetchBybitSpot(): Promise<RawInstrument[]> {
+  type Resp = { result?: { list?: Array<{ symbol: string; baseCoin: string; status: string }> } };
+  const data = await fetchJson<Resp>('https://api.bybit.com/v5/market/instruments-info?category=spot&limit=1000');
+  return (data?.result?.list ?? []).filter(x => x.status === 'Trading').map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'spot', listedAt: 0 }));
+}
+
+async function fetchBitgetPerp(): Promise<RawInstrument[]> {
+  type Resp = { data?: Array<{ symbol: string; baseCoin: string; symbolStatus: string; symbolType: string }> };
+  const data = await fetchJson<Resp>('https://api.bitget.com/api/v2/mix/market/contracts?productType=USDT-FUTURES');
+  return (data?.data ?? []).filter(x => x.symbolStatus === 'normal' && x.symbolType === 'perpetual').map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'perp', listedAt: 0 }));
 }
 
 // ─── Existence checkers (no timestamp, just presence) ─────────────────────────
@@ -342,185 +287,40 @@ async function getHyperliquidSet(): Promise<Set<string>> {
   return s;
 }
 
-// ─── Surf fallbacks ───────────────────────────────────────────────────────────
-
-function ymd(value: number | string | Date): string {
-  return new Date(value).toISOString().slice(0, 10);
-}
-
-function normalizeSurfExchange(value: string | undefined): ExchangeKey | 'binance_alpha' | null {
-  const exchange = String(value ?? '').toUpperCase();
-  if (exchange === 'BINANCE') return 'binance';
-  if (exchange === 'BINANCE ALPHA') return 'binance_alpha';
-  if (exchange === 'OKX') return 'okx';
-  if (exchange === 'BYBIT') return 'bybit';
-  if (exchange === 'BITGET') return 'bitget';
-  if (exchange === 'COINBASE') return 'coinbase';
-  if (exchange === 'UPBIT') return 'upbit';
-  if (exchange === 'HYPERLIQUID') return 'hyperliquid';
-  return null;
-}
-
-function normalizeSurfListings(events: SurfListingEvent[]): { instruments: SurfInstrument[]; alpha: Set<string> } {
-  const instruments: SurfInstrument[] = [];
-  const alpha = new Set<string>();
-
-  for (const event of events) {
-    const symbol = String(event.base_symbol ?? '').toUpperCase();
-    const exchange = normalizeSurfExchange(event.exchange_name);
-    const pair = String(event.trading_pair ?? '').replace('/', '-');
-    const product = String(event.product ?? '').toUpperCase();
-    const listedAt = event.effective_at ? event.effective_at * 1000 : Date.now();
-
-    if (!symbol || !exchange || !pair) continue;
-
-    if (exchange === 'binance_alpha') {
-      alpha.add(symbol);
-      continue;
-    }
-
-    if (product.includes('PERP')) {
-      instruments.push({ symbol, pair, type: 'perp', listedAt, exchange });
-    } else if (product.includes('SPOT')) {
-      instruments.push({ symbol, pair, type: 'spot', listedAt, exchange });
-    }
-  }
-
-  return { instruments, alpha };
-}
-
-async function fetchSurfListingEvents(since: number, generatedAt: string): Promise<SurfListingEvent[]> {
-  const from = ymd(since);
-  const to = ymd(generatedAt);
-  const result: SurfListingEvent[] = [];
-
-  for (let offset = 0; offset < 500; offset += 100) {
-    const page = await runSurfJson<SurfListingEvent[]>('listing', [
-      '--from',
-      from,
-      '--to',
-      to,
-      '--limit',
-      '100',
-      '--offset',
-      String(offset),
-    ]);
-
-    if (!page?.length) break;
-    result.push(...page);
-    if (page.length < 100) break;
-  }
-
-  return result;
-}
-
-async function fetchSurfMarketMap(): Promise<Map<string, { price: number | null; change: number | null; volume: number | null; marketCap: number | null; fdv: number | null }>> {
-  const pages = await Promise.all([0, 100, 200, 300, 400].map((offset) =>
-    runSurfJson<SurfMarketCoin[]>('market-ranking', [
-      '--sort-by',
-      'market_cap',
-      '--limit',
-      '100',
-      '--offset',
-      String(offset),
-    ])
-  ));
-  const result = new Map<string, { price: number | null; change: number | null; volume: number | null; marketCap: number | null; fdv: number | null }>();
-
-  for (const coin of pages.flatMap((page) => page ?? [])) {
-    const symbol = String(coin.symbol ?? '').toUpperCase();
-    if (!symbol || result.has(symbol)) continue;
-    result.set(symbol, {
-      price: coin.price_usd ?? null,
-      change: coin.change_24h_pct ?? null,
-      volume: coin.volume_24h_usd ?? null,
-      marketCap: coin.market_cap_usd ?? null,
-      fdv: coin.fdv ?? null,
-    });
-  }
-
-  return result;
-}
-
-async function fetchSurfFearGreed(): Promise<{ value: number; label: string } | null> {
-  type Item = { value: number; classification: string };
-  const now = Date.now();
-  const rows = await runSurfJson<Item[]>('market-fear-greed', [
-    '--from',
-    ymd(now - 2 * 24 * 3600 * 1000),
-    '--to',
-    ymd(now),
-  ]);
-  const latest = rows?.[0];
-  return latest ? { value: latest.value, label: latest.classification } : null;
-}
-
-async function getSurfExchangeSet(exchange: string, type: 'spot' | 'perp'): Promise<Set<string>> {
-  const rows = await runSurfJson<SurfExchangeMarket[]>('exchange-markets', [
-    '--exchange',
-    exchange,
-    '--type',
-    type,
-    '--limit',
-    '5000',
-  ]);
-  const s = new Set<string>();
-
-  for (const market of rows ?? []) {
-    if (market.active === false) continue;
-    const base = String(market.base ?? '').toUpperCase();
-    if (base) s.add(base);
-  }
-
-  return s;
-}
-
 // ─── CoinGecko market cap / FDV fetcher ───────────────────────────────────────
 
-async function fetchCoinGeckoMarkets(): Promise<Map<string, { marketCap: number; fdv: number | null }>> {
-  type Item = { symbol: string; market_cap: number | null; fully_diluted_valuation: number | null };
-  const result = new Map<string, { marketCap: number; fdv: number | null }>();
-  const pages = [1, 2, 3];
-  await Promise.all(pages.map(async (page) => {
-    const d = await fetchJson<Item[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`
-    );
-    for (const item of d ?? []) {
-      const sym = item.symbol.toUpperCase();
-      if (!result.has(sym) && item.market_cap) {
-        result.set(sym, { marketCap: item.market_cap, fdv: item.fully_diluted_valuation ?? null });
-      }
-    }
-  }));
+type MarketQuote = { price: number | null; change: number | null; volume: number | null; marketCap: number | null; fdv: number | null };
+
+async function fetchCoinGeckoMarkets(): Promise<Map<string, MarketQuote>> {
+  type Item = { symbol: string; current_price: number | null; price_change_percentage_24h: number | null; total_volume: number | null; market_cap: number | null; fully_diluted_valuation: number | null };
+  const urls = [1, 2, 3].map(page => `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`);
+  urls.push(...[1, 2].map(page => `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`));
+  const pages = await Promise.all(urls.map(url => fetchJson<Item[]>(url)));
+  const result = new Map<string, MarketQuote>();
+  for (const item of pages.flatMap(page => page ?? [])) {
+    const symbol = item.symbol?.toUpperCase();
+    if (!symbol || result.has(symbol)) continue;
+    result.set(symbol, { price: item.current_price, change: item.price_change_percentage_24h, volume: item.total_volume, marketCap: item.market_cap, fdv: item.fully_diluted_valuation });
+  }
   return result;
 }
 
 // ─── Price fetcher ────────────────────────────────────────────────────────────
 
 async function fetchBinancePrices(symbols: string[]): Promise<Map<string, { price: number; change: number; volume: number }>> {
-  const result = new Map<string, { price: number; change: number; volume: number }>();
-  if (!symbols.length) return result;
-
-  // Binance batch limit is 100 symbols
-  const CHUNK = 100;
   type Item = { symbol: string; openPrice: string; lastPrice: string; quoteVolume: string };
-  const chunks: string[][] = [];
-  for (let i = 0; i < symbols.length; i += CHUNK) chunks.push(symbols.slice(i, i + CHUNK));
-
-  await Promise.all(chunks.map(async (chunk) => {
-    const pairs = chunk.map(s => `"${s}USDT"`).join(',');
-    const d = await fetchJson<Item[]>(
-      `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`
-    );
-    for (const item of d ?? []) {
-      const base = item.symbol.replace('USDT', '');
-      const open = parseFloat(item.openPrice);
-      const last = parseFloat(item.lastPrice);
-      const change = open > 0 ? ((last - open) / open) * 100 : 0;
-      result.set(base, { price: last, change, volume: parseFloat(item.quoteVolume) });
-    }
-  }));
-
+  const result = new Map<string, { price: number; change: number; volume: number }>();
+  const wanted = new Set(symbols);
+  if (!wanted.size) return result;
+  const data = await fetchJson<Item[]>('https://api.binance.com/api/v3/ticker/24hr?type=MINI');
+  for (const item of data ?? []) {
+    if (!item.symbol.endsWith('USDT')) continue;
+    const base = item.symbol.slice(0, -4);
+    if (!wanted.has(base)) continue;
+    const open = Number(item.openPrice), last = Number(item.lastPrice), volume = Number(item.quoteVolume);
+    if (!(open > 0) || !(last > 0) || !Number.isFinite(volume)) continue;
+    result.set(base, { price: last, change: (last - open) / open * 100, volume });
+  }
   return result;
 }
 
@@ -542,7 +342,7 @@ function computeSignal(coin: Omit<ListingCoin, 'signalRating' | 'listingSequence
   return 'D';
 }
 
-function computeSequence(binanceSpot: boolean, anySpot: boolean, anyPerp: boolean): ListingSequence {
+function computeSequence(anySpot: boolean, anyPerp: boolean): ListingSequence {
   if (anySpot && anyPerp) return 'full_stack';
   if (anySpot) return 'spot_only';
   if (anyPerp) return 'perp_only';
@@ -552,58 +352,32 @@ function computeSequence(binanceSpot: boolean, anySpot: boolean, anyPerp: boolea
 // ─── Main export ──────────────────────────────────────────────────────────────
 
 export async function getWatchData(lookbackDays = 30): Promise<WatchData> {
-  return errorStore.run({ errors: [] }, () => getWatchDataInner(lookbackDays));
+  try {
+    const snapshot = JSON.parse(await readFile(resolve(process.cwd(), 'public/data/watch-data.json'), 'utf8')) as WatchData;
+    if (isWatchData(snapshot) && snapshot.lookbackDays === lookbackDays) return snapshot;
+  } catch { /* A first build can collect live data before a snapshot exists. */ }
+  return collectWatchData(lookbackDays);
+}
+
+export async function collectWatchData(lookbackDays = 30): Promise<WatchData> {
+  if (!Number.isInteger(lookbackDays) || lookbackDays < 1 || lookbackDays > 365) throw new Error('lookbackDays must be an integer between 1 and 365');
+  return errorStore.run({ errors: [], successful: new Set(), failed: new Set(), requests: new Map() }, () => getWatchDataInner(lookbackDays));
 }
 
 async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
-  const generatedAt = new Date().toISOString();
-  const since = Date.now() - lookbackDays * 24 * 3600 * 1000;
-
-  const [
-    [
-      okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures,
-      bnbSpotSet, upbitSet, hlSet, bnbAlphaSet,
-      fngRaw, globalRaw, cgMarkets,
-    ],
-    [
-      surfEvents, surfMarketMap, surfFearGreed,
-      surfBinanceSpotSet, surfUpbitSet, surfHlSet,
-    ],
-  ] = await Promise.all([
-    Promise.all([
-      fetchOkxSpot(since),
-      fetchOkxSwap(since),
-      fetchBybitLinear(since),
-      fetchBitgetSpot(since),
-      fetchCoinbaseSpot(since),
-      fetchBinanceFutures(since),
-      getBinanceSpotSet(),
-      getUpbitSet(),
-      getHyperliquidSet(),
-      getBinanceAlphaSet(),
-      fetchJson<{ data: Array<{ value: string; value_classification: string }> }>('https://api.alternative.me/fng/?limit=1'),
-      fetchJson<{ data: { total_market_cap: Record<string, number>; market_cap_percentage: Record<string, number>; market_cap_change_percentage_24h_usd: number; active_cryptocurrencies: number; markets: number } }>('https://api.coingecko.com/api/v3/global'),
-      fetchCoinGeckoMarkets(),
-    ]),
-    Promise.all([
-      fetchSurfListingEvents(since, generatedAt),
-      fetchSurfMarketMap(),
-      fetchSurfFearGreed(),
-      getSurfExchangeSet('binance', 'spot'),
-      getSurfExchangeSet('upbit', 'spot'),
-      getSurfExchangeSet('hyperliquid', 'perp'),
-    ]),
+  const now = Date.now();
+  const generatedAt = new Date(now).toISOString();
+  const since = now - lookbackDays * 24 * 3600 * 1000;
+  const [okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures, bnbSpotSet, upbitSet, hlSet, bnbAlphaSet, fngRaw, globalRaw, cgMarkets, bybitSpot, bitgetPerp] = await Promise.all([
+    fetchOkxSpot(), fetchOkxSwap(), fetchBybitLinear(), fetchBitgetSpot(), fetchCoinbaseSpot(), fetchBinanceFutures(),
+    getBinanceSpotSet(), getUpbitSet(), getHyperliquidSet(), getBinanceAlphaSet(),
+    fetchJson<{ data: Array<{ value: string; value_classification: string }> }>('https://api.alternative.me/fng/?limit=1'),
+    fetchJson<{ data: { total_market_cap: Record<string, number>; market_cap_percentage: Record<string, number>; market_cap_change_percentage_24h_usd: number; active_cryptocurrencies: number; markets: number } }>('https://api.coingecko.com/api/v3/global'),
+    fetchCoinGeckoMarkets(), fetchBybitSpot(), fetchBitgetPerp(),
   ]);
-
-  const surfListings = normalizeSurfListings(surfEvents);
-  for (const sym of surfBinanceSpotSet) bnbSpotSet.add(sym);
-  for (const sym of surfUpbitSet) upbitSet.add(sym);
-  for (const sym of surfHlSet) hlSet.add(sym);
-  for (const sym of surfListings.alpha) bnbAlphaSet.add(sym);
-
-  const fearGreed = fngRaw?.data?.[0]
-    ? { value: parseInt(fngRaw.data[0].value, 10), label: fngRaw.data[0].value_classification }
-    : surfFearGreed;
+  recordError('Bitget listing dates', 'legacy spot inventory does not supply verified listing dates', false);
+  if (cbSpot.length >= 500) recordError('Coinbase inventory', 'coverage limited to the first 500 public products', false);
+  const fearGreed = fngRaw?.data?.[0] ? { value: Number(fngRaw.data[0].value), label: fngRaw.data[0].value_classification } : null;
 
   const global: GlobalMarket = {
     totalMarketCapUsd: globalRaw?.data?.total_market_cap?.usd ?? null,
@@ -615,11 +389,10 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
   };
 
   // Collect all unique symbols from timed sources
-  const allRecent = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures, ...surfListings.instruments];
+  const allRecent = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures].filter(x => Number.isFinite(x.listedAt) && x.listedAt >= since && x.listedAt <= now);
   const symbolSet = new Set(allRecent.map(x => x.symbol));
 
-  // Include Binance Alpha-only tokens so they appear in the Alpha tab even if
-  // not yet listed on any CEX. Use current time as firstSeenAt placeholder.
+  // Alpha inventory has no verified listing date; retain null for those entries.
   for (const sym of bnbAlphaSet) symbolSet.add(sym);
 
   // Exclude stablecoins and noise
@@ -632,7 +405,7 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
   const coinMap = new Map<string, {
     binance: ExchangeListing; okx: ExchangeListing; bybit: ExchangeListing;
     bitget: ExchangeListing; coinbase: ExchangeListing; upbit: ExchangeListing;
-    hyperliquid: ExchangeListing; firstSeenAt: number;
+    hyperliquid: ExchangeListing; firstSeenAt: number | null;
   }>();
 
   function getOrCreate(sym: string) {
@@ -640,76 +413,47 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
       coinMap.set(sym, {
         binance: emptyListing(), okx: emptyListing(), bybit: emptyListing(),
         bitget: emptyListing(), coinbase: emptyListing(), upbit: emptyListing(),
-        hyperliquid: emptyListing(), firstSeenAt: Date.now(),
+        hyperliquid: emptyListing(), firstSeenAt: null,
       });
     }
     return coinMap.get(sym)!;
   }
 
-  // Apply timed data
-  for (const inst of okxSpot) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.okx.spot = true;
-    c.okx.spotListedAt = inst.listedAt;
-    c.okx.spotPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of okxSwap) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.okx.perp = true;
-    c.okx.perpListedAt = inst.listedAt;
-    c.okx.perpPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of bybitPerp) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.bybit.perp = true;
-    c.bybit.perpListedAt = inst.listedAt;
-    c.bybit.perpPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of bitgetSpot) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.bitget.spot = true;
-    c.bitget.spotListedAt = inst.listedAt;
-    c.bitget.spotPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of cbSpot) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.coinbase.spot = true;
-    c.coinbase.spotListedAt = inst.listedAt;
-    c.coinbase.spotPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of bnbFutures) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    c.binance.perp = true;
-    c.binance.perpListedAt = inst.listedAt;
-    c.binance.perpPairs.push(inst.pair);
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
-  }
-  for (const inst of surfListings.instruments) {
-    if (!symbolSet.has(inst.symbol)) continue;
-    const c = getOrCreate(inst.symbol);
-    const listing = c[inst.exchange];
+  function applyInstrument(inst: RawInstrument, exchange: ExchangeKey) {
+    if (!symbolSet.has(inst.symbol) || inst.listedAt > now) return;
+    const coin = getOrCreate(inst.symbol);
+    const listing = coin[exchange];
+    const time = Number.isFinite(inst.listedAt) && inst.listedAt > 0 ? inst.listedAt : null;
     if (inst.type === 'spot') {
       listing.spot = true;
-      listing.spotListedAt = listing.spotListedAt ? Math.min(listing.spotListedAt, inst.listedAt) : inst.listedAt;
+      if (time !== null) listing.spotListedAt = listing.spotListedAt === null ? time : Math.min(time, listing.spotListedAt);
       if (!listing.spotPairs.includes(inst.pair)) listing.spotPairs.push(inst.pair);
     } else {
       listing.perp = true;
-      listing.perpListedAt = listing.perpListedAt ? Math.min(listing.perpListedAt, inst.listedAt) : inst.listedAt;
+      if (time !== null) listing.perpListedAt = listing.perpListedAt === null ? time : Math.min(time, listing.perpListedAt);
       if (!listing.perpPairs.includes(inst.pair)) listing.perpPairs.push(inst.pair);
     }
-    if (inst.listedAt < c.firstSeenAt) c.firstSeenAt = inst.listedAt;
+    if (time !== null && time >= since && (coin.firstSeenAt === null || time < coin.firstSeenAt)) coin.firstSeenAt = time;
   }
+  for (const inst of okxSpot) applyInstrument(inst, 'okx');
+  for (const inst of okxSwap) applyInstrument(inst, 'okx');
+  for (const inst of bybitPerp) applyInstrument(inst, 'bybit');
+  for (const inst of bitgetSpot) applyInstrument(inst, 'bitget');
+  for (const inst of cbSpot) applyInstrument(inst, 'coinbase');
+  for (const inst of bnbFutures) applyInstrument(inst, 'binance');
+  for (const inst of bybitSpot) {
+    if (!symbolSet.has(inst.symbol)) continue;
+    const listing = getOrCreate(inst.symbol).bybit;
+    listing.spot = true;
+    listing.spotPairs.push(inst.pair);
+  }
+  for (const inst of bitgetPerp) {
+    if (!symbolSet.has(inst.symbol)) continue;
+    const listing = getOrCreate(inst.symbol).bitget;
+    listing.perp = true;
+    listing.perpPairs.push(inst.pair);
+  }
+  for (const symbol of symbolSet) getOrCreate(symbol);
 
   // Apply presence-only data
   for (const [sym, c] of coinMap) {
@@ -718,7 +462,7 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
     if (hlSet.has(sym)) c.hyperliquid.perp = true;
   }
 
-  // Fetch prices for all symbols (Binance batch)
+  // Fetch a complete ticker inventory; unsupported pairs cannot poison valid quotes.
   const allSymbols = [...coinMap.keys()];
   const prices = await fetchBinancePrices(allSymbols);
 
@@ -733,7 +477,6 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
 
     const px = prices.get(symbol);
     const cg = cgMarkets.get(symbol);
-    const surfMarket = surfMarketMap.get(symbol);
     const anySpot = spotExchanges.length > 0;
     const anyPerp = perpExchanges.length > 0;
 
@@ -749,7 +492,7 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
     if (c.upbit.spot && spotExchanges.length <= 2) notes.push(`Upbit KRW — Korean premium risk`);
 
     const binanceAlpha = bnbAlphaSet.has(symbol);
-    const mcap = cg?.marketCap ?? surfMarket?.marketCap ?? null;
+    const mcap = cg?.marketCap ?? null;
     // Buy signal: (Alpha OR Binance Spot+Perp) AND mcap < $30M
     const buySignal = (binanceAlpha || (c.binance.spot && c.binance.perp)) && mcap !== null && mcap < 30_000_000;
 
@@ -757,9 +500,9 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
       notes.unshift('Binance Alpha listed');
     }
 
-    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? surfMarket?.price ?? null, priceChange24h: px?.change ?? surfMarket?.change ?? null, volume24h: px?.volume ?? surfMarket?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? surfMarket?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges, binanceAlpha, buySignal };
+    const partial = { symbol, firstSeenAt: c.firstSeenAt, priceUsdt: px?.price ?? cg?.price ?? null, priceChange24h: px?.change ?? cg?.change ?? null, volume24h: px?.volume ?? cg?.volume ?? null, marketCap: mcap, fdv: cg?.fdv ?? null, binance: c.binance, okx: c.okx, bybit: c.bybit, bitget: c.bitget, coinbase: c.coinbase, upbit: c.upbit, hyperliquid: c.hyperliquid, spotExchanges, perpExchanges, binanceAlpha, buySignal };
     const signalRating = computeSignal(partial);
-    const listingSequence = computeSequence(c.binance.spot, anySpot, anyPerp);
+    const listingSequence = computeSequence(anySpot, anyPerp);
 
     listings.push({
       ...partial,
@@ -776,10 +519,11 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
   const ratingOrder: Record<SignalRating, number> = { S: 0, A: 1, B: 2, C: 3, D: 4, R: 5 };
   listings.sort((a, b) => {
     const rd = ratingOrder[a.signalRating] - ratingOrder[b.signalRating];
-    return rd !== 0 ? rd : b.firstSeenAt - a.firstSeenAt;
+    return rd !== 0 ? rd : (b.firstSeenAt ?? 0) - (a.firstSeenAt ?? 0);
   });
 
   const errors = errorStore.getStore()?.errors ?? [];
 
-  return { generatedAt, fearGreed, global, listings, lookbackDays, errors };
+  const context = errorStore.getStore();
+  return { generatedAt, fearGreed, global, listings, lookbackDays, errors, sources: { successful: [...context!.successful], failed: [...context!.failed] } };
 }

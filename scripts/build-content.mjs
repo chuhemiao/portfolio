@@ -5,6 +5,7 @@ import matter from 'gray-matter';
 
 import {
   artifactIdForSlug,
+  buildTranslationGroups,
   discoverContentFiles,
   hashSource,
   isDraftPost,
@@ -31,7 +32,7 @@ import { runCompileJobs } from './lib/content/pool.mjs';
 
 // Bump when the markdown pipeline or artifact format changes: every cached
 // artifact from an older version is then recompiled instead of reused.
-export const CONTENT_COMPILER_VERSION = 2;
+export const CONTENT_COMPILER_VERSION = 4;
 
 function parseArgs(argv) {
   const options = { force: false, workers: undefined };
@@ -106,7 +107,7 @@ async function main() {
       const { data } = matter(source);
 
       if (isDraftPost(data, filePath)) {
-        entry = { hash: contentHash, draft: true, sourcePath: relativePath };
+        entry = { hash: contentHash, draft: true, sourcePath: relativePath, slug: resolveSlug(filePath, data), meta: toIndexMetadata(data) };
       } else {
         const slug = resolveSlug(filePath, data);
         const artifact = artifactIdForSlug(slug);
@@ -142,10 +143,8 @@ async function main() {
     entries.push(entry);
   }
 
-  await runCompileJobs(jobs, { workerCount: options.workers, onResult: () => {} });
-
-  const posts = entries
-    .map((entry) => ({
+  const posts = buildTranslationGroups(
+    manifestEntries.map((entry) => ({
       slug: entry.slug,
       title: entry.meta.title,
       publishedAt: entry.meta.publishedAt,
@@ -153,29 +152,24 @@ async function main() {
       language: entry.meta.language,
       ...(entry.meta.category !== undefined ? { category: entry.meta.category } : {}),
       ...(entry.meta.image !== undefined ? { image: entry.meta.image } : {}),
-      ...(entry.meta.translationSlug !== undefined
-        ? { translationSlug: entry.meta.translationSlug }
-        : {}),
+      ...Object.fromEntries(
+        ['translationSlug', 'translationKey', 'sourceSlug']
+          .filter((field) => entry.meta[field] !== undefined)
+          .map((field) => [field, entry.meta[field]])
+      ),
+      draft: entry.draft,
       artifact: entry.artifact,
       contentHash: entry.hash,
       sourcePath: entry.sourcePath
-    }));
-
-  const postBySlug = new Map(posts.map((post) => [post.slug, post]));
-  for (const post of posts) {
-    if (post.translationSlug) continue;
-
-    if (post.slug.endsWith('-en')) {
-      const baseSlug = post.slug.slice(0, -3);
-      if (postBySlug.has(baseSlug)) post.translationSlug = baseSlug;
-      continue;
-    }
-
-    const englishSlug = `${post.slug}-en`;
-    if (postBySlug.has(englishSlug)) post.translationSlug = englishSlug;
-  }
+    }))
+  ).filter((post) => !post.draft).map((post) => {
+    delete post.draft;
+    return post;
+  });
 
   posts.sort(sortNewestFirst);
+
+  await runCompileJobs(jobs, { workerCount: options.workers, onResult: () => {} });
 
   const expectedArtifacts = new Set();
   for (const entry of entries) {
@@ -193,7 +187,7 @@ async function main() {
   const nextManifestFiles = {};
   for (const entry of manifestEntries) {
     nextManifestFiles[entry.sourcePath] = entry.draft
-      ? { hash: entry.hash, draft: true, compilerVersion: CONTENT_COMPILER_VERSION }
+      ? { hash: entry.hash, draft: true, slug: entry.slug, meta: entry.meta, compilerVersion: CONTENT_COMPILER_VERSION }
       : {
           hash: entry.hash,
           slug: entry.slug,

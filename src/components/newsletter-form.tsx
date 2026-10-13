@@ -1,9 +1,11 @@
 'use client';
 
+import { useI18n } from '@/components/locale-provider';
 import { useState } from 'react';
 import { ArrowRightIcon, CheckIcon } from 'lucide-react';
 
 export default function NewsletterForm() {
+  const { t } = useI18n();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<'idle' | 'loading' | 'done' | 'error'>('idle');
   const [error, setError] = useState('');
@@ -19,15 +21,15 @@ export default function NewsletterForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email }),
       });
-      const data = (await res.json()) as { error?: string };
+      await res.json();
       if (!res.ok) {
-        setError(data.error ?? 'Something went wrong.');
+        setError(res.status === 400 ? t('Enter a valid email address.', '请输入有效邮箱地址。', '有効なメールアドレスを入力してください。') : t('Subscription failed. Please try again.', '订阅失败，请重试。', '登録できませんでした。もう一度お試しください。'));
         setStatus('error');
       } else {
         setStatus('done');
       }
     } catch {
-      setError('Network error, please try again.');
+      setError(t('Network error, please try again.', '网络错误，请重试。', '通信エラーです。もう一度お試しください。'));
       setStatus('error');
     }
   }
@@ -36,7 +38,7 @@ export default function NewsletterForm() {
     return (
       <div className='flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400'>
         <CheckIcon className='size-4' />
-        <span>Subscribed! You'll hear from me soon.</span>
+        <span>{t("Subscribed! You'll hear from me soon.", '订阅成功！稍后将收到更新。', '登録しました！更新をお届けします。')}</span>
       </div>
     );
   }
@@ -46,6 +48,7 @@ export default function NewsletterForm() {
       <input
         type='email'
         required
+        aria-label={t('Email address', '邮箱地址', 'メールアドレス')}
         placeholder='your@email.com'
         value={email}
         onChange={e => setEmail(e.target.value)}
@@ -56,9 +59,9 @@ export default function NewsletterForm() {
         type='submit'
         disabled={status === 'loading'}
         className='inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-background transition hover:opacity-80 disabled:opacity-50'>
-        {status === 'loading' ? 'Subscribing…' : <><span>Subscribe</span><ArrowRightIcon className='size-3' /></>}
+        {status === 'loading' ? t('Subscribing…', '订阅中…', '登録中…') : <><span>{t('Subscribe', '订阅', '登録')}</span><ArrowRightIcon className='size-3' /></>}
       </button>
-      {status === 'error' && <p className='text-xs text-red-500'>{error}</p>}
+      {status === 'error' && <p role='alert' className='text-xs text-red-500'>{error}</p>}
     </form>
   );
 }

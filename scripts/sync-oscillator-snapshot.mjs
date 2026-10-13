@@ -1,7 +1,6 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import zlib from 'node:zlib';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 
@@ -29,10 +28,6 @@ const SNAPSHOT_PATH = path.resolve(
   __dirname,
   '../src/data/oscillator-manual-snapshot.ts'
 );
-const FETCH_CACHE_DIRS = [
-  path.resolve(__dirname, '../.next/dev/cache/fetch-cache'),
-  path.resolve(__dirname, '../.next/cache/fetch-cache'),
-];
 const SURF_BIN_DIR = path.join(process.env.HOME ?? '', '.local/bin');
 const SURF_CANDIDATES = [
   process.env.SURF_BIN,
@@ -40,8 +35,14 @@ const SURF_CANDIDATES = [
   'surf',
 ].filter(Boolean);
 
-let fetchCacheIndexPromise;
+const WITH_SURF = process.argv.includes('--with-surf');
+const DRY_RUN = process.argv.includes('--dry-run');
+const MAX_MARKET_AGE_MS = 6 * 60 * 60 * 1000;
+const DAY_MS = 24 * 60 * 60 * 1000;
+const sourceAsOf = {};
+const unavailableSources = new Set();
 let surfCommandPromise;
+let coinGeckoStableClassificationAvailable = false;
 const execFileAsync = promisify(execFile);
 
 function coingeckoConfig() {
@@ -82,6 +83,7 @@ async function resolveSurfCommand() {
 }
 
 async function runSurfJson(command, args = []) {
+  if (!WITH_SURF) return null;
   const surf = await resolveSurfCommand();
   if (!surf) return null;
 
@@ -111,78 +113,27 @@ async function fetchJson(url, init) {
       ...init,
       signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
     });
-    if (!res.ok) return readFetchCacheJson(url);
+    if (!res.ok) {
+      unavailableSources.add(new URL(url).pathname);
+      return null;
+    }
     return await res.json();
   } catch {
-    return readFetchCacheJson(url);
+    unavailableSources.add(new URL(url).pathname);
+    return null;
   }
 }
 
-async function getFetchCacheIndex() {
-  if (fetchCacheIndexPromise) return fetchCacheIndexPromise;
-
-  fetchCacheIndexPromise = (async () => {
-    const index = new Map();
-
-    for (const dir of FETCH_CACHE_DIRS) {
-      let entries = [];
-      try {
-        entries = await fs.readdir(dir);
-      } catch {
-        continue;
-      }
-
-      for (const name of entries) {
-        const filePath = path.join(dir, name);
-
-        try {
-          const parsed = JSON.parse(await fs.readFile(filePath, 'utf8'));
-          const cacheUrl = parsed?.data?.url;
-          if (typeof cacheUrl === 'string' && !index.has(cacheUrl)) {
-            index.set(cacheUrl, parsed);
-          }
-        } catch {
-          continue;
-        }
-      }
-    }
-
-    return index;
-  })();
-
-  return fetchCacheIndexPromise;
+function isFreshTimestamp(value) {
+  const timestamp = typeof value === 'number' ? value : Date.parse(value);
+  const age = Date.now() - timestamp;
+  return Number.isFinite(timestamp) && age >= -5 * 60 * 1000 && age <= MAX_MARKET_AGE_MS;
 }
 
-function decodeFetchCacheBody(entry) {
-  const body = entry?.data?.body;
-  if (typeof body !== 'string') return null;
-
-  const buffer = Buffer.from(body, 'base64');
-  const candidates = [buffer];
-
-  try {
-    candidates.push(zlib.gunzipSync(buffer));
-  } catch {}
-
-  try {
-    candidates.push(zlib.inflateSync(buffer));
-  } catch {}
-
-  for (const candidate of candidates) {
-    try {
-      return JSON.parse(candidate.toString('utf8'));
-    } catch {
-      continue;
-    }
+function recordSourceTimestamp(source, value) {
+  if (!sourceAsOf[source] || Date.parse(value) < Date.parse(sourceAsOf[source])) {
+    sourceAsOf[source] = value;
   }
-
-  return null;
-}
-
-async function readFetchCacheJson(url) {
-  const index = await getFetchCacheIndex();
-  const entry = index.get(url);
-  return entry ? decodeFetchCacheBody(entry) : null;
 }
 
 function asNumber(value) {
@@ -231,20 +182,21 @@ async function fetchCoinGeckoTopCoins() {
       )
     )
   );
-  const coins = pages.flatMap((page) => page ?? []);
-
-  if ((pages[1]?.length ?? 0) === 0) {
-    const legacySecondPage = await fetchJson(
-      `${cfg.base}/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=50&page=2&sparkline=false&price_change_percentage=24h,7d,30d`,
-      { headers: cfg.headers }
-    );
-    coins.push(...(legacySecondPage ?? []));
-  }
-
-  return Array.from(new Map(coins.map((coin) => [coin.id, coin])).values()).slice(
-    0,
-    TOP_UNIVERSE_LIMIT
+  const stablecoins = await fetchJson(
+    `${cfg.base}/coins/markets?vs_currency=usd&category=stablecoins&per_page=250&page=1&sparkline=false`,
+    { headers: cfg.headers }
   );
+  coinGeckoStableClassificationAvailable = Array.isArray(stablecoins) && stablecoins.length > 0;
+  const stablecoinIds = new Set((Array.isArray(stablecoins) ? stablecoins : []).map((coin) => coin.id));
+  const coins = pages.flatMap((page) => Array.isArray(page) ? page : [])
+    .filter((coin) => !stablecoinIds.has(coin.id));
+
+  return Array.from(new Map(coins
+    .filter((coin) => isFreshTimestamp(coin.last_updated))
+    .map((coin) => {
+      recordSourceTimestamp('coingecko', coin.last_updated);
+      return [coin.id, coin];
+    })).values()).slice(0, TOP_UNIVERSE_LIMIT);
 }
 
 async function fetchSurfMarketRanking() {
@@ -268,13 +220,14 @@ async function fetchCoinMarketCapTopCoins() {
   const data = await fetchJson(
     `https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=${TOP_UNIVERSE_LIMIT}&sortBy=market_cap&sortType=desc`
   );
-  const primary = data?.data?.cryptoCurrencyList ?? [];
-  if (primary.length) return primary;
-
-  const fallback = await fetchJson(
-    'https://api.coinmarketcap.com/data-api/v3/cryptocurrency/listing?start=1&limit=300&sortBy=market_cap&sortType=desc'
+  if (!isFreshTimestamp(data?.status?.timestamp)) return [];
+  const coins = (data?.data?.cryptoCurrencyList ?? []).filter((coin) =>
+    isFreshTimestamp(coin.lastUpdated ?? coin.quotes?.[0]?.lastUpdated)
   );
-  return fallback?.data?.cryptoCurrencyList ?? [];
+  for (const coin of coins) {
+    recordSourceTimestamp('coinmarketcap', coin.lastUpdated ?? coin.quotes?.[0]?.lastUpdated);
+  }
+  return coins;
 }
 
 async function fetchSurfBinanceBtcMarkets(symbols) {
@@ -334,7 +287,8 @@ async function fetchBinanceBtcTickers(symbols) {
 
   const liveTickerMap = new Map(
     (tickers ?? []).flatMap((ticker) => {
-      if (!ticker.symbol?.endsWith('BTC')) return [];
+      if (!ticker.symbol?.endsWith('BTC') || !isFreshTimestamp(Number(ticker.closeTime))) return [];
+      recordSourceTimestamp('binance', new Date(Number(ticker.closeTime)).toISOString());
 
       return [
         [
@@ -372,19 +326,28 @@ async function fetchBtcPrice() {
   if (surfLast !== null) return surfLast;
 
   const ticker = await fetchJson(
-    'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'
+    'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'
   );
-  if (ticker?.price) {
-    const value = Number(ticker.price);
-    if (Number.isFinite(value)) return value;
+  if (ticker?.lastPrice && isFreshTimestamp(Number(ticker.closeTime))) {
+    const value = Number(ticker.lastPrice);
+    if (Number.isFinite(value) && value > 0) {
+      recordSourceTimestamp('binance', new Date(Number(ticker.closeTime)).toISOString());
+      return value;
+    }
   }
 
   const cfg = coingeckoConfig();
   const price = await fetchJson(
-    `${cfg.base}/simple/price?ids=bitcoin&vs_currencies=usd`,
+    `${cfg.base}/simple/price?ids=bitcoin&vs_currencies=usd&include_last_updated_at=true`,
     { headers: cfg.headers }
   );
-  return price?.bitcoin?.usd ?? null;
+  const value = asNumber(price?.bitcoin?.usd);
+  const timestamp = Number(price?.bitcoin?.last_updated_at) * 1000;
+  if (value !== null && value > 0 && isFreshTimestamp(timestamp)) {
+    recordSourceTimestamp('coingecko', new Date(timestamp).toISOString());
+    return value;
+  }
+  return null;
 }
 
 async function fetchCoinGeckoBtcRatios(coinIds) {
@@ -394,13 +357,13 @@ async function fetchCoinGeckoBtcRatios(coinIds) {
   for (let index = 0; index < coinIds.length; index += COINGECKO_RATIO_BATCH) {
     const chunk = coinIds.slice(index, index + COINGECKO_RATIO_BATCH);
     const response = await fetchJson(
-      `${cfg.base}/simple/price?ids=${chunk.join(',')}&vs_currencies=btc`,
+      `${cfg.base}/simple/price?ids=${chunk.join(',')}&vs_currencies=btc&include_last_updated_at=true`,
       { headers: cfg.headers }
     );
 
     for (const coinId of chunk) {
       const ratio = response?.[coinId]?.btc;
-      if (ratio && Number.isFinite(ratio)) {
+      if (ratio && Number.isFinite(ratio) && isFreshTimestamp(Number(response?.[coinId]?.last_updated_at) * 1000)) {
         ratios.set(coinId, ratio);
       }
     }
@@ -409,54 +372,67 @@ async function fetchCoinGeckoBtcRatios(coinIds) {
   return ratios;
 }
 
-function buildHistoryStats(values) {
-  const cleaned = values.filter((value) => Number.isFinite(value) && value > 0);
+function buildHistoryStats(points, historySource) {
+  const now = Date.now();
+  const latestClosedSample = historySource === 'coingecko' ? Math.floor(now / DAY_MS) * DAY_MS : now;
+  const cleaned = points.filter(([timestamp, value]) =>
+    Number.isFinite(timestamp) && timestamp >= now - 1825 * DAY_MS && timestamp <= latestClosedSample &&
+    Number.isFinite(value) && value > 0
+  ).sort((left, right) => left[0] - right[0]);
+  if (!cleaned.length || now - cleaned.at(-1)[0] > 2 * DAY_MS) return null;
 
-  if (!cleaned.length) {
-    return null;
-  }
-
+  const recent = cleaned.filter(([timestamp]) => timestamp >= now - 730 * DAY_MS);
   return {
-    currentCyclePeak: Math.max(...cleaned.slice(-730)),
-    fiveYearLow: Math.min(...cleaned),
+    currentCyclePeak: recent.length && recent[0][0] <= now - 728 * DAY_MS
+      ? Math.max(...recent.map((point) => point[1])) : null,
+    fiveYearLow: Math.min(...cleaned.map((point) => point[1])),
+    historySource,
+    historyAsOf: new Date(cleaned.at(-1)[0]).toISOString(),
+    historyStart: new Date(cleaned[0][0]).toISOString(),
   };
 }
 
-async function fetchSurfAltBtcHistory(symbol) {
-  const history = await runSurfJson('market-price', [
-    '--symbol',
-    symbol,
-    '--currency',
-    'btc',
-    '--time-range',
-    'max',
-  ]);
-
-  if (!Array.isArray(history) || history.length === 0) {
-    return null;
+async function fetchBinanceHistory(binanceSymbol) {
+  if (!binanceSymbol) return null;
+  const points = [];
+  const endTime = Date.now();
+  let startTime = endTime - 1825 * DAY_MS;
+  // Binance returns at most 1000 daily candles per request.
+  for (let page = 0; page < 2; page += 1) {
+    const candles = await fetchJson(
+      `https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=1d&limit=1000&startTime=${startTime}&endTime=${endTime}`
+    );
+    if (!Array.isArray(candles)) return null;
+    for (const candle of candles) {
+      // Only closed daily candles belong to historical anchors.
+      if (Number(candle[6]) <= endTime) points.push([Number(candle[6]), asNumber(candle[4])]);
+    }
+    if (candles.length < 1000) break;
+    startTime = Number(candles.at(-1)[0]) + DAY_MS;
   }
-
-  return buildHistoryStats(history.map((point) => asNumber(point.value)));
+  return buildHistoryStats(points, 'binance');
 }
 
-async function fetchAltBtcHistory(coinId, symbol) {
-  const surfHistory = await fetchSurfAltBtcHistory(symbol);
-  if (surfHistory) {
-    return surfHistory;
+let coinGeckoHistoryUnavailable = false;
+async function fetchAltBtcHistory(coinId, binanceSymbol) {
+  const binanceHistory = await fetchBinanceHistory(binanceSymbol);
+  if (binanceHistory) return binanceHistory;
+
+  if (!coinGeckoHistoryUnavailable) {
+    const cfg = coingeckoConfig();
+    const chart = await fetchJson(
+      `${cfg.base}/coins/${coinId}/market_chart?vs_currency=btc&days=1825&interval=daily`,
+      { headers: cfg.headers }
+    );
+    const stats = buildHistoryStats(chart?.prices ?? [], 'coingecko');
+    if (stats) return stats;
+    // Public CoinGecko access may reject 5-year histories; avoid repeatedly exhausting its rate limit.
+    if (!chart && !process.env.COINGECKO_API_KEY) coinGeckoHistoryUnavailable = true;
   }
-
-  const cfg = coingeckoConfig();
-  const chart = await fetchJson(
-    `${cfg.base}/coins/${coinId}/market_chart?vs_currency=btc&days=1825&interval=daily`,
-    { headers: cfg.headers }
-  );
-
-  const stats = buildHistoryStats((chart?.prices ?? []).map((point) => point[1]));
-  if (stats) {
-    return stats;
-  }
-
-  return { currentCyclePeak: null, fiveYearLow: null };
+  return {
+    currentCyclePeak: null, fiveYearLow: null,
+    historySource: 'none', historyAsOf: null, historyStart: null,
+  };
 }
 
 function applySurfRankingOverlay(sourceRows, surfRows) {
@@ -564,71 +540,6 @@ function applySurfTokenInfoOverlay(sourceRows, surfTokenInfoMap) {
   });
 }
 
-function parseSnapshotFile(text) {
-  const start = text.indexOf('=');
-  const end = text.lastIndexOf(';');
-  if (start === -1 || end === -1 || end <= start) return null;
-
-  return JSON.parse(text.slice(start + 1, end).trim());
-}
-
-function hasRankMetadata(snapshot) {
-  return (snapshot?.data?.summary?.dualRankedCount ?? 0) > 0;
-}
-
-async function readRankFallbackSnapshot() {
-  try {
-    const current = parseSnapshotFile(await fs.readFile(SNAPSHOT_PATH, 'utf8'));
-    if (hasRankMetadata(current)) return current;
-  } catch {}
-
-  try {
-    const { stdout } = await execFileAsync(
-      'git',
-      ['show', 'HEAD:src/data/oscillator-manual-snapshot.ts'],
-      {
-        cwd: path.resolve(__dirname, '..'),
-        timeout: FETCH_TIMEOUT_MS,
-        maxBuffer: 1024 * 1024 * 16,
-      }
-    );
-    const fromGit = parseSnapshotFile(stdout);
-    return hasRankMetadata(fromGit) ? fromGit : null;
-  } catch {
-    return null;
-  }
-}
-
-async function applyRankMetadataFallback(sourceRows) {
-  const snapshot = await readRankFallbackSnapshot();
-  const previousUniverse = snapshot?.data?.universe;
-  if (!Array.isArray(previousUniverse) || previousUniverse.length === 0) {
-    return sourceRows;
-  }
-
-  const previousBySymbol = new Map(
-    previousUniverse.map((row) => [String(row.symbol ?? '').toUpperCase(), row])
-  );
-
-  return sourceRows.map((row) => {
-    const previous = previousBySymbol.get(row.symbol);
-    if (!previous) return row;
-
-    const coingeckoRank = row.coingeckoRank ?? previous.coingeckoRank ?? null;
-    const coinmarketcapRank = row.coinmarketcapRank ?? previous.coinmarketcapRank ?? null;
-    const id =
-      row.id === row.symbol.toLowerCase() && previous.id ? previous.id : row.id;
-
-    return {
-      ...row,
-      id,
-      coingeckoRank,
-      coinmarketcapRank,
-      dualTop300: row.dualTop300 || Boolean(previous.dualTop300),
-    };
-  });
-}
-
 function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak) {
   if (!isVeteran) {
     if (aboveFiveYearLow === null) {
@@ -644,14 +555,14 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
       return {
         grade: 'A',
         action: 'Focus',
-        observation: `This single-cycle asset is ${aboveFiveYearLow.toFixed(1)}% above its 5-year low, which still looks like a healthy rebound zone. Strength here depends more on narrative durability and liquidity staying alive this cycle.`,
+        observation: `This single-cycle asset is ${aboveFiveYearLow.toFixed(1)}% above its available-history low, which still looks like a healthy rebound zone. Strength here depends more on narrative durability and liquidity staying alive this cycle.`,
       };
     }
 
     return {
       grade: 'F',
       action: 'Avoid',
-      observation: `This single-cycle asset is only ${aboveFiveYearLow.toFixed(1)}% above its 5-year low and still sits too close to structural weakness. There is no right-side confirmation yet.`,
+      observation: `This single-cycle asset is only ${aboveFiveYearLow.toFixed(1)}% above its available-history low and still sits too close to structural weakness. There is no right-side confirmation yet.`,
     };
   }
 
@@ -669,7 +580,7 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
       return {
         grade: 'A',
         action: 'Focus',
-        observation: `This research name is ${aboveFiveYearLow.toFixed(1)}% above its 5-year low. Without a prior-cycle peak anchor, treat it as relatively strong, but still provisional.`,
+        observation: `This research name is ${aboveFiveYearLow.toFixed(1)}% above its available-history low. Without a prior-cycle peak anchor, treat it as relatively strong, but still provisional.`,
       };
     }
 
@@ -677,14 +588,14 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
       return {
         grade: 'B',
         action: 'Watch',
-        observation: `It is ${aboveFiveYearLow.toFixed(1)}% above its 5-year low, but the historical anchor is still weak. More cycle evidence is needed.`,
+        observation: `It is ${aboveFiveYearLow.toFixed(1)}% above its available-history low, but the historical anchor is still weak. More cycle evidence is needed.`,
       };
     }
 
     return {
       grade: 'F',
       action: 'Avoid',
-      observation: `It is too close to the 5-year low (${aboveFiveYearLow.toFixed(1)}%) and still lacks a reliable prior-cycle reference point. The risk/reward setup looks poor.`,
+      observation: `It is too close to the available-history low (${aboveFiveYearLow.toFixed(1)}%) and still lacks a reliable prior-cycle reference point. The risk/reward setup looks poor.`,
     };
   }
 
@@ -709,14 +620,14 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
       return {
         grade: 'A',
         action: 'Focus',
-        observation: `The drawdown of ${cycleChange.toFixed(1)}% versus the prior cycle top is still manageable, and the ratio remains ${aboveFiveYearLow.toFixed(1)}% above the 5-year low. That is the profile of a healthy relative-strength name.`,
+        observation: `The drawdown of ${cycleChange.toFixed(1)}% versus the prior cycle top is still manageable, and the ratio remains ${aboveFiveYearLow.toFixed(1)}% above the available-history low. That is the profile of a healthy relative-strength name.`,
       };
     }
 
     return {
       grade: 'B',
       action: 'Watch',
-      observation: `The ratio is down ${cycleChange.toFixed(1)}% from the prior cycle top. Structure is not broken yet, but it is still too close to the 5-year low for clean confirmation.`,
+      observation: `The ratio is down ${cycleChange.toFixed(1)}% from the prior cycle top. Structure is not broken yet, but it is still too close to the available-history low for clean confirmation.`,
     };
   }
 
@@ -727,17 +638,18 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
   };
 }
 
-function buildUniverseRows(sourceRows, ratios, binanceTickers) {
+function buildUniverseRows(sourceRows, ratios, binanceTickers, btcPrice) {
   return sourceRows
     .map((row) => {
       const binanceMarket = pickBinanceBtcMarket(row.symbol, binanceTickers);
       const coingeckoRatio = ratios.get(row.id) ?? null;
-      const currentRatio = binanceMarket?.price ?? coingeckoRatio;
+      const derivedRatio = row.currentPriceUsd > 0 && btcPrice > 0 ? row.currentPriceUsd / btcPrice : null;
+      const currentRatio = binanceMarket?.price ?? coingeckoRatio ?? derivedRatio;
       const currentRatioSource = binanceMarket?.price
         ? 'binance'
         : coingeckoRatio
           ? 'coingecko'
-          : 'none';
+          : derivedRatio ? 'usd-derived' : 'none';
 
       return {
         ...row,
@@ -806,7 +718,7 @@ async function buildFocusResults(universe) {
         const marketRow = universeMap.get(coin.symbol);
         if (!marketRow || !coin.id) return null;
 
-        const history = await fetchAltBtcHistory(coin.id, coin.symbol);
+        const history = await fetchAltBtcHistory(coin.id, marketRow.binanceSymbol);
         const currentRatio = marketRow.currentRatio;
         const lastCyclePeak = coin.lastCyclePeak ?? null;
 
@@ -843,6 +755,9 @@ async function buildFocusResults(universe) {
           currentCyclePeak: history.currentCyclePeak,
           lastCyclePeak,
           fiveYearLow: history.fiveYearLow,
+          historySource: history.historySource,
+          historyAsOf: history.historyAsOf,
+          historyStart: history.historyStart,
           cycleChange,
           aboveFiveYearLow,
           grade: gradeInfo.grade,
@@ -911,6 +826,14 @@ async function buildSnapshotData() {
     fetchSurfMarketRanking(),
   ]);
 
+  if ((!Number.isFinite(btcPrice) || btcPrice <= 0) || Math.max(coingeckoCoins.length, coinmarketcapCoins.length) < COINGECKO_PAGE_SIZE) {
+    throw new Error('Refusing to overwrite oscillator snapshot: fresh BTC price and at least 250 fresh ranked market rows are required.');
+  }
+
+  if (!coinGeckoStableClassificationAvailable && !coinmarketcapCoins.some((coin) => Array.isArray(coin.tags))) {
+    throw new Error('Refusing to overwrite oscillator snapshot: stablecoin classification is unavailable from both CoinGecko and CoinMarketCap.');
+  }
+
   const rankedRows = applySurfRankingOverlay(
     appendSurfRankingFallbackRows(
       mergeMarketSources(
@@ -924,15 +847,16 @@ async function buildSnapshotData() {
     surfRanking
   );
   const surfTokenInfoMap = await fetchSurfTokenInfoMap(rankedRows);
-  const sourceRows = await applyRankMetadataFallback(
-    applySurfTokenInfoOverlay(rankedRows, surfTokenInfoMap)
-  );
+  const sourceRows = applySurfTokenInfoOverlay(rankedRows, surfTokenInfoMap)
+    .filter((row) => (bestRank(row) ?? Infinity) <= TOP_UNIVERSE_LIMIT)
+    .sort((left, right) => (bestRank(left) ?? Infinity) - (bestRank(right) ?? Infinity))
+    .slice(0, TOP_UNIVERSE_LIMIT);
 
   const binanceTickers = await fetchBinanceBtcTickers(
     sourceRows.map((coin) => coin.symbol)
   );
   const ratios = await fetchCoinGeckoBtcRatios(sourceRows.map((coin) => coin.id));
-  const universe = buildUniverseRows(sourceRows, ratios, binanceTickers);
+  const universe = buildUniverseRows(sourceRows, ratios, binanceTickers, btcPrice);
   const results = await buildFocusResults(universe);
   const summary = buildSummary(universe);
 
@@ -942,6 +866,12 @@ async function buildSnapshotData() {
     universe,
     summary,
     btcPrice: asNumber(btcPrice),
+    freshness: {
+      sourceAsOf,
+      historyAvailable: results.filter((row) => row.historySource !== 'none').length,
+      historyTotal: results.length,
+      unavailableSources: Array.from(unavailableSources).sort(),
+    },
   };
 }
 
@@ -964,7 +894,20 @@ async function main() {
     data,
   };
 
-  await fs.writeFile(SNAPSHOT_PATH, serializeSnapshot(snapshot), 'utf8');
+  if (DRY_RUN) {
+    console.log(JSON.stringify(snapshot));
+    return;
+  }
+
+  const tempPath = `${SNAPSHOT_PATH}.${process.pid}.tmp`;
+  try {
+    await fs.writeFile(tempPath, serializeSnapshot(snapshot), { encoding: 'utf8', flag: 'wx' });
+    await fs.rename(tempPath, SNAPSHOT_PATH);
+  } finally {
+    await fs.rm(tempPath, { force: true }).catch((error) => {
+      console.error(`Could not clean up snapshot temporary file: ${error.message}`);
+    });
+  }
 
   console.log(
     `Updated oscillator snapshot at ${snapshot.asOf} with ${data.universe.length} altcoins and ${data.results.length} focus rows.`

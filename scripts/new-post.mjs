@@ -4,6 +4,8 @@ import path from 'node:path';
 import process from 'node:process';
 import matter from 'gray-matter';
 import readline from 'node:readline/promises';
+import { toIndexMetadata } from './lib/content/discovery.mjs';
+import { normalizeLocale } from '../src/lib/i18n.ts';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const BLOG_CONTENT_DIR = path.join(CONTENT_DIR, 'blog');
@@ -23,6 +25,9 @@ function parseArgs(argv) {
     category: '',
     date: '',
     slug: '',
+    language: '',
+    translationKey: '',
+    sourceSlug: '',
     dryRun: false,
   };
 
@@ -52,6 +57,14 @@ function parseArgs(argv) {
 
     if (arg === '--slug') {
       parsed.slug = argv[i + 1] || '';
+      i += 1;
+      continue;
+    }
+
+    if (['--language', '--translation-key', '--source-slug'].includes(arg)) {
+      const key = { '--language': 'language', '--translation-key': 'translationKey', '--source-slug': 'sourceSlug' }[arg];
+      parsed[key] = argv[i + 1] || '';
+      if (!parsed[key] || parsed[key].startsWith('--')) throw new Error(`${arg} requires a value`);
       i += 1;
       continue;
     }
@@ -275,7 +288,10 @@ async function main() {
     process.exit(1);
   }
 
+  const language = args.language ? normalizeLocale(args.language) : toIndexMetadata({ title, summary: description }).language;
+  if (!language) throw new Error('Invalid --language; expected zh-CN, en or ja');
   const existingSlugs = getExistingSlugs();
+  if (args.sourceSlug && !existingSlugs.has(args.sourceSlug)) throw new Error(`Source slug "${args.sourceSlug}" does not exist`);
   const requestedSlug = args.slug ? cleanSlugCandidate(args.slug) : '';
   const slugBase = requestedSlug || buildSlug(title, description, postDate);
   const slug = ensureUniqueSlug(slugBase, existingSlugs);
@@ -291,6 +307,7 @@ publishedAt: ${yamlSingleQuoted(postDate)}
 summary: ${yamlSingleQuoted(summary)}
 slug: ${yamlSingleQuoted(slug)}
 category: ${yamlSingleQuoted(category)}
+language: ${yamlSingleQuoted(language)}${args.translationKey ? `\ntranslationKey: ${yamlSingleQuoted(args.translationKey)}` : ''}${args.sourceSlug ? `\nsourceSlug: ${yamlSingleQuoted(args.sourceSlug)}` : ''}
 ---
 
 ## TL;DR
@@ -302,6 +319,7 @@ ${description}
     console.log(`dry-run path: ${path.relative(process.cwd(), outputFile)}`);
     console.log(`slug: ${slug}`);
     console.log(`category: ${category}`);
+    console.log(`language: ${language}`);
     return;
   }
 

@@ -34,6 +34,7 @@ export type CoinMarketCapListing = {
   slug?: string;
   cmcRank: number | null;
   marketPairCount?: number | null;
+  tags?: string[];
   quotes?: CoinMarketCapQuote[] | null;
 };
 
@@ -215,11 +216,14 @@ export function mergeMarketSources(
   coinmarketcapCoins: CoinMarketCapListing[],
   researchFocusMap: Map<string, ResearchFocusItem>
 ): MarketSourceCoin[] {
+  const stablecoinSymbols = new Set(coinmarketcapCoins
+    .filter((coin) => coin.tags?.includes('stablecoin'))
+    .map((coin) => coin.symbol.toUpperCase()));
   const symbolIndex = buildSymbolIndex(coingeckoCoins);
   const merged = new Map<string, MarketSourceCoin>();
 
   for (const coin of coingeckoCoins) {
-    if (isExcludedFromAltUniverse(coin.symbol, coin.name)) continue;
+    if (isExcludedFromAltUniverse(coin.symbol, coin.name) || stablecoinSymbols.has(coin.symbol.toUpperCase())) continue;
 
     const symbol = coin.symbol.toUpperCase();
     const research = researchFocusMap.get(symbol) ?? null;
@@ -249,7 +253,7 @@ export function mergeMarketSources(
   }
 
   for (const coin of coinmarketcapCoins) {
-    if (isExcludedFromAltUniverse(coin.symbol, coin.name)) continue;
+    if (isExcludedFromAltUniverse(coin.symbol, coin.name) || stablecoinSymbols.has(coin.symbol.toUpperCase())) continue;
 
     const symbol = coin.symbol.toUpperCase();
     const research = researchFocusMap.get(symbol) ?? null;
@@ -275,7 +279,10 @@ export function mergeMarketSources(
         match?.market_cap_rank ??
         coin.cmcRank ??
         null,
-      dualTop300: Boolean(existing || match),
+      dualTop300: Boolean(
+        (existing?.coingeckoRank ?? match?.market_cap_rank ?? Infinity) <= 300 &&
+        (coin.cmcRank ?? Infinity) <= 300
+      ),
       researchFocus: existing?.researchFocus ?? Boolean(research),
       researchSlug: existing?.researchSlug ?? research?.slug ?? null,
       researchType: existing?.researchType ?? research?.type ?? null,

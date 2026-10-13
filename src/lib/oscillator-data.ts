@@ -5,7 +5,7 @@ import type { MarketSourceCoin } from './oscillator-helpers';
 
 export type Grade = 'S' | 'A' | 'B' | 'F';
 export type Action = 'Focus' | 'Watch' | 'Avoid';
-export type RatioSource = 'binance' | 'coingecko' | 'none';
+export type RatioSource = 'binance' | 'coingecko' | 'usd-derived' | 'none';
 export type OscillatorDataMode = 'live' | 'snapshot';
 
 export interface MarketBreadthRow extends MarketSourceCoin {
@@ -25,6 +25,9 @@ export interface OscillatorResult {
   currentCyclePeak: number | null;
   lastCyclePeak: number | null;
   fiveYearLow: number | null;
+  historySource?: 'binance' | 'coingecko' | 'none';
+  historyAsOf?: string | null;
+  historyStart?: string | null;
   cycleChange: number | null;
   aboveFiveYearLow: number | null;
   grade: Grade;
@@ -62,6 +65,12 @@ export interface OscillatorData {
   universe: MarketBreadthRow[];
   summary: OscillatorSummary;
   btcPrice: number | null;
+  freshness?: {
+    sourceAsOf: Record<string, string>;
+    historyAvailable: number;
+    historyTotal: number;
+    unavailableSources: string[];
+  };
   mode: OscillatorDataMode;
   snapshotAsOf: string | null;
   note: string | null;

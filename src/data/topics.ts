@@ -1,3 +1,5 @@
+import type { Locale } from '@/lib/i18n';
+
 export interface Topic {
   slug: string;
   name: string;
@@ -169,4 +171,74 @@ export const TOPICS: Topic[] = [
 
 export function getTopicBySlug(slug: string): Topic | undefined {
   return TOPICS.find((t) => t.slug === slug);
+}
+
+const TOPIC_TRANSLATIONS: Record<string, { name: [string, string]; tagline: [string, string]; description: [string, string]; whyItMatters: [string, string] }> = {
+  stablecoin: {
+    name: ['稳定币', 'ステーブルコイン'],
+    tagline: ['锚定机制、收益与系统风险', 'ペッグの仕組み、利回り、システムリスク'],
+    description: ['研究算法、抵押和混合型稳定币设计，关注脱锚事件、收益机会，以及 DeFi 流动性层的宏观影响。', 'アルゴリズム型、担保型、ハイブリッド型の設計を研究。ペッグ乖離、利回り機会、DeFi の流動性とマクロへの影響を追います。'],
+    whyItMatters: ['稳定币是 DeFi 的储备货币。其设计影响资金流向、风险定价和整个系统的稳定性。', 'ステーブルコインは DeFi の準備通貨です。設計が資金の流れ、リスク評価、システム全体の安定性を左右します。'],
+  },
+  'perp-dex': {
+    name: ['永续合约 DEX', '無期限先物 DEX'],
+    tagline: ['链上永续合约的市场结构', 'オンチェーン無期限先物の市場構造'],
+    description: ['研究与中心化交易所竞争的永续合约 DEX，涵盖费率模型、预言机、流动性池、未平仓量与链上衍生品经济机制。', '中央集権型取引所と競う無期限先物 DEX を研究。手数料、オラクル、流動性プール、建玉、オンチェーンデリバティブの経済性を扱います。'],
+    whyItMatters: ['链上永续合约交易量快速增长。理解其市场结构，是交易和投资决策的重要基础。', 'オンチェーン無期限先物の取引量は急速に成長しています。市場構造の理解は取引と投資の基礎です。'],
+  },
+  cex: {
+    name: ['中心化交易所', '中央集権型取引所'],
+    tagline: ['交易所商业模式与上币情报', '取引所のビジネスモデルと上場情報'],
+    description: ['研究中心化交易所战略、上币信号、费率竞争、储备证明、监管定位和主要平台的交易量归因。', '取引所戦略、上場シグナル、手数料競争、準備金証明、規制への対応、主要市場の取引量を研究します。'],
+    whyItMatters: ['中心化交易所承担市场价格发现。上币决策也是观察山寨币叙事轮动的重要信号。', '中央集権型取引所は市場の価格発見を担います。上場判断はアルトコインのテーマ変化を追う重要なシグナルです。'],
+  },
+  'l1-l2': {
+    name: ['L1 / L2', 'L1 / L2'],
+    tagline: ['公链竞争与扩容架构', 'チェーン間競争とスケーリング設計'],
+    description: ['研究 Layer 1 共识与 Layer 2 Rollup 扩容，涵盖生态发展、DeFi TVL、跨链基础设施和模块化与单体架构取舍。', 'Layer 1 のコンセンサスと Layer 2 の Rollup を研究。エコシステム、DeFi TVL、ブリッジ、モジュラー型と一体型の設計を扱います。'],
+    whyItMatters: ['每个周期的选链决策都涉及大量资本。L1 与 L2 的竞争格局不同，需要分别分析。', 'チェーン選択には各サイクルで多額の資本が関わります。L1 と L2 の競争は異なり、それぞれの分析が必要です。'],
+  },
+  'ai-crypto': {
+    name: ['AI × Crypto', 'AI × Crypto'],
+    tagline: ['AI 基础设施与去中心化算力', 'AI 基盤と分散型コンピューティング'],
+    description: ['研究 AI Agent、去中心化训练与推理市场、可验证计算，以及机器学习与区块链基础设施的交集。', 'AI エージェント、分散型の学習・推論市場、検証可能な計算、機械学習とブロックチェーン基盤の接点を研究します。'],
+    whyItMatters: ['AI 基础设施吸引新一轮资本。加密网络为算力、数据和模型验证提供去中心化基础设施。', 'AI 基盤に新たな資本が流入しています。暗号資産ネットワークは計算、データ、モデル検証のための分散型基盤を提供します。'],
+  },
+  rwa: {
+    name: ['现实世界资产', '実世界資産'],
+    tagline: ['现实世界资产上链', '実世界資産のオンチェーン化'],
+    description: ['研究代币化国债、私人信贷、房地产，以及支持机构资金通过区块链结算的监管基础设施。', 'トークン化国債、プライベートクレジット、不動産、機関資金のブロックチェーン決済を支える規制基盤を研究します。'],
+    whyItMatters: ['RWA 连接传统金融与 DeFi。资产代币化的增长取决于发行、合规和结算基础设施。', 'RWA は伝統金融と DeFi をつなぎます。資産トークン化の成長には発行、規制対応、決済基盤が必要です。'],
+  },
+  yield: {
+    name: ['收益', '利回り'],
+    tagline: ['DeFi 收益来源与协议经济机制', 'DeFi の利回り源とプロトコルの経済性'],
+    description: ['研究借贷、流动性质押、再质押、收益聚合器，以及影响资金可持续性的协议收入机制。', 'レンディング、リキッドステーキング、リステーキング、利回りアグリゲーター、資金の持続性を左右する収益構造を研究します。'],
+    whyItMatters: ['理解收益从何而来、谁承担风险、哪些协议能够持续捕获价值，是 DeFi 投资的基础。', '利回りの源、リスクの負担者、継続的に価値を獲得するプロトコルの理解は DeFi 投資の基礎です。'],
+  },
+  robotics: {
+    name: ['机器人', 'ロボティクス'],
+    tagline: ['物理 AI、人形机器人与具身智能', 'フィジカル AI、ヒューマノイド、身体性知能'],
+    description: ['研究人形机器人、自主系统，以及物理 AI 与加密激励机制的结合，包括链上机器人协作网络。', 'ヒューマノイド、自律システム、フィジカル AI と暗号資産インセンティブ、オンチェーンのロボット協調ネットワークを研究します。'],
+    whyItMatters: ['机器人逐步成为经济活动参与者，其所有权、支付与任务协作也需要新的基础设施。', 'ロボットが経済活動に参加するにつれ、所有権、決済、タスク調整の新たな基盤が必要になります。'],
+  },
+  quantum: {
+    name: ['量子计算', '量子コンピューティング'],
+    tagline: ['量子计算、密码学威胁与后量子安全', '量子計算、暗号技術への脅威、耐量子セキュリティ'],
+    description: ['研究量子计算进展、对 ECDSA 和 RSA 等密码标准的威胁，以及区块链网络的后量子密码迁移。', '量子計算の進展、ECDSA や RSA への脅威、ブロックチェーンの耐量子暗号への移行を研究します。'],
+    whyItMatters: ['能够破解 ECDSA 的量子计算机会威胁区块链密钥安全。后量子迁移周期较长，需要提前跟踪。', 'ECDSA を破る量子コンピューターはブロックチェーンの鍵の安全性を脅かします。耐量子移行には長い準備期間が必要です。'],
+  },
+  'market-structure': {
+    name: ['市场结构', '市場構造'],
+    tagline: ['震荡指标、市场广度与宏观周期', 'オシレーター、市場の広がり、マクロサイクル'],
+    description: ['研究山寨币周期、BTC 市占率、板块轮动信号，以及不同市场环境下的量化仓位决策框架。', 'アルトコインのサイクル、BTC ドミナンス、セクターローテーション、相場環境別のポジショニング手法を研究します。'],
+    whyItMatters: ['资产选择之外，宏观周期判断同样影响投资结果。市场结构分析为仓位和风险管理提供背景。', '銘柄選択に加え、マクロサイクルの判断も投資結果に影響します。市場構造の分析はポジションとリスク管理の背景を提供します。'],
+  },
+};
+
+export function localizedTopic(topic: Topic, locale: Locale): Topic {
+  const translation = TOPIC_TRANSLATIONS[topic.slug];
+  if (!translation || locale === 'en') return topic;
+  const t = (en: string, zh: string, ja: string) => locale === 'zh-CN' ? zh : locale === 'ja' ? ja : en;
+  return { ...topic, name: t(topic.name, ...translation.name), tagline: t(topic.tagline, ...translation.tagline), description: t(topic.description, ...translation.description), whyItMatters: t(topic.whyItMatters, ...translation.whyItMatters) };
 }

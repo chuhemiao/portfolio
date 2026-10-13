@@ -4,6 +4,12 @@ Personal portfolio site for [kkdemian](https://kkdemian.com) — Web3 Product En
 
 Built with Next.js Static Export, TypeScript, Tailwind CSS, and Shadcn UI. Deployed on Cloudflare Pages, with dynamic APIs served by Cloudflare Workers.
 
+## Languages
+
+The site supports `/zh-CN`, `/en`, and `/ja`. Existing URLs remain accessible. UI localization is separate from article translation; only published translations appear in article language links and SEO alternates.
+
+See [multilingual content workflow](docs/multilingual-content.md) for authoring, language feeds, and validation commands.
+
 ## Getting Started
 
 1. Clone the repository:
@@ -186,7 +192,18 @@ Current local status as of 2026-07-07:
 - Next upgrade reports: none in the latest generated depth queue.
 - Known data-quality risk: the latest batch includes 1000 reports generated after Surf returned `PAID_BALANCE_ZERO` and CoinGecko APIs returned `429 Too Many Requests`; DefiLlama protocol list was used as fallback candidate expansion. These pass structural depth audit but should be live-data refreshed before high-conviction investment use.
 
-For crypto data refresh, use Surf first: check `surf list-operations`, inspect the target command with `--help`, then fall back to CoinGecko, CMC, explorers, DefiLlama, official docs, or web search only when Surf is missing data or errors.
+For crypto data refresh, use local data and native CoinGecko, CMC, exchange, DefiLlama, or official sources. Do not invoke Surf unless the user explicitly requests it.
+
+Refresh the market dashboards before rebuilding the static site:
+
+```bash
+pnpm sync:oscillator
+pnpm sync:watch
+pnpm test:markets
+pnpm build
+```
+
+Oscillator stores its market snapshot in `src/data/oscillator-manual-snapshot.ts`. Historical anchors use available closed daily observations within the displayed windows; unavailable histories remain empty. Watch stores one atomic snapshot at `public/data/watch-data.json`, reused during builds and as the browser fallback when `/api/watch-data` is unavailable. The Watch sync also refreshes Day1Global BTC heat independently at `public/data/btc-score.json` for Oscillator's heat tab. Snapshot timestamps describe the data collection, and failed refreshes preserve the last usable file. Unknown Alpha dates remain unknown; Bitget's deprecated `openTime` is not used as a listing date, and Coinbase's public inventory coverage limit is disclosed. If the terminal needs a proxy, configure `HTTP_PROXY`, `HTTPS_PROXY`, and `NODE_USE_ENV_PROXY=1` for Node 24 without changing repository settings.
 
 For batch CMC/CGO research expansion, use `scripts/generate-cmc-cgo-research-batch.mjs` with `--from-pending --target-count=<n> --list-only` before writing. Surf child commands have a timeout and credit-error short-circuit so long-tail enrichment gaps are captured as article risk instead of hanging the run; the generator also supports registry filtering, non-Latin slug fallback, an opt-in CoinGecko API fallback, and DefiLlama-backed candidate expansion through `pnpm seed:research:candidates`.
 

@@ -1,6 +1,8 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+import { LOCALES, articleHref, localizeHref } from '../src/lib/i18n.ts';
+import { loadTopics } from './lib/content/indexes.mjs';
 import { BLOG_INDEX_FILE, ROOT } from './lib/content/paths.mjs';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
@@ -59,11 +61,14 @@ async function loadPosts() {
       publishedAt: post.publishedAt || new Date(0).toISOString(),
       summary: post.summary || '',
       category: post.category || 'tech',
+      language: post.language || 'en',
+      translations: post.translations || { [post.language || 'en']: post.slug },
     },
   }));
 }
 
-function renderRss(posts) {
+function renderRss(posts, locale) {
+  const title = locale === 'zh-CN' ? '博客' : locale === 'ja' ? 'ブログ' : 'Blog';
   const latestPost = posts[0];
   const lastBuildDate = latestPost
     ? new Date(latestPost.metadata.publishedAt).toUTCString()
@@ -71,11 +76,11 @@ function renderRss(posts) {
 
   const items = posts
     .map((post) => {
-      const postUrl = `${SITE.url}/blog/${post.slug}`;
+      const postUrl = escapeXml(`${SITE.url}${articleHref(post.slug, post.metadata.language)}`);
       return `<item>
   <title>${escapeXml(post.metadata.title)}</title>
   <link>${postUrl}</link>
-  <guid>${postUrl}</guid>
+  <guid>${escapeXml(`${SITE.url}/blog/${post.slug}`)}</guid>
   <pubDate>${new Date(post.metadata.publishedAt).toUTCString()}</pubDate>
   <description>${escapeXml(post.metadata.summary)}</description>
 </item>`;
@@ -85,10 +90,10 @@ function renderRss(posts) {
   return `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 <channel>
-  <title>${escapeXml(SITE.name)} Blog</title>
-  <link>${SITE.url}/blog</link>
+  <title>${escapeXml(SITE.name)} ${title}</title>
+  <link>${SITE.url}${locale ? `/${locale}` : ''}/blog</link>
   <description>${escapeXml(SITE.description)}</description>
-  <language>en-us</language>
+  ${locale ? `<language>${locale}</language>` : ''}
   <lastBuildDate>${lastBuildDate}</lastBuildDate>
 ${items}
 </channel>
@@ -111,6 +116,12 @@ function renderLlmsTxt(posts) {
 > ${SITE.description}
 
 ${SITE.summary}
+
+## Languages
+
+- [中文](${SITE.url}/zh-CN)
+- [English](${SITE.url}/en)
+- [日本語](${SITE.url}/ja)
 
 ## Pages
 
@@ -168,12 +179,13 @@ function renderUrlSet(items) {
     <lastmod>${escapeXml(item.lastmod)}</lastmod>
     <changefreq>${item.changefreq}</changefreq>
     <priority>${item.priority}</priority>
+    ${(item.alternates ?? []).map(([locale, href]) => `<xhtml:link rel="alternate" hreflang="${escapeXml(locale)}" href="${escapeXml(href)}" />`).join('\n    ')}
   </url>`
     )
     .join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 ${body}
 </urlset>
 `;
@@ -199,7 +211,7 @@ ${body}
 // /sitemap.xml stays the single entry point but is now an index over shards of
 // at most SITEMAP_SHARD_SIZE URLs, so the blog can keep growing past the 50k
 // URL / 50MB per-file sitemap limits.
-function buildSitemapShards(posts) {
+function buildSitemapShards(posts, topics) {
   const now = new Date().toISOString();
   const routes = [
     '',
@@ -213,6 +225,7 @@ function buildSitemapShards(posts) {
     '/watch',
     '/pulse',
     '/topics',
+    ...topics.map((topic) => `/topics/${topic.slug}`),
   ];
 
   const shards = [
@@ -220,13 +233,14 @@ function buildSitemapShards(posts) {
       name: 'pages.xml',
       lastmod: now,
       body: renderUrlSet(
-        routes.map((route) => ({
-          loc: `${SITE.url}${route}`,
+        routes.flatMap((route) => LOCALES.map((locale) => ({
+          loc: `${SITE.url}${localizeHref(route || '/', locale)}`,
+          alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route || '/', language)}`]),
           lastmod: now,
           changefreq: 'weekly',
           priority:
             route === '' ? '1.0' : route === '/research' || route === '/oscillator' ? '0.95' : '0.85',
-        }))
+        })))
       ),
     },
   ];
@@ -234,7 +248,8 @@ function buildSitemapShards(posts) {
   for (let start = 0, shard = 1; start < posts.length; start += SITEMAP_SHARD_SIZE, shard += 1) {
     const chunk = posts.slice(start, start + SITEMAP_SHARD_SIZE);
     const items = chunk.map((post) => ({
-      loc: `${SITE.url}/blog/${post.slug}`,
+      loc: `${SITE.url}${articleHref(post.slug, post.metadata.language)}`,
+      alternates: Object.entries(post.metadata.translations).map(([locale, slug]) => [locale, `${SITE.url}${articleHref(slug, locale)}`]),
       lastmod: new Date(post.metadata.publishedAt).toISOString(),
       changefreq: 'monthly',
       priority: '0.8',
@@ -250,8 +265,8 @@ function buildSitemapShards(posts) {
   return shards;
 }
 
-async function writeSitemaps(posts) {
-  const shards = buildSitemapShards(posts);
+async function writeSitemaps(posts, topics) {
+  const shards = buildSitemapShards(posts, topics);
   const expected = new Set(shards.map((shard) => shard.name));
 
   await fs.mkdir(SITEMAP_DIR, { recursive: true });
@@ -345,6 +360,10 @@ function renderHeaders() {
   return `/*
   X-Content-Type-Options: nosniff
 
+/rss-*.xml
+  Content-Type: application/rss+xml; charset=utf-8
+  Cache-Control: public, max-age=3600
+
 /rss.xml
   Content-Type: application/rss+xml; charset=utf-8
   Cache-Control: public, max-age=3600
@@ -389,11 +408,12 @@ function renderHeaders() {
 
 async function main() {
   const started = Date.now();
-  const posts = await loadPosts();
+  const [posts, topics] = await Promise.all([loadPosts(), loadTopics()]);
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
 
   const [shardCount] = await Promise.all([
-    writeSitemaps(posts),
+    writeSitemaps(posts, topics),
+    ...LOCALES.map((locale) => fs.writeFile(path.join(PUBLIC_DIR, `rss-${locale}.xml`), renderRss(posts.filter((post) => post.metadata.language === locale), locale), 'utf8')),
     fs.writeFile(path.join(PUBLIC_DIR, 'rss.xml'), renderRss(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'llms.txt'), renderLlmsTxt(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'robots.txt'), renderRobotsTxt(), 'utf8'),

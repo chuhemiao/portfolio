@@ -5,17 +5,17 @@ import os from 'node:os';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
-const SCRIPT_PATH = '/Users/kk/indie/portfolio/scripts/sync-research-logos.mjs';
+const SCRIPT_PATH = new URL('./sync-research-logos.mjs', import.meta.url).pathname;
 
 function makeWorkspace() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'research-logo-sync-'));
 
-  fs.mkdirSync(path.join(root, 'src', 'app', 'research'), { recursive: true });
+  fs.mkdirSync(path.join(root, 'src', 'app', '(legacy)', 'research'), { recursive: true });
   fs.mkdirSync(path.join(root, 'content', 'blog'), { recursive: true });
   fs.mkdirSync(path.join(root, 'public', 'research-logos'), { recursive: true });
 
   fs.writeFileSync(
-    path.join(root, 'src', 'app', 'research', 'research-client.tsx'),
+    path.join(root, 'src', 'app', '(legacy)', 'research', 'research-client.tsx'),
     `'use client';
 
 type ResearchProject = {
@@ -73,7 +73,7 @@ test('syncResearchLogos keeps running when Coinpaprika coin list fetch fails', a
     await module.syncResearchLogos();
 
     const logoPath = path.join(root, 'public', 'research-logos', 'unknown-project.svg');
-    const researchFile = path.join(root, 'src', 'app', 'research', 'research-client.tsx');
+    const researchFile = path.join(root, 'src', 'app', '(legacy)', 'research', 'research-client.tsx');
     const source = fs.readFileSync(researchFile, 'utf8');
 
     assert.equal(fs.existsSync(logoPath), true);

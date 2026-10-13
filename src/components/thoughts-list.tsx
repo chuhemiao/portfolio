@@ -1,8 +1,8 @@
 'use client';
 
 import BlurFade from '@/components/magicui/blur-fade';
-import { format } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
+import { useI18n } from '@/components/locale-provider';
+import { formatLocaleDate, inferLocale } from '@/lib/i18n';
 import { useState } from 'react';
 
 interface Thought {
@@ -35,6 +35,7 @@ function parseLinks(text: string) {
 }
 
 export default function ThoughtsList({ thoughts }: { thoughts: Thought[] }) {
+  const { locale, t: translate } = useI18n();
   const [visible, setVisible] = useState(10);
   const hasMore = visible < thoughts.length;
 
@@ -44,9 +45,9 @@ export default function ThoughtsList({ thoughts }: { thoughts: Thought[] }) {
         {thoughts.slice(0, visible).map((t, i) => (
           <BlurFade key={t.id} delay={0.08 + i * 0.05}>
             <div className='rounded-lg border p-4'>
-              <p className='text-sm leading-7 whitespace-pre-line'>{parseLinks(t.text)}</p>
+              <p lang={inferLocale(t.text)} className='text-sm leading-7 whitespace-pre-line'>{parseLinks(t.text)}</p>
               <p className='text-xs text-muted-foreground text-right mt-2'>
-                {format(new Date(t.date), 'M月d日', { locale: zhCN })}
+                {formatLocaleDate(t.date, locale, { year: undefined, month: 'short', day: 'numeric' })}
               </p>
             </div>
           </BlurFade>
@@ -58,7 +59,7 @@ export default function ThoughtsList({ thoughts }: { thoughts: Thought[] }) {
           onClick={() => setVisible(v => v + 10)}
           className='w-full py-2 text-sm text-muted-foreground hover:text-foreground transition-colors'
         >
-          加载更多 ({thoughts.length - visible} 条)
+          {translate(`Load more (${thoughts.length - visible} remaining)`, `加载更多（剩余 ${thoughts.length - visible} 条）`, `さらに表示（残り ${thoughts.length - visible} 件）`)}
         </button>
       )}
     </>

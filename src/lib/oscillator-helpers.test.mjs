@@ -250,3 +250,22 @@ test('appendSurfRankingFallbackRows backfills missing surf-ranked alts without r
   assert.equal(hype?.researchSlug, 'hyperliquid');
   assert.equal(hype?.change24h, 3.8);
 });
+
+
+test('dual Top 300 requires both source ranks at or below the boundary', () => {
+  const cg = (rank) => [{id: 'solana', symbol: 'sol', name: 'Solana', market_cap_rank: rank}];
+  const cmc = (rank) => [{id: 5426, symbol: 'SOL', name: 'Solana', cmcRank: rank}];
+  assert.equal(mergeMarketSources(cg(300), cmc(300), new Map())[0].dualTop300, true);
+  assert.equal(mergeMarketSources(cg(301), cmc(300), new Map())[0].dualTop300, false);
+  assert.equal(mergeMarketSources(cg(300), cmc(301), new Map())[0].dualTop300, false);
+  assert.equal(mergeMarketSources(cg(null), cmc(300), new Map())[0].dualTop300, false);
+});
+
+test('fresh stablecoin source tags exclude new stablecoins from both source lists', () => {
+  const cg = [{id: 'usd1', symbol: 'usd1', name: 'USD1', market_cap_rank: 15}];
+  const cmc = [
+    {id: 1, symbol: 'USD1', name: 'World Liberty Financial USD', cmcRank: 15, tags: ['stablecoin']},
+    {id: 2, symbol: 'CHIP', name: 'USD.AI', cmcRank: 80, tags: ['ai-big-data']},
+  ];
+  assert.deepEqual(mergeMarketSources(cg, cmc, new Map()).map((row) => row.symbol), ['CHIP']);
+});

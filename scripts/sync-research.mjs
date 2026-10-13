@@ -15,7 +15,7 @@ import { syncResearchRegistry } from './sync-research-registry.mjs';
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const RESEARCH_CLIENT = path.join(
   process.cwd(),
-  'src/app/research/research-client.tsx'
+  'src/app/(legacy)/research/research-client.tsx'
 );
 
 const ADD_FLAG = process.argv.includes('--add');

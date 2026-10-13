@@ -1,5 +1,7 @@
 /// <reference types="@cloudflare/workers-types" />
 
+import { isWatchData } from '../../../src/lib/watch-client-data';
+
 type SignalStatus = 'on' | 'off' | 'unknown';
 type SignalRating = 'S' | 'A' | 'B' | 'C' | 'D' | 'R';
 type ListingSequence =
@@ -28,7 +30,7 @@ interface ExchangeListing {
 
 interface ListingCoin {
   symbol: string;
-  firstSeenAt: number;
+  firstSeenAt: number | null;
   priceUsdt: number | null;
   priceChange24h: number | null;
   volume24h: number | null;
@@ -281,7 +283,15 @@ async function getCachedJson(
     });
   } catch (error) {
     const stale = await defaultCache().match(cacheKey(key));
-    if (stale) return cachedResponse(request, env, stale);
+    if (stale) {
+      const data: unknown = await stale.clone().json();
+      if (data && typeof data === 'object' && !Array.isArray(data)) {
+        return jsonResponse(request, env, { ...data, _cached: true }, {
+          headers: { 'Cache-Control': 'no-store' },
+        });
+      }
+      return cachedResponse(request, env, stale);
+    }
     return jsonResponse(
       request,
       env,
@@ -312,7 +322,15 @@ async function fetchJson<T>(
       errors.push(`${url}: HTTP ${res.status}`);
       return null;
     }
-    return (await res.json()) as T;
+    const data = await res.json() as T;
+    if (data && typeof data === 'object') {
+      const envelope = data as { code?: string | number; retCode?: number };
+      if ((envelope.code !== undefined && !['0', '00000'].includes(String(envelope.code))) || (envelope.retCode !== undefined && envelope.retCode !== 0)) {
+        errors.push(`${url}: source rejected the request`);
+        return null;
+      }
+    }
+    return data;
   } catch (error) {
     errors.push(`${url}: ${error instanceof Error ? error.message : String(error)}`);
     return null;
@@ -422,11 +440,11 @@ function computeSequence(anySpot: boolean, anyPerp: boolean): ListingSequence {
   return 'unknown';
 }
 
-async function fetchOkxSpot(since: number, errors: string[]): Promise<RawInstrument[]> {
-  type Resp = { data?: Array<{ instId?: string; listTime?: string }> };
+async function fetchOkxSpot(errors: string[]): Promise<RawInstrument[]> {
+  type Resp = { data?: Array<{ instId?: string; listTime?: string; state?: string }> };
   const data = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SPOT', errors);
   return (data?.data ?? [])
-    .filter((item) => item.listTime && Number(item.listTime) >= since && item.instId)
+    .filter((item) => item.instId && item.state === 'live')
     .map((item) => ({
       symbol: String(item.instId).split('-')[0].toUpperCase(),
       pair: String(item.instId),
@@ -435,11 +453,11 @@ async function fetchOkxSpot(since: number, errors: string[]): Promise<RawInstrum
     }));
 }
 
-async function fetchOkxSwap(since: number, errors: string[]): Promise<RawInstrument[]> {
-  type Resp = { data?: Array<{ instId?: string; listTime?: string }> };
+async function fetchOkxSwap(errors: string[]): Promise<RawInstrument[]> {
+  type Resp = { data?: Array<{ instId?: string; listTime?: string; state?: string }> };
   const data = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SWAP', errors);
   return (data?.data ?? [])
-    .filter((item) => item.listTime && Number(item.listTime) >= since && item.instId)
+    .filter((item) => item.instId && item.state === 'live')
     .map((item) => ({
       symbol: String(item.instId).split('-')[0].toUpperCase(),
       pair: String(item.instId),
@@ -448,7 +466,7 @@ async function fetchOkxSwap(since: number, errors: string[]): Promise<RawInstrum
     }));
 }
 
-async function fetchBybitLinear(since: number, errors: string[]): Promise<RawInstrument[]> {
+async function fetchBybitLinear(errors: string[]): Promise<RawInstrument[]> {
   type Resp = {
     result?: {
       list?: Array<{
@@ -456,6 +474,7 @@ async function fetchBybitLinear(since: number, errors: string[]): Promise<RawIns
         baseCoin?: string;
         launchTime?: string;
         contractType?: string;
+      status?: string;
       }>;
     };
   };
@@ -466,9 +485,7 @@ async function fetchBybitLinear(since: number, errors: string[]): Promise<RawIns
   return (data?.result?.list ?? [])
     .filter(
       (item) =>
-        item.launchTime &&
-        Number(item.launchTime) >= since &&
-        item.contractType === 'LinearPerpetual' &&
+        item.contractType === 'LinearPerpetual' && item.status === 'Trading' &&
         item.baseCoin &&
         item.symbol
     )
@@ -480,25 +497,27 @@ async function fetchBybitLinear(since: number, errors: string[]): Promise<RawIns
     }));
 }
 
-async function fetchBitgetSpot(since: number, errors: string[]): Promise<RawInstrument[]> {
-  type Resp = { data?: Array<{ symbol?: string; baseCoin?: string; openTime?: string }> };
+async function fetchBitgetSpot(errors: string[]): Promise<RawInstrument[]> {
+  type Resp = { data?: Array<{ symbol?: string; baseCoin?: string; openTime?: string; status?: string }> };
   const data = await fetchJson<Resp>('https://api.bitget.com/api/v2/spot/public/symbols', errors);
   return (data?.data ?? [])
-    .filter((item) => item.openTime && Number(item.openTime) >= since && item.baseCoin && item.symbol)
+    .filter((item) => item.baseCoin && item.symbol && item.status === 'online')
     .map((item) => ({
       symbol: String(item.baseCoin).toUpperCase(),
       pair: String(item.symbol),
       type: 'spot',
-      listedAt: Number(item.openTime),
+      listedAt: 0,
     }));
 }
 
-async function fetchCoinbaseSpot(since: number, errors: string[]): Promise<RawInstrument[]> {
+async function fetchCoinbaseSpot(errors: string[]): Promise<RawInstrument[]> {
   type Resp = {
     products?: Array<{
       product_id?: string;
       base_currency_id?: string;
       new_at?: string | null;
+      is_disabled?: boolean;
+      trading_disabled?: boolean;
     }>;
   };
   const data = await fetchJson<Resp>(
@@ -508,35 +527,34 @@ async function fetchCoinbaseSpot(since: number, errors: string[]): Promise<RawIn
   return (data?.products ?? [])
     .filter(
       (item) =>
-        item.new_at &&
-        new Date(item.new_at).getTime() >= since &&
         item.base_currency_id &&
-        item.product_id
+        item.product_id &&
+        !item.is_disabled &&
+        !item.trading_disabled
     )
     .map((item) => ({
       symbol: String(item.base_currency_id).toUpperCase(),
       pair: String(item.product_id),
       type: 'spot',
-      listedAt: new Date(String(item.new_at)).getTime(),
+      listedAt: item.new_at ? new Date(item.new_at).getTime() : 0,
     }));
 }
 
-async function fetchBinanceFutures(since: number, errors: string[]): Promise<RawInstrument[]> {
+async function fetchBinanceFutures(errors: string[]): Promise<RawInstrument[]> {
   type Resp = {
     symbols?: Array<{
       symbol?: string;
       baseAsset?: string;
       onboardDate?: number;
       contractType?: string;
+      status?: string;
     }>;
   };
   const data = await fetchJson<Resp>('https://fapi.binance.com/fapi/v1/exchangeInfo', errors);
   return (data?.symbols ?? [])
     .filter(
       (item) =>
-        item.onboardDate &&
-        item.onboardDate >= since &&
-        item.contractType === 'PERPETUAL' &&
+        item.contractType === 'PERPETUAL' && item.status === 'TRADING' &&
         item.baseAsset &&
         item.symbol
     )
@@ -546,6 +564,18 @@ async function fetchBinanceFutures(since: number, errors: string[]): Promise<Raw
       type: 'perp',
       listedAt: Number(item.onboardDate),
     }));
+}
+
+async function fetchBybitSpot(errors: string[]): Promise<RawInstrument[]> {
+  type Resp = { result?: { list?: Array<{ symbol: string; baseCoin: string; status: string }> } };
+  const data = await fetchJson<Resp>('https://api.bybit.com/v5/market/instruments-info?category=spot&limit=1000', errors);
+  return (data?.result?.list ?? []).filter(item => item.status === 'Trading').map(item => ({ symbol: item.baseCoin.toUpperCase(), pair: item.symbol, type: 'spot', listedAt: 0 }));
+}
+
+async function fetchBitgetPerp(errors: string[]): Promise<RawInstrument[]> {
+  type Resp = { data?: Array<{ symbol: string; baseCoin: string; symbolStatus: string; symbolType: string }> };
+  const data = await fetchJson<Resp>('https://api.bitget.com/api/v2/mix/market/contracts?productType=USDT-FUTURES', errors);
+  return (data?.data ?? []).filter(item => item.symbolStatus === 'normal' && item.symbolType === 'perpetual').map(item => ({ symbol: item.baseCoin.toUpperCase(), pair: item.symbol, type: 'perp', listedAt: 0 }));
 }
 
 async function getBinanceSpotSet(errors: string[]) {
@@ -646,42 +676,26 @@ async function fetchCoinGeckoMarkets(errors: string[]) {
 async function fetchBinancePrices(symbols: string[], errors: string[]) {
   type Item = { symbol?: string; openPrice?: string; lastPrice?: string; quoteVolume?: string };
   const result = new Map<string, { price: number; change: number; volume: number }>();
-  const chunkSize = 100;
-  const chunks: string[][] = [];
-  for (let i = 0; i < symbols.length; i += chunkSize) {
-    chunks.push(symbols.slice(i, i + chunkSize));
+  const wanted = new Set(symbols);
+  if (!wanted.size) return result;
+  const data = await fetchJson<Item[]>('https://api.binance.com/api/v3/ticker/24hr?type=MINI', errors);
+  for (const item of data ?? []) {
+    if (!item.symbol?.endsWith('USDT')) continue;
+    const base = item.symbol.slice(0, -4);
+    if (!wanted.has(base)) continue;
+    const open = Number(item.openPrice), last = Number(item.lastPrice), volume = Number(item.quoteVolume);
+    if (!(open > 0) || !(last > 0) || !Number.isFinite(volume)) continue;
+    result.set(base, { price: last, change: (last - open) / open * 100, volume });
   }
-
-  await Promise.all(
-    chunks.map(async (chunk) => {
-      const pairs = chunk.map((symbol) => `"${symbol}USDT"`).join(',');
-      const data = await fetchJson<Item[]>(
-        `https://api.binance.com/api/v3/ticker/24hr?symbols=[${pairs}]&type=MINI`,
-        errors
-      );
-      for (const item of data ?? []) {
-        if (!item.symbol) continue;
-        const base = item.symbol.replace(/USDT$/, '');
-        const open = Number(item.openPrice);
-        const last = Number(item.lastPrice);
-        const change = open > 0 ? ((last - open) / open) * 100 : 0;
-        result.set(base, {
-          price: last,
-          change,
-          volume: Number(item.quoteVolume),
-        });
-      }
-    })
-  );
-
   return result;
 }
 
 async function refreshWatchData(): Promise<WatchData> {
   const errors: string[] = [];
-  const generatedAt = new Date().toISOString();
+  const now = Date.now();
+  const generatedAt = new Date(now).toISOString();
   const lookbackDays = 30;
-  const since = Date.now() - lookbackDays * 24 * 3600 * 1000;
+  const since = now - lookbackDays * 24 * 3600 * 1000;
 
   const [
     okxSpot,
@@ -697,13 +711,15 @@ async function refreshWatchData(): Promise<WatchData> {
     fngRaw,
     globalRaw,
     markets,
+    bybitSpot,
+    bitgetPerp,
   ] = await Promise.all([
-    fetchOkxSpot(since, errors),
-    fetchOkxSwap(since, errors),
-    fetchBybitLinear(since, errors),
-    fetchBitgetSpot(since, errors),
-    fetchCoinbaseSpot(since, errors),
-    fetchBinanceFutures(since, errors),
+    fetchOkxSpot(errors),
+    fetchOkxSwap(errors),
+    fetchBybitLinear(errors),
+    fetchBitgetSpot(errors),
+    fetchCoinbaseSpot(errors),
+    fetchBinanceFutures(errors),
     getBinanceSpotSet(errors),
     getUpbitSet(errors),
     getHyperliquidSet(errors),
@@ -722,10 +738,14 @@ async function refreshWatchData(): Promise<WatchData> {
       };
     }>('https://api.coingecko.com/api/v3/global', errors),
     fetchCoinGeckoMarkets(errors),
+    fetchBybitSpot(errors),
+    fetchBitgetPerp(errors),
   ]);
 
+  errors.push('Bitget listing dates: legacy spot inventory does not supply verified listing dates');
+  if (cbSpot.length >= 500) errors.push('Coinbase inventory: coverage limited to the first 500 public products');
   const timed = [...okxSpot, ...okxSwap, ...bybitPerp, ...bitgetSpot, ...cbSpot, ...bnbFutures];
-  const symbolSet = new Set(timed.map((item) => item.symbol));
+  const symbolSet = new Set(timed.filter(item => Number.isFinite(item.listedAt) && item.listedAt >= since && item.listedAt <= now).map((item) => item.symbol));
   for (const symbol of bnbAlphaSet) symbolSet.add(symbol);
 
   const excluded = new Set(['USDT', 'USDC', 'BUSD', 'DAI', 'TUSD', 'FDUSD', 'USD1', 'USDE']);
@@ -737,7 +757,7 @@ async function refreshWatchData(): Promise<WatchData> {
 
   const coinMap = new Map<
     string,
-    Record<ExchangeKey, ExchangeListing> & { firstSeenAt: number }
+    Record<ExchangeKey, ExchangeListing> & { firstSeenAt: number | null }
   >();
 
   function getOrCreate(symbol: string) {
@@ -751,7 +771,7 @@ async function refreshWatchData(): Promise<WatchData> {
         coinbase: emptyListing(),
         upbit: emptyListing(),
         hyperliquid: emptyListing(),
-        firstSeenAt: Date.now(),
+        firstSeenAt: null,
       };
       coinMap.set(symbol, coin);
     }
@@ -759,23 +779,20 @@ async function refreshWatchData(): Promise<WatchData> {
   }
 
   function applyInstrument(inst: RawInstrument, exchange: ExchangeKey) {
-    if (!symbolSet.has(inst.symbol)) return;
+    if (!symbolSet.has(inst.symbol) || inst.listedAt > now) return;
     const coin = getOrCreate(inst.symbol);
     const listing = coin[exchange];
+    const time = Number.isFinite(inst.listedAt) && inst.listedAt > 0 ? inst.listedAt : null;
     if (inst.type === 'spot') {
       listing.spot = true;
-      listing.spotListedAt = listing.spotListedAt
-        ? Math.min(listing.spotListedAt, inst.listedAt)
-        : inst.listedAt;
+      if (time !== null) listing.spotListedAt = listing.spotListedAt === null ? time : Math.min(listing.spotListedAt, time);
       if (!listing.spotPairs.includes(inst.pair)) listing.spotPairs.push(inst.pair);
     } else {
       listing.perp = true;
-      listing.perpListedAt = listing.perpListedAt
-        ? Math.min(listing.perpListedAt, inst.listedAt)
-        : inst.listedAt;
+      if (time !== null) listing.perpListedAt = listing.perpListedAt === null ? time : Math.min(listing.perpListedAt, time);
       if (!listing.perpPairs.includes(inst.pair)) listing.perpPairs.push(inst.pair);
     }
-    coin.firstSeenAt = Math.min(coin.firstSeenAt, inst.listedAt);
+    if (time !== null && time >= since && (coin.firstSeenAt === null || time < coin.firstSeenAt)) coin.firstSeenAt = time;
   }
 
   for (const inst of okxSpot) applyInstrument(inst, 'okx');
@@ -784,6 +801,8 @@ async function refreshWatchData(): Promise<WatchData> {
   for (const inst of bitgetSpot) applyInstrument(inst, 'bitget');
   for (const inst of cbSpot) applyInstrument(inst, 'coinbase');
   for (const inst of bnbFutures) applyInstrument(inst, 'binance');
+  for (const inst of bybitSpot) applyInstrument(inst, 'bybit');
+  for (const inst of bitgetPerp) applyInstrument(inst, 'bitget');
 
   for (const symbol of symbolSet) {
     const coin = getOrCreate(symbol);
@@ -861,10 +880,10 @@ async function refreshWatchData(): Promise<WatchData> {
   const order: Record<SignalRating, number> = { S: 0, A: 1, B: 2, C: 3, D: 4, R: 5 };
   listings.sort((a, b) => {
     const byRating = order[a.signalRating] - order[b.signalRating];
-    return byRating === 0 ? b.firstSeenAt - a.firstSeenAt : byRating;
+    return byRating === 0 ? (b.firstSeenAt ?? 0) - (a.firstSeenAt ?? 0) : byRating;
   });
 
-  return {
+  const data: WatchData = {
     generatedAt,
     fearGreed: fngRaw?.data?.[0]
       ? {
@@ -884,6 +903,13 @@ async function refreshWatchData(): Promise<WatchData> {
     lookbackDays,
     errors,
   };
+  const liveListingSources = [okxSpot, okxSwap, bybitPerp, bitgetSpot, cbSpot, bnbFutures].filter(inventory => inventory.length > 0).length;
+  const hasDatedListing = listings.some(coin => coin.firstSeenAt !== null);
+  const hasLivePrice = listings.some(coin => coin.priceUsdt !== null && Number.isFinite(coin.priceUsdt));
+  if (liveListingSources < 3 || !hasDatedListing || !hasLivePrice || !isWatchData(data)) {
+    throw new Error('Watch refresh refused incomplete source data; previous cache retained');
+  }
+  return data;
 }
 
 function buildBottomSignals(data: FearDashboardData): BottomSignal[] {
@@ -1187,8 +1213,12 @@ async function refreshFearData(): Promise<FearDashboardData> {
 }
 
 async function refreshAndCache(key: string, ttl: number, refresh: () => Promise<unknown>) {
-  const data = await refresh();
-  await putCache(key, data, ttl);
+  try {
+    const data = await refresh();
+    await putCache(key, data, ttl);
+  } catch (error) {
+    console.warn(`Worker ${key} refresh failed; existing cache retained`, error instanceof Error ? error.message : String(error));
+  }
 }
 
 export default {

@@ -8,10 +8,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 import matter from 'gray-matter';
+import { buildTranslationGroups, isDraftPost, toIndexMetadata } from './lib/content/discovery.mjs';
 
 const ROOT = process.cwd();
 const CONTENT_DIR = path.join(ROOT, 'content', 'blog');
-const RESEARCH_CLIENT = path.join(ROOT, 'src/app/research/research-client.tsx');
+const RESEARCH_CLIENT = path.join(ROOT, 'src/app/(legacy)/research/research-client.tsx');
 const OUT_DIR = path.join(ROOT, 'data/research-map');
 const REGISTRY_FILE = path.join(OUT_DIR, 'registry.json');
 const CANDIDATES_FILE = path.join(OUT_DIR, 'candidates.json');
@@ -142,43 +143,34 @@ function readResearchCards() {
   return cards;
 }
 
-function readResearchPosts() {
-  const posts = walk(CONTENT_DIR)
-    .map((filePath) => {
-      const src = fs.readFileSync(filePath, 'utf8');
-      const { data } = matter(src);
-      if (data.category !== 'research') return null;
-
-      const slug = typeof data.slug === 'string' && data.slug.trim()
-        ? data.slug.trim()
-        : path.basename(filePath, '.mdx');
-
-      return {
-        slug,
-        title: data.title || slug,
-        summary: data.summary || '',
-        publishedAt: data.publishedAt || '',
-        file: relative(filePath),
-        language: data.language || '',
-        translationSlug: data.translationSlug || '',
-        researchProjectSlug: data.researchProjectSlug || '',
-      };
-    })
-    .filter(Boolean);
-
-  const slugs = new Set(posts.map((post) => post.slug));
-  return posts.filter((post) => {
-    if (post.language === 'en' && post.translationSlug) return false;
-    if (
-      post.researchProjectSlug &&
-      post.researchProjectSlug !== post.slug &&
-      slugs.has(post.researchProjectSlug)
-    ) {
-      return false;
-    }
-    if (!post.slug.endsWith('-en')) return true;
-    return !slugs.has(post.slug.slice(0, -3));
+export function selectResearchPosts(posts) {
+  const grouped = buildTranslationGroups(posts);
+  const bySlug = new Map(grouped.map((post) => [post.slug, post]));
+  return grouped.filter((post) => {
+    if (post.draft || post.category !== 'research' || post.sourceSlug !== post.slug) return false;
+    const project = bySlug.get(post.researchProjectSlug);
+    return !project || project.sourceSlug === post.sourceSlug;
   });
+}
+
+function readResearchPosts() {
+  const posts = walk(CONTENT_DIR).map((filePath) => {
+    const src = fs.readFileSync(filePath, 'utf8');
+    const { data } = matter(src);
+    const slug = typeof data.slug === 'string' && data.slug.trim()
+      ? data.slug.trim() : path.basename(filePath, '.mdx');
+    return {
+      ...toIndexMetadata(data),
+      slug,
+      title: data.title || slug,
+      summary: data.summary || '',
+      publishedAt: data.publishedAt || '',
+      file: relative(filePath),
+      draft: isDraftPost(data, filePath),
+      researchProjectSlug: data.researchProjectSlug || '',
+    };
+  });
+  return selectResearchPosts(posts);
 }
 
 function buildAliases(post, card) {

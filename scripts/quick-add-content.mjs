@@ -10,7 +10,7 @@ const CATEGORY_ALIASES = {
   investing: 'investing',
   story: 'story',
 };
-const VALUE_FLAGS = new Set(['--category', '--title', '--date', '--slug']);
+const VALUE_FLAGS = new Set(['--category', '--title', '--date', '--slug', '--language', '--translation-key', '--source-slug']);
 
 function printHelp() {
   console.log(`Usage:
@@ -24,6 +24,9 @@ Options:
   --title <title>        Override generated title
   --date <YYYY-MM-DD>    Override publish date
   --slug <slug>          Override generated slug
+  --language <locale>    zh-CN | en | ja (inferred if omitted)
+  --translation-key <id> Stable translation group key
+  --source-slug <slug>   Existing original article slug
   --sync-research        After --write research posts, run pnpm sync:research --add`);
 }
 

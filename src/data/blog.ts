@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
+import { articleHref, normalizeLocale, type Locale } from '../lib/i18n';
 
 // Where compiled content artifacts live.
 // NOTE: scripts/lib/content/paths.mjs carries the same resolution and must stay
@@ -38,8 +39,11 @@ export type Metadata = {
   slug?: string;
   draft?: boolean;
   status?: string;
-  language?: 'zh' | 'en';
+  language: Locale;
   translationSlug?: string;
+  translationKey: string;
+  sourceSlug: string;
+  translations: Partial<Record<Locale, string>>;
 };
 
 export type TocItem = {
@@ -68,8 +72,11 @@ type BlogIndexEntry = {
   summary: string;
   category?: Category;
   image?: string;
-  language?: 'zh' | 'en';
+  language: Locale;
   translationSlug?: string;
+  translationKey: string;
+  sourceSlug: string;
+  translations: Partial<Record<Locale, string>>;
   artifact: string;
   contentHash: string;
   sourcePath: string;
@@ -105,12 +112,15 @@ function toMetadata(entry: BlogIndexEntry): Metadata {
   const metadata: Metadata = {
     title: entry.title,
     publishedAt: entry.publishedAt,
-    summary: entry.summary
+    summary: entry.summary,
+    language: normalizeLocale(entry.language) ?? 'en',
+    translationKey: entry.translationKey ?? entry.slug,
+    sourceSlug: entry.sourceSlug ?? entry.slug,
+    translations: entry.translations ?? { [normalizeLocale(entry.language) ?? 'en']: entry.slug }
   };
 
   if (entry.category !== undefined) metadata.category = entry.category;
   if (entry.image !== undefined) metadata.image = entry.image;
-  if (entry.language !== undefined) metadata.language = entry.language;
   if (entry.translationSlug !== undefined) metadata.translationSlug = entry.translationSlug;
 
   return metadata;
@@ -271,8 +281,9 @@ function getRelation(slug: string): Relation | undefined {
   return lookupKey(slug, relationMap);
 }
 
-export function getRelatedPosts(slug: string): PostListItem[] {
-  return resolveSlugs(getRelation(slug)?.posts ?? []);
+export function getRelatedPosts(slug: string, locale?: Locale): PostListItem[] {
+  const posts = resolveSlugs(getRelation(slug)?.posts ?? []);
+  return locale ? getLocalizedPosts(posts, locale) : posts;
 }
 
 export function getRelatedTopicSlugs(slug: string): string[] {
@@ -293,4 +304,27 @@ export function getPostsForCategory(category: string, limit?: number): PostListI
   );
   const slugs = categoryIndex[category] ?? [];
   return resolveSlugs(limit === undefined ? slugs : slugs.slice(0, limit));
+}
+
+export function getPostTranslations(post: PostListItem | ParsedPost | string): Partial<Record<Locale, string>> {
+  const item = typeof post === 'string' ? getPostMeta(post) : post;
+  return item?.metadata.translations ?? {};
+}
+
+export function getLocalizedPosts(posts: PostListItem[], locale: Locale): PostListItem[] {
+  const selected = new Map<string, PostListItem>();
+  const candidates = new Map(posts.map((post) => [post.slug, post]));
+  for (const post of posts) {
+    const key = post.metadata.translationKey;
+    if (selected.has(key)) continue;
+    const desiredSlug = post.metadata.translations[locale] ?? post.metadata.sourceSlug;
+    const desired = candidates.get(desiredSlug) ?? getPostMeta(desiredSlug) ?? post;
+    selected.set(key, desired);
+  }
+  return [...selected.values()];
+}
+
+export function getPostHref(post: PostListItem | ParsedPost, locale: Locale): string {
+  const targetSlug = post.metadata.translations[locale];
+  return targetSlug ? articleHref(targetSlug, locale) : articleHref(post.slug, post.metadata.language);
 }

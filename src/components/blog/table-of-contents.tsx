@@ -1,5 +1,7 @@
 'use client';
 
+import { useI18n } from '@/components/locale-provider';
+
 import { useEffect, useState } from 'react';
 import { TocItem } from '@/data/blog';
 
@@ -12,6 +14,7 @@ export default function TableOfContents({
   toc,
   className = '',
 }: TableOfContentsProps) {
+  const { t } = useI18n();
   const [activeId, setActiveId] = useState<string>('');
 
   useEffect(() => {
@@ -54,7 +57,7 @@ export default function TableOfContents({
     <aside className={className}>
       <div className="border-l-2 border-border/50 pl-3">
         <h2 className="text-xs font-medium uppercase tracking-wider mb-3 text-muted-foreground">
-          On this page
+          {t('On this page', '本页目录', '目次')}
         </h2>
         <ul className="space-y-1">
           {toc.map((item, index) => {

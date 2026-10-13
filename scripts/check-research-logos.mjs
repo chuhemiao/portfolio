@@ -1,32 +1,17 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { PROJECTS as projects } from '../src/data/research-projects.ts';
 
 const ROOT = process.cwd();
-const RESEARCH_FILE = path.join(ROOT, 'src/app/research/research-client.tsx');
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const LOCAL_PREFIX = '/research-logos/';
 
-const source = fs.readFileSync(RESEARCH_FILE, 'utf8');
-const blocks = [...source.matchAll(/  \{\n([\s\S]*?)\n  \},?/g)];
-
-const projects = blocks
-  .map(([, body]) => {
-    const get = (key) => body.match(new RegExp(`${key}: '([^']+)'`))?.[1];
-    const logoUrl = body.match(/logoUrl:\s*["'`]([^"'`]+)["'`]/)?.[1];
-
-    return {
-      name: get('name'),
-      slug: get('slug'),
-      logoUrl,
-    };
-  })
-  .filter((project) => project.name && project.slug);
-
 const failures = [];
+let fallbacks = 0;
 
 for (const project of projects) {
   if (!project.logoUrl) {
-    failures.push(`${project.slug}: missing logoUrl`);
+    fallbacks += 1;
     continue;
   }
 
@@ -55,4 +40,4 @@ if (failures.length > 0) {
   process.exit(1);
 }
 
-console.log(`Research logo check passed for ${projects.length} projects.`);
+console.log(`Research logo check passed for ${projects.length} projects (${fallbacks} use the initials fallback).`);

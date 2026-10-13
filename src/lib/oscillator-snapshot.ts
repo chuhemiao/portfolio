@@ -6,7 +6,7 @@ export interface OscillatorSnapshotEnvelope {
 }
 
 const SNAPSHOT_NOTE =
-  'Weekly snapshot fallback. Refresh with `pnpm sync:oscillator` when you want a new market read.';
+  'Local market snapshot. Prices and ranks reflect the source timestamps; missing history remains unavailable.';
 
 export function normalizeOscillatorSnapshot(
   snapshot: OscillatorSnapshotEnvelope

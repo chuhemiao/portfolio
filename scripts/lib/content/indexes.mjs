@@ -31,68 +31,51 @@ export function buildCategoryIndex(posts) {
   return index;
 }
 
-export function buildTopicIndex(posts, topics) {
-  const index = {};
-  const normalized = topics.map((topic) => ({
-    slug: topic.slug,
-    keywords: topic.matchKeywords.map((keyword) => keyword.toLowerCase())
-  }));
-
-  for (const topic of normalized) index[topic.slug] = [];
-
+function groupPosts(posts) {
+  const groups = new Map();
   for (const post of posts) {
-    const text = matchText(post);
-    for (const topic of normalized) {
-      if (topic.keywords.some((keyword) => text.includes(keyword))) {
-        index[topic.slug].push(post.slug);
+    const key = post.translationKey ?? post.slug;
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(post);
+  }
+  return groups;
+}
+
+export function buildTopicIndex(posts, topics) {
+  const index = Object.fromEntries(topics.map((topic) => [topic.slug, []]));
+  for (const members of groupPosts(posts).values()) {
+    const text = members.map(matchText).join(' ');
+    for (const topic of topics) {
+      if (topic.matchKeywords.some((keyword) => text.includes(keyword.toLowerCase()))) {
+        index[topic.slug].push(...members.map((post) => post.slug));
       }
     }
   }
-
   return index;
 }
 
-// Related posts are the newest posts sharing a category. The posts array is
-// already sorted newest-first, so each category only needs one linear pass.
 export function buildRelations(posts, topics) {
-  const byCategory = new Map();
-
-  for (const post of posts) {
-    if (!post.category) continue;
-    if (!byCategory.has(post.category)) byCategory.set(post.category, []);
-    byCategory.get(post.category).push(post.slug);
-  }
-
-  const normalizedTopics = topics.map((topic) => ({
-    slug: topic.slug,
-    keywords: topic.matchKeywords.map((keyword) => keyword.toLowerCase())
-  }));
-
+  const groups = groupPosts(posts);
+  const topicIndex = buildTopicIndex(posts, topics);
+  const topicSets = Object.fromEntries(Object.entries(topicIndex).map(([slug, entries]) => [slug, new Set(entries)]));
   const relations = {};
-
   for (const post of posts) {
     const related = [];
-
     if (post.category) {
-      const siblings = byCategory.get(post.category);
-      for (const slug of siblings) {
-        if (slug === post.slug) continue;
-        related.push(slug);
+      for (const [key, members] of groups) {
+        if (key === (post.translationKey ?? post.slug)) continue;
+        const siblings = members.filter((member) => member.category === post.category);
+        if (siblings.length === 0) continue;
+        const sibling = siblings.find((member) => member.language === post.language)
+          ?? siblings.find((member) => member.slug === member.sourceSlug) ?? siblings[0];
+        related.push(sibling.slug);
         if (related.length === RELATED_POSTS_LIMIT) break;
       }
     }
-
-    const text = matchText(post);
-    const topicSlugs = [];
-    for (const topic of normalizedTopics) {
-      if (topicSlugs.length === RELATED_TOPICS_LIMIT) break;
-      if (topic.keywords.some((keyword) => text.includes(keyword))) {
-        topicSlugs.push(topic.slug);
-      }
-    }
-
-    relations[post.slug] = { posts: related, topics: topicSlugs };
+    relations[post.slug] = {
+      posts: related,
+      topics: topics.filter((topic) => topicSets[topic.slug].has(post.slug)).slice(0, RELATED_TOPICS_LIMIT).map((topic) => topic.slug)
+    };
   }
-
   return relations;
 }

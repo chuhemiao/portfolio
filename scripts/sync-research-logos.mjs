@@ -3,7 +3,7 @@ import path from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const ROOT = process.cwd();
-const RESEARCH_FILE = path.join(ROOT, 'src/app/research/research-client.tsx');
+const RESEARCH_FILE = path.join(ROOT, 'src/app/(legacy)/research/research-client.tsx');
 const CONTENT_DIR = path.join(ROOT, 'content', 'blog');
 const LOGO_DIR = path.join(ROOT, 'public', 'research-logos');
 const LOCAL_PREFIX = '/research-logos/';
