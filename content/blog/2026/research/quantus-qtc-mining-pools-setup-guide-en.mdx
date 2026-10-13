@@ -1,0 +1,461 @@
+---
+title: 'Quantus (QTC): Mining Pool Landscape and Setup Guide'
+publishedAt: '2026-10-13'
+summary: 'Quantus is supported by GPU pools including Kryptex, LuckyPool, Quanpool, and K1Pool. This guide compares concentration, fees, and payout models, then covers SRBMiner, HiveOS, K1Pool, and the official self-hosted node setup.'
+slug: 'quantus-qtc-mining-pools-setup-guide-en'
+category: 'research'
+language: 'en'
+translationSlug: 'quantus-qtc-mining-pools-setup-guide'
+researchProjectSlug: 'quantus-qtc-post-quantum-payment-l1-research'
+---
+
+## TL;DR
+
+As of **2026-10-12 UTC**, several GPU mining pools supported QTC. The larger visible pools included **Kryptex, LuckyPool, Quanpool, K1Pool, JetskiPool, and Qelvpool**.
+
+For a quick start, the practical choices are:
+
+- **Simplest: Kryptex**, with regional endpoints, SRBMiner configuration, and HiveOS instructions;
+- **More distributed: LuckyPool or Quanpool**;
+- **Account-based management: K1Pool**;
+- **Self-hosting: the official `quantus-node + quantus-miner` stack**, which avoids a pool but requires more operational work.
+
+One distinction is critical: **the official `quantus-miner` primarily connects to the QUIC mining service exposed by a local Quantus node. It does not connect directly to an ordinary pool Stratum endpoint.** Pool mining should use software supported by the chosen pool, such as SRBMiner, Krig, or BzMiner.
+
+---
+
+## Available Mining Pools
+
+Pool status and hashrate change quickly. The figures below reflect public data observed around **2026-10-12 UTC**. Hashrate, fees, and minimum payouts may change at any time, so miners should verify each pool's current page before starting.
+
+### Main pools
+
+| Pool | Observed hashrate | Fee / model | Connection method | Best suited for |
+|---|---:|---|---|---|
+| **Kryptex** | About 28.7 TH/s, a large share of identified pool hashrate | Official guide says about 1% for PROP and SOLO; the pool directory showed 3%, creating a methodology discrepancy | `qtc-<region>.kryptex.network:7049` | Beginners, Windows, HiveOS |
+| **LuckyPool** | About 7.7 TH/s | About 1%, PROP | Obtain current configuration from the pool page | Miners seeking less single-pool concentration |
+| **Quanpool** | About 1.89 TH/s | About 1%, PPLNS | Enter a wallet on the site and copy the generated command | Miners who do not want to run a local node |
+| **K1Pool** | About 113.9 GH/s | About 1%, PPLNS | `eu/us/cn.quantus.k1pool.com:5660` | Users who want account-based pool management |
+| **JetskiPool** | About 108.7 GH/s | About 1%, PPLNS | Obtain configuration from the pool page | Small-scale or backup mining |
+| **Qelvpool** | Independent page showed about 6.27 GH/s | 1%, PPLNS; minimum payout about 0.10 QTC; hourly payouts | Configure through the website | Users who prefer an independent small pool |
+
+Hashrate source: [MiningPoolStats: Quantus](https://miningpoolstats.stream/quantus). The directory showed approximately **48.6 TH/s** of network hashrate at the time, but about **20%** could not be attributed to identified pools. These figures should be treated as public-directory estimates, not official network statistics.
+
+Pool pages:
+
+- [Kryptex Quantus Pool](https://pool.kryptex.com/qtc)
+- [LuckyPool Quantus](https://quantus.luckypool.io/)
+- [Quanpool](https://quanpool.com/)
+- [K1Pool Quantus](https://k1pool.com/pool/quantus)
+- [Qelvpool Quantus](https://qelvhash.com/pool/quantus)
+
+MiningPoolStats also listed RabbitMiner, Himpool, Pooly, Suprnova, NushyPool, RPlant, AriaBrain, C3Pool, AlphaPool, QuicPool, SkyPool, CoinXPool, F4Pool, NurseryPool, and other small or SOLO pools. Some had very low or zero visible hashrate. A pool merely listing Quantus is not enough; miners should also check recent blocks, miner count, payout history, and live hashrate.
+
+### Pool-selection guidance
+
+Kryptex represented a visibly large share of identified pool hashrate. To reduce concentration, miners can consider:
+
+- Using **LuckyPool or Quanpool** for the primary workload;
+- Keeping Kryptex as a backup;
+- Testing K1Pool or Qelvpool with a small allocation;
+- Evaluating not only headline fees, but also pool depth, recent blocks, minimum payout, and payout history.
+
+---
+
+## Path 1: Quick Start with Kryptex
+
+This is the most accessible path for a first QTC mining setup. It does not require a full Quantus node; only a wallet, a compatible GPU, and mining software are needed.
+
+### 1. Prepare a wallet
+
+Create or restore a wallet with the official Quantus Wallet and obtain a Quantus address beginning with `qz...`.
+
+The official mining documentation requires self-hosted mining rewards to be delivered to a **Wormhole address**, which must be generated specifically when running a node. Pool pages generally accept a standard Quantus wallet address. Even so, miners should use a self-custodied wallet rather than sending long-term rewards directly to an exchange address. Sources: [Quantus Mining Guide](https://docs.quantus.com/guides/mining/) and [Quantus Wallet](https://www.quantus.com/wallet/).
+
+### 2. Choose mining software
+
+Kryptex currently lists the following main options:
+
+- **SRBMiner-MULTI**, supporting NVIDIA and AMD RDNA GPUs;
+- **Krig Miner**, Kryptex's own miner for AMD and NVIDIA;
+- A custom miner configuration for HiveOS.
+
+Kryptex states that NVIDIA RTX 3000-series or newer cards and AMD RX 6000-series or newer cards are better suited in practice. Efficiency varies by GPU and should be measured directly. See the [Kryptex Quantus Mining Guide](https://pool.kryptex.com/articles/how-to-mine-quantus-en).
+
+### 3. Use SRBMiner on Windows
+
+After downloading and extracting SRBMiner, create `mine-qtc.bat` in the miner directory:
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet qzYOUR_QUANTUS_ADDRESS ^
+  --worker rig01
+```
+
+Replace `qtc-eu.kryptex.network:7049` with the nearest endpoint:
+
+| Region | Address |
+|---|---|
+| Global | `qtc.kryptex.network:7049` |
+| Europe | `qtc-eu.kryptex.network:7049` |
+| North America | `qtc-us.kryptex.network:7049` |
+| South America | `qtc-br.kryptex.network:7049` |
+| Singapore | `qtc-sg.kryptex.network:7049` |
+| Hong Kong | `qtc-hk.kryptex.network:7049` |
+| Russia | `qtc-ru.kryptex.network:7049` |
+| Middle East | `qtc-ae.kryptex.network:7049` |
+
+To enable SSL, add:
+
+```bat
+--tls true
+```
+
+Complete example:
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-hk.kryptex.network:7049 ^
+  --wallet qzYOUR_QUANTUS_ADDRESS ^
+  --worker 4090-rig01 ^
+  --tls true
+```
+
+Then run:
+
+```text
+mine-qtc.bat
+```
+
+Pools commonly need **10 to 15 minutes** before stable hashrate and valid shares appear on the address dashboard.
+
+### 4. SOLO mode
+
+Kryptex supports SOLO mining. Prefix the wallet address with `solo:`:
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet solo:qzYOUR_QUANTUS_ADDRESS ^
+  --worker solo-rig01
+```
+
+SOLO mining does not provide stable income:
+
+- A successful block earns the full block reward;
+- No block means there may be no income for a long period;
+- Small miners are usually better served by PROP or PPLNS;
+- SOLO is appropriate only for miners with substantial hashrate and tolerance for payout variance.
+
+### 5. HiveOS
+
+Quantus is not a standard built-in HiveOS coin in the Kryptex flow, but the pool page provides a custom Flight Sheet:
+
+1. Open the [Kryptex Quantus Pool](https://pool.kryptex.com/qtc);
+2. Select **HiveOS**;
+3. Select SRBMiner and a region;
+4. Copy the generated Flight Sheet JSON;
+5. In HiveOS, choose **Flight Sheets → Import from Clipboard**;
+6. Select the QTC wallet;
+7. Apply the sheet to the rig.
+
+Do not reuse another coin's HiveOS configuration without checking it. The algorithm field must be:
+
+```text
+quantus
+```
+
+---
+
+## Path 2: Use K1Pool
+
+K1Pool is suitable for users who want a pool account, statistics dashboard, and independent payout settings.
+
+### 1. Select a server
+
+K1Pool publicly listed these Quantus endpoints:
+
+| Region | Address |
+|---|---|
+| Europe | `eu.quantus.k1pool.com:5660` |
+| United States | `us.quantus.k1pool.com:5660` |
+| China | `cn.quantus.k1pool.com:5660` |
+| Russia / Europe backup | `ru.quantus.k1pool.org:5660` |
+
+K1Pool states that these ports support GPU mining, with some endpoints accepting both plain TCP and SSL. The safest approach is to use the current configuration generated by the pool page before starting. See [K1Pool Quantus](https://k1pool.com/pool/quantus).
+
+### 2. Register an account
+
+K1Pool does not support anonymous mining. The flow is:
+
+1. Register or sign in at [K1Pool](https://k1pool.com/pool/quantus);
+2. Obtain the pool's internal account address;
+3. Use that address as the miner wallet field;
+4. Add the real Quantus payout wallet in the K1Pool dashboard;
+5. Set the minimum payout;
+6. Start the miner and wait 5 to 10 minutes for the worker to appear.
+
+The SRBMiner configuration is broadly:
+
+```bat
+SRBMiner-MULTI.exe ^
+  --algorithm quantus ^
+  --pool eu.quantus.k1pool.com:5660 ^
+  --wallet K1POOL_ACCOUNT_ADDRESS.worker01
+```
+
+K1Pool currently lists support for:
+
+- SRBMiner-MULTI;
+- Suprminer;
+- BzMiner;
+- PeakMiner;
+- Krig Miner.
+
+Because K1Pool may change the account, wallet, and worker field format, copy the command generated by its [How to Start Mining](https://k1pool.com/pool/quantus/how-to-start) page instead of relying entirely on a manually written configuration.
+
+---
+
+## Path 3: Quanpool or Another Small Pool
+
+Quanpool is suitable for users who do not want to run a local node but prefer a smaller pool.
+
+Basic flow:
+
+1. Open [Quanpool](https://quanpool.com/);
+2. Enter a `qz...` Quantus address;
+3. Select a GPU miner;
+4. Select PPLNS;
+5. Copy the live mining command generated by the site;
+6. Place the command in a `.bat` file, shell script, or HiveOS custom miner configuration;
+7. Wait for the worker to come online.
+
+Quanpool generates commands from its current pool configuration, so manually guessing the Stratum endpoint is not recommended. A community-maintained Quantus guide likewise recommends copying the **Start Mining** command from Quanpool. See the [community mining guide](https://github.com/0xmoei/quantus/blob/master/README.md).
+
+Qelvpool displayed:
+
+- A PPLNS fee of about 1%;
+- A minimum payout of about 0.10 QTC;
+- Hourly payouts;
+- Compatibility with SRBMiner-MULTI and qelvminer.
+
+Quanpool, LuckyPool, and Qelvpool can reduce dependence on Kryptex, but miners should first observe valid shares and payout records for several hours.
+
+---
+
+## Path 4: Self-Hosted Node and Official Miner
+
+A self-hosted node avoids pool fees, but the operator must manage:
+
+- Node synchronization;
+- Disk and network capacity;
+- Node version upgrades;
+- Miner and node version compatibility;
+- Firewall and key management;
+- Payout variance when no block is found.
+
+The official setup now requires **mainnet**, not the retired `planck` testnet. The node should be at least **v1.0.1+**. There is currently no official native `quantus-miner` build for Linux ARM64, so Linux x86_64, macOS, or WSL2 is recommended. See the [official Mining Guide](https://docs.quantus.com/guides/mining/).
+
+### 1. Automated installation
+
+On Linux, macOS, or WSL2:
+
+```bash
+curl -fsSL https://docs.quantus.com/scripts/quantus-mining.sh -o quantus-mining.sh
+chmod +x quantus-mining.sh
+
+./quantus-mining.sh setup
+./quantus-mining.sh start
+```
+
+The script:
+
+- Downloads the Quantus node;
+- Downloads the external miner;
+- Generates a node identity;
+- Generates the Wormhole mining configuration;
+- Uses `CHAIN=mainnet`;
+- Starts both node and miner.
+
+Inspect the configuration with:
+
+```bash
+./quantus-mining.sh config show
+```
+
+If an old Planck configuration exists, switch it to mainnet:
+
+```bash
+./quantus-mining.sh config set CHAIN mainnet
+./quantus-mining.sh setup --force
+```
+
+Do not copy Planck chain data into mainnet, and do not use:
+
+```bash
+--force-authoring
+```
+
+That option is not required to participate in mainnet mining.
+
+### 2. Generate a Wormhole reward address
+
+Mining rewards are sent to a Wormhole address, not an ordinary transparent address.
+
+To derive it from the same 24-word phrase used by an existing Quantus wallet:
+
+```bash
+./quantus-node key quantus --scheme wormhole --words
+```
+
+The command prompts for the mnemonic. Do not place the mnemonic directly on the command line.
+
+To create a separate mining wallet:
+
+```bash
+./quantus-node key quantus --scheme wormhole
+```
+
+Save all three outputs securely:
+
+| Output | Purpose |
+|---|---|
+| Address | Monitor incoming rewards |
+| Inner Hash | Passed to the node through `--rewards-inner-hash` |
+| Secret phrase | The only recovery credential for the wallet and rewards |
+
+**Never share the mnemonic, Inner Hash, or miner authentication files.**
+
+### 3. Run the node manually
+
+Linux example:
+
+```bash
+RUST_LOG=info ./quantus-node \
+  --validator \
+  --chain mainnet \
+  --node-key-file ~/.quantus/node_key.p2p \
+  --rewards-inner-hash <YOUR_INNER_HASH> \
+  --miner-listen-port 9833
+```
+
+`--miner-listen-port 9833` enables the local mining service and disables the node's internal CPU miner.
+
+### 4. Start the official external miner
+
+The default Linux chain directory is:
+
+```bash
+CHAIN_DIR="$HOME/.local/share/quantus-node/chains/mainnet"
+```
+
+Start the miner in another terminal:
+
+```bash
+./quantus-miner serve \
+  --node-addr 127.0.0.1:9833 \
+  --auth-token-file "$CHAIN_DIR/miner-auth-token" \
+  --tls-cert-sha256-file "$CHAIN_DIR/miner-tls-cert-sha256" \
+  --gpu-devices 1 \
+  --cpu-workers 0
+```
+
+Parameters:
+
+- `--gpu-devices 1`: use GPU 1;
+- `--gpu-devices 0,1`: use multiple GPUs;
+- `--cpu-workers 0`: disable CPU mining;
+- Increase `--cpu-workers` for a CPU-only configuration;
+- Never place `miner-auth-token` or `miner-tls-cert-sha256` in a public script or commit them to GitHub.
+
+The official documentation says the node and miner must match the `quantus-miner/2` protocol. They are released separately, so blindly combining the `latest` version from each repository is unsafe. Sources: [Quantus QPoW documentation](https://docs.quantus.com/deep-dives/qpow/) and [Quantus Miner releases](https://github.com/Quantus-Network/quantus-miner/releases).
+
+---
+
+## Monitoring, Returns, and Security
+
+### Monitor the node
+
+Official documentation provides several monitoring surfaces:
+
+- Node telemetry: [telemetry.quantus.cat](https://telemetry.quantus.cat/)
+- Explorer: [explorer.quantus.com](https://explorer.quantus.com/)
+- Local Prometheus: `http://localhost:9615/metrics`
+- Local RPC: `http://localhost:9944`
+
+View Linux logs with:
+
+```bash
+tail -f ~/.local/share/quantus-node/chains/mainnet/network/quantus-node.log
+```
+
+The macOS path is usually:
+
+```bash
+~/Library/Application Support/quantus-node/chains/mainnet/
+```
+
+### Common failures
+
+| Problem | Check first |
+|---|---|
+| Miner exits immediately | Node and miner versions, authentication token, TLS fingerprint |
+| `no application protocol` | Node and miner are not using the same miner protocol version |
+| Node synchronizes slowly | Disk, network, peer count, firewall |
+| Hashrate appears but no rewards arrive | Incorrect reward address, incorrect Inner Hash, or an unsynchronized node |
+| Pool worker remains offline | Stratum endpoint, `quantus` algorithm field, wallet format, and port |
+| Windows synchronization stalls | Windows Defender may be scanning RocksDB; consider excluding the chain-data directory |
+| Miner fails on Linux ARM64 | No official native ARM64 miner is currently available; use x86_64 or macOS |
+
+### Firewall guidance
+
+Official guidance is to:
+
+- Expose primarily the P2P port `30333` to the public internet;
+- Keep the `9833/UDP` miner port local or inside a private network;
+- Keep RPC port `9944` local;
+- Keep Prometheus port `9615` local;
+- Use WireGuard, Tailscale, a VPC, or another private network for remote GPU mining;
+- **Never expose port 9833 directly to `0.0.0.0/0`.**
+
+### Do not copy pool profitability estimates directly
+
+QTC block rewards decline as current supply increases. The official formula is:
+
+```text
+Block Reward = (MaxSupply - CurrentSupply) / EmissionDivisor
+```
+
+Mainnet uses an `EmissionDivisor` of `50,000,000` and does not have Bitcoin-style halvings. Returns depend on:
+
+- Actual GPU hashrate;
+- Network hashrate;
+- Pool fees;
+- Electricity cost;
+- Stale shares and rejection rate;
+- QTC price;
+- Pool payout rules;
+- Device power draw and cooling.
+
+Without the GPU model, electricity rate, and measured power draw, a website's daily-profit figure is not a sound basis for purchasing hardware.
+
+---
+
+## Conclusion
+
+For most miners, the recommended order is:
+
+1. Create an official Quantus wallet;
+2. Prove the setup with **Kryptex and SRBMiner**;
+3. Observe valid shares, rejection rate, and power draw for 30 to 60 minutes;
+4. If mining decentralization matters, move part of the hashrate to **LuckyPool, Quanpool, or Qelvpool**;
+5. Consider the official self-hosted node only when willing to maintain synchronization and manage version upgrades.
+
+**Bottom line.** Beginners should start with pool mining rather than immediately operating a node. Self-hosting is better suited to miners who want full control and are prepared to absorb synchronization, maintenance, and payout-variance costs.

@@ -1,0 +1,461 @@
+---
+title: 'Quantus（QTC）：矿池现状与挖矿接入指南'
+publishedAt: '2026-10-13'
+summary: 'Quantus 已有 Kryptex、LuckyPool、Quanpool、K1Pool 等 GPU 矿池支持；本指南比较矿池集中度、费用与支付模式，并提供 SRBMiner、HiveOS、K1Pool 及官方自建节点的接入与安全配置。'
+slug: 'quantus-qtc-mining-pools-setup-guide'
+category: 'research'
+language: 'zh'
+translationSlug: 'quantus-qtc-mining-pools-setup-guide-en'
+researchProjectSlug: 'quantus-qtc-post-quantum-payment-l1-research'
+---
+
+## TL;DR
+
+截至 **2026-10-12 UTC**，$QTC 已有多个 GPU 矿池支持，当前规模较大的包括 **Kryptex、LuckyPool、Quanpool、K1Pool、JetskiPool 和 Qelvpool**。
+
+如果只是想快速开始，建议优先使用：
+
+- **最简单：Kryptex**，有完整的区域节点、SRBMiner 配置和 HiveOS 指引；
+- **更分散：LuckyPool 或 Quanpool**；
+- **需要账号管理：K1Pool**；
+- **想自己运行节点：官方 `quantus-node + quantus-miner`**，不依赖矿池，但运维复杂度更高。
+
+注意：**官方 `quantus-miner` 主要连接本地 Quantus 节点的 QUIC 矿工服务，不是直接连接普通矿池 Stratum 地址。** 矿池挖矿应使用矿池支持的 SRBMiner、Krig、BzMiner 等软件。
+
+---
+
+## 当前可用矿池
+
+矿池状态和算力变化很快，下面是 **2026-10-12 UTC 附近抓取到的公开数据**。矿池算力、费用和最低支付额可能随时调整，启动前应再查看矿池页面。
+
+### 主要矿池
+
+| 矿池 | 观察到的算力 | 费用 / 模式 | 连接方式 | 适合对象 |
+|---|---:|---|---|---|
+| **Kryptex** | 约 28.7 TH/s，已知矿池算力占比较高 | 官网指南称 PROP/SOLO 均约 1%；矿池目录显示 3%，存在口径差异 | `qtc-<region>.kryptex.network:7049` | 新手、Windows、HiveOS |
+| **LuckyPool** | 约 7.7 TH/s | 约 1%，PROP | 通过矿池页面获取配置 | 希望降低单池集中度 |
+| **Quanpool** | 约 1.89 TH/s | 约 1%，PPLNS | 网页输入钱包后复制实时命令 | 不想运行本地节点 |
+| **K1Pool** | 约 113.9 GH/s | 约 1%，PPLNS | `eu/us/cn.quantus.k1pool.com:5660` | 有矿池账号管理需求 |
+| **JetskiPool** | 约 108.7 GH/s | 约 1%，PPLNS | 通过池方页面获取 | 小规模或备用池 |
+| **Qelvpool** | 独立页面约 6.27 GH/s | 1%，PPLNS；最低支付约 0.10 $QTC；按小时支付 | 通过网页配置 | 希望使用独立小池 |
+
+矿池算力来源：[MiningPoolStats — Quantus](https://miningpoolstats.stream/quantus)。该页面当时显示全网约 **48.6 TH/s**，但约 **20%** 算力未能归属到已知矿池，因此这些数字应视作公开目录估算，而不是官方统计。
+
+独立池页面：
+
+- [Kryptex Quantus Pool](https://pool.kryptex.com/qtc)
+- [LuckyPool Quantus](https://quantus.luckypool.io/)
+- [Quanpool](https://quanpool.com/)
+- [K1Pool Quantus](https://k1pool.com/pool/quantus)
+- [Qelvpool Quantus](https://qelvhash.com/pool/quantus)
+
+MiningPoolStats 还列出了 RabbitMiner、Himpool、Pooly、Suprnova、NushyPool、RPlant、AriaBrain、C3Pool、AlphaPool、QuicPool、SkyPool、CoinXPool、F4Pool、NurseryPool 等小型或 SOLO 矿池，但部分池当时算力很低，甚至为零。选择时不要只看「支持 Quantus」，还应检查最近出块时间、矿工数量、支付记录和在线算力。
+
+### 矿池选择建议
+
+目前 Kryptex 的算力占比明显较高。为了避免矿池过度集中，可以考虑：
+
+- 主力放在 **LuckyPool 或 Quanpool**；
+- Kryptex 作为备用；
+- K1Pool、Qelvpool 适合作为小规模测试；
+- 不建议只看名义费率，应同时看**池深度、最近出块、最低支付额和支付历史**。
+
+---
+
+## 路线一：使用 Kryptex 快速挖矿
+
+这是最适合第一次挖 $QTC 的方式。你不需要运行完整 Quantus 节点，只需要钱包、兼容的 GPU 和矿工软件。
+
+### 1. 准备钱包
+
+使用官方 Quantus Wallet 创建或恢复钱包，并准备一个以 `qz...` 开头的 Quantus 地址。
+
+官方挖矿文档要求奖励最终进入 **Wormhole 地址**；如果使用官方自建节点，需要特别生成 Wormhole 地址。矿池页面通常直接接受你的 Quantus 钱包地址，仍建议使用自己的非交易所钱包，而不是长期把奖励打到交易所地址。[Quantus Mining Guide](https://docs.quantus.com/guides/mining/) [Quantus Wallet](https://www.quantus.com/wallet/)
+
+### 2. 选择矿工软件
+
+Kryptex 当前挖矿指南列出的主要软件包括：
+
+- **SRBMiner-MULTI**：支持 NVIDIA 和 AMD RDNA GPU；
+- **Krig Miner**：Kryptex 自有矿工，支持 AMD 和 NVIDIA；
+- HiveOS 可使用自定义矿工配置。
+
+Kryptex 的说明称，实际使用上 NVIDIA RTX 3000 系列及更新型号、AMD RX 6000 系列及更新型号更适合；不同 GPU 的效率差异需要实测。[Kryptex Quantus Mining Guide](https://pool.kryptex.com/articles/how-to-mine-quantus-en)
+
+### 3. Windows 使用 SRBMiner
+
+下载并解压 SRBMiner 后，在矿工目录创建 `mine-qtc.bat`：
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet qz你的Quantus地址 ^
+  --worker rig01
+```
+
+将 `qtc-eu.kryptex.network:7049` 换成距离你更近的节点：
+
+| 地区 | 地址 |
+|---|---|
+| 全球 | `qtc.kryptex.network:7049` |
+| 欧洲 | `qtc-eu.kryptex.network:7049` |
+| 北美 | `qtc-us.kryptex.network:7049` |
+| 南美 | `qtc-br.kryptex.network:7049` |
+| 新加坡 | `qtc-sg.kryptex.network:7049` |
+| 香港 | `qtc-hk.kryptex.network:7049` |
+| 俄罗斯 | `qtc-ru.kryptex.network:7049` |
+| 中东 | `qtc-ae.kryptex.network:7049` |
+
+如需 SSL，可以在命令中加入：
+
+```bat
+--tls true
+```
+
+完整示例：
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-hk.kryptex.network:7049 ^
+  --wallet qz你的Quantus地址 ^
+  --worker 4090-rig01 ^
+  --tls true
+```
+
+然后双击运行：
+
+```text
+mine-qtc.bat
+```
+
+矿池通常需要等待 **10–15 分钟**，才会在地址页面显示稳定算力和有效份额。
+
+### 4. SOLO 模式
+
+Kryptex 支持 SOLO 模式。使用时，在钱包地址前加入 `solo:`：
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet solo:qz你的Quantus地址 ^
+  --worker solo-rig01
+```
+
+SOLO 模式不是稳定收入模式：
+
+- 找到区块时获得整块奖励；
+- 没找到区块时可能长时间没有收入；
+- 小算力用户通常更适合 PROP 或 PPLNS；
+- 只有在算力较大、能够承受收入波动时才适合 SOLO。
+
+### 5. HiveOS
+
+Kryptex 没有把 Quantus 作为 HiveOS 的标准内置币种，但其矿池页面提供自定义 Flight Sheet：
+
+1. 打开 [Kryptex Quantus Pool](https://pool.kryptex.com/qtc)；
+2. 选择 **HiveOS**；
+3. 选择 SRBMiner 和区域；
+4. 复制矿池生成的 Flight Sheet JSON；
+5. 在 HiveOS 中选择 **Flight Sheets → Import from Clipboard**；
+6. 选择你的 $QTC 钱包；
+7. 应用到矿机。
+
+不要直接套用其他币种的 HiveOS 配置，必须确认算法字段是：
+
+```text
+quantus
+```
+
+---
+
+## 路线二：使用 K1Pool
+
+K1Pool 适合希望拥有矿池账户、统计面板和独立支付设置的用户。
+
+### 1. 选择服务器
+
+K1Pool 当前公开的 Quantus 接入地址：
+
+| 地区 | 地址 |
+|---|---|
+| 欧洲 | `eu.quantus.k1pool.com:5660` |
+| 美国 | `us.quantus.k1pool.com:5660` |
+| 中国 | `cn.quantus.k1pool.com:5660` |
+| 俄罗斯 / 欧洲备用 | `ru.quantus.k1pool.org:5660` |
+
+K1Pool 页面说明这些端口支持 GPU 挖矿，部分端口同时支持普通 TCP 和 SSL；启动前建议直接使用其网页生成的配置。[K1Pool Quantus](https://k1pool.com/pool/quantus)
+
+### 2. 注册账户
+
+K1Pool 不支持匿名挖矿，流程是：
+
+1. 注册或登录 [K1Pool](https://k1pool.com/pool/quantus)；
+2. 获取矿池内部账户地址；
+3. 将该地址作为矿工连接的 wallet；
+4. 在 K1Pool 后台添加你的真实 Quantus payout wallet；
+5. 设置最低支付额；
+6. 启动矿工后等待 5–10 分钟查看 Worker。
+
+SRBMiner 配置逻辑大致如下：
+
+```bat
+SRBMiner-MULTI.exe ^
+  --algorithm quantus ^
+  --pool eu.quantus.k1pool.com:5660 ^
+  --wallet K1POOL账户地址.worker01
+```
+
+K1Pool 当前列出的兼容软件包括：
+
+- SRBMiner-MULTI；
+- Suprminer；
+- BzMiner；
+- PeakMiner；
+- Krig Miner。
+
+由于 K1Pool 的账户字段、钱包字段和 Worker 字段可能随页面更新，最稳妥的方法是复制其 [How to Start Mining](https://k1pool.com/pool/quantus/how-to-start) 页面生成的命令，而不是完全手写。
+
+---
+
+## 路线三：使用 Quanpool 或其他小池
+
+Quanpool 适合不想运行本地节点、但又希望使用相对小型矿池的用户。
+
+基本流程：
+
+1. 打开 [Quanpool](https://quanpool.com/)；
+2. 输入自己的 `qz...` Quantus 地址；
+3. 选择 GPU 矿工；
+4. 选择 PPLNS；
+5. 复制网页生成的实时挖矿命令；
+6. 将命令放入 `.bat`、Shell 或 HiveOS 自定义矿工配置；
+7. 等待 Worker 在线。
+
+Quanpool 页面会根据当前池配置生成接入命令，因此不建议手动猜测其 Stratum 地址。社区维护的 Quantus 指南也特别建议直接复制 Quanpool 页面上的 **Start Mining** 命令。[社区挖矿指南](https://github.com/0xmoei/quantus/blob/master/README.md)
+
+Qelvpool 的页面则显示：
+
+- PPLNS 费率约 1%；
+- 最低支付额约 0.10 $QTC；
+- 按小时支付；
+- 兼容 SRBMiner-MULTI 和 qelvminer。
+
+如果你希望减少对 Kryptex 的依赖，Quanpool、LuckyPool、Qelvpool 都可以作为测试对象，但要先观察至少数小时的有效份额和支付记录。
+
+---
+
+## 路线四：自建节点 + 官方矿工
+
+自建节点不需要支付矿池费用，但会承担：
+
+- 节点同步；
+- 磁盘和网络；
+- 节点版本升级；
+- miner/node 版本匹配；
+- 防火墙和密钥管理；
+- 自己承担找不到区块的收益波动。
+
+官方当前要求使用 **mainnet**，不是已经退役的 `planck` 测试网；节点版本至少应为 **v1.0.1+**。Linux ARM64 当前没有官方原生 `quantus-miner` 发布包，建议使用 Linux x86_64、macOS 或 WSL2。[官方 Mining Guide](https://docs.quantus.com/guides/mining/)
+
+### 1. 自动安装方式
+
+在 Linux、macOS 或 WSL2 中：
+
+```bash
+curl -fsSL https://docs.quantus.com/scripts/quantus-mining.sh -o quantus-mining.sh
+chmod +x quantus-mining.sh
+
+./quantus-mining.sh setup
+./quantus-mining.sh start
+```
+
+该脚本会：
+
+- 下载 Quantus 节点；
+- 下载外部矿工；
+- 生成节点身份；
+- 生成 Wormhole mining 配置；
+- 使用 `CHAIN=mainnet`；
+- 启动节点和矿工。
+
+查看配置：
+
+```bash
+./quantus-mining.sh config show
+```
+
+如果已有旧的 Planck 配置，应切换到主网：
+
+```bash
+./quantus-mining.sh config set CHAIN mainnet
+./quantus-mining.sh setup --force
+```
+
+不要把 Planck 的链数据复制到 mainnet，也不要使用：
+
+```bash
+--force-authoring
+```
+
+该参数不是加入主网挖矿所需的参数。
+
+### 2. 生成 Wormhole 奖励地址
+
+挖矿奖励不会直接发送到普通透明地址，而是发送到 Wormhole 地址。
+
+如果你已经有 Quantus 钱包，建议使用同一个 24 词助记词派生：
+
+```bash
+./quantus-node key quantus --scheme wormhole --words
+```
+
+命令会提示你输入助记词，不应把助记词直接写在命令行中。
+
+如果要新建独立挖矿钱包：
+
+```bash
+./quantus-node key quantus --scheme wormhole
+```
+
+务必保存：
+
+| 输出 | 用途 |
+|---|---|
+| Address | 观察奖励到账 |
+| Inner Hash | 传给节点的 `--rewards-inner-hash` |
+| Secret phrase | 恢复钱包和奖励的唯一凭证 |
+
+**不要把助记词、Inner Hash 或矿工认证文件发给任何人。**
+
+### 3. 手动运行节点
+
+Linux 示例：
+
+```bash
+RUST_LOG=info ./quantus-node \
+  --validator \
+  --chain mainnet \
+  --node-key-file ~/.quantus/node_key.p2p \
+  --rewards-inner-hash <YOUR_INNER_HASH> \
+  --miner-listen-port 9833
+```
+
+`--miner-listen-port 9833` 会开启本地矿工服务，同时关闭节点内部的 CPU 挖矿。
+
+### 4. 启动官方外部矿工
+
+Linux 默认链目录：
+
+```bash
+CHAIN_DIR="$HOME/.local/share/quantus-node/chains/mainnet"
+```
+
+然后在另一个终端启动：
+
+```bash
+./quantus-miner serve \
+  --node-addr 127.0.0.1:9833 \
+  --auth-token-file "$CHAIN_DIR/miner-auth-token" \
+  --tls-cert-sha256-file "$CHAIN_DIR/miner-tls-cert-sha256" \
+  --gpu-devices 1 \
+  --cpu-workers 0
+```
+
+参数说明：
+
+- `--gpu-devices 1`：使用第 1 个 GPU；
+- `--gpu-devices 0,1`：使用多个 GPU；
+- `--cpu-workers 0`：关闭 CPU 挖矿；
+- 如果只使用 CPU，可把 `--cpu-workers` 调高；
+- `miner-auth-token` 和 `miner-tls-cert-sha256` 不能写进公开脚本或提交到 GitHub。
+
+官方说明当前节点与矿工需要匹配 `quantus-miner/2` 协议。节点和矿工分别发布，不能盲目把两个项目的 `latest` 版本混搭。[Quantus QPoW Docs](https://docs.quantus.com/deep-dives/qpow/) [Quantus Miner Releases](https://github.com/Quantus-Network/quantus-miner/releases)
+
+---
+
+## 监控、收益和安全
+
+### 监控节点
+
+官方文档提供了几个监控入口：
+
+- 节点遥测：[telemetry.quantus.cat](https://telemetry.quantus.cat/)
+- Explorer：[explorer.quantus.com](https://explorer.quantus.com/)
+- 本地 Prometheus：`http://localhost:9615/metrics`
+- 本地 RPC：`http://localhost:9944`
+
+Linux 查看日志：
+
+```bash
+tail -f ~/.local/share/quantus-node/chains/mainnet/network/quantus-node.log
+```
+
+macOS 路径通常位于：
+
+```bash
+~/Library/Application Support/quantus-node/chains/mainnet/
+```
+
+### 常见故障
+
+| 问题 | 优先检查 |
+|---|---|
+| 矿工立即退出 | 节点与矿工版本、认证 token、TLS 指纹 |
+| `no application protocol` | 节点和矿工不是同一矿工协议版本 |
+| 节点同步很慢 | 磁盘、网络、Peer 数量、防火墙 |
+| 有算力但无奖励 | 奖励地址错误、Inner Hash 错误或节点尚未同步 |
+| Pool Worker 不在线 | Stratum 地址、算法是否为 `quantus`、钱包格式和端口 |
+| Windows 同步卡住 | Windows Defender 正在扫描 RocksDB，考虑排除链数据目录 |
+| Linux ARM64 无法启动矿工 | 当前没有官方原生 ARM64 miner，改用 x86_64 或 macOS |
+
+### 防火墙建议
+
+官方建议：
+
+- 对公网开放的主要是 P2P 端口 `30333`；
+- `9833/UDP` 矿工端口保持本地或私有网络；
+- `9944` RPC 保持本地；
+- `9615` Prometheus 保持本地；
+- 远程 GPU 挖矿使用 WireGuard、Tailscale、VPC 等私有网络；
+- **不要把 9833 直接暴露到 `0.0.0.0/0`**。
+
+### 收益不要直接照搬矿池估算
+
+$QTC 的区块奖励会随当前供给变化而递减，官方公式为：
+
+```text
+Block Reward = (MaxSupply - CurrentSupply) / EmissionDivisor
+```
+
+主网 `EmissionDivisor` 为 `50,000,000`，没有 Bitcoin 式减半。收益会受到以下因素影响：
+
+- GPU 实际算力；
+- 全网算力；
+- 矿池费；
+- 电价；
+- stale share 和拒绝率；
+- $QTC 价格；
+- 矿池支付规则；
+- 设备功耗与散热。
+
+在没有你的 GPU 型号、电价和实际功耗前，不建议直接用网页的「每日收益」决定是否购买硬件。
+
+---
+
+## 结论
+
+对大多数用户，推荐按以下顺序操作：
+
+1. 创建官方 Quantus 钱包；
+2. 使用 **Kryptex + SRBMiner** 先跑通；
+3. 观察 30–60 分钟的有效份额、拒绝率和功耗；
+4. 如果重视矿池去中心化，把部分算力迁移到 **LuckyPool、Quanpool 或 Qelvpool**；
+5. 只有在你愿意维护节点和处理版本升级时，再考虑官方自建节点挖矿。
+
+**底线。** 新手优先选择矿池模式，不要一开始就运行自建节点；自建节点适合希望获得完整控制权、愿意承担同步和运维成本的矿工。

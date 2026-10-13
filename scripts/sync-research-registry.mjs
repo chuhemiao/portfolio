@@ -161,6 +161,7 @@ function readResearchPosts() {
         file: relative(filePath),
         language: data.language || '',
         translationSlug: data.translationSlug || '',
+        researchProjectSlug: data.researchProjectSlug || '',
       };
     })
     .filter(Boolean);
@@ -168,6 +169,13 @@ function readResearchPosts() {
   const slugs = new Set(posts.map((post) => post.slug));
   return posts.filter((post) => {
     if (post.language === 'en' && post.translationSlug) return false;
+    if (
+      post.researchProjectSlug &&
+      post.researchProjectSlug !== post.slug &&
+      slugs.has(post.researchProjectSlug)
+    ) {
+      return false;
+    }
     if (!post.slug.endsWith('-en')) return true;
     return !slugs.has(post.slug.slice(0, -3));
   });

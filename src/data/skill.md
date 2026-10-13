@@ -10,9 +10,10 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 
 - Read `AGENTS.md` before starting.
 - Use `pnpm`; do not use npm or yarn.
-- For crypto data refresh, use Surf first: run `surf list-operations`, then the target command `--help`, then collect fresh market, listing, tokenomics, social, DeFi, on-chain, or research data.
-- Use CoinGecko, CMC, explorers, exchanges, DefiLlama, official docs, and web search only when Surf has no data, errors, or the user explicitly asks for another source.
+- For crypto data refresh, default to user-provided material, repository data, CoinGecko, CMC, explorers, exchanges, DefiLlama, official docs, and web search.
+- Do not call Surf unless the user explicitly requests it.
 - Do not create duplicate Research Map entries. Check local coverage before writing.
+- For a separate research article about a project already in the registry, set `researchProjectSlug` to the canonical project's slug. The article remains publishable under `/research`, while registry generation keeps one project entry.
 
 ## Current State
 
