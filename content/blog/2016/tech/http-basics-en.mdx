@@ -1,0 +1,33 @@
+---
+title: How HTTP Works
+publishedAt: '2016-05-13'
+summary: How HTTP works
+category: thoughts
+slug: http-basics-en
+language: en
+translationKey: http-basics
+sourceSlug: http-basics
+---
+# How HTTP works
+1. HTTP uses a request/response model. The client sends a request message and the server responds with a status.
+2. The HTTP request/response steps are:
+3. The client connects to the web server: the HTTP client establishes a TCP connection.
+4. The client initiates an HTTP request, sending a request message through the established TCP connection.
+5. The server receives the HTTP request and returns a response: it parses the request, locates the resource, and writes a copy to the TCP connection for the client to read.
+6. Release the TCP connection: in close mode, the server actively closes it and the client follows. In keepalive mode, it remains open for a while and can receive more requests.
+# The client browser parses HTML: it parses and displays the HTML text returned by the server.
+1.The browser asks the DNS server to resolve the domain in the URL to an IP address.
+2.After resolving the IP address, it establishes a TCP connection using that address and default port 80.
+3.The browser sends an HTTP request to read the file specified after the domain in the URL. The request is sent as data in the third message of the TCP three-way handshake.
+4.The server responds to the browser’s request and sends the corresponding HTML text.
+5.Release the TCP connection.
+6.The browser processes the HTML text and displays the content.
+# HTTP statelessness
+1.HTTP is stateless: when the same client visits a page on the same server again, the server cannot know it visited before or distinguish clients. Statelessness simplifies server design and makes large numbers of concurrent HTTP requests easier to support.
+# HTTP persistent connections
+1.HTTP1.0 uses nonpersistent connections. The client must establish and maintain a new connection for each requested object, costing two RTTs per document. A page may contain multiple objects, so this can slow downloads and increase network overhead. HTTP1.1 uses persistent keepalive connections: the server keeps a connection open for a period after responding, allowing multiple requests and responses on it. It does not close TCP after a response, so the client can request other objects through the same connection.
+# HTTP/1.1 persistent connections have two modes:
+1. Non-pipelined: the client sends the next request only after receiving the previous response.
+2. Pipelined: the client can send a new request before receiving the HTTP response.
+
+

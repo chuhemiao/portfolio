@@ -1,7 +1,7 @@
 'use client';
 
 import BlurFade from '@/components/magicui/blur-fade';
-import type { Category } from '@/data/blog';
+import type { Category, PostListItem } from '@/data/blog';
 import { TOPICS, localizedTopic } from '@/data/topics';
 import Link from 'next/link';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
@@ -9,25 +9,12 @@ import { useState, useEffect, useCallback } from 'react';
 import { ArrowUpRightIcon, LanguagesIcon, SearchIcon, XIcon } from 'lucide-react';
 
 import { useI18n } from '@/components/locale-provider';
-import { articleHref, categoryLabel, formatLocaleDate, LANGUAGE_NAMES, normalizeLocale, type Locale } from '@/lib/i18n';
+import { articleHref, categoryLabel, formatLocaleDate, LANGUAGE_NAMES, normalizeLocale } from '@/lib/i18n';
+import { filterPostsForLocale, paginatePosts, type PostLanguageFilter } from '@/lib/post-locale-selection';
 
 const BLUR_FADE_DELAY = 0.04;
 const POSTS_PER_PAGE = 12;
 function parsePage(value: string | null) { const page = Number(value); return Number.isSafeInteger(page) && page > 0 ? page : 1; }
-
-type Post = {
-  metadata: {
-    title: string;
-    publishedAt: string;
-    summary: string;
-    image?: string;
-    category?: Category;
-    language?: Locale;
-    translations?: Partial<Record<Locale, string>>;
-  };
-  slug: string;
-  source: string;
-};
 
 type CategoryInfo = {
   key: Category | 'all';
@@ -49,7 +36,7 @@ const CATEGORIES: CategoryInfo[] = [
 const VALID_CATEGORIES = new Set(CATEGORIES.map((category) => category.key));
 const validTopic = (slug: string | null) => TOPICS.some((topic) => topic.slug === slug) ? slug : null;
 
-export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; topicPostSlugs: Record<string, string[]> }) {
+export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListItem[]; topicPostSlugs: Record<string, string[]> }) {
   const { locale, t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -63,14 +50,15 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
   const [selectedTopic, setSelectedTopic] = useState<string | null>(validTopic(searchParams.get('topic')));
   const [currentPage, setCurrentPage] = useState(parsePage(searchParams.get('page')));
   const [searchQuery, setSearchQuery] = useState(searchParams.get('q') ?? '');
-  const [selectedLanguage, setSelectedLanguage] = useState<'all' | Locale>(
-    normalizeLocale(initialLanguage) ?? 'all'
+  const [selectedLanguage, setSelectedLanguage] = useState<PostLanguageFilter>(
+    initialLanguage === 'all' ? 'all' : normalizeLocale(initialLanguage) ?? 'auto'
   );
 
   // Sync URL → state when user navigates back/forward
   useEffect(() => {
     const cat = searchParams.get('category') as Category | 'all';
-    setSelectedLanguage(normalizeLocale(searchParams.get('lang')) ?? 'all');
+    const language = searchParams.get('lang');
+    setSelectedLanguage(language === 'all' ? 'all' : normalizeLocale(language) ?? 'auto');
     setSelectedCategory(cat && VALID_CATEGORIES.has(cat) ? cat : 'all');
     setSelectedTopic(validTopic(searchParams.get('topic')));
     setSearchQuery(searchParams.get('q') ?? '');
@@ -78,14 +66,14 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
   }, [searchParams]);
 
   const updateUrl = useCallback(
-    (category: Category | 'all', language: 'all' | Locale, filters: { query?: string; topic?: string | null; page?: number } = {}) => {
+    (category: Category | 'all', language: PostLanguageFilter, filters: { query?: string; topic?: string | null; page?: number } = {}) => {
       const params = new URLSearchParams(searchParams.toString());
       if (category === 'all') {
         params.delete('category');
       } else {
         params.set('category', category);
       }
-      if (language === 'all') {
+      if (language === 'auto') {
         params.delete('lang');
       } else {
         params.set('lang', language);
@@ -103,31 +91,13 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
   );
 
   const topicSlugs = selectedTopic ? new Set(topicPostSlugs[selectedTopic] ?? []) : null;
-  const filteredPosts = posts.filter((post) => {
-    const matchesCategory =
-      selectedCategory === 'all' || post.metadata.category === selectedCategory;
-    const matchesLanguage =
-      selectedLanguage === 'all' || post.metadata.language === selectedLanguage;
-
-    const matchesTopic = topicSlugs ? topicSlugs.has(post.slug) : true;
-
-    const matchesSearch = searchQuery.trim()
-      ? (() => {
-          const q = searchQuery.toLowerCase();
-          return (
-            post.metadata.title.toLowerCase().includes(q) ||
-            post.metadata.summary.toLowerCase().includes(q)
-          );
-        })()
-      : true;
-
-    return matchesCategory && matchesLanguage && matchesTopic && matchesSearch;
+  const filteredPosts = filterPostsForLocale(posts, locale, {
+    language: selectedLanguage,
+    category: selectedCategory,
+    topicSlugs,
+    query: searchQuery,
   });
-
-  const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE);
-  const visiblePage = Math.min(currentPage, totalPages || 1);
-  const startIndex = (visiblePage - 1) * POSTS_PER_PAGE;
-  const paginatedPosts = filteredPosts.slice(startIndex, startIndex + POSTS_PER_PAGE);
+  const { posts: paginatedPosts, page: visiblePage, totalPages, startIndex } = paginatePosts(filteredPosts, currentPage, POSTS_PER_PAGE);
 
   const handleCategoryChange = (category: Category | 'all') => {
     setSelectedCategory(category);
@@ -153,14 +123,14 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
     setSelectedCategory('all');
     setSelectedTopic(null);
     setSearchQuery('');
-    setSelectedLanguage('all');
+    setSelectedLanguage('auto');
     setCurrentPage(1);
-    updateUrl('all', 'all', { query: '', topic: null });
+    updateUrl('all', 'auto', { query: '', topic: null });
   };
 
   const hasActiveFilter =
     selectedCategory !== 'all' ||
-    selectedLanguage !== 'all' ||
+    selectedLanguage !== 'auto' ||
     selectedTopic !== null ||
     searchQuery.trim().length > 0;
 
@@ -200,7 +170,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
         </div>
       </BlurFade>
 
-      <p className='text-xs text-muted-foreground'>{t('Article titles and summaries retain their original language. Use the language filter to find available translations.', '文章标题和摘要保留原文语言，可通过语言筛选查找已有译文。', '記事のタイトルと要約は原文の言語です。言語フィルターで利用可能な翻訳を探せます。')}</p>
+      <p className='text-xs text-muted-foreground'>{t('Articles use your selected site language when a translation is available. Otherwise, the original is shown and labeled.', '文章优先显示当前网站语言的译文；暂无译文时显示原文并标注。', 'サイトの言語に合わせて翻訳を表示します。未翻訳の記事は原文と表示されます。')}</p>
 
       {/* Search */}
       <BlurFade delay={BLUR_FADE_DELAY * 1.2}>
@@ -246,9 +216,10 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
       </BlurFade>
 
       <BlurFade delay={BLUR_FADE_DELAY * 1.65}>
-        <div className='flex items-center gap-2'>
+        <div role='group' aria-label={t('Article language filter', '文章语言筛选', '記事の言語フィルター')} className='flex flex-wrap items-center gap-2'>
           <LanguagesIcon className='size-3.5 text-muted-foreground' />
           {([
+            ['auto', t('Site language', '跟随网站语言', 'サイトの言語')],
             ['all', t('All languages', '全部语言', 'すべての言語')],
             ['zh-CN', '中文'],
             ['en', 'English'],
@@ -256,6 +227,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
           ] as const).map(([key, label]) => (
             <button
               key={key}
+              aria-pressed={selectedLanguage === key}
               onClick={() => {
                 setSelectedLanguage(key);
                 setCurrentPage(1);
@@ -346,8 +318,9 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: Post[]; t
                         {categoryLabel(post.metadata.category, locale)}
                       </span>
                     )}
-                    <span lang={post.metadata.language} className='rounded-full border border-border/60 px-2 py-0.5 text-[10px] text-muted-foreground'>
-                      {LANGUAGE_NAMES[post.metadata.language ?? 'en']}
+                    <span className='rounded-full border border-border/60 px-2 py-0.5 text-[10px] text-muted-foreground'>
+                      <span lang={post.metadata.language}>{LANGUAGE_NAMES[post.metadata.language]}</span>
+                      {selectedLanguage === 'auto' && post.metadata.language !== locale && <span lang={locale}> · {t('Original · translation unavailable', '原文 · 暂无此语言译文', '原文 · この言語の翻訳はありません')}</span>}
                     </span>
                     <span className='text-[10px] text-muted-foreground'>
                       {formatLocaleDate(post.metadata.publishedAt, locale)}

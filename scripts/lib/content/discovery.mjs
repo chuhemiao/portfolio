@@ -138,7 +138,29 @@ export function toIndexMetadata(data) {
     meta[field] = field === 'translationKey' ? data[field].trim() : normalizeSlug(data[field]);
   }
 
+  if (data.translationSourceHash !== undefined) {
+    if (typeof data.translationSourceHash !== 'string' || !/^[a-f0-9]{64}$/.test(data.translationSourceHash)) {
+      throw new Error('translationSourceHash must be a SHA-256 hex digest');
+    }
+    if (!meta.sourceSlug) throw new Error('translationSourceHash requires sourceSlug');
+    meta.translationSourceHash = data.translationSourceHash;
+  }
+
   return meta;
+}
+
+export function validateTranslationProvenance(posts) {
+  const bySlug = new Map(posts.map((post) => [post.slug, post]));
+  for (const post of posts) {
+    if (!post.translationSourceHash) continue;
+    const source = bySlug.get(post.sourceSlug);
+    if (!source || source.slug === post.slug) {
+      throw new Error(`Translation "${post.slug}" requires a distinct source "${post.sourceSlug}"`);
+    }
+    if (post.translationSourceHash !== source.sourceHash) {
+      throw new Error(`Translation "${post.slug}" is stale: source "${post.sourceSlug}" changed; regenerate or review the translation`);
+    }
+  }
 }
 
 export function buildTranslationGroups(posts) {

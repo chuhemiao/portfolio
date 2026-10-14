@@ -1,0 +1,24 @@
+---
+title: Install libmcrypt and mcrypt Extensions for PHP
+publishedAt: '2016-07-04'
+summary: 'Step One: Download the extensions'
+category: tech
+slug: Libmcrypt-en
+language: en
+translationKey: Libmcrypt
+sourceSlug: Libmcrypt
+---
+## Step One: Download the extensions
+1.[mcrypt](https://sourceforge.net/projects/mcrypt/)
+2.[libmcrypt](http://zh.osdn.jp/projects/sfnet_mcrypt/downloads/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/)
+## Step Two: Extract and enter the relevant directory
+1.Install using phpize
+2.`/usr/local/php/bin/phpize`   If you do not know the location（`whereis phpize`）
+3. `./configure --with-php-config=/usr/local/php/bin/php-config`   Here,`/usr/local/php/bin/php-config`is the`php-config`path; this directory is at the same level as phpize.
+4. `make && make install`
+## Step Three: Find`php.ini`configuration
+1.Append`extension=mcrypt.so`,`extension=libmcrypt.so`
+2.Then restart`php-fpm`
+3. `php -m` Check the installed extensions
+
+4.The troublesome part was finding the extension download URLs. It made me work overtime!

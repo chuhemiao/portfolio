@@ -1,0 +1,17 @@
+---
+title: Could not get lock /var/lib/dpkg/lock の解決
+publishedAt: '2016-01-09'
+summary: Ubuntu のよくあるエラー：Could not get lock /var/lib/dpkg/lock の解決
+category: thoughts
+slug: dpkg-lock-ja
+language: ja
+translationKey: dpkg-lock
+sourceSlug: dpkg-lock
+---
+## Ubuntu のよくあるエラー：Could not get lock /var/lib/dpkg/lock の解決
+1.端末から sudo apt-get install xxx でインストールすると、次のエラーが出る：
++ E: Could not get lock /var/lib/dpkg/lock - open (11: Resource temporarily unavailable)
++ E: Unable to lock the administration directory (/var/lib/dpkg/), is another process using it
+2.別のプログラムが動作中で、リソースがロックされている可能性がある。前回のインストールや更新が正常に終わらず、ロックが残った可能性もある。ここでの解決方法は次のとおり：
+	+ sudo rm /var/cache/apt/archives/lock
+	+ sudo rm /var/lib/dpkg/lock

@@ -4,38 +4,10 @@ import Link from 'next/link';
 import { useI18n } from '@/components/locale-provider';
 import { useEffect, useMemo, useState } from 'react';
 import { PROJECTS, type ResearchProject } from '@/data/research-projects';
+import { getResearchDescription, getResearchCategoryLabel } from '@/data/research-localization';
+import { inferLocale } from '@/lib/i18n';
 
-const ALL_TYPES = [
-  'All',
-  'CEX',
-  'Perp DEX',
-  'DEX',
-  'GameFi',
-  'Lending',
-  'Yield',
-  'DeFi',
-  'L1',
-  'L2',
-  'L2 Infra',
-  'ZK',
-  'FHE',
-  'Privacy',
-  'Prediction',
-  'Stablecoin',
-  'PayFi',
-  'BTCFi/Yield',
-  'Consumer/Sports',
-  'Interoperability',
-  'Identity/PoH',
-  'Data/Infra',
-  'Restaking/Cloud',
-  'AI/DePIN',
-  'Meme/AI',
-  'SocialFi',
-  'RWA',
-  'Wallet',
-  'Infra'
-];
+const ALL_TYPES = [...new Set(PROJECTS.map(project => project.type))];
 
 const TYPE_GROUPS: Record<string, string[]> = {
   Exchanges: ['CEX', 'Perp DEX', 'DEX'],
@@ -47,6 +19,8 @@ const TYPE_GROUPS: Record<string, string[]> = {
   Infra: ['Data/Infra', 'Restaking/Cloud', 'AI/DePIN', 'Identity/PoH', 'Wallet', 'Infra'],
   Other: ['DeFi']
 };
+const groupedTypes = new Set(Object.entries(TYPE_GROUPS).filter(([label]) => label !== 'Other').flatMap(([, types]) => types));
+TYPE_GROUPS.Other = ALL_TYPES.filter(type => !groupedTypes.has(type));
 
 type CategoryFilter =
   | { kind: 'all' }
@@ -100,12 +74,9 @@ const ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
 const PAGE_SIZE = 60;
 
 export default function ResearchClient({ postLinks }: { postLinks: Record<string, string> }) {
-  const { t } = useI18n();
-  const labels: Record<string, [string, string]> = {
-    Exchanges: ['交易所', '取引所'], Lending: ['借贷', 'レンディング'], Chains: ['公链', 'チェーン'], Privacy: ['隐私', 'プライバシー'], Consumer: ['消费应用', 'コンシューマー'], Markets: ['市场', '市場'], Infra: ['基础设施', 'インフラ'], Other: ['其他', 'その他'],
-    'Perp DEX': ['永续合约 DEX', '無期限先物 DEX'], Yield: ['收益', '利回り'], 'L2 Infra': ['L2 基础设施', 'L2 インフラ'], Prediction: ['预测市场', '予測市場'], Stablecoin: ['稳定币', 'ステーブルコイン'], PayFi: ['支付金融', '決済金融'], 'BTCFi/Yield': ['BTCFi / 收益', 'BTCFi / 利回り'], 'Consumer/Sports': ['消费 / 体育', '消費 / スポーツ'], Interoperability: ['跨链互操作', '相互運用性'], 'Identity/PoH': ['身份 / 人类证明', 'ID / 人間性証明'], 'Data/Infra': ['数据 / 基础设施', 'データ / インフラ'], 'Restaking/Cloud': ['再质押 / 云服务', 'リステーキング / クラウド'], 'Meme/AI': ['Meme / AI', 'Meme / AI'], Wallet: ['钱包', 'ウォレット'],
-  };
-  const labelFor = (label: string) => labels[label] ? t(label, ...labels[label]) : label;
+  const { locale, t } = useI18n();
+  const labelFor = (label: string) => getResearchCategoryLabel(label, locale);
+  const descriptions = useMemo(() => Object.fromEntries(PROJECTS.map(project => [project.slug, getResearchDescription(project, locale)])), [locale]);
   const [categoryFilter, setCategoryFilter] = useState<CategoryFilter>({ kind: 'all' });
   const [showAllCategories, setShowAllCategories] = useState(false);
   const [query, setQuery] = useState('');
@@ -130,10 +101,12 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
         p.name.toLowerCase().includes(q) ||
         p.initial.toLowerCase().includes(q) ||
         p.slug.toLowerCase().includes(q) ||
-        p.description.toLowerCase().includes(q);
+        p.description.toLowerCase().includes(q) ||
+        descriptions[p.slug].text.toLowerCase().includes(q) ||
+        getResearchCategoryLabel(p.type, locale).toLowerCase().includes(q);
       return matchType && matchQuery;
     }).sort((a, b) => a.name.localeCompare(b.name));
-  }, [categoryFilter, query]);
+  }, [categoryFilter, query, descriptions, locale]);
 
   const visible = filtered.slice(0, visibleCount);
 
@@ -223,7 +196,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
           </div>
         </header>
 
-        <p className='text-xs text-muted-foreground'>{t('Article summaries retain their original language; links open an available translation or the original article.', '文章摘要保留原文语言；链接优先打开可用译文，没有译文时打开原文。', '記事の要約は原文の言語です。リンクは利用可能な翻訳、または原文を開きます。')}</p>
+        <p className='text-xs text-muted-foreground'>{t('Project summaries are localized. Links open a full translation when available; otherwise they are marked as originals.', '项目摘要已适配当前语言。链接优先打开完整译文，暂无译文时会标注原文。', 'プロジェクト概要は表示言語に対応しています。本文の翻訳があれば開き、ない場合は原文と表示します。')}</p>
 
         <div className='relative max-w-xs'>
           <input
@@ -308,11 +281,15 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
         )}
 
         <div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-5 xl:grid-cols-4'>
-          {visible.map((project) => (
+          {visible.map((project) => {
+            const description = descriptions[project.slug];
+            const articleHref = postLinks[project.slug] ?? `/blog/${project.slug}`;
+            const originalArticle = !articleHref.startsWith(`/${locale}/`);
+            return (
             <Link
               key={project.slug}
               id={`project-${project.slug}`}
-              href={postLinks[project.slug] ?? `/blog/${project.slug}`}
+              href={articleHref}
               className='group relative flex min-h-[16.5rem] flex-col gap-3 overflow-hidden rounded-[1.4rem] border border-border/60 bg-background/72 p-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.6)] backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:bg-background/84 hover:shadow-[0_28px_55px_-34px_rgba(15,23,42,0.78)]'>
               <div
                 className='absolute inset-x-4 top-0 h-px opacity-70 transition-opacity duration-300 group-hover:opacity-100'
@@ -330,12 +307,15 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
                     {labelFor(project.type)}
                   </span>
                 </div>
-                <p className='line-clamp-3 text-[13px] leading-6 text-muted-foreground'>
-                  {project.description}
+                <p lang={description.available ? locale : inferLocale(project.description)} className='line-clamp-3 text-[13px] leading-6 text-muted-foreground'>
+                  {description.text}
                 </p>
+                {!description.available && <p className='text-xs text-muted-foreground'>{t('Summary: original language', '摘要：原文语言', '概要：原文の言語')}</p>}
+                {originalArticle && <p className='text-xs text-muted-foreground'>{t('Read original article', '阅读原文', '原文を読む')}</p>}
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
 
         {filtered.length === 0 && (

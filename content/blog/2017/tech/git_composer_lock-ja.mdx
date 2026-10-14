@@ -1,0 +1,35 @@
+---
+title: git pull で composer.lock がロックされる
+publishedAt: '2017-10-29'
+summary: git pull で composer.lock がロックされる。現在のファイルが最新ではないということだ
+category: tech
+slug: git_composer_lock-ja
+language: ja
+translationKey: git_composer_lock
+sourceSlug: git_composer_lock
+---
+
+# git pull で composer.lock がロックされる。現在のファイルが最新ではないということだ
+
+1. git fetch origin
+2. git reset --hard origin/master
+3. git pull
+
+# Your local changes to the following files would be overwritten by merge
+
+```PHP 
+error: Your local changes to the following files would be overwritten by merge:
+protected/config/main.php
+Please, commit your changes or stash them before you can merge.
+``` 
+
++ 解決方法：
+
+	- 本番サーバーの変更を残し、新しい設定項目だけをマージしたい場合は、次のようにする：
+	- git stash
+	- git pull
+	- git stash pop
+
++ その後、git diff -w にファイル名を続けて、自動マージの結果を確認できる。
+
++ 同じように、上の方法でリモートのリポジトリを最新コードとして使うこともできる。

@@ -1,0 +1,87 @@
+---
+title: 'Linux Commands'
+publishedAt: '2015-08-20'
+summary: 'System, resource, disk, network, process, user, service, and package commands.'
+category: 'thoughts'
+slug: 'linux-en'
+language: 'en'
+translationKey: 'linux'
+sourceSlug: 'linux'
+---
+
+1. `fs -du -s -h FILE_PATH`: show the current file size.
+
+## System
+
+| Command | Purpose |
+|---|---|
+| `uname -a` | Kernel, operating system, and CPU information |
+| `head -n 1 /etc/issue` | Operating-system version |
+| `cat /proc/cpuinfo` | CPU information |
+| `hostname` | Computer name |
+| `lspci -tv` | All PCI devices |
+| `lsusb -tv` | All USB devices |
+| `lsmod` | Loaded kernel modules |
+| `env` | Environment variables |
+
+## Resources
+
+| Command | Purpose |
+|---|---|
+| `free -m` | Memory and swap usage |
+| `df -h` | Partition usage |
+| `du -sh <DIRECTORY>` | Size of a directory |
+| `grep MemTotal /proc/meminfo` | Total memory |
+| `grep MemFree /proc/meminfo` | Free memory |
+| `uptime` | Uptime, users, and load |
+| `cat /proc/loadavg` | System load |
+
+## Disks and Partitions
+
+| Command | Purpose |
+|---|---|
+| `mount \| column -t` | Mounted partitions |
+| `fdisk -l` | All partitions |
+| `swapon -s` | Swap partitions |
+| `hdparm -i /dev/hda` | Disk parameters, for IDE devices |
+| `dmesg \| grep IDE` | IDE detection during boot |
+
+## Networking
+
+| Command | Purpose |
+|---|---|
+| `ifconfig` | Network-interface properties |
+| `iptables -L` | Firewall settings |
+| `route -n` | Routing table |
+| `netstat -lntp` | Listening ports |
+| `netstat -antp` | Established connections |
+| `netstat -s` | Network statistics |
+
+## Processes
+
+| Command | Purpose |
+|---|---|
+| `ps -ef` | All processes |
+| `top` | Live process status |
+
+## Users
+
+| Command | Purpose |
+|---|---|
+| `w` | Active users |
+| `id <USERNAME>` | A user's information |
+| `last` | Login history |
+| `cut -d: -f1 /etc/passwd` | All users |
+| `cut -d: -f1 /etc/group` | All groups |
+| `crontab -l` | Current user's scheduled tasks |
+
+## Services
+
+| Command | Purpose |
+|---|---|
+| `chkconfig --list` | All system services |
+| `chkconfig --list \| grep on` | Enabled system services |
+
+## Packages
+
+`rpm -qa`: list installed packages.

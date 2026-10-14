@@ -1,0 +1,88 @@
+---
+title: "HTTP status codes"
+publishedAt: "2016-04-13"
+summary: "The initial request has been accepted; the client should send the rest. (New in HTTP 1.1)"
+category: "tech"
+slug: "http-status-codes-en"
+language: "en"
+translationKey: "http-status-codes"
+sourceSlug: "http-status-codes"
+---
+
+1.100 Continue The initial request has been accepted; the client should send the rest. (New in HTTP 1.1)
+
+2.101 Switching Protocols The server will switch to another protocol as requested by the client. (New in HTTP 1.1)
+
+3.200 OK Everything is normal; the response document follows for GET and POST requests.
+
+4.201 Created The server created the document; the Location header gives its URL.
+
+5.202 Accepted The request was accepted, but processing is not complete.
+
+6.203 Non-Authoritative Information The document was returned normally, but some response headers may be incorrect because a copy was used. (New in HTTP 1.1)
+
+7.204 No Content There is no new document; the browser should keep displaying the old one. This is useful when the user refreshes periodically and a Servlet can determine that the document is sufficiently current.
+
+8.205 Reset Content There is no new content, but the browser should reset its display, forcing it to clear form inputs. (New in HTTP 1.1)
+
+9.206 Partial Content The client sent a GET request with a Range header, and the server fulfilled it. (New in HTTP 1.1)
+
+10.300 Multiple Choices The document is available at several locations listed in the response. If the server has a preference, it should give it in the Location response header.
+
+11.301 Moved Permanently The requested document is elsewhere; Location gives the new URL, which the browser should visit automatically.
+
+12.302 Found Similar to 301, but the new URL is a temporary substitute, not permanent. In HTTP 1.0 the corresponding status text is “Moved Temporatily”. The browser can automatically visit the new URL, making this useful.
+
++ This can sometimes be used interchangeably with 301. For example, a browser incorrectly requesting http://host/~user without a trailing slash may receive 301 from some servers and 302 from others.
+
++ Strictly speaking, automatic browser redirection can only be assumed when the original request is GET. See 307.
+
+13.303 See Other Similar to 301/302, except that if the original request was POST, the redirected document specified by Location should be retrieved with GET. (New in HTTP 1.1)
+
+14.304 Not Modified The client has a cached document and made a conditional request, usually with If-Modified-Since to request only a newer version. The server says the cached document can still be used.
+
+15.305 Use Proxy Retrieve the requested document through the proxy specified in Location. (New in HTTP 1.1)
+
+16.307 Temporary Redirect Like 302 (Found). Many browsers incorrectly redirect after 302 even for POST, although they should do so for a POST response only with 303. HTTP 1.1 therefore added 307 to distinguish the codes: browsers can follow GET and POST redirects for 303, but only GET redirects for 307. (New in HTTP 1.1)
+
+17.400 Bad Request The request has a syntax error.
+
+18.401 Unauthorized The client tried to access a password-protected page without authorization. A WWW-Authenticate response header prompts the browser to display a username/password dialog, then retry with a suitable Authorization header.
+
+19.403 Forbidden The resource is unavailable. The server understands the request but refuses to process it, usually because of file or directory permissions.
+
+20.404 Not Found The resource cannot be found at the specified location. A common response.
+
+21.405 Method Not Allowed The request method (GET, POST, HEAD, Delete, PUT, TRACE, etc.) is not applicable to the resource. (New in HTTP 1.1)
+
+22.406 Not Acceptable The resource exists, but its MIME type is incompatible with the client's Accpet header. (New in HTTP 1.1)
+
+23.407 Proxy Authentication Required Like 401: the client must first authenticate with the proxy. (New in HTTP 1.1)
+
+24.408 Request Timeout The client sent no request within the permitted waiting time. It can repeat the request later. (New in HTTP 1.1)
+
+25.409 Conflict Usually associated with PUT. The request cannot succeed because it conflicts with the resource's current state. (New in HTTP 1.1)
+
+26.410 Gone The document is no longer available, and the server knows no redirect address. Unlike 404, a 407 response means it permanently left this location, whereas 404 means unavailable for an unknown reason. (New in HTTP 1.1)
+
+27.411 Length Required The server cannot process the request without a Content-Length header. (New in HTTP 1.1)
+
+28.412 Precondition Failed A precondition specified in the request headers failed. (New in HTTP 1.1)
+
+29.413 Request Entity Too Large The target document is larger than the server currently wants to process. If it may process it later, include a Retry-After header. (New in HTTP 1.1)
+
+30.414 Request URI Too Long URI The URI is too long. (New in HTTP 1.1)
+
+31.416 Requested Range Not Satisfiable The server cannot satisfy the Range header. (New in HTTP 1.1)
+
+32.500 Internal Server Error An unexpected condition prevented the server from completing the request.
+
+33.501 Not Implemented The server lacks required functionality, for example an unsupported PUT request.
+
+34.502 Bad Gateway Acting as a gateway or proxy, the server contacted another server to finish the request but received an invalid response.
+
+35.503 Service Unavailable Maintenance or heavy load prevents a response. For example, a Servlet might return 503 when its database connection pool is full. A Retry-After header may be included.
+
+36.504 Gateway Timeout Used by a proxy or gateway when the remote server does not respond in time. (New in HTTP 1.1)
+
+37.505 HTTP Version Not Supported The server does not support the HTTP version specified. (New in HTTP 1.1)

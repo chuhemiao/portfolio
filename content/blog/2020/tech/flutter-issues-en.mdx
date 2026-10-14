@@ -1,0 +1,51 @@
+---
+title: Flutter Troubleshooting Notes
+publishedAt: '2020-07-19'
+summary: flutter doctor keeps hanging; it may be a proxy issue
+category: tech
+slug: flutter-issues-en
+language: en
+translationKey: flutter-issues
+sourceSlug: flutter-issues
+---
+
+
++ flutter doctor keeps hanging; it may be a proxy issue
+    + export PUB_HOSTED_URL=https://pub.flutter-io.cn
+    + export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+
+Set a Chinese mirror on macOS/Linux; run this once first each time: （export PATH="$PWD/flutter/bin:$PATH"）
+
+1. export PUB_HOSTED_URL=https://pub.flutter-io.cn
+2. export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+3. git clone -b dev https://github.com/flutter/flutter.git
+4. export PATH="$PWD/flutter/bin:$PATH"
+5. cd ./flutter
+6. flutter doctor
+
+
+Then run flutter doctor -v to update the version
+
+For the Java part of the Flutter environment, use jdk8; otherwise it keeps prompting for an upgrade.
+
+
+Speed up git clone
+
+git config --global http.https://github.com.proxy socks5://127.0.0.1:7891
+Or open .gitconfig and enter the following configuration
+
+[http "https://github.com"]
+    proxy = socks5://127.0.0.1:1086
+    
+
++ Waiting for another flutter command to release the startup lock...
+
+    - Enter your Flutter SDK directory, find bin/cache/lockfile, and delete it.
+
+
+
+CDN: trunk URL couldn't be downloaded:
+      https://raw.githubusercontent.com
+      
+
+

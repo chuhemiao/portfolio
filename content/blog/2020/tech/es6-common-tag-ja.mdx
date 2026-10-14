@@ -1,0 +1,65 @@
+---
+title: ES6 構文：テンプレートリテラル
+publishedAt: '2020-08-04'
+summary: テンプレートリテラルの概念と用途
+category: tech
+slug: es6-common-tag-ja
+language: ja
+translationKey: es6-common-tag
+sourceSlug: es6-common-tag
+---
+
+
+
+### テンプレートリテラルの概念と用途
+
++ テンプレートリテラルは、通常の文字列の二重引用符や一重引用符の代わりにバッククォート (` `) を使う。
++ テンプレートリテラルには ${expression} という構文のプレースホルダーを含められる。式と周囲の文字列は、各部分を連結する既定の関数へ渡される。式から始まるものはタグ付きテンプレートリテラルと呼ばれる。その式は通常、テンプレート処理後に呼び出される関数で、最終結果を出力する前にテンプレートを加工できる。
++ テンプレート内でバッククォート (`) を使うには、その前にエスケープ文字 (\) を付ける。
+
+簡単に言えば、特殊な文字の処理、データ表示、React テンプレートのプレースホルダーなどを、より簡潔に表すための書き方だ。
+
+```
+// 旧方式
+var a = 5;
+var b = 10;
+console.log('Fifteen is ' + (a + b) + ' and\nnot ' + (2 * a + b) + '.');
+
+// 新方式
+
+var a = 5;
+var b = 10;
+console.log(`Fifteen is ${a + b} and
+not ${2 * a + b}.`);
+
+// 最终结果
+// "Fifteen is 15 and
+// not 20."
+
+```
+
+### 構文の形式
+
+```
+// 单行字符串
+`string text` 
+
+// 多行字符串 方便换行
+`string text line 1
+ string text line 2`
+
+// 嵌套模板
+`string text ${expression} string text`
+
+// 根据不同的状态展示不同的class
+const classes = `header ${ isLargeScreen() ? '' :
+ `icon-${item.isCollapsed ? 'expander' : 'collapser'}` }`;
+
+// 自定义的标签函数处理模板字符串
+tag `string text ${expression} string text`
+
+```
+
+### 煩雑な正規表現への対処
+
++ [common-tags](https://github.com/zspecza/common-tags) を使えば、基本的な空白の除去やデータ処理に対応できる。詳しい使い方はドキュメントを参照。

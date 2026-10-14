@@ -1,0 +1,70 @@
+---
+title: Go get で Gin をインストールできない場合
+publishedAt: '2019-07-23'
+summary: 問題の内容
+category: tech
+slug: go-gin-golang-x-ja
+language: ja
+translationKey: go-gin-golang-x
+sourceSlug: go-gin-golang-x
+---
+
+### 1.問題の内容
+
+```
+Go get 出现超时问题：“golang unrecognized import path "golang.org/x/net   unrecognized import path "golang.org/x/sys"  Unknown SSL protocol error in connection to gopkg.in:443 "”
+```
+
+### 2.解決方法
+
++ ネット上の方法 1：手動でダウンロードする
+```
+mkdir $GOPATH/src/golang.org/x
+cd $GOPATH/src/golang.org/x
+git clone git@github.com:golang/text.git
+```
+
+### 方法 2：プロキシを設定する
+
+```
+export http_proxy=https://proxyAddress:port
+export https_proxy=https://proxyAddress:port
+```
+
+### 3.最適な解決方法
+
++ Go 1.11 から Go Mod に対応し、https://goproxy.io/ をダウンロード用プロキシとして使う解決方法が提供されている。公式の設定方法：
+
++ macos/linux  
+
+```
+export GO111MODULE=on 
+export GOPROXY=https://goproxy.io
+```
+
++ Windows では PowerShell で設定する（現在設定している GOPATH に対して入力する）
+
+```
+$env:GO111MODULE="on"
+$env:GOPROXY="https://goproxy.io"
+```
+
+![go-gin-golang](https://cdn.bsatoshi.com/2019/07/23/72B1D829-1628-4CC9-8129-053951E159C2.png)
+
++ ここでは引用符が必要で、なければ on やアドレスのエラーが出る。その後は Go get などが順調に動いた。
+
+### Notice： Go version が >=1.13 の場合は次を使う
+
+```
+go env -w GOPROXY=https://goproxy.io,direct
+go env -w GOPRIVATE=*.corp.example.com
+```
+
+
+Go で Gin をインストールし、Go mod で管理できた
+
+![Go で Gin をインストールする](https://cdn.bsatoshi.com/2019/07/23/1C3E1CAC-D142-49F0-95C8-5243B1EB701C.png)
+
+参考資料：
+https://goproxy.io/
+[go get golang.org/x の失敗を一度に解決する](https://segmentfault.com/a/1190000018264719)

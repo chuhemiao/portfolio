@@ -1,0 +1,169 @@
+---
+title: "Dart basics"
+publishedAt: "2020-06-19"
+summary: "The var keyword and the basics of variables, functions, Future, and Stream."
+category: "tech"
+slug: "dart-basics-en"
+language: "en"
+translationKey: "dart-basics"
+sourceSlug: "dart-basics"
+---
+
+### Variable declarations
++ The var keyword
++ A strongly typed language: the type cannot be changed after declaration.
+
+            var z;
+            z = "hello world";
+            // 下面代码在dart中会报错，因为变量t的类型已经确定为String，
+            // 类型一旦确定后则不能再更改其类型。
+            z = 1000;
+            
++ dynamic and Object
+    + Object is the root class of all Dart objects: every type is a subclass of Object, including Function and Null. Thus data of any type can be assigned to an object declared as Object. Like var, dynamic is a keyword; a variable declared with it can be assigned any object. 
+    + dynamic and Object share the ability to accept values of different types later.
+    + The difference is that the compiler permits all possible operations on a dynamic object, whereas an Object object can only use Object properties and methods; other operations produce compile errors.         
+ dynamic t;
+ Object x;
+ t = "hello world";
+ x = 'Hello Object';
+ //下面代码没有问题
+ t = 1000;
+ x = 1000;
+ 
+ + final and const
+     + The variable type and value do not change; they are fixed at initialization.
+     + final and const are neither var nor types. A final variable can be set only once.
+     + The difference: const is a compile-time constant, while final is initialized at first use. A variable marked final or const can omit its type.
+
+//可以省略String这个类型声明
+final str = "hi world";
+//final String str = "hi world"; 
+const str1 = "hi world";
+//const String str1 = "hi world";
+
+### Functions
+
++ Dart is a truly object-oriented language: even functions are objects of type Function. Functions can therefore be assigned to variables or passed to other functions, a typical feature of functional programming.
++ Declare a function:
+
+bool isNoble(int atomicNumber) {
+  return _nobleGases[atomicNumber] != null;
+}
+
++ If a Dart function declaration does not explicitly declare its return type, it is treated as dynamic by default. Note that return values are not type-inferred.
+
++ A function containing only one expression can use shorthand syntax.
+
+bool isNoble (int atomicNumber)=> _nobleGases [ atomicNumber ] ！= null ;
+
++ Functions can be variables:
+
+var say = (str){
+  print(str);
+};
+say("hi world");
+
++ Pass a function as an argument:
+
+void execute(var callback) {
+    callback();
+}
+execute(() => print("xxx"))
+
++ Optional positional parameters
+    + Enclose a group of parameters in [] to make them optional positional parameters, placed at the end of the parameter list:
+
+String say(String from, String msg, [String device]) {
+  var result = '$from says $msg';
+  if (device != null) {
+    result = '$result with a $device';
+  }
+  return result;
+}
+
+Test: say('Bob', 'Howdy'); // Result: Bob says Howdy
+
+Test: say('Bob', 'Howdy', 'smoke signal'); // Result: Bob says Howdy with a smoke signal
+
++ **Optional named parameters (used more often)**
+    + When defining a function, place {param1, param2, …} at the end of the parameter list to specify named parameters. For example:
+
+//设置[bold]和[hidden]标志
+void enableFlags({bool bold, bool hidden}) {
+    // ... 
+}
+
++ When calling a function, you can specify named parameters, for example paramName: value.
+
+enableFlags(bold: true, hidden: false);
+
+**Note: optional positional and optional named parameters cannot be used together.**
+
+### Asynchronous support
+
++ Dart libraries contain many functions returning Future or Stream objects. These asynchronous functions return after scheduling time-consuming operations such as I/O, rather than waiting for them to finish.
+
++ The async and await keywords support asynchronous programming and let you write asynchronous code that resembles synchronous code.
+
++ Future
+    - Future is much like JavaScript Promise: it represents the eventual completion or failure of an asynchronous operation and its resulting value.
+    - It handles asynchronous operations: on success, execute the success handler; on failure, catch the error or stop subsequent operations.
+    - Each Future has one outcome: success or failure.
+    -  All Future APIs return another Future, making chaining convenient.
+
++ Future APIs and features, with examples
+    - Future.then: handle success
+    - Future.catchError: catch errors
+    - Future.whenComplete: perform additional work during the request lifecycle
+    - Future.wait: continue only after all Futures succeed
+    - With only success or failure as outcomes, the then handler is not executed when an error is caught.
+
+// 延迟2s返回结果："hi world!"
+Future.delayed(new Duration(seconds: 2),(){
+   return "hi world!";
+}).then((data){
+    // 执行成功走这
+   print(data);
+}).catchError((e){
+   //执行失败会走到这里  
+   print(e);
+}).whenComplete((){
+   //无论成功或失败都会走到这里
+});
+// wait等待结果，4s后看到hello world
+Future.wait([
+  // 2秒后返回结果  
+  Future.delayed(new Duration(seconds: 2), () {
+    return "hello";
+  }),
+  // 4秒后返回结果  
+  Future.delayed(new Duration(seconds: 4), () {
+    return " world";
+  })
+]).then((results){
+  print(results[0]+results[1]);
+}).catchError((e){
+  print(e);
+});
+
++ Async/await
+    + Write asynchronous code in a synchronous style. Dart Futures return Futures and can be chained, or you can use Async/await directly.
+
+// 登陆之后保存用户信息
+task() async {
+   try{
+    String id = await login("alice","******");
+    String userInfo = await getUserInfo(id);
+    await saveUserInfo(userInfo);
+    //执行接下来的操作   
+   } catch(e){
+    //错误处理   
+    print(e);   
+   }  
+}
+
+### Stream
++  Stream also receives asynchronous event data. Unlike Future, it can receive multiple asynchronous results, whether success or failure. 
++  During an asynchronous task, repeated success or failure events can deliver result data or exceptions. 
++  Stream is often used for asynchronous tasks that read data repeatedly, such as network downloads and file I/O.

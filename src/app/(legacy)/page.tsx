@@ -5,6 +5,7 @@ import BlurFade from '@/components/magicui/blur-fade';
 import { DATA } from '@/data/resume';
 import { TOPICS, localizedTopic } from '@/data/topics';
 import { WEEKLY_REPORTS } from '@/data/weekly-research';
+import { getLocalizedWeeklyReport } from '@/lib/weekly-localization';
 import { getBlogPosts, getLocalizedPosts, getPostHref } from '@/data/blog';
 import {
   ArrowRightIcon,
@@ -115,7 +116,8 @@ export async function renderPage(locale: Locale) {
     Coinbase: t('US-regulated exchange evolving into diversified financial platform', '美国受监管交易所，向多元金融平台发展', '米国の規制に準拠する取引所から総合金融プラットフォームへ'),
     Solana: t('High-throughput L1 · DeFi, NFT, and payments hub', '高吞吐量 L1 · DeFi、NFT 与支付生态', '高スループット L1 · DeFi、NFT、決済の拠点'),
   };
-  const weeklyBrief = WEEKLY_REPORTS[0];
+  const localizedBrief = WEEKLY_REPORTS[0] ? getLocalizedWeeklyReport(WEEKLY_REPORTS[0], locale) : undefined;
+  const weeklyBrief = localizedBrief?.report;
 
   const websiteJsonLd = {
     '@context': 'https://schema.org',
@@ -442,15 +444,16 @@ export async function renderPage(locale: Locale) {
                   </div>
                   <div className='mt-4 space-y-2'>
                     <div className='text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground'>
-                      {formatLocaleDate(weeklyBrief.id, locale)} · {t('Original: 中文', '中文原文', '原文: 中文')}
+                      {formatLocaleDate(weeklyBrief.id, locale)}
+                      {localizedBrief?.fallbackOriginal && <> · {t('Translation pending · original report', '译文待补充 · 显示原报告', '翻訳準備中 · 原文のレポートを表示')}</>}
                     </div>
-                    <h3 className='text-base font-semibold tracking-[-0.03em] text-foreground leading-snug'>
+                    <h3 lang={localizedBrief?.language} className='text-base font-semibold tracking-[-0.03em] text-foreground leading-snug'>
                       {weeklyBrief.headline}
                     </h3>
                   </div>
                   {weeklyBrief.coreCrypto && (
                     <div className='mt-4 rounded-[1.1rem] border border-border/60 bg-background/80 px-3.5 py-2.5'>
-                      <p className='text-xs leading-6 text-muted-foreground line-clamp-4'>
+                      <p lang={localizedBrief?.language} className='text-xs leading-6 text-muted-foreground line-clamp-4'>
                         {weeklyBrief.coreCrypto}
                       </p>
                     </div>

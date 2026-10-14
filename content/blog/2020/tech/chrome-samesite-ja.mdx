@@ -1,0 +1,122 @@
+---
+title: "Chrome 80 以降の SameSite：Cookie のプライバシーと CSRF 対策"
+publishedAt: "2020-08-04"
+summary: "Cookie の二つの課題：プライバシーと CSRF（クロスサイトリクエストフォージェリ）。"
+category: "thoughts"
+slug: "chrome-samesite-ja"
+language: "ja"
+translationKey: "chrome-samesite"
+sourceSlug: "chrome-samesite"
+---
+
+### SameSite を追加する理由 
+
++ Cookie の二つの課題：プライバシーと CSRF（クロスサイトリクエストフォージェリ）。
++ Cookie の利用範囲を明確にして攻撃の可能性を減らす。
+
+### Cookie を設定する手順
+
++ クライアントがサーバーへ HTTP 要求を送る。
++ サーバーが受け取ったら、応答ヘッダーに Set-Cookie を追加する。
++ ブラウザーが応答を受け取り、Cookie を保存する。
++ 以降、そのサーバーへの要求では Cookie フィールドで情報を送る。
+
+### Cookie の属性
+
+![ブラウザーの Cookie と SameSite](https://i.loli.net/2020/08/03/25vlgEdmMktCwGy.png)
+
++ Name/Value
+	+ JavaScript で操作する際は Value をエンコードする。
+
++ Expires
+	+ Expires は有効期限を指定する。例：
+
+	+ Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;
+	+ Expires がなければセッション Cookie で、図では Session と表示される。値はクライアントのメモリにあり、ブラウザーを閉じると失効する。ただしセッション復元機能があるブラウザーでは、閉じても Cookie が残り、閉じなかったように復元される。
+
+	+ 一方、永続 Cookie は期限切れや削除まで利用者のディスクに保存される。指定日時はサーバーではなくクライアントに関係する。
+
++ Max-Age
+		- Max-Age は失効までの秒数を指定する。例：
+		- Set-Cookie: id=a3fWa; Max-Age=604800;
+		- Max-Age は正数、負数、0 を指定できる。
+		- max-Age が正数なら、Cookie ファイルに保存する。
+		- 負数ならセッション Cookie を示す。
+		- 0 なら直ちに Cookie を削除する。
+		- 両方ある場合は Max-Age が優先する。
+
++ Domain
+	+ Domain は Cookie を送る host を指定する。未指定なら現在の文書 URL のホスト部分を使うが、サブドメインは含まない。
+	+ ドメインをまたいで Cookie は設定できない。
+
++ Path
+	+ Path は URL パスを指定する。要求先のパスにこれが含まれる場合だけ Cookie ヘッダーを送る。Path=/docs なら /docs/Web/ には送るが、/test には送らない。
+
+	+ Domain と Path が、送信先 URL となる Cookie のスコープを定義する。
+
++ Secure 属性
+	+ Secure の Cookie は HTTPS で暗号化した要求でのみ送る。HTTPS はブラウザーとサーバー間の盗聴や改ざんを防ぐ。
+
++ HTTPOnly
+	+ HTTPOnly は document.cookie などを通じたスクリプトのアクセスを防ぎ、XSS 対策に役立つ。
+
++ SameSite
+	+ Google が 2 月に公開した Chrome80 では、SameSite によりサードパーティー Cookie をデフォルトで制限し、CSRF 対策とプライバシー保護を強化した。Token+SameSite で CSRF に対処できる。
+
+### SameSite の値
+
++ SameSite はサードパーティー Cookie を制限し、リスクを減らす。値は三つ。
+	+ Strict：ファーストパーティーの要求だけに送る。現在のページ URL と要求先が完全に一致する同一サイトの要求だけに Cookie を送る。
+	+ Lax：一部のサードパーティー要求に送る。
+	+ None：クロスサイトかどうかによらず送る。
+
++ Strict
+	+ Strict は最も厳しく、サードパーティー Cookie を全面禁止する。クロスサイトでは一切送らず、現在のページ URL と要求先が一致するときだけ送る。
+	+ Set-Cookie: CookieName=CookieValue; SameSite=Strict;
++ Lax
+	+ Lax は少し緩い。通常は送らないが、要求先へ移動する Get 要求は例外。
+	+ Set-Cookie: CookieName=CookieValue; SameSite=Lax;
+
++ None
+	+ Chrome は Lax をデフォルトにする予定で、80 では実施済み。None を指定して制限を外せるが、同時に Secure が必要で、HTTPS のみで送る。それがなければ無効。
+	+ Set-Cookie: widget_session=abc123; SameSite=None; Secure
+
+
+### SameSite の影響
+
+![samesite.png](https://i.loli.net/2020/08/03/xtH5pQylGW84bj3.png)
+
++ 図のように、多くの Web アプリでは Post フォーム、iframe、AJAX、Image の四つが、従来はクロスサイトで Cookie を送っていたのに送らなくなる。
+
++ Post フォーム：CSRF の説明では必ずフォームを例にするので当然の変更。
+
++ iframe：埋め込む Web アプリの多くがクロスサイトなので影響する。
+
++ AJAX：フロントエンドの値取得の動作や結果に影響する可能性がある。
+
++ Image：通常は CDN に置き Cookie 不要なので影響は限定的。ただし認証が必要な画像には影響する可能性がある。
+
+
+### 解決策
+
++ 暫定策は SameSite を None にし、Secure も付ける（Set-cookie: key=value; SameSite=None; Secure）。
+
++ Chrome の規則に合わせるのが適切：
+	+ 通常は SameSite=Lax、サードパーティー Cookie が必要なら none、CSRF Token のセッション Cookie は Strict にする（SameSite は CSRF 対策のため）。
+
+![Netflix は SameSite=Lax がデフォルト](https://i.loli.net/2020/08/03/TwNmZu9JD78SxWX.png)
+	
++ 注意：HTTP の API は SameSite=none に対応しない。UA を確認し、対応しないブラウザーには付けない。
++ [UA による SameSite 互換性の判定](https://www.chromium.org/updates/same-site/incompatible-clients)
+
+### Chrome 80 以降：7 月 14 日以降に段階展開し、7 月 28 日には大部分の利用者をカバー
+
++ 7 月 14 日の Chrome 84 安定版公開と同時に SameSite の強制適用を再開し、Chrome 80+ でも有効にした。
+
++ Cookie 検証が厳しくなり、デフォルト値は None から Lax へ変わる。
+### SameSite の更新説明と議論
+
++ [SameSite Updates Version](https://www.chromium.org/updates/same-site)
++ [New cross-site cookie not 'SameSite' warning ](https://github.com/google/google-api-javascript-client/issues/561)
++ [ブラウザーシリーズ：Cookie と SameSite](https://github.com/mqyqingfeng/Blog/issues/157)
++ [Ruan Yifeng：Cookie の SameSite 属性](https://www.ruanyifeng.com/blog/2019/09/cookie-samesite.html)

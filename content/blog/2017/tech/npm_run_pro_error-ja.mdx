@@ -1,0 +1,25 @@
+---
+title: 低スペックの Alibaba Cloud ECS で NPM ビルドが止まる場合
+publishedAt: '2017-07-25'
+summary: '`npm install` #問題なし'
+category: tech
+slug: npm_run_pro_error-ja
+language: ja
+translationKey: npm_run_pro_error
+sourceSlug: npm_run_pro_error
+---
+
+1.`npm install` #問題なし
+
+2.`npm run production` 三回ビルドを試したが、最大でも 65% で、その後 VPS が落ちた（CPU は使い切っておらず、低スペックなので I/O がボトルネックかもしれない）。再起動して swap を追加する。
+
+3.swap 用のファイルを作る（Windows の 3 GB の仮想メモリ・ページファイルに相当）：`dd if=/dev/zero of=/mnt/swap bs=1024 count=3194304` 
+
+4.swap ファイルを設定する：`mkswap /mnt/swap swapon /mnt/swap`
+
+5.マウントの設定を追加する：`echo "/mnt/swap swap swap defaults 0 0" >> /etc/fstab `
+
+6.マウント：`SWAP： mount -a`
+
+>By これまでにつまずいたこと
+ >>夢遥奇縁

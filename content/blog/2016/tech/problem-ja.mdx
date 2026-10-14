@@ -1,0 +1,56 @@
+---
+title: '使った小技と問題のメモ'
+publishedAt: '2016-05-24'
+summary: 'php -m での拡張確認と、日々の問題解決メモ。'
+category: 'thoughts'
+slug: 'problem-ja'
+language: 'ja'
+translationKey: 'problem'
+sourceSlug: 'problem'
+---
+
+## 小技
+
+1. PHP の拡張を確認：`php -m`。
+2. Nginx を再読み込み：`service nginx reload`。
+3. Composer の国内ミラー設定：`composer config repo.packagist composer https://packagist.phpcomposer.com`。
+4. Laravel 5.2 は認証ビューを標準では作らない：`php artisan make:auth --views`。
+5. 鍵を生成：`php artisan key:generate`。
+6. データベースを出力：`mysqldump` にユーザー名、パスワード、DB 名を指定し、SQL ファイルへ出力する。`mysqldump -uUSERNAME -pPASSWORD DATABASE > DATABASE.sql`。
+7. ページ更新：`onclick="window.location.reload();"`。
+8. クリックで移動：`onclick="document.location='http://www.baidu.com'"`。
+9. Chrome は DNS をキャッシュする。以前失敗したページが再び失敗するときは、ブラウザーを再起動する。
+10. 日付をタイムスタンプにし、日・月・年へ整形：`date('d M Y',strtotime($value->date))`。
+11. `php -i` は `phpinfo` と同様に環境情報を表示する。
+12. `php -m` でインストール済み拡張を表示する。
+
+## 問題
+
+1. PHP 5.3 は `[ ]` の配列記法に対応しない。
+2. PHP の導入に失敗したら削除して再導入する。`skip-broken` で問題のあるパッケージを飛ばす：
+
+`yum install -y --skip-broken php-devel`
+
+3. php-fpm が存在しないユーザーのエラーを出す場合、`php-fpm.conf` の `user`、`group` を実行ユーザーへ変更する：
+
+`ERROR: [pool www] cannot get uid for user '@chuhe@'`
+
+`ERROR: FPM initialization failed`
+
+4. SVN がロックされた場合：
+
+- 対象ディレクトリを付けて `svn cleanup`。
+- `jobs` で停止中のジョブを確認。
+- `kill %` にジョブ番号を付けて停止した処理を終了。
+- `ping idiot6.com` で疎通を確認。
+- `telnet idiot6.com 3690` でポートを確認。
+
+5. PHP の導入状態を確認：`rpm -qa php`。
+6. `devel` 付きは、ほかのライブラリーのコンパイル時に必要な開発用ファイル。付かないものはコンパイル済みのバイナリー。
+7. SMS 認証画面を埋め込むと、送信ごとに session が変わる場合がある。
+8. Laravel 5.2 のページ送りは、`BootstrapFourPresenter.php` の class 属性を変更して調整する。
+9. SQL の `order by` 対象は整数型にする。そうでなければバイト順に並ぶ。
+
+> 最近、つまずいた点。
+>
+> By 梦遥奇缘

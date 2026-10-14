@@ -1,0 +1,45 @@
+---
+title: Moving from WordPress to Typecho
+publishedAt: '2015-09-23'
+summary: >-
+  Yesterday I noticed Typecho on someone’s blog and decided on a whim to switch.
+  Here is how I migrated the database.
+category: tech
+slug: wordpress-typecho-en
+language: en
+translationKey: wordpress-typecho
+sourceSlug: wordpress-typecho
+---
+
+## Yesterday I noticed Typecho on someone’s blog and decided on a whim to switch. Here is how I migrated the database.
+
+1.  Step One
+    * First, back up your existing database. I will not go into the method here.
+
+2.  Step Two
+
+    * After backing up the database, remove the previous website and download Typecho from http://typecho.org/, or from GitHub: https://github.com/typecho/typecho. Upload the files to your server with FTP. The installation steps are on the official website, so I will skip them here.
+
+3.  Step Three
+
+    * Now the important part: find the WordPress-to-Typecho plugin on the official site (http://docs.typecho.org/plugins/wordpress-to-typecho).
+
+4.  Step Four
+
+    * Upload it to /usr/plugins and open the administration panel.
+
+    * Open Plugin Management from the Console dropdown.
+
+    * Activate the wordpresstotypecho plugin.
+
+    * Click Settings for the wordpresstotypecho plugin.
+
+    * Fill in the database, username, and other information, then save.
+
+    * Select Import Data from WordPress, which appears in the Console dropdown.
+
+    * Complete the import. If it fails, check your database settings and other configuration. You can disable the plugin after importing without affecting other features.
+
+5.  Step Five
+
+    * If the import fails, you can remove unused database tables. On my Alibaba Cloud server, I imported the previous backup into the current tables (note that the table prefixes differ). Then fill in the plugin configuration and run the conversion.

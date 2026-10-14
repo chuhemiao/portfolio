@@ -1,0 +1,60 @@
+---
+title: A Classic Lottery Algorithm
+publishedAt: '2017-08-03'
+summary: Define the prize probability array
+category: tech
+slug: lottery_active-en
+language: en
+translationKey: lottery_active
+sourceSlug: lottery_active
+---
+## Define the prize probability array
+```php
+private $innerRate = array(
+'1' => 1,
+'2' => 200,
+'3' => 500,
+'4' => 100000,
+'5' => 300000,
+'6' => 1693000,
+);
+```
+### Call the function
+
+1.`$i = $this->getRand($this->innerRate)`;
+2.Handle the result based on the returned $i; either if or switch works.
+```php
+if($i==1)
+{
+	echo "一等奖";
+}else{
+	echo "二等奖";
+}
+```
+### Base function
+```php
+private function getRand($proArr)
+{
+    $result = '';
+    // 概率数组的总概率精度
+    $proSum = array_sum($proArr);
+    // 概率数组循环
+    foreach ($proArr as $key => $proCur) {
+        $randNum = mt_rand(1, $proSum); // 抽取随机数
+        if ($randNum <= $proCur) {
+            $result = $key; // 得出结果
+            break;
+        } else {
+            $proSum -= $proCur;
+        }
+    }
+    unset($proArr);
+    return $result;
+}
+```
+
+
+
+
+
+

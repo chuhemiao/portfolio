@@ -1,0 +1,34 @@
+---
+title: React Native のバグと解決方法
+publishedAt: '2020-07-24'
+summary: >-
+  Xiaomi の端末で APK をインストールできない：`adb install またはsudo npx react-native run-android`
+  での APK インストール
+category: tech
+slug: react-native-bug-ja
+language: ja
+translationKey: react-native-bug
+sourceSlug: react-native-bug
+---
+
+###  Xiaomi の端末で APK をインストールできない：`adb install またはsudo npx react-native run-android` での APK インストール
+
+ + まずポートを有効にする：`adb reverse tcp:8081 tcp:8081`、続いて実行：`sudo npx react-native run-android`。次のエラーが出る：`Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]`
+ + 解決方法：Xiaomi（Mi 8 Lite）では、テスト用パッケージのインストールに USB 経由のインストール許可が必要だ。開発者モードを有効にして USB を接続するだけでは充電しかできない。設定 → 追加設定 → 開発者向けオプション → USB インストールを有効にする。
+ + 続いて adb install で APK をインストールするか、直接使う：`sudo npx react-native run-android`でインストールする。
+
+### 一部 Oppo 機種でカメラとストレージを使用できない
+
+`Android APIv29 FileNotFoundException EACCES (Permission denied)`
+
+application の設定を変更する：`android:requestLegacyExternalStorage="true"`
+
+### iOS のリクエストは正常だが、Xiaomi と Oppo の一部 Android 機種で axios が使えず Network error (Android) が続く
+
++ RN のバージョン：0.62.2
++ axios ：0.19.2
++ Android の設定を変更する：`android > gradle.properties` => `FLIPPER_VERSION=0.39.0 `
+
+### 一部 Android 機種で debug を開くと画面をタップできない
+
++ debug を開いたら画面を切り替えず、debug のウィンドウを最前面にして端末からデバッグする（二画面が必要で、そうでないと使えない）。

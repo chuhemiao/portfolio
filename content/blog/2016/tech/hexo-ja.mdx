@@ -1,0 +1,47 @@
+---
+title: 私の Hexo への道
+publishedAt: '2016-01-09'
+summary: 私の Hexo への道
+category: tech
+slug: hexo-ja
+language: ja
+translationKey: hexo
+sourceSlug: hexo
+---
+# 私の Hexo への道
+## Node.js の前に、g++ と libssl-dev がなければインストールする：
++ sudo apt-get update
++ sudo apt-get install g++
++ sudo apt-get install libssl-dev
++ Node のインストール：apt-get install nodejs
++ node -v：確認
+## Git のインストール
++ sudo apt-get install git
++ git --version：バージョン確認
++ git config --global user.email "535101602@qq.com"  // GitHub 登録時のメールアドレス
++ git config --global user.name "chuhemiao"  // GitHub のユーザー名
+## GitHub のアカウントを自分で登録する。なければ進められない。GitCafe も使える。
+- 鍵を生成する：
+	+ ssh-keygen -t rsa -C "535101602@qq.com"
+	+ Enter の後、passphrase の確認でパスワードを二回入力する。yes/no の確認では y ではなく yes と入力する。
+	+ cd ~/.ssh/ で移動する。id_rsa と id_rsa.pub があるので、cat id_rsa.pub の内容を GitHub の SSH key に追加する。
+	+ ssh -T git@github.com 接続を確認する
+## Hexo のインストール
++ npm install -g hexo
++ hexo init <ディレクトリ名>
++ cd でこのディレクトリへ移動し、hexo d -g でサービスと静的ページを生成する
++ http://localhost:4000。ブラウザーで URL を開いて確認する
+## 記事を書く
++ new コマンドで作成した記事の保存先：```hexo\source\_posts\```のディレクトリ。
++ hexo new "name"
++ layout は省略可能で、既定は post。scaffolds 内のファイル名が layout 名になる。ファイルを追加して独自の layout を作ることも、既存のものを編集することもできる。post の既定は hexo\scaffolds\post.md。
+## Markdown に対応するので、先に構文を学ぶとよい。リンク：[markdown](http://www.appinn.com/markdown/);
+## テーマの変更。自分はシンプルな pacman を使っている。リンク：[themes](https://github.com/hexojs/hexo/wiki/Themes)
++ テーマ変更は簡単だ。Hexo ディレクトリの _config.yml の theme を、Git で取得したテーマ名に替える。
++ git clone https://github.com/chuhemiao/pacman
+## 独自のページ
++ hexo\source\ に新しいページが作られる
++ hexo new page "名前"
+## 404 ページの追加（ドメイン設定後に使える）
++ hexo/source に 404.html を作り、内容を編集すればよい。
+

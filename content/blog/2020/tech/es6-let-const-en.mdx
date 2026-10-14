@@ -1,0 +1,85 @@
+---
+title: 'ES6 Syntax: let, var, and const'
+publishedAt: '2020-08-04'
+summary: let 、var 、 const
+category: tech
+slug: es6-let-const-en
+language: en
+translationKey: es6-let-const
+sourceSlug: es6-let-const
+---
+
+
+
+### let 、var 、 const
+
++ Differences between var, let, and const:
+	0. Usage
+	1. Block scope
+	2. No variable hoisting
+	3. Temporal dead zone
+	4. Variables cannot be redeclared
+	5. Global variables declared with let or const are not attached to the top-level object
+
+### Usage
++ let can fully replace var for defining variables
++ const is generally used for constants, anonymous functions, arrow functions, and so on
++ Use const by default in development, and let only when the value truly needs to change (for example, use const to define a component or a value in map before calling it, making the code more structured and readable).
+
+### Block scope
++ Block declarations define variables inaccessible outside the specified block. Both let and const are forms of block declaration.
+
++ ECMAScript 6 introduced block scope inside functions and current blocks (the area between { and }, including if(){ xxxxxx here is also a block }).
++ Block scopes can be nested indefinitely
++ The real purpose of block scope is to divide code into blocks (eg: 3)
++ When declaring functions in block scope, it is best to use anonymous functions.
+
+```
+{{{{
+  {let test = 'Hello World'}
+  console.log(test); // 报错  拿不到子作用域的变量
+}}}};
+
+Eg3：for (let i = 0; i < 3; i++) {
+  let i = 'abc';
+  console.log(i);
+}
+
+```
+
+Here let has its own scope, so abc is output three times. Each loop iteration creates a new variable initialized with the value of the same-named variable from the previous iteration. In this situation, let acts similarly to a closure.
+
+### No variable hoisting
+
+Variable hoisting: within one scope, a variable can be used before its declaration with the value undefined. ES5 var is hoisted; in ES6, directly logging an undeclared value gives Uncaught ReferenceError: xxxxxx is not defined.
+
+### Temporal dead zone
+
++ On entering the current scope, the variable already exists but cannot be accessed. It can only be accessed and used when execution reaches its declaration.
++ The temporal dead zone and lack of hoisting reduce runtime errors by preventing use before declaration and the unexpected behavior it can cause.
+### Redeclaring variables is not allowed
+
++ let and const do not allow the same variable to be declared again in the same scope
+
+### Global variables declared with let or const are not attached to the top-level object
+
+- The browser’s top-level object is window
+- Node’s top-level object is global
+
++ Global variables declared with var create properties on the global object and are attached to the top-level object. let and const are not.
+
+```
+var value = 535;
+console.log(window.value); // 535
+
+let value = 535;
+console.log(window.value); // undefined
+
+```
+
++ const must be assigned immediately on declaration and cannot be changed afterward (the data stored at the memory address to which the variable points must not change).
+	+ Simple types (number, string, boolean): the memory address is the value, a constant; changing it raises an error.
+	+ Complex types (obj, arr, etc.): the address holds a pointer. const only guarantees the pointer stays fixed, always pointing to the same address; its internal values may change.
+### Summary
++ let can be declared first and assigned later, but const must be assigned immediately or it raises an error
++ A simple type declared with const cannot be changed. For complex types (arrays, objects, etc.), the pointer’s address cannot change, but internal data can.

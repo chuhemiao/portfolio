@@ -1,0 +1,24 @@
+---
+title: PHP の VC6、VC9、TS、NTS の違いと使い方
+publishedAt: '2016-01-12'
+summary: VC6 と VC9 の違い：
+category: tech
+slug: VC6-VC9-TS-NTS-ja
+language: ja
+translationKey: VC6-VC9-TS-NTS
+sourceSlug: VC6-VC9-TS-NTS
+---
+1.VC6 と VC9 の違い：
++ VC6 は Visual Studio 6 でコンパイルされる。Apache で PHP を動かすなら VC6 を選ぶ。VC9 は Visual Studio 2008 でコンパイルされ、IIS で動かすなら VC9 を選ぶ。VC9 は IIS 向けで Apache に対応せず、VC6 は IIS と Apache の両方に対応する。 
+
+2.TS と NTS の違い：
++ Windows 版 PHP は 5.2.1 以降、Thread Safe と Non Thread Safe に分かれる。
+Thread Safe は実行時にスレッド安全性を確認し、要求ごとに新しいスレッドを起動する CGI 方式でシステム資源を使い果たすことを防ぐ。Non Thread Safe は実行時にこの確認を行わない。
+3.PHP の二つの実行方式：ISAPI と FastCGI。
+
++ ISAPI は DLL の動的ライブラリとして使い、ユーザーの要求で実行され、処理後すぐには終了しない。そのためスレッド安全性の確認が必要で、実行効率を高める。ISAPI で PHP を使うなら Thread Safe を選ぶ。
+
+4.FastCGI は単一スレッドで実行するので、スレッド安全性の確認は不要だ。確認を省くことで効率が上がる。FastCGI で PHP を使うなら Non Thread Safe を選ぶ。  
+5.NTS と TS の確認：phpinfo(); を使う 
++ Safety の項目でスレッドセーフかどうかを確認する。
++ enabled なら通常は TS、そうでなければ NTS。

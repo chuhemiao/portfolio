@@ -1,0 +1,20 @@
+---
+title: PHP Warning：open_basedir の制限
+publishedAt: '2016-02-05'
+summary: エラーメッセージ全文：
+category: tech
+language: ja
+slug: open_basedir-ja
+translationKey: open_basedir
+sourceSlug: open_basedir
+---
+# エラーメッセージ全文：
+- `FastCGI sent in stderr: PHP message: PHP Warning:  chdir(): open_basedir restriction in effect`
++ このエラーは、プログラムがアクセスできるディレクトリを open_basedir が制限しているために起きる。ここでの解決方法は php.ini で制限をコメントアウトすることだが、安全性が低下するリスクはある。
++ Nginx の実行時エラーログで確認できる。ログを見るコマンド：
++  `vi /var/log/nginx/error.log`
+#  手順 1：
++ php.ini を開き、open_basedir の行の先頭に ; を付けてコメントアウトする。
+#  手順 2：
++ 次のコマンドで php-fpm を再起動する：
++  `/etc/init.d/php-fpm restart`

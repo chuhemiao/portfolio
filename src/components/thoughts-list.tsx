@@ -2,7 +2,7 @@
 
 import BlurFade from '@/components/magicui/blur-fade';
 import { useI18n } from '@/components/locale-provider';
-import { formatLocaleDate, inferLocale } from '@/lib/i18n';
+import { formatLocaleDate, type Locale } from '@/lib/i18n';
 import { useState } from 'react';
 
 interface Thought {
@@ -10,6 +10,8 @@ interface Thought {
   text: string;
   date: string;
   timestamp: number;
+  language: Locale;
+  fallbackOriginal: boolean;
 }
 
 function parseLinks(text: string) {
@@ -45,7 +47,8 @@ export default function ThoughtsList({ thoughts }: { thoughts: Thought[] }) {
         {thoughts.slice(0, visible).map((t, i) => (
           <BlurFade key={t.id} delay={0.08 + i * 0.05}>
             <div className='rounded-lg border p-4'>
-              <p lang={inferLocale(t.text)} className='text-sm leading-7 whitespace-pre-line'>{parseLinks(t.text)}</p>
+              {t.fallbackOriginal && <p className='mb-2 text-xs text-muted-foreground'>{translate('Translation pending · original message', '译文待补充 · 显示原文', '翻訳準備中 · 原文を表示')}</p>}
+              <p lang={t.language} className='text-sm leading-7 whitespace-pre-line'>{parseLinks(t.text)}</p>
               <p className='text-xs text-muted-foreground text-right mt-2'>
                 {formatLocaleDate(t.date, locale, { year: undefined, month: 'short', day: 'numeric' })}
               </p>

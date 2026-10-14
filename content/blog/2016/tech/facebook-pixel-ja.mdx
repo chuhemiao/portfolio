@@ -1,0 +1,70 @@
+---
+title: "Web サイトに Facebook ピクセルを設置する"
+publishedAt: "2016-09-06"
+summary: "1. 広告マネージャーの [Facebook ピクセルタブ](https://www.facebook.com/ads/manager/pixel/facebook_pixel) を開く。"
+category: "tech"
+slug: "facebook-pixel-ja"
+language: "ja"
+translationKey: "facebook-pixel"
+sourceSlug: "facebook-pixel"
+---
+
+## Facebook ピクセルを作成する
+1. 広告マネージャーの [Facebook ピクセルタブ](https://www.facebook.com/ads/manager/pixel/facebook_pixel) を開く。
+2. ピクセルを作成をクリックする。
+3. 名前を入力する。広告アカウントごとに作れるピクセルは一つなので、事業を表す名前を選ぶ。
+4. 注意：名前は後から `Facebook` ピクセルタブで変更できる。
+5. チェックボックスで利用規約に同意する。
+6. ピクセルを作成をクリックする。
+
+## Facebook ピクセルコードについて
+1. ピクセルのベースコード
++ 広告マネージャーのピクセルページを開く。
++ 操作 > コードを表示をクリックする。
++ ベースコードをコピーし、各ページの `<head>` タグの間に貼り付ける。サイトのテンプレートに貼れば、サイト全体に設置できる。
+2. イベントコード
++ 標準イベント
+    1. サイトの元のコード：Facebook ピクセルを `<head>` と `</head>` の間に貼る。すでに他のコードがあれば、その下、`</head>` の上に追加する。
+    2. Facebook ピクセルのベースコード：図と同じ形式で、ピクセル番号だけが 567845666 と異なる。
+    3. 標準イベントコード：登録完了やカート追加など、ページに関係するイベントコードを、ピクセル内の `</script>` の上に貼る。追跡する各ページで行う。
+    4. ![コードの例](https://source.shengxuezixun.com/images/facebook_pixels.jpg?imageMogr2/thumbnail/600x600)
++ カスタムイベント
+    1. 事業に重要な操作を追跡するが、計測と最適化には追加設定が必要。[使い方](https://developers.facebook.com/docs/facebook-pixel/api-reference#events)を参照。
+
+## ページに Facebook ピクセルのベースコードを追加する
+1. 広告マネージャーの Facebook ピクセルタブを開く。
+2. 操作 > ピクセルコードを表示をクリックする。
+3. コードをクリックして選択する。
+4. 右クリックでコピーするか、Ctrl+C/Cmd+C を使う。
+5. 完了をクリックする。
+6. サイトの HTML を開いてコードを貼る。
+
+## ページにイベントコードを追加する
+1. 広告マネージャーの Facebook ピクセルタブを開く。
+2. コンバージョンを作成 > 標準イベントでコンバージョンを追跡をクリックする。
+3. 重要なイベントのコードをコピーする。
+4. サイトのコードを開き、対象ページのイベントコードを置き換える。script タグの間にイベントコードを個別に追加し、ベースコードは変更しないことを推奨する。
+5. ![イベントの種類](https://source.shengxuezixun.com/images/facebook_lead.png?imageMogr2/thumbnail/600x600)
+
+## ページに設置する最終コード
+
+			<script>
+		    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+		    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+		    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+		    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+		    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+		    fbq('init', '12345678900');
+		    fbq('track', "PageView");
+		    fbq('track', 'Lead');
+		    </script>
+
+		    <noscript><img height="1" width="1" style="display:none"
+		    src="https://www.facebook.com/tr?id=12345678900&ev=PageView&noscript=1"
+		    /></noscript>
+
+
+1. `fbq('init', '你的fbid');` — プレースホルダーを自分の Facebook ID に置き換える。
+2. `fbq('track', "PageView");` — 集計するピクセルのイベント種別。
+
+PS：[ピクセルの設置を確認する Chrome 拡張機能](https://chrome.google.com/webstore/detail/facebook-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc)

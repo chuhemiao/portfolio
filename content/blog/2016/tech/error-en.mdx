@@ -1,0 +1,82 @@
+---
+title: "Common error codes"
+publishedAt: "2016-03-09"
+summary: "Use Ctrl+F to find a status code."
+category: "thoughts"
+slug: "error-en"
+language: "en"
+translationKey: "error"
+sourceSlug: "error"
+---
+
+## Page HTTP status lookup tool
+1. Use Ctrl+F to find a status code directly.
+2. When a request asks your server to display a page on your website, the server returns an HTTP status code in response.
+3. When a request asks your server to display a page (for example, a browser visit or a Googlebot crawl), the server responds with an HTTP status code.
+4. This code describes the request status and gives Googlebot information about your website and the requested page.
+5. Common codes:
+200 — The server successfully returned the page.
+404 — The requested page does not exist.
+503 — The server is temporarily unavailable.
+
+## 1xx (provisional responses)
+These indicate a provisional response and require the requester to take action to continue.
+Code and description:
+100 (Continue): Continue the request. The server has received its first part and is waiting for the rest.
+101 (Switching Protocols): The requester asked to switch protocols; the server has acknowledged this and is ready to switch.
+
+## 2xx (success)
+These indicate that the server successfully processed the request.
+Code and description:
+200 (OK): The request was processed successfully, usually with the requested page. For robots.txt, this means Googlebot retrieved the file successfully.
+201 (Created): The request succeeded and the server created a new resource.
+202 (Accepted): The server accepted the request but has not processed it yet.
+203 (Non-Authoritative Information): The request succeeded, but the returned information may come from another source.
+204 (No Content): The request succeeded, with no content returned.
+205 (Reset Content): The request succeeded, with no content returned. Unlike 204, this asks the requester to reset the document view, for example clearing a form for new input.
+206 (Partial Content): Part of a GET request was processed successfully.
+
+## 3xx (redirects)
+Further action is needed to finish the request. These are usually permanent redirects. Google recommends fewer than 5 redirects per request. Webmaster Tools can show whether Googlebot encounters problems crawling redirected pages.
+Code and description:
+300 (Multiple Choices): Several actions are available. The server may choose one based on the requester (User agent), or provide a list for the requester to choose from.
+301 (Moved Permanently): The page has moved permanently. In response to GET or HEAD, this automatically sends the requester to the new location. Use it to notify Googlebot that a page or site has permanently moved.
+302 (Moved Temporarily): The server currently responds from another location, but future requests should use the original location. Like 301 for GET and HEAD, it automatically sends the requester elsewhere. Googlebot continues crawling and indexing the original location, so do not use this to announce a permanent move.
+303 (See Other): The requester should make a separate GET request to another location to retrieve the response. For every request except HEAD, the server automatically redirects there.
+304 (Not Modified): The page has not changed since the last request. No page content is returned.
+If the page has not changed since the requester last fetched it, configure this response, known as the If-Modified-Since HTTP header. Telling Googlebot the page has not changed since its last crawl saves bandwidth and overhead.
+305 (Use Proxy): The requester can access the page only through a proxy. The response also identifies the proxy to use.
+307 (Temporary Redirect): The server currently responds from another location, but future requests should use the original location. Like 301 for GET and HEAD, it automatically sends the requester elsewhere. Googlebot continues crawling and indexing the original location, so do not use this to announce a permanent move.
+
+## 4xx (request errors)
+These indicate that a problem with the request may have prevented the server from processing it.
+Code and description:
+400 (Bad Request): The server does not understand the request syntax.
+401 (Unauthorized): Authentication is required. The server may return this response to a page after login.
+403 (Forbidden): The server refuses the request. If this appears when Googlebot tries to crawl a valid page, visible under Diagnostics > Web Crawl in Google Webmaster Tools, your server or host may be denying Googlebot access.
+404 (Not Found): The server cannot find the page. For example, this is normally returned for a page that does not exist on the server.
+If you have a robots.txt file but see this status, the file may have the wrong name or location. It should be at the top-level domain and named robots.txt.
+If this appears for a URL Googlebot tries to crawl, on the HTTP Errors page in Diagnostics, Googlebot may have followed an invalid link from another page: an old link or a mistyped URL.
+405 (Method Not Allowed): The specified request method is disabled.
+406 (Not Acceptable): The page cannot be returned using the requested content characteristics.
+407 (Proxy Authentication Required): Similar to 401, but the requester must authenticate through a proxy. The response also identifies the proxy.
+408 (Request Timeout): The server timed out waiting for the request.
+409 (Conflict): The server encountered a conflict completing the request and must include details in the response. It may return this for a PUT request conflicting with an earlier request, along with a list of differences.
+410 (Gone): The resource has been permanently deleted. This resembles 404 but may replace it when the resource used to exist. For a permanently deleted resource, use 301 to specify a new location.
+411 (Length Required): The server refuses requests with an invalid Content-Length header.
+412 (Precondition Failed): The server did not meet a precondition set by the requester.
+413 (Request Entity Too Large): The request entity exceeds the server's processing capacity.
+414 (Request URI Too Long): The URI, usually a URL, is too long to process.
+415 (Unsupported Media Type): The request format is not supported by the requested page.
+416 (Requested Range Not Satisfiable): The request specifies an invalid range of the page.
+417 (Expectation Failed): The server did not meet the requirement in the Expect request header.
+
+## 5xx (server errors)
+These indicate an internal error while the server tried to process the request. The fault may be in the server rather than the request.
+Code and description:
+500 (Internal Server Error): The server encountered an error and could not complete the request.
+501 (Not Implemented): The server lacks the functionality needed, for example an unrecognized request method.
+502 (Bad Gateway): Acting as a gateway or proxy, the server received an invalid upstream response.
+503 (Service Unavailable): The server is unavailable, due to overload or maintenance. Usually temporary.
+504 (Gateway Timeout): Acting as a gateway or proxy, the server did not receive the upstream request in time.
+505 (HTTP Version Not Supported): The server does not support the HTTP protocol version used in the request.

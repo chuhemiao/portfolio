@@ -1,6 +1,7 @@
 'use client';
 
-import type { Locale } from '@/lib/i18n';
+import { getTranslator, type Locale } from '@/lib/i18n';
+import { getLocalizedWeeklyReport } from '@/lib/weekly-localization';
 import { useDashboardI18n } from '../fear/use-dashboard-i18n';
 
 import { useEffect, useState } from 'react';
@@ -703,7 +704,7 @@ const BTC_HEAT_FAQ: FaqItem[] = [
 
 // ── Weekly Research ───────────────────────────────────────────────────────────
 
-import { WeeklyNewsItem, GeoItem, WeeklyReport, WEEKLY_REPORTS } from '@/data/weekly-research';
+import { type WeeklyReport, WEEKLY_REPORTS } from '@/data/weekly-research';
 
 const NEWS_CATEGORY_STYLE: Record<string, string> = {
   加密: 'border-sky-500/30 bg-sky-500/10 text-sky-600',
@@ -711,6 +712,10 @@ const NEWS_CATEGORY_STYLE: Record<string, string> = {
   科技: 'border-emerald-500/30 bg-emerald-500/10 text-emerald-600',
   地缘: 'border-rose-500/30 bg-rose-500/10 text-rose-600',
   政策: 'border-amber-500/30 bg-amber-500/10 text-amber-600',
+};
+const NEWS_CATEGORY_KEYS: Record<string, string> = {
+  Crypto: '加密', 暗号資産: '加密', Macro: '宏观', マクロ: '宏观',
+  Tech: '科技', 技術: '科技', Geopolitics: '地缘', 地政学: '地缘',
 };
 
 function SectionLabel({ icon, label }: { icon: string; label: string }) {
@@ -737,11 +742,13 @@ function BulletList({ items, dot }: { items: string[]; dot: string }) {
   );
 }
 
-function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defaultOpen: boolean }) {
-  const { d } = useDashboardI18n();
+function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: { report: WeeklyReport; defaultOpen: boolean; language: Locale; fallbackOriginal: boolean }) {
+  const { d, locale } = useDashboardI18n();
+  const t = getTranslator(locale);
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
+    <div lang={language} className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
+      {fallbackOriginal && <p className='px-5 pt-3 text-xs text-muted-foreground' lang={locale}>{t('Translation pending · original report', '译文待补充 · 显示原报告', '翻訳準備中 · 原文のレポートを表示')}</p>}
       {/* Header */}
       <button
         onClick={() => setOpen(!open)}
@@ -751,7 +758,7 @@ function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defau
           <span className='shrink-0 rounded-full bg-amber-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-600'> {d("日报")} </span>
           <div className='min-w-0'>
             <p className='text-[11px] font-medium tracking-widest text-muted-foreground uppercase leading-none mb-1'>
-              {report.dateRange}{d(report.generatedAt ? ` · ${report.generatedAt}` : '')}
+              {report.dateRange}{report.generatedAt ? ` · ${report.generatedAt}` : ''}
             </p>
             <p className='text-sm font-semibold leading-snug tracking-tight truncate'>{report.headline}</p>
           </div>
@@ -786,7 +793,7 @@ function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defau
                       {report.coreActions.map((action, i) => (
                         <li key={i} className='flex items-start gap-2 text-sm text-muted-foreground leading-relaxed'>
                           <span className='mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500/60' />
-                          {d(action)}
+                          {action}
                         </li>
                       ))}
                     </ul>
@@ -824,11 +831,11 @@ function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defau
                   <div key={i} className='px-5 py-4 space-y-2'>
                     <div>
                       <span className='inline-block rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-rose-600'>
-                        {d(geo.title)}
+                        {geo.title}
                       </span>
                       <p className='mt-1 text-xs font-medium text-muted-foreground'>{geo.subtitle}</p>
                     </div>
-                    <p className='text-sm text-muted-foreground leading-relaxed'>{d(geo.content)}</p>
+                    <p className='text-sm text-muted-foreground leading-relaxed'>{geo.content}</p>
                   </div>
                 ))}
               </div>
@@ -844,17 +851,17 @@ function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defau
                   <div key={i} className='px-5 py-3.5 space-y-1.5'>
                     <div className='flex items-start justify-between gap-3'>
                       <div className='flex items-center gap-2 flex-wrap'>
-                        <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wider ${NEWS_CATEGORY_STYLE[news.category] ?? 'border-border bg-muted/50 text-muted-foreground'}`}>
-                          {d(news.category)}
+                        <span className={`inline-block rounded-full border px-2 py-0.5 text-[10px] font-semibold tracking-wider ${NEWS_CATEGORY_STYLE[NEWS_CATEGORY_KEYS[news.category] ?? news.category] ?? 'border-border bg-muted/50 text-muted-foreground'}`}>
+                          {news.category}
                         </span>
-                        <span className='text-sm font-medium leading-snug'>{d(news.title)}</span>
+                        <span className='text-sm font-medium leading-snug'>{news.title}</span>
                       </div>
                       <span className='shrink-0 text-[10px] text-muted-foreground/60 mt-0.5'>{news.source}</span>
                     </div>
-                    <p className='text-xs text-muted-foreground leading-relaxed'>{d(news.summary)}</p>
+                    <p className='text-xs text-muted-foreground leading-relaxed'>{news.summary}</p>
                     {news.action ? (
                       <p className='text-xs text-foreground/70 leading-relaxed'>
-                        <span className='text-amber-600 font-medium'>👉 </span>{d(news.action)}
+                        <span className='text-amber-600 font-medium'>👉 </span>{news.action}
                       </p>
                     ) : null}
                   </div>
@@ -870,21 +877,23 @@ function WeeklyReportCard({ report, defaultOpen }: { report: WeeklyReport; defau
 }
 
 function WeeklyResearchTab() {
-  const { d } = useDashboardI18n();
+  const { d, locale } = useDashboardI18n();
+  const t = getTranslator(locale);
   return (
     <div className='space-y-6'>
       <div className='space-y-1'>
         <h2 className='text-xl font-semibold tracking-tight'>{d("Weekly Research")}</h2>
-        <p className='text-xs text-muted-foreground'>{d("Source content is shown in its original language; translations will be added in the content phase.")}</p>
+        <p className='text-xs text-muted-foreground'>{t('Historical reports follow the selected language; dates and original views are preserved.', '历史报告按所选语言显示，保留原发布日期和观点。', '過去のレポートを選択言語で表示し、公開日と当時の見解を保持します。')}</p>
         <p className='text-sm text-muted-foreground'> {d("加密货币、宏观经济与 AI 科技领域的研究更新，覆盖核心判断 · 美股 · 加密 · 地缘 · 推荐阅读。")} </p>
       </div>
       {WEEKLY_REPORTS.length === 0 ? (
         <p className='rounded-2xl border border-dashed border-border px-4 py-10 text-center text-sm text-muted-foreground'> {d("暂无周报内容。")} </p>
       ) : (
         <div className='space-y-3'>
-          {WEEKLY_REPORTS.map((report, i) => (
-            <WeeklyReportCard key={report.id} report={report} defaultOpen={i === 0} />
-          ))}
+          {WEEKLY_REPORTS.map((source, i) => {
+            const localized = getLocalizedWeeklyReport(source, locale);
+            return <WeeklyReportCard key={source.id} {...localized} defaultOpen={i === 0} />;
+          })}
         </div>
       )}
     </div>

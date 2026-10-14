@@ -1,0 +1,34 @@
+---
+title: Connect to GitHub with Git on CentOS
+publishedAt: '2015-10-22'
+summary: Install Git
+category: tech
+slug: git-centos-github-en
+language: en
+translationKey: git-centos-github
+sourceSlug: git-centos-github
+---
+
+1.  Install Git
+
+    * sudo apt-get install git git-core
+
+    * Configure Git
+
+    * $ git config --global user.name &quot;chuhe&quot;
+
+    * $ git config --global user.email chuhe@qq.com
+2.  Generate a key
+
+    * $ ssh-keygen -t rsa -C &quot;chuhe@qq.com&quot; // same email as above
+
+    * vim /home/linx/.ssh/id_rsa.pub // copy the key inside, or use cat directly
+3.  Open your GitHub page → click your avatar → settings → SSH KEYS → add SSH key → paste the copied content into key (choose any title) → save.
+4.  The important part
+
+    * Test: $ ssh git@github.com
+
+    * Successful output: chuhe@ubuntu:~$ ssh -T git@github.com  Hi chuhemiao! You've successfully authenticated, but GitHub does not provide shell access.
+
+    * If you keep pressing Enter and reach a yes/no prompt, remember to type yes, not y!
+5.  I struggled with the last step for more than a day, then happened to see a blogger say to type yes. Painful!

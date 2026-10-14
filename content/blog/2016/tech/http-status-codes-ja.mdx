@@ -1,0 +1,88 @@
+---
+title: "HTTP ステータスコード"
+publishedAt: "2016-04-13"
+summary: "最初の要求を受け付けた。クライアントは残りの部分を送る。（HTTP 1.1 で追加）"
+category: "tech"
+slug: "http-status-codes-ja"
+language: "ja"
+translationKey: "http-status-codes"
+sourceSlug: "http-status-codes"
+---
+
+1.100 Continue 最初の要求を受け付けた。クライアントは残りの部分を送る。（HTTP 1.1 で追加）
+
+2.101 Switching Protocols クライアントの要求に従って、別のプロトコルに切り替える。（HTTP 1.1 で追加）
+
+3.200 OK 正常。GET・POST に対する応答文書が続く。
+
+4.201 Created 文書を作成した。Location ヘッダーに URL を示す。
+
+5.202 Accepted 要求は受け付けたが、処理はまだ完了していない。
+
+6.203 Non-Authoritative Information 文書は正常に返されたが、コピーを使っているため応答ヘッダーの一部が正しくない可能性がある。（HTTP 1.1 で追加）
+
+7.204 No Content 新しい文書はなく、ブラウザーは元の文書を表示し続ける。定期的な再読み込みに対し、Servlet が文書は十分新しいと判断できる場合に便利。
+
+8.205 Reset Content 新しい内容はないが、表示をリセットする。フォームの入力を消去させるために使う。（HTTP 1.1 で追加）
+
+9.206 Partial Content Range ヘッダー付きの GET 要求をサーバーが処理した。（HTTP 1.1 で追加）
+
+10.300 Multiple Choices 文書を取得できる場所が複数あり、応答文書に一覧を示す。推奨先があれば Location ヘッダーで指定する。
+
+11.301 Moved Permanently 文書が別の場所にある。Location に新しい URL を示し、ブラウザーは自動的に移動する。
+
+12.302 Found 301 に似ているが、新しい URL は恒久的ではなく一時的な代替先。HTTP 1.0 では “Moved Temporatily” と呼ばれた。ブラウザーが自動的に新しい URL を開けるため便利。
+
++ 301 と置き換えて使われる場合もある。たとえば末尾のスラッシュがない http://host/~user への誤った要求に、301 を返すサーバーも 302 を返すサーバーもある。
+
++ 厳密には、元の要求が GET の場合だけ自動転送を想定できる。307 を参照。
+
+13.303 See Other 301/302 に似るが、元が POST なら Location の転送先文書を GET で取得する。（HTTP 1.1 で追加）
+
+14.304 Not Modified クライアントが文書をキャッシュし、通常は If-Modified-Since でより新しいものだけを求める条件付き要求を送った。サーバーはキャッシュを引き続き使えると通知する。
+
+15.305 Use Proxy Location に指定したプロキシ経由で文書を取得する。（HTTP 1.1 で追加）
+
+16.307 Temporary Redirect 302（Found）と同様。多くのブラウザーは POST の 302 応答でも誤って転送するが、本来 POST で転送できるのは 303 のときだけ。そのため HTTP 1.1 では区別を明確にする 307 を追加した。303 では GET と POST の転送をたどれるが、307 では GET の転送だけをたどれる。（HTTP 1.1 で追加）
+
+17.400 Bad Request 要求の構文が誤っている。
+
+18.401 Unauthorized 認証せずにパスワード保護ページへアクセスした。応答に WWW-Authenticate が含まれ、ブラウザーはユーザー名・パスワード入力を表示し、適切な Authorization ヘッダーを付けて再要求する。
+
+19.403 Forbidden リソースを利用できない。要求は理解したが処理を拒否した。通常はファイルやディレクトリの権限設定による。
+
+20.404 Not Found 指定した場所にリソースが見つからない。よく使う応答。
+
+21.405 Method Not Allowed GET、POST、HEAD、Delete、PUT、TRACE などの要求メソッドを、そのリソースに使えない。（HTTP 1.1 で追加）
+
+22.406 Not Acceptable リソースはあるが、MIME 型がクライアントの Accpet ヘッダーと互換性を持たない。（HTTP 1.1 で追加）
+
+23.407 Proxy Authentication Required 401 に似ており、まずプロキシで認証する必要がある。（HTTP 1.1 で追加）
+
+24.408 Request Timeout 許容待機時間内に要求を送らなかった。後で同じ要求を再送できる。（HTTP 1.1 で追加）
+
+25.409 Conflict 通常は PUT に関係する。リソースの現在の状態と競合しているため成功できない。（HTTP 1.1 で追加）
+
+26.410 Gone 文書が利用不能になり、転送先も分からない。404 と異なり、407 は指定場所から恒久的に失われたことを示し、404 は理由不明の利用不能を示す。（HTTP 1.1 で追加）
+
+27.411 Length Required Content-Length ヘッダーを送らなければ処理できない。（HTTP 1.1 で追加）
+
+28.412 Precondition Failed 要求ヘッダーで指定した前提条件が成立しなかった。（HTTP 1.1 で追加）
+
+29.413 Request Entity Too Large 文書のサイズがサーバーの現在の処理許容範囲を超えている。後で処理できる見込みなら Retry-After を返す。（HTTP 1.1 で追加）
+
+30.414 Request URI Too Long URI URI が長すぎる。（HTTP 1.1 で追加）
+
+31.416 Requested Range Not Satisfiable 要求の Range ヘッダーを満たせない。（HTTP 1.1 で追加）
+
+32.500 Internal Server Error 予期しない状況により要求を完了できなかった。
+
+33.501 Not Implemented 必要な機能をサポートしていない。たとえば未対応の PUT 要求。
+
+34.502 Bad Gateway ゲートウェイやプロキシとして、次のサーバーから無効な応答を受け取った。
+
+35.503 Service Unavailable 保守や過負荷で応答できない。たとえばデータベース接続プールが満杯なら Servlet が 503 を返す場合がある。Retry-After を含めることもできる。
+
+36.504 Gateway Timeout プロキシやゲートウェイが、遠隔サーバーから時間内に応答を得られなかった。（HTTP 1.1 で追加）
+
+37.505 HTTP Version Not Supported 要求で指定した HTTP バージョンに対応していない。（HTTP 1.1 で追加）

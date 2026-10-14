@@ -6,6 +6,7 @@ import { DATA } from '@/data/resume';
 import { promises as fs } from 'fs';
 import type { Metadata } from 'next';
 import path from 'path';
+import { localizeThought, type Thought, type ThoughtTranslations } from '@/lib/thought-localization';
 
 export const metadata: Metadata = localizedPageMetadata('/thoughts', 'en', {
   title: 'Thoughts',
@@ -55,7 +56,12 @@ export default async function ThoughtsPage() { return renderPage('en'); }
 
 export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
-  const { thoughts } = await getThoughts();
+  const { thoughts: originals } = await getThoughts();
+  let translations: ThoughtTranslations = {};
+  try {
+    translations = JSON.parse(await fs.readFile(path.join(process.cwd(), 'content', 'thought-translations.json'), 'utf8'));
+  } catch { /* New source messages remain readable before translation. */ }
+  const thoughts = originals.map((thought: Thought) => localizeThought(thought, locale, translations));
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
@@ -85,7 +91,7 @@ export async function renderPage(locale: Locale) {
               </p>
             ) : (
               <>
-                <p className='text-xs text-muted-foreground'>{t('Telegram messages are shown in their original language.', 'Telegram 消息保留原文语言。', 'Telegram の投稿は原文の言語で表示されます。')}</p>
+                <p className='text-xs text-muted-foreground'>{t('Messages follow the selected language. New or edited messages show their original text until translated.', '消息按所选语言显示。新增或修改的消息在译文补齐前显示原文。', '選択した言語で投稿を表示します。新規・変更された投稿は、翻訳が揃うまで原文を表示します。')}</p>
                 <ThoughtsList thoughts={thoughts} />
               </>
             )}

@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { pathToFileURL } from 'url';
 import { articleHref, normalizeLocale, type Locale } from '../lib/i18n';
+import { selectLocalizedPosts } from '../lib/post-locale-selection';
 
 // Where compiled content artifacts live.
 // NOTE: scripts/lib/content/paths.mjs carries the same resolution and must stay
@@ -312,16 +313,7 @@ export function getPostTranslations(post: PostListItem | ParsedPost | string): P
 }
 
 export function getLocalizedPosts(posts: PostListItem[], locale: Locale): PostListItem[] {
-  const selected = new Map<string, PostListItem>();
-  const candidates = new Map(posts.map((post) => [post.slug, post]));
-  for (const post of posts) {
-    const key = post.metadata.translationKey;
-    if (selected.has(key)) continue;
-    const desiredSlug = post.metadata.translations[locale] ?? post.metadata.sourceSlug;
-    const desired = candidates.get(desiredSlug) ?? getPostMeta(desiredSlug) ?? post;
-    selected.set(key, desired);
-  }
-  return [...selected.values()];
+  return selectLocalizedPosts(posts, locale, getPostMeta);
 }
 
 export function getPostHref(post: PostListItem | ParsedPost, locale: Locale): string {

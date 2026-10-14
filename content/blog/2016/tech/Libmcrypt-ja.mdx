@@ -1,0 +1,24 @@
+---
+title: PHP に libmcrypt と mcrypt 拡張をインストールする
+publishedAt: '2016-07-04'
+summary: 手順 1：拡張をダウンロードする
+category: tech
+slug: Libmcrypt-ja
+language: ja
+translationKey: Libmcrypt
+sourceSlug: Libmcrypt
+---
+## 手順 1：拡張をダウンロードする
+1.[mcrypt](https://sourceforge.net/projects/mcrypt/)
+2.[libmcrypt](http://zh.osdn.jp/projects/sfnet_mcrypt/downloads/Libmcrypt/2.5.8/libmcrypt-2.5.8.tar.gz/)
+## 手順 2：展開して該当ディレクトリへ移動する
+1.phpize を使ってインストールする
+2.`/usr/local/php/bin/phpize`   場所が不明な場合（`whereis phpize`）
+3. `./configure --with-php-config=/usr/local/php/bin/php-config`   ここで、`/usr/local/php/bin/php-config`は`php-config`のパス。このディレクトリは phpize と同じ階層にある。
+4. `make && make install`
+## 手順 3：探す：`php.ini`設定
+1.末尾に追加：`extension=mcrypt.so`,`extension=libmcrypt.so`
+2.その後、再起動：`php-fpm`
+3. `php -m` インストール済み拡張を確認する
+
+4.面倒だったのは拡張のダウンロード URL を探すことだった。そのせいで残業してしまった！

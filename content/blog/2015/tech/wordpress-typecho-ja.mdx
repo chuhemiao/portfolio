@@ -1,0 +1,43 @@
+---
+title: WordPress から Typecho へ移行する
+publishedAt: '2015-09-23'
+summary: 昨日、ある人のブログで Typecho を見つけ、思いつきで移行した。以下はデータベースを移す方法だ。
+category: tech
+slug: wordpress-typecho-ja
+language: ja
+translationKey: wordpress-typecho
+sourceSlug: wordpress-typecho
+---
+
+## 昨日、ある人のブログで Typecho を見つけ、思いつきで移行した。以下はデータベースを移す方法だ。
+
+1.  手順 1
+    * まず既存のデータベースをバックアップする。方法の詳細はここでは省く。
+
+2.  手順 2
+
+    * バックアップ後、以前のサイトを削除し、http://typecho.org/ または GitHub の https://github.com/typecho/typecho から Typecho のコードをダウンロードする。FTP でサーバーへアップロードする。インストール手順は公式サイトにあるので省略する。
+
+3.  手順 3
+
+    * ここが重要だ。まず公式サイトで WordPress から Typecho へ移行するプラグインを探す（http://docs.typecho.org/plugins/wordpress-to-typecho）。
+
+4.  手順 4
+
+    * /usr/plugins にアップロードし、管理画面を開く。
+
+    * 「コンソール」のドロップダウンから「プラグイン管理」を開く。
+
+    * wordpresstotypecho プラグインを有効化する。
+
+    * wordpresstotypecho の「設定」を開く。
+
+    * データベース名やユーザー名などを入力して保存する。
+
+    * 「コンソール」に表示される「WordPress からデータをインポート」を選ぶ。
+
+    * インポートを完了する。失敗したらデータベースなどの設定を確認する。完了後はプラグインを無効化しても、ほかの機能に影響はない。
+
+5.  手順 5
+
+    * インポートできない場合、不要なテーブルを削除できる。自分は Alibaba Cloud のサーバーで、以前のバックアップを現在のテーブルへ再インポートした（テーブルの接頭辞は異なるので注意）。その後プラグインの設定を入力し、変換を実行すれば完了する。

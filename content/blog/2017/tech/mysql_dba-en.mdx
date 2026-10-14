@@ -1,0 +1,63 @@
+---
+title: "Reading notes: The Path to Becoming a MySQL DBA"
+publishedAt: "2017-04-17"
+summary: "Three-tier architecture and notes on MySQL storage, types, indexes, and optimization."
+category: "tech"
+slug: "mysql_dba-en"
+language: "en"
+translationKey: "mysql_dba"
+sourceSlug: "mysql_dba"
+---
+
+### Chapter 1: Understanding MySQL
+1. Three-tier architecture:
+    1. Presentation layer (`UI`): the interface that interacts directly with users.
+    2. Business logic layer (`BLL`): processes business logic and user requests.
+    3. Data access layer (`DAL`): database operations such as create, read, update, and delete.
+2. `SQL` (Structured Query Language) is declarative: it tells the database what to query, not how. The database uses algorithms and statistics to calculate the best access path, a task performed by the `optimizer`.
+3. MySQL permissions:
+    1. Grant query, insert, update, and delete permissions: `grant select,insert,update,delete on db_name.* to user_name@ '10.%' identified by  'pwd'`
+    2. Revoke permissions: `revoke select,insert,update,delete on db_name.* from user_name@ '10.%'`
+4. Storage engines: ARCHIVE is designed for large volumes of enterprise transaction data. It uses lossless zlib compression to store data in compressed archive tables, compressing it on insertion. It supports only `insert` and `select`, an auto-increment key and its index, but no other indexes. It suits log and user behavior analysis where `u、d` and indexes are unnecessary.
+5. `MySQL` means the `MYSQL` server; `mysql` means the client.
+6. Clear entered text with `'\c`. If the preceding statement uses a single quote, use a single quote; if it uses a double quote, use a double quote.
+7. Main `MySQL` parameter settings:
+    1. `innodb_buffer_pool_size`: to improve write performance, if the data and access patterns are unknown, set it to 70%-80% of physical memory.
+    2. `innodb_log_file_size`: size of each file in the log group; 256mb or more is recommended.
+    3. `innodb_flush_log_at_trx_commit`: 2 is recommended; the default is 1. At 2, committing a transaction writes the log buffer to a file without flushing the log file to disk.
+    4. `sync_binlog`: 0 is recommended, with no disk synchronization. In `autocommit` mode each statement writes to the binary log; otherwise each transaction writes once.
+
+### Chapter 3
+1. Development basics:
+    1. Data model: the definition and format of data, or how data is composed. A relational model represents entities and their relationships in two-dimensional tables, each also called a relation.
+    2. DLL → `Data Definition language`: defines data structures and database objects, usually for creating databases and tables (`create、alter、drop`).
+    3. DML → `Data Manipulation Language`: queries and modifies data, including `select、insert、update、delete`, the four operations called `CRUD（create、read、upadte、delete）`.
+    4. `XML（eXtensible Markup Language）` is an extensible markup language, initially designed to exchange data on the `Internet`.
+    5. `xml` transports and stores data; its tags describe content. HTML displays data; its tags format it.
+2. Data types: all of the following are signed.
+    1. `tinyint`: 1 byte, range `-128~~127`.
+    2. `smallint`: 2 bytes, `-32768 ~~ 32767`.
+    3. `mediumint`: 3 bytes, `-8388608~~8388607`.
+    4. `int`: 4 bytes, `-2147483648~~2147483647`.
+    5. `bigint`: 8 bytes, `-9223372036954775808~~9223372036954775807`.
+    6. `float`: values are rounded.
+    7. Dates and times:
+        1. Without the `NO_ZERO_DATES` `SQL` mode, MySQL by default only permits dates with zero months and days in `date` or `datetime` columns.
+        2. `70~99` represents `1970-1999`.
+        3. `00~69` represents `2000-2069`.
+        4. For both date and time use `datetime`, 8 bytes.
+        5. For dates only use `date`, 3 bytes.
+        6. `timestamp` is stored in `utc`: it converts from the current time zone on storage and back on retrieval. The current time zone defaults to the `time_zone` system variable. It occupies four bytes.
+        7. `time`: three bytes.
+        8. `year`: for displaying only the year, 1 byte.
+3. Introduction to indexes:
+1. Index categories:
+    1. B-tree (`B-tree`), hash (`hash`), spatial (`R-tree`), and full-text (`full-text`) indexes.
+    2. Logical categories: single-column, composite (multiple columns), unique (`Unique`), and non-unique (`Non Unique`) indexes.
+2. Clustered indexes: if the logical order of index keys matches the physical order of the corresponding rows in the table, it is a clustered index. Data and the index (`B+tree`) are together, with records stored in its leaves. A clustered index is also called an index-organized table; otherwise the index is non-clustered. `InnoDB` uses clustered indexes.
+3. Index queries:
+    1. Filter using the leftmost-prefix principle.
+4. MySQL optimizer:
+    1. Meanings of `extra` in `explain` output:
+        1. `select  tables  optimized  away`: `MIN、MAX` operations can be answered directly from index information without retrieving physical records.
+        2. `Using index`: a covering index, where all data comes from the index without reading physical records.

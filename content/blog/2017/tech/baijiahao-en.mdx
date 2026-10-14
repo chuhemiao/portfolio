@@ -1,0 +1,81 @@
+---
+title: Fix json_ld Errors in Baidu Baijiahao Webmaster Integration
+publishedAt: '2017-09-22'
+summary: Add the canonical tag (required)
+category: thoughts
+slug: baijiahao-en
+language: en
+translationKey: baijiahao
+sourceSlug: baijiahao
+---
+
+
+##  Add the canonical tag (required)
+
+1.`<link rel="canonical" href="http(s)://xxx"/>`
+2.The href must be the desktop page URL corresponding to the MIP or H5 page. If no desktop page exists, use the current page URL.
+
+### Add json_ld data
+
+```javascript
+<script type="application/ld+json">
+{
+    "@context":"https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+    "@id":"https://btxiaobai.com/coinbaseethltc.html",
+    "title":"币圈大佬coinbase新增ETH和LTC钱包存储",
+    "images":[
+        "https://cdn.btxiaobai.com/article/2017/09/21/3FjRPCI635TFPHViuAaGa8kqzr0RTWTgjdTClOiN.png",
+        "https://cdn.btxiaobai.com/article/2017/09/21/TZpJXC0I7rV9YkG8gkrw0T4LL3XysM87y6KB5ifs.png",
+        "https://cdn.btxiaobai.com/article/2017/09/20/mPUtYXFtBOz3N9M9bcGO1TIztbzJmDtHOSKqnchL.png"
+        ],
+    "description":"coinbase新增ETH和LTC钱包存储",
+    "pubDate":"2017-09-22T16:23:00"
+}
+</script>
+```
+
+1.Do not put spaces, line breaks, or other special characters before the data. The time field must include T, there can be at most three images, and id is the current page URL.
+
+### Add the official account ID declaration (required for H5 pages)
+1. Add the code before the page’s </head> tag. appid is the appid already added to the webmaster site.
+2. `eg:<script src="//msite.baidu.com/sdk/c.js?appid=123456789"></script>`
+
+### Add follow-function code (strongly recommended), or use a MIP page 
+
+1.Sticky bar `<script>cambrian.render('head')</script>`
+
+### Format validation
+
+1.Copy the article URL and paste it into the validation page.
+
+2.Right-click to view the page source and paste it into the page-source option.
+
+3.Click Validate. If a json_ld format error appears, check the message (most are formatting problems).
+
+### Submit data
+
+1.Submit data with a script: use PHP to obtain the site URLs and push them to Baidu.
+
+```php
+$urls = array(
+    'https://www.btxiaobai.com/eroscoin.html',
+    'https://www.btxiaobai.com/j-japan-bitecoin.html',
+);
+$api = 'http://data.zz.baidu.com/urls?site=https://www.btxiaobai.com/&token=此处为你站长的token&type=realtime';
+$ch = curl_init();
+$options =  array(
+    CURLOPT_URL => $api,
+    CURLOPT_POST => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POSTFIELDS => implode("\n", $urls),
+    CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+);
+curl_setopt_array($ch, $options);
+$result = curl_exec($ch);
+echo $result;
+```
+![Returned result](https://cdn.btxiaobai.com/article/2017/09/22/eHei4zYsn3vEI8yKdcPCNJdglY1vwwzYDS6ArCMQ.png)
+
+### View the result
+
+[Bitcoin Beginner](https://btxiaobai.com)

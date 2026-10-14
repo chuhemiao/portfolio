@@ -1,0 +1,81 @@
+---
+title: Baidu 百家号の json_ld エラーを解決する
+publishedAt: '2017-09-22'
+summary: canonical タグの追加（必須）
+category: thoughts
+slug: baijiahao-ja
+language: ja
+translationKey: baijiahao
+sourceSlug: baijiahao
+---
+
+
+##  canonical タグの追加（必須）
+
+1.`<link rel="canonical" href="http(s)://xxx"/>`
+2.href には MIP または H5 ページに対応する PC ページの URL を入れる。PC ページがなければ現在のページの URL を入れる。
+
+### json_ld データの追加
+
+```javascript
+<script type="application/ld+json">
+{
+    "@context":"https://zhanzhang.baidu.com/contexts/cambrian.jsonld",
+    "@id":"https://btxiaobai.com/coinbaseethltc.html",
+    "title":"币圈大佬coinbase新增ETH和LTC钱包存储",
+    "images":[
+        "https://cdn.btxiaobai.com/article/2017/09/21/3FjRPCI635TFPHViuAaGa8kqzr0RTWTgjdTClOiN.png",
+        "https://cdn.btxiaobai.com/article/2017/09/21/TZpJXC0I7rV9YkG8gkrw0T4LL3XysM87y6KB5ifs.png",
+        "https://cdn.btxiaobai.com/article/2017/09/20/mPUtYXFtBOz3N9M9bcGO1TIztbzJmDtHOSKqnchL.png"
+        ],
+    "description":"coinbase新增ETH和LTC钱包存储",
+    "pubDate":"2017-09-22T16:23:00"
+}
+</script>
+```
+
+1.データの前に空白や改行などの特殊文字を入れない。時刻には T を入れ、画像は最大三枚、id は現在のページの URL にする。
+
+### 公式アカウント ID の宣言を追加する（H5 ページでは必須）
+1. ページの </head> の前にコードを追加する。appid はウェブマスターサイトに登録済みの appid。
+2. `eg:<script src="//msite.baidu.com/sdk/c.js?appid=123456789"></script>`
+
+### フォロー機能のコードを追加する（強く推奨）、または MIP ページ 
+
+1.上部固定バー `<script>cambrian.render('head')</script>`
+
+### 形式の検証
+
+1.記事の URL をコピーし、検証ページに貼り付ける。
+
+2.右クリックでページのソースを表示し、ソースの入力欄へ貼り付ける。
+
+3.検証をクリックする。json_ld の形式エラーが出たら表示を確認する（ほとんどは形式の問題だ）。
+
+### データの送信
+
+1.スクリプトでデータを送信する。PHP でサイトの URL を取得し、Baidu に送る。
+
+```php
+$urls = array(
+    'https://www.btxiaobai.com/eroscoin.html',
+    'https://www.btxiaobai.com/j-japan-bitecoin.html',
+);
+$api = 'http://data.zz.baidu.com/urls?site=https://www.btxiaobai.com/&token=此处为你站长的token&type=realtime';
+$ch = curl_init();
+$options =  array(
+    CURLOPT_URL => $api,
+    CURLOPT_POST => true,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POSTFIELDS => implode("\n", $urls),
+    CURLOPT_HTTPHEADER => array('Content-Type: text/plain'),
+);
+curl_setopt_array($ch, $options);
+$result = curl_exec($ch);
+echo $result;
+```
+![応答結果](https://cdn.btxiaobai.com/article/2017/09/22/eHei4zYsn3vEI8yKdcPCNJdglY1vwwzYDS6ArCMQ.png)
+
+### 結果の確認
+
+[ビットコイン初心者](https://btxiaobai.com)

@@ -1,0 +1,34 @@
+---
+title: Use curl for HTTPS and Download Images on Click
+publishedAt: '2016-11-16'
+summary: '`curl`access to`https`endpoint'
+category: tech
+slug: curl_attachment-en
+language: en
+translationKey: curl_attachment
+sourceSlug: curl_attachment
+---
+## `curl`access to`https`endpoint
+```php
+$url = "https://test.idiot.com/preregister/data?phone=15756892356" ;
+$ch = curl_init();
+curl_setopt($ch, CURLOPT_URL,$url);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+$result = curl_exec($ch);
+print_r($result);
+```
+
+
+## Download an image directly on click
+
+1.Add a`header`header to the backend response:
+
++ `header('Content-type: image/png')`
++ `header("Content-Disposition: attachment; filename='xxxx.png'")`
+
+2.Frontend: add the`download`attribute 
+
++ `eg`:`<a href="large.jpg" download>`Download`</a>`
+
+

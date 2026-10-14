@@ -1,0 +1,28 @@
+---
+title: Install the Yaf Extension on CentOS
+publishedAt: '2016-01-16'
+summary: Download the Yaf extension
+category: tech
+slug: yaf-en
+language: en
+translationKey: yaf
+sourceSlug: yaf
+---
+## Download the Yaf extension
++ [Download Yaf](http://pecl.php.net/package/yaf)
+## Extract and enter the directory
++ tar   -zxvf   yaf-2.3.3.tgz
++ cd yaf-2.3.3
+## phpize
++ Run phpize in the current directory
+![phpize](https://source.shengxuezixun.com/images%2Fphpize.png)
+##  Compile and install
++ ./configure --with-php-config=$PHP_BIN/php-config
++ If you do not know your PHP bin directory, use the Linux command find / -name php-config to locate it, copy the path, then press Enter (or use whereis php-config).
++ ![Compile](https://source.shengxuezixun.com/images%2Fconfigure_make.png)
++ Then run make && make install
++ ![makeinstall](https://source.shengxuezixun.com/images%2Fmake_makeinstall.png)
++ If you see the output shown above, installation succeeded.
+## Change the php.ini configuration
++ Append extension=yaf.so to the file
++ Restart PHP:/etc/init.d/php-fpm restart

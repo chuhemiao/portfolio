@@ -1,0 +1,60 @@
+---
+title: Yii の Basic 版と Advanced 版をインストールする
+publishedAt: '2016-01-16'
+summary: Yii 2.0 Basic のインストール
+category: tech
+slug: yii2-0-ja
+language: ja
+translationKey: yii2-0
+sourceSlug: yii2-0
+---
+
+## Yii 2.0 Basic のインストール
+
+## 手順 1：公式サイトから Yii 2.0 Basic をダウンロードする
+## 手順 2：ダウンロードした Yii 2.0 Basic をサーバーの www フォルダーへ展開する
++ 編集する：`config/web.php` 。鍵を追加する： `cookieValidationKey` の設定（Composer でインストールした場合は自動で行われる）：
+![basic](https://source.shengxuezixun.com/images%2Fbasic.jpg?imageMogr2/thumbnail/800x800)
++空欄なら、cookie validation 用の鍵を入れる：`'cookieValidationKey' => '`ここに鍵を入力',
+## 次の URL へアクセスすれば動くはずだ：
++ `D:/wamp/wamp/www/abc/ooxx/basic/index.php`
+ 
+## Yii 2.0 Advanced のインストール
++ 手順 1：公式サイトから Yii 2.0 Advanced をダウンロードする
++ 手順 2：ダウンロードした Yii 2.0 Basic をサーバーの www フォルダーへ展開する
++ 手順 3 は特に重要だ。展開後は下のようなファイルがある。ブラウザーで Yii アプリへアクセスする前に init を実行すること。そうしないと Advanced 版の入口ファイルが見つからない。
+![basic](https://source.shengxuezixun.com/images%2Fadvanced.png?imageMogr2/thumbnail/800x800)
+## 初期化後にデータベースを設定する。テンプレートを開いて探す：`common\config`その中にあるのは`main-local.php`。ユーザー名、パスワード、データベース名を入力する。データベースがなければ作成する。user テーブルがない場合もエラーになるので注意。
+			<?php
+			return [
+			'components' => [
+			'db' => [
+			'class' => 'yii\db\Connection',
+			'dsn' => 'mysql:host=localhost;dbname=lnctime',
+			'username' => 'root',
+			'password' => '',
+			'charset' => 'utf8',
+			],
+			'mailer' => [
+			'class' => 'yii\swiftmailer\Mailer',
+			'viewPath' => '@common/mail',
+			'useFileTransport' => true,
+			],
+			],
+			];
++ Advanced 版の user テーブル構造：
+			CREATE TABLE `user` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `username` varchar(255) NOT NULL,
+			  `auth_key` varchar(32) NOT NULL,
+			  `password_hash` varchar(255) NOT NULL,
+			  `password_reset_token` varchar(255) DEFAULT NULL,
+			  `email` varchar(255) NOT NULL,
+			  `role` smallint(6) NOT NULL DEFAULT '10',
+			  `status` smallint(6) NOT NULL DEFAULT '10',
+			  `created_at` int(11) NOT NULL,
+			  `updated_at` int(11) NOT NULL,
+			  PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+## `http://localhost/hezi/backend/web/index.php` で管理側へ、`http://localhost/hezi/frontend/web/index.php` でフロント側へアクセスできる。
+
+ 

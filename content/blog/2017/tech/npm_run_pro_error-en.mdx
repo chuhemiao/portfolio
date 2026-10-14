@@ -1,0 +1,25 @@
+---
+title: Fix NPM Build Freezes on Low-Spec Alibaba Cloud ECS
+publishedAt: '2017-07-25'
+summary: '`npm install` #No problem'
+category: tech
+slug: npm_run_pro_error-en
+language: en
+translationKey: npm_run_pro_error
+sourceSlug: npm_run_pro_error
+---
+
+1.`npm install` #No problem
+
+2.`npm run production` The build ran three times, reaching at most 65%, then the VPS crashed (CPU was not saturated; perhaps an I/O bottleneck on the low-spec machine). Restart it and add swap.
+
+3.Create a swap file (equivalent to a 3 GB Windows virtual-memory page file):`dd if=/dev/zero of=/mnt/swap bs=1024 count=3194304` 
+
+4.Set up the swap file:`mkswap /mnt/swap swapon /mnt/swap`
+
+5.Add the mount entry:`echo "/mnt/swap swap swap defaults 0 0" >> /etc/fstab `
+
+6.Mount:`SWAP： mount -a`
+
+>By Pitfalls Over the Years
+ >>Mengyao Qiyuan

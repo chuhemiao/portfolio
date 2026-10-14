@@ -1,0 +1,28 @@
+---
+title: CentOS に Yaf 拡張をインストールする
+publishedAt: '2016-01-16'
+summary: Yaf 拡張をダウンロードする
+category: tech
+slug: yaf-ja
+language: ja
+translationKey: yaf
+sourceSlug: yaf
+---
+## Yaf 拡張をダウンロードする
++ [Yaf のダウンロード](http://pecl.php.net/package/yaf)
+## 展開してディレクトリに移動する
++ tar   -zxvf   yaf-2.3.3.tgz
++ cd yaf-2.3.3
+## phpize
++ 現在のディレクトリで phpize を実行する
+![phpize](https://source.shengxuezixun.com/images%2Fphpize.png)
+##  コンパイルとインストール
++ ./configure --with-php-config=$PHP_BIN/php-config
++ PHP の bin ディレクトリが不明な場合、Linux の find / -name php-config で探してパスをコピーし、Enter を押す（whereis php-config も使える）。
++ ![コンパイル](https://source.shengxuezixun.com/images%2Fconfigure_make.png)
++ 続いて make && make install を実行する
++ ![makeinstall](https://source.shengxuezixun.com/images%2Fmake_makeinstall.png)
++ 上の画像の出力が表示されたら、インストールは成功している。
+## php.ini の設定を変更する
++ ファイルの末尾に extension=yaf.so を追加する
++ PHP の再起動：/etc/init.d/php-fpm restart

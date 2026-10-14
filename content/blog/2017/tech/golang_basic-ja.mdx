@@ -1,0 +1,34 @@
+---
+title: Go の基本インストール
+publishedAt: '2017-03-21'
+summary: Linux に Go をインストールする手順
+category: tech
+slug: golang_basic-ja
+language: ja
+translationKey: golang_basic
+sourceSlug: golang_basic
+---
+
+##  Linux に Go をインストールする手順
+
+
++ [Go のダウンロード](https://golang.org/dl/)
++ `wget   https://storage.googleapis.com/golang/go1.7.4.linux-amd64.tar.gz`
++ `tar -C /usr/local/ -xzf go1.7.4.linux-amd64.tar.gz`
++ #/etc/profile に変数を追加する
+	- `vi /etc/profile`
+	- #Go の環境変数
+	- `export GOROOT=/usr/local/go/bin`
+	- `export GOPATH=$PATH:$GOROOT/bin`
+	- `source /etc/profile`
+
++ 現在のバージョンを確認する `go version`
++ Go をビルドする  `/usr/local/go/src`   `./all.bash`
+
+## NOTICE
+
++ 以前のバージョン（go1.6）が入っていなければ、先に古いバージョンをインストールしてから新しいものを入れる必要がある。
+
+
+
+

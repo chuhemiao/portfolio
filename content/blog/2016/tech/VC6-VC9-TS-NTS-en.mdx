@@ -1,0 +1,24 @@
+---
+title: 'PHP VC6, VC9, TS, and NTS Versions'
+publishedAt: '2016-01-12'
+summary: 'Difference between VC6 and VC9:'
+category: tech
+slug: VC6-VC9-TS-NTS-en
+language: en
+translationKey: VC6-VC9-TS-NTS
+sourceSlug: VC6-VC9-TS-NTS
+---
+1.Difference between VC6 and VC9:
++ VC6 is compiled with Visual Studio 6; choose it if PHP is hosted with Apache. VC9 is compiled with Visual Studio 2008; choose it if PHP is hosted with IIS. VC9 targets IIS and does not support Apache, while VC6 supports both IIS and Apache. 
+
+2.Difference between TS and NTS:
++ Windows PHP has Thread Safe and Non Thread Safe versions from 5.2.1 onward.
+Literally, Thread Safe performs thread-safety checks during execution to prevent CGI, which starts a new thread for each request, from exhausting system resources. Non Thread Safe does not perform these checks.
+3.Two PHP execution modes: ISAPI and FastCGI.
+
++ ISAPI uses a DLL dynamic library that runs on user requests and does not disappear immediately after handling one. It therefore needs thread-safety checks to improve execution efficiency. For PHP through ISAPI, choose Thread Safe.
+
+4.FastCGI executes operations in a single thread, so thread-safety checks are unnecessary. Removing them can improve efficiency. For PHP through FastCGI, choose Non Thread Safe.  
+5.Check NTS versus TS with phpinfo(); 
++ Check the Safety field to see whether it is thread-safe.
++ If it is enabled, it is generally TS; otherwise NTS.

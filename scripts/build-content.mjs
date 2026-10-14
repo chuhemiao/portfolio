@@ -6,6 +6,7 @@ import matter from 'gray-matter';
 import {
   artifactIdForSlug,
   buildTranslationGroups,
+  validateTranslationProvenance,
   discoverContentFiles,
   hashSource,
   isDraftPost,
@@ -32,7 +33,7 @@ import { runCompileJobs } from './lib/content/pool.mjs';
 
 // Bump when the markdown pipeline or artifact format changes: every cached
 // artifact from an older version is then recompiled instead of reused.
-export const CONTENT_COMPILER_VERSION = 4;
+export const CONTENT_COMPILER_VERSION = 5;
 
 function parseArgs(argv) {
   const options = { force: false, workers: undefined };
@@ -143,6 +144,13 @@ async function main() {
     entries.push(entry);
   }
 
+  validateTranslationProvenance(manifestEntries.map((entry) => ({
+    slug: entry.slug,
+    sourceHash: entry.hash,
+    sourceSlug: entry.meta.sourceSlug,
+    translationSourceHash: entry.meta.translationSourceHash
+  })));
+
   const posts = buildTranslationGroups(
     manifestEntries.map((entry) => ({
       slug: entry.slug,
@@ -215,10 +223,14 @@ async function main() {
   ]);
 
   const elapsed = ((Date.now() - started) / 1000).toFixed(2);
+  const articleGroups = posts.filter((post) => post.slug === post.sourceSlug);
+  const completeGroups = articleGroups.filter((post) => Object.keys(post.translations).length === 3).length;
   console.log(
     [
       `Content files discovered: ${files.length}`,
       `Published posts: ${posts.length}`,
+      `Trilingual article groups: ${completeGroups}/${articleGroups.length}`,
+      `Article groups missing translations: ${articleGroups.length - completeGroups}`,
       `Drafts skipped: ${drafts}`,
       `Cache hits: ${cacheHits}`,
       `Compiled: ${jobs.length}`,

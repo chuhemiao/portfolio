@@ -1,0 +1,47 @@
+---
+title: Reactive Programming and React Native Trade-offs
+publishedAt: '2020-05-27'
+summary: >-
+  React presents an important idea: when state changes, the UI changes
+  automatically. The framework responds to user-state changes by rebuilding the
+  interface. This is a typical reactive programming paradigm. Here is a summary
+  of React’s reactive principles:
+category: thoughts
+slug: post-lhqgl8-en
+language: en
+translationKey: post-lhqgl8
+sourceSlug: post-lhqgl8
+---
+
+
++ React presents an important idea: when state changes, the UI changes automatically. The framework responds to user-state changes by rebuilding the interface. This is a typical reactive programming paradigm. Here is a summary of React’s reactive principles:
+
++ Developers only need to focus on state transitions (data). When state changes, React automatically rebuilds the UI from the new state.
+After receiving a state-change notification, React combines the current render tree and latest state, uses a diff algorithm to find the changed parts, and updates only those parts through DOM operations. This avoids rebuilding the entire tree and improves performance.
+
+### React Native
+
++ React Native is a derivative of React for native mobile applications. Their main difference is the target of the virtual DOM mapping. React’s virtual DOM ultimately maps to a browser DOM tree; RN maps it through JavaScriptCore to a native control tree.
+
++ JavaScriptCore is a JavaScript interpreter with two main roles in React Native:
+    - Provide the runtime for JavaScript.
+    - Bridge communication between JavaScript and the native application, like JsBridge. In fact, many iOS JsBridge implementations are based on JavaScriptCore.
+
++ RN maps the virtual DOM to native controls in two steps:
+
+    - Pass layout messages: send virtual DOM layout information to the native side.
+    - The native side renders the control tree with the corresponding controls based on the layout information.
+    
+### Summary
+
++ The main advantages of JavaScript development with native rendering are:
+
+1. A web development stack, a large community, quick onboarding, and relatively low development cost.
+2. Native rendering, with much better performance than H5.
+3. Good dynamic behavior and support for hot updates.
+
++ Drawbacks:
+
+* Rendering needs communication between JavaScript and the native side. In scenarios such as dragging, frequent communication can cause stuttering.
+* JavaScript is a scripting language that needs JIT (Just In Time) compilation at runtime; its execution efficiency still differs from AOT (Ahead Of Time) code.
+* Because rendering depends on native controls, controls for each platform need separate maintenance, and community controls can lag behind system updates. The control system is also constrained by the native UI system. For example, Android has fixed gesture-conflict resolution rules, making conflicts difficult when nesting controls written by different people.

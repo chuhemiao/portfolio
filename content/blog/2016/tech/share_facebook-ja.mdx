@@ -1,0 +1,46 @@
+---
+title: Facebook で指定画像を共有し、キャッシュを削除する
+publishedAt: '2016-07-19'
+summary: share.js プラグインでソーシャルメディアへ共有する
+category: thoughts
+slug: share_facebook-ja
+language: ja
+translationKey: share_facebook
+sourceSlug: share_facebook
+---
+## share.js プラグインでソーシャルメディアへ共有する
+
+1.使い方は次を参照：[overtrue](http://overtrue.me/share.js/)
+
+2.Facebook への共有時に画像のキャッシュ問題が起きる
+
++ キャッシュを削除する：`https://developers.facebook.com/tools/debug/`
++ ![facebook](https://source.shengxuezixun.com/facebook_clear.png)
+
+3.debug をクリックした後：
+
++ ![facebook](https://source.shengxuezixun.com/fb_url.png)
+
+4.何度か削除を試す。それでも解決しなければ直接指定する。
+
+			<head>
+			<meta property="og:title" content="梦遥奇缘" />
+
+			<meta property="og:description" content="梦遥奇缘 " />
+
+			<meta property="og:url" content="http://idiot6.com" />
+
+			<meta property="og:image" content="//source.shengxuezixun.com/images%2Flogo.png"/>
+
+			<meta property="og:type" content="website" />
+			</head>
+
+5.共有したいページへ戻って共有を押すと、指定した画像になるはずだ。
+
+## 補足：使用する際の`share.js`での問題
+
+1.iOS で共有先を指定できない場合、jQuery 版を使っているか確認する。ネイティブ JavaScript 版で指定した共有先を表示できるのは Android のみだ。
+2.参考資料：
+	+ [dotblog](https://dotblogs.com.tw/walter/2014/05/21/how-to-set-facebook-share-info)
+	+ [facebook_tools](https://developers.facebook.com/tools/debug/)
+

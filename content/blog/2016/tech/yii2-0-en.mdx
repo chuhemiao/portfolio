@@ -1,0 +1,60 @@
+---
+title: Install Yii Basic and Advanced Editions
+publishedAt: '2016-01-16'
+summary: Install Yii 2.0 Basic
+category: tech
+slug: yii2-0-en
+language: en
+translationKey: yii2-0
+sourceSlug: yii2-0
+---
+
+## Install Yii 2.0 Basic
+
+## Step One: download Yii 2.0 Basic from the official site
+## Step Two: extract the downloaded Yii 2.0 Basic into the server’s www folder
++ Edit `config/web.php` and add a key to the `cookieValidationKey` setting (Composer installation completes this automatically):
+![basic](https://source.shengxuezixun.com/images%2Fbasic.jpg?imageMogr2/thumbnail/800x800)
++Insert a key below if empty, for cookie validation:`'cookieValidationKey' => '`enter-your-key-here',
+## The following URL should now work:
++ `D:/wamp/wamp/www/abc/ooxx/basic/index.php`
+ 
+## Install Yii 2.0 Advanced
++ Step One: download Yii 2.0 Advanced from the official site
++ Step Two: extract the downloaded Yii 2.0 Basic into the server’s www folder
++ Step Three is particularly important. After extraction you will see the files below. Run init before accessing the Yii application in the browser, or the Advanced edition’s entry files will not be found.
+![basic](https://source.shengxuezixun.com/images%2Fadvanced.png?imageMogr2/thumbnail/800x800)
+## After initialization, configure the database. Open the template and find`common\config`containing`main-local.php`: enter the username, password, and database name (it must exist; create it if necessary). The database must also contain a user table, or an error will occur.
+			<?php
+			return [
+			'components' => [
+			'db' => [
+			'class' => 'yii\db\Connection',
+			'dsn' => 'mysql:host=localhost;dbname=lnctime',
+			'username' => 'root',
+			'password' => '',
+			'charset' => 'utf8',
+			],
+			'mailer' => [
+			'class' => 'yii\swiftmailer\Mailer',
+			'viewPath' => '@common/mail',
+			'useFileTransport' => true,
+			],
+			],
+			];
++ Advanced edition user table structure:
+			CREATE TABLE `user` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `username` varchar(255) NOT NULL,
+			  `auth_key` varchar(32) NOT NULL,
+			  `password_hash` varchar(255) NOT NULL,
+			  `password_reset_token` varchar(255) DEFAULT NULL,
+			  `email` varchar(255) NOT NULL,
+			  `role` smallint(6) NOT NULL DEFAULT '10',
+			  `status` smallint(6) NOT NULL DEFAULT '10',
+			  `created_at` int(11) NOT NULL,
+			  `updated_at` int(11) NOT NULL,
+			  PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+## Open `http://localhost/hezi/backend/web/index.php` for the backend, and `http://localhost/hezi/frontend/web/index.php` for the frontend.
+
+ 

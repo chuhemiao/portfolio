@@ -1,0 +1,125 @@
+---
+title: "Setting up an Ethereum development environment on macOS in 2020 and building a first dapp with Truffle"
+publishedAt: "2020-04-19"
+summary: "HomeBrew, Xcode, go-ethereum, Ganache, nodejs, Truffle, VsCode."
+category: "tech"
+slug: "2020-macos-eth-truffle-dapps-en"
+language: "en"
+translationKey: "2020-macos-eth-truffle-dapps"
+sourceSlug: "2020-macos-eth-truffle-dapps"
+---
+
+### Tools needed for Ethereum development
+
+- HomeBrew
+
+- Xcode command-line tools
+
+- go-ethereum
+
+- Ganache
+
+- nodejs and npm
+
+- Truffle
+
+- VsCode
+
+### Install HOMEBREW
+
+- Skip this step if it is already installed.
+
+- Open <https://brew.sh/> and copy the content inside the red box: `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+
+![homebrew](https://cdn.bsatoshi.com/2019/12/14/15763112879761.jpg)
+
+### Install Xcode
+
+- It is usually already available; otherwise, look up the installation steps on Google.
+
+### Install geth
+
+- brew tap ethereum/ethereum
+- brew install ethereum
+
+- Check the installation with geth -h. If the output matches the illustration, installation is complete.
+
+### nodejs and npm
+
+- brew install node
+
+- node -v checks whether installation succeeded.
+
+- npm -v
+
+### Install truffle
+
+- npm install -g truffle
+
+- truffle -v checks whether installation succeeded.
+
+### Install Ganache
+
+- Open the following link in a browser: <https://www.trufflesuite.com/ganache>
+
+- Download Ganache for MacOS, open the downloaded dmg, and follow the steps.
+
+- Launch the software to begin debugging, as shown below.
+
+![Install Ganache](https://cdn.bsatoshi.com/2019/12/14/15763116506866.jpg)
+
+### Install VsCode
+
+- Open <https://code.visualstudio.com/>, download the application, and launch it.
+
+- Install extensions: first click the area marked 1, search for the extension name, and click install.
+
+![Install VsCode](https://cdn.bsatoshi.com/2019/12/14/15763119152803.jpg)
+
+### Create the first dapp
+
+- Once the software above is installed, open Ganache. You will see the allocated testnet accounts and their balances.
+
+- Open a terminal and create a directory: mkdir blockchain-test
+- cd blockchain-test
+- Create a project with the truffle installed earlier. I recommend truffle box, which includes ready-made examples. See the documentation and existing projects: <https://www.trufflesuite.com/boxes>
+
+- Here we use [pet-shop](https://www.trufflesuite.com/boxes/pet-shop). First run: sudo truffle unbox pet-shop
+
+![Create the first dapp](https://cdn.bsatoshi.com/2019/12/14/15763125307985.jpg)
+
+- The new project directory looks like this:
+
+![Create the first dapp](https://cdn.bsatoshi.com/2019/12/14/15763126268873.jpg)
+
+- contracts/ : contains the Solidity code for all smart contracts, including the example Migrations.sol contract, which will be introduced later;
+
+- migrations/ : contains the migration commands Truffle uses to deploy smart contracts;
+
+- test/ : contains JavaScript and Solidity test cases;
+
+- truffle-config.js : Truffle settings, including ports, testnets, and mainnets;
+
+- node_modules ： installed base packages
+
+- bs-config.json:the smart-contract compilation configuration
+
+- src：the main entry files for the project
+
+- Run these commands in order:
+  - truffle compile
+  - truffle migrate
+  - truffle test
+  - npm run dev
+
+- You should now see the application running:
+
+![truffleCreate the first dapp](https://cdn.bsatoshi.com/2019/12/14/15763132463521.jpg)
+
+- The application opens a browser by default. You can also visit <http://localhost:3000> directly to see the result.
+
+![truffleCreate the first dapp](https://cdn.bsatoshi.com/2019/12/14/15763132695654.jpg)
+
+- Visit <http://localhost:3001> to see smart-contract interactions and the current dapp status, as shown below:
+
+![truffleCreate the first dapp](https://cdn.bsatoshi.com/2019/12/14/15763134408246.jpg)

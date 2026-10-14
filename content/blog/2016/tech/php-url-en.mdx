@@ -1,0 +1,39 @@
+---
+title: Get the Full Current Page URL in PHP
+publishedAt: '2016-03-21'
+summary: 'Test URL:     `http://localhost/chuhe/testurl.php?id=xxoo&name=fuck`'
+category: tech
+slug: php-url-en
+language: en
+translationKey: php-url
+sourceSlug: php-url
+---
+
+## Test URL:     `http://localhost/chuhe/testurl.php?id=xxoo&name=fuck`
+
+## Get the domain or host address 
+			echo $_SERVER['HTTP_HOST']."<br>"; #localhost
+
+## Get the page address 
+			echo $_SERVER['PHP_SELF']."<br>"; #/chuhe/testurl.php
+
+## Get the URL parameters 
+			echo $_SERVER["QUERY_STRING"]."<br>"; #id=xxoo&name=fuck
+
+## Get the user agent 
+			echo $_SERVER['HTTP_REFERER']."<br>"; 
+
+## Get the full URL
+			echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+			echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+			http://localhost/chuhe/testurl.php?id=xxoo&name=fuck
+
+## Full URL including the port number
+			echo 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; 
+			http://localhost:80/chuhe/testurl hp?id=xxoo&name=fuck
+
+## Get only the path
+			$url='http://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]; 
+			echo dirname($url);
+			#http://localhost/chuhe
+

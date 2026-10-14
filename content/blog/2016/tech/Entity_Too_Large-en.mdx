@@ -1,0 +1,26 @@
+---
+title: Fixing Nginx 413 Request Entity Too Large
+publishedAt: '2016-09-20'
+summary: Problems after moving to a new server
+category: tech
+slug: Entity_Too_Large-en
+language: en
+translationKey: Entity_Too_Large
+sourceSlug: Entity_Too_Large
+---
+## Problems after moving to a new server
+1.Sessions are stored by default in`/tmp/session`(change this in php-fpm.conf); check whether the configured session path is correct.
+
+2.File uploads return`413 Request Entity Too Large`
++ Find the active Nginx configuration(`whereis nginx.conf`)
++ Find the http{} section and change it to`client_max_body_size 800m`; the default should be 2m.
+
+3.Change the defaults in php.ini
++ `post_max_size = 800M`(default: 2M);
++ `upload_max_filesize = 800M`(default: 2M);
+
+4. Restart Nginx and php-fpm
++ `kill -HUP 'cat /usr/local/nginx/nginx.pid' `
++ Restart php-fpm
+
+5.If single sign-on keeps failing to authenticate, encryption-function extensions may be missing(`mcrypt、mbstring`)

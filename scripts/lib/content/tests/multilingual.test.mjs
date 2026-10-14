@@ -5,12 +5,30 @@ import path from 'node:path';
 import { registerHooks } from 'node:module';
 import test from 'node:test';
 
-import { buildTranslationGroups, toIndexMetadata } from '../discovery.mjs';
+import { buildTranslationGroups, hashSource, toIndexMetadata, validateTranslationProvenance } from '../discovery.mjs';
 import { buildRelations, buildTopicIndex } from '../indexes.mjs';
 import { selectResearchPosts } from '../../../sync-research-registry.mjs';
 
 const post = (slug, language, extra = {}) => ({
   slug, language, title: slug, summary: '', publishedAt: '2026-10-13', category: 'research', ...extra
+});
+
+test('generated translations reject changed, missing or self-referencing sources', () => {
+  const hash = hashSource('original body');
+  const source = { slug: 'original', sourceHash: hash };
+  const translated = { slug: 'original-ja', sourceSlug: 'original', translationSourceHash: hash };
+  assert.doesNotThrow(() => validateTranslationProvenance([source, translated]));
+  assert.throws(() => validateTranslationProvenance([{ ...source, sourceHash: hashSource('revised body') }, translated]), /stale/);
+  assert.throws(() => validateTranslationProvenance([translated]), /requires a distinct source/);
+  assert.throws(() => validateTranslationProvenance([{ ...translated, sourceSlug: translated.slug }]), /requires a distinct source/);
+  assert.doesNotThrow(() => validateTranslationProvenance([source, { slug: 'manual-ja', sourceSlug: 'original' }]));
+});
+
+test('generated translation metadata validates provenance digest and source', () => {
+  const hash = hashSource('original body');
+  assert.equal(toIndexMetadata({ sourceSlug: 'original', translationSourceHash: hash }).translationSourceHash, hash);
+  assert.throws(() => toIndexMetadata({ sourceSlug: 'original', translationSourceHash: 'abc' }), /SHA-256/);
+  assert.throws(() => toIndexMetadata({ translationSourceHash: hash }), /requires sourceSlug/);
 });
 
 test('metadata canonicalizes aliases and detects Japanese kana before Han', () => {
@@ -105,8 +123,8 @@ test('runtime list and href helpers prefer translations and preserve actual fall
   process.env.CONTENT_CACHE_DIR = directory;
   const hooks = registerHooks({
     resolve(specifier, context, nextResolve) {
-      if (specifier === '../lib/i18n' && context.parentURL?.endsWith('/src/data/blog.ts')) {
-        return nextResolve('../lib/i18n.ts', context);
+      if (['../lib/i18n', '../lib/post-locale-selection'].includes(specifier) && context.parentURL?.endsWith('/src/data/blog.ts')) {
+        return nextResolve(`${specifier}.ts`, context);
       }
       return nextResolve(specifier, context);
     }

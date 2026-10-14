@@ -1,0 +1,51 @@
+---
+title: Flutter の問題メモ
+publishedAt: '2020-07-19'
+summary: flutter doctor が止まったままになる場合、プロキシの問題かもしれない
+category: tech
+slug: flutter-issues-ja
+language: ja
+translationKey: flutter-issues
+sourceSlug: flutter-issues
+---
+
+
++ flutter doctor が止まったままになる場合、プロキシの問題かもしれない
+    + export PUB_HOSTED_URL=https://pub.flutter-io.cn
+    + export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+
+macOS/Linux で中国のミラーを設定する。毎回、先に一度実行する： （export PATH="$PWD/flutter/bin:$PATH"）
+
+1. export PUB_HOSTED_URL=https://pub.flutter-io.cn
+2. export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
+3. git clone -b dev https://github.com/flutter/flutter.git
+4. export PATH="$PWD/flutter/bin:$PATH"
+5. cd ./flutter
+6. flutter doctor
+
+
+続いて flutter doctor -v を実行してバージョンを更新する
+
+Flutter の Java 環境では jdk8 を使う必要がある。そうでないとアップグレードを要求され続ける。
+
+
+git clone を高速化する
+
+git config --global http.https://github.com.proxy socks5://127.0.0.1:7891
+または .gitconfig を開き、次の設定を入力する
+
+[http "https://github.com"]
+    proxy = socks5://127.0.0.1:1086
+    
+
++ Waiting for another flutter command to release the startup lock...
+
+    - Flutter SDK のディレクトリで bin/cache/lockfile を見つけて削除する。
+
+
+
+CDN: trunk URL couldn't be downloaded:
+      https://raw.githubusercontent.com
+      
+
+

@@ -1,0 +1,39 @@
+---
+title: PHP で現在のページの完全な URL を取得する
+publishedAt: '2016-03-21'
+summary: 'テスト URL：     `http://localhost/chuhe/testurl.php?id=xxoo&name=fuck`'
+category: tech
+slug: php-url-ja
+language: ja
+translationKey: php-url
+sourceSlug: php-url
+---
+
+## テスト URL：     `http://localhost/chuhe/testurl.php?id=xxoo&name=fuck`
+
+## ドメインまたはホストのアドレスを取得する 
+			echo $_SERVER['HTTP_HOST']."<br>"; #localhost
+
+## ページのアドレスを取得する 
+			echo $_SERVER['PHP_SELF']."<br>"; #/chuhe/testurl.php
+
+## URL のパラメーターを取得する 
+			echo $_SERVER["QUERY_STRING"]."<br>"; #id=xxoo&name=fuck
+
+## ユーザーエージェントを取得する 
+			echo $_SERVER['HTTP_REFERER']."<br>"; 
+
+## 完全な URL を取得する
+			echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+			echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING'];
+			http://localhost/chuhe/testurl.php?id=xxoo&name=fuck
+
+## ポート番号を含む完全な URL
+			echo 'http://'.$_SERVER['SERVER_NAME'].':'.$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"]; 
+			http://localhost:80/chuhe/testurl hp?id=xxoo&name=fuck
+
+## パスのみを取得する
+			$url='http://'.$_SERVER['SERVER_NAME'].$_SERVER["REQUEST_URI"]; 
+			echo dirname($url);
+			#http://localhost/chuhe
+

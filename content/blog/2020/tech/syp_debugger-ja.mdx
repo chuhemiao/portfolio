@@ -1,0 +1,61 @@
+---
+title: スマートフォンで H5 ページをデバッグし、通信を記録する
+publishedAt: '2020-08-14'
+summary: デバッグ方法
+category: thoughts
+slug: syp_debugger-ja
+language: ja
+translationKey: syp_debugger
+sourceSlug: syp_debugger
+---
+
+
+### デバッグ方法
+
++ Safari の内蔵デバッガーを使うにはケーブルで接続する。Chrome も同様。詳しくは次を参照：[Safari と Chrome の実機デバッグ](https://juejin.im/post/6844903977557950471)
++ 方法 2：spy-debugger を使う
+
+### デバッグツール
+
+[spy-debugger](https://github.com/wuchangming/spy-debugger) は Android、iOS、WebView などの H5 ページの表示調整に使う。通信の記録は主に WebView で使う。spy-debugger は表示のデバッグに便利で、ケーブルなしでアクセスでき、複数人で同時にデバッグできる。
+
+
+### 使い方
+
++ インストール：
+	+ Windows： `npm install spy-debugger -g`
+	+ macOS： `sudo npm install spy-debugger -g`
+
++ 起動
+	+ 端末で入力：`spy-debugger`
+	+ ![spy-debugger の起動](https://i.loli.net/2020/08/10/bZujnayV2oNHwmM.png)
+
++ デバッグ前の条件
+	+ スマートフォンとパソコンを同じ Wi-Fi に接続する
+	+ 端末で入力：`spy-debugger` Windows または macOS で起動できない場合は、ファイアウォールを停止して再試行する
+	+ スマートフォンの HTTP プロキシを、上の画像のポート（既定は 9888）とパソコンの現在の IP アドレスで設定する
+		+ Android：設定 → WLAN → ネットワークを長押し → ネットワークの変更 → 詳細 → プロキシ設定 → 手動
+		+ iOS：設定 → Wi-Fi → ネットワークを選ぶ → HTTP プロキシ → 手動
+
+### iOS では証明書を別途インストールする
++ Safari で次を開く： [証明書のインストール](http://spydebugger.com/cert) 。許可し、インストールしてパスワードを入力すれば完了
+
+
+### アクセス方法
+
++ ポートを設定後、スマートフォンのブラウザーで入力する：`spy-debugger`起動時の IP とローカルプロジェクトのポート
++ 例：起動時の IP が 192.168.2.36、ローカルプロジェクトの URL が`http://localhost:8080`なら、デバッグ URL は`http://192.168.2.36:8080`
+
+### 通信の記録
+
+![spy-debugger通信の記録](https://i.loli.net/2020/08/10/8hOx7LX2GA4TBlH.png)
+
+上の method と host はデバッガーからのリクエストを示す。リクエストをクリックすると Response を確認できる。
+
+### ポートとプロキシの設定
+
++ 指定ポートで起動：spy-debugger -p 8888
++ プロキシの設定：spy-debugger -e http://127.0.0.1:7980
++ ほかの設定は次を参照：[ドキュメント](https://github.com/wuchangming/spy-debugger)
+
+

@@ -1,0 +1,17 @@
+---
+title: Could Not Get Lock /var/lib/dpkg/lock
+publishedAt: '2016-01-09'
+summary: 'Fixing the common Ubuntu error: Could not get lock /var/lib/dpkg/lock'
+category: thoughts
+slug: dpkg-lock-en
+language: en
+translationKey: dpkg-lock
+sourceSlug: dpkg-lock
+---
+## Fixing the common Ubuntu error: Could not get lock /var/lib/dpkg/lock
+1.Installing a program in the terminal with sudo apt-get install xxx produces this error:
++ E: Could not get lock /var/lib/dpkg/lock - open (11: Resource temporarily unavailable)
++ E: Unable to lock the administration directory (/var/lib/dpkg/), is another process using it
+2.Another program may be running and holding the lock. The lock may also remain because a previous installation or update did not complete normally. The solution described here is simple:
+	+ sudo rm /var/cache/apt/archives/lock
+	+ sudo rm /var/lib/dpkg/lock

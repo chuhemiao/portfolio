@@ -1,0 +1,70 @@
+---
+title: "Install the Facebook pixel on a website"
+publishedAt: "2016-09-06"
+summary: "1. Open the [Facebook pixel tab](https://www.facebook.com/ads/manager/pixel/facebook_pixel) in Ads Manager."
+category: "tech"
+slug: "facebook-pixel-en"
+language: "en"
+translationKey: "facebook-pixel"
+sourceSlug: "facebook-pixel"
+---
+
+## Create a Facebook pixel
+1. Open the [Facebook pixel tab](https://www.facebook.com/ads/manager/pixel/facebook_pixel) in Ads Manager.
+2. Click Create Pixel.
+3. Enter a name. Each advertising account can have only one pixel, so choose a name representing your business.
+4. Note: you can change the name later from the `Facebook` pixel tab.
+5. Check the box to accept the terms.
+6. Click Create Pixel.
+
+## About Facebook pixel code
+1. Pixel base code
++ Go to the pixel page in Ads Manager.
++ Click Actions > View Code.
++ Copy the base code and paste it between the `<head>` tags on every page, or into the website template to install it across the site.
+2. Event code
++ Standard events
+    1. Original website code: paste the Facebook pixel between `<head>` and `</head>`. If other code is already there, paste the pixel below it, above `</head>`.
+    2. Facebook pixel base code: it is as shown in the illustration, except your pixel number will differ from 567845666.
+    3. Standard event code: paste the code relevant to the page, such as Complete Registration or Add to Cart, above `</script>` in the pixel code. Do this on every page you want to track.
+    4. ![Example code](https://source.shengxuezixun.com/images/facebook_pixels.jpg?imageMogr2/thumbnail/600x600)
++ Custom events
+    1. These track important business actions, but need additional setup for tracking and optimization. [Learn how to use](https://developers.facebook.com/docs/facebook-pixel/api-reference#events) custom events.
+
+## Add Facebook pixel base code to website pages
+1. Open the Facebook pixel tab in Ads Manager.
+2. Click Actions > View Pixel Code.
+3. Click the code to highlight it.
+4. Right-click and Copy, or use Ctrl+C/Cmd+C.
+5. Click Done.
+6. Open the website HTML and paste the code.
+
+## Add event code to website pages
+1. Open the Facebook pixel tab in Ads Manager.
+2. Click Create Conversion > Track Conversions With Standard Events.
+3. Copy the event code for important events.
+4. Open the website code and replace the event code on the relevant pages. We recommend adding event code separately between script tags and leaving the pixel base code unchanged.
+5. ![Event types](https://source.shengxuezixun.com/images/facebook_lead.png?imageMogr2/thumbnail/600x600)
+
+## Final code to place on the page
+
+			<script>
+		    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+		    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+		    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+		    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+		    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+		    fbq('init', '12345678900');
+		    fbq('track', "PageView");
+		    fbq('track', 'Lead');
+		    </script>
+
+		    <noscript><img height="1" width="1" style="display:none"
+		    src="https://www.facebook.com/tr?id=12345678900&ev=PageView&noscript=1"
+		    /></noscript>
+
+
+1. `fbq('init', '你的fbid');` — replace the placeholder with your Facebook ID.
+2. `fbq('track', "PageView");` — the pixel event type to count.
+
+PS: [Chrome extension to check whether the pixel is installed](https://chrome.google.com/webstore/detail/facebook-pixel-helper/fdgfkebogiimcoedlicjlajpkdmockpc)

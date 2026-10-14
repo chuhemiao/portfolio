@@ -1,0 +1,155 @@
+---
+title: "Long-term chain selection for DEX / Perp DEX: distribution before performance"
+publishedAt: '2026-09-27'
+summary: "Chain selection should start with trading flow, stablecoins, market makers, distribution, and risk capabilities—not TPS. Solana, Base, and Hyperliquid HIP-3 offer three different paths for a new team."
+slug: 'dex-perp-dex-chain-selection-distribution-before-performance-en'
+category: 'thoughts'
+language: 'en'
+sourceSlug: 'dex-perp-dex-chain-selection-distribution-before-performance'
+translationKey: 'dex-perp-dex-chain-selection-distribution-before-performance'
+---
+
+## TL;DR
+
+When building a new DEX or Perp DEX, the easiest mistake is to treat chain selection as a performance ranking. What determines survival is not the chain’s claimed TPS, but whether five conditions hold together:
+
+1. Sustained trading flow;
+2. Usable stablecoins and collateral;
+3. Market makers willing to quote over the long term;
+4. Distribution through wallets, trading terminals, communities, or exchanges;
+5. The ability to handle oracles, liquidations, insurance funds, and extreme markets.
+
+Based on the user-provided snapshot dated 2026-09-27, my choices are clear:
+
+- **For a new spot DEX: Solana first, Base second; consider BSC when you have Binance-ecosystem distribution.**
+- **For a new Perp DEX: prioritize Base and Solana; choose Hyperliquid HIP-3 if you do not want to build exchange-grade infrastructure from scratch.**
+- **Ethereum is better as a capital and settlement layer than as the launch execution layer for retail perpetuals.**
+- **Monad and Sui suit a second bet, not the only battlefield without market-making and capital commitments.**
+
+Full chain-level data, protocol comparisons, and risk definitions are in [New DEX / Perp DEX on major public chains: long-term chain selection research](/research/mainstream-chain-dex-perp-dex-long-term-chain-selection-research).
+
+## Chain selection is a market-entry problem, not a technical exam
+
+Chain performance sets the theoretical ceiling, but a startup first faces the floor of a cold start. Low latency, high throughput, and low fees will not create a usable market without stablecoins, market makers, active traders, and distribution.
+
+This is why deploying on more chains often fragments liquidity rather than diversifying risk. Each additional chain requires the team to rebuild:
+
+- LP and market-making inventory;
+- Oracles and index prices;
+- Liquidations and insurance funds;
+- Cross-chain deposits and treasury routing;
+- Wallet, frontend, and operational support;
+- Local community and growth efforts.
+
+Without independent sources of traffic, multichain deployment only makes every market shallower.
+
+## Three viable paths
+
+### Path 1: use Solana for high-frequency trading and new-asset discovery
+
+Solana’s strongest current advantage is trading flow, not TVL. The user-provided snapshot shows about **$76.71B** in 30-day spot DEX volume and about **11.57x** DEX/TVL turnover, clearly above Ethereum, BSC, and Base.
+
+This makes Solana suitable for:
+
+- New-asset launches and long-tail trading;
+- High-frequency, small-ticket, and bot trading;
+- Shared spot and perpetual accounts;
+- Low-latency order books and liquidations;
+- Embedded access in wallets, aggregators, and trading terminals.
+
+High flow does not mean orders arrive naturally at a new protocol. Raydium, Orca, Jupiter, and Drift already own user mindshare and routing access. A new team needs at least one exclusive resource: asset issuance, wallet access, market-making prices, regional users, trading tools, or a new-market discovery mechanism.
+
+Solana is therefore a choice with a high ceiling and intense competition. Without distribution, larger volume can create the illusion that the market is huge and you will naturally capture a share.
+
+### Path 2: use Base for EVM, USDC, and product-layer innovation
+
+Base’s value is not leading volume, but bringing EVM tooling, USDC, Coinbase-related distribution, and consumer product experience into one environment.
+
+For an EVM team, it fits:
+
+- RFQ, Intent, and Solver trading;
+- USDC-settled spot or perpetuals;
+- Social trading, copy trading, and unified accounts;
+- RWA, stablecoins, and semi-institutional OTC;
+- Combinations of spot, lending, and yield strategies.
+
+Do not copy another Aerodrome on Base. A better approach is to reuse existing liquidity and place the product advantage in routing, risk management, accounts, strategies, and user relationships. Underlying liquidity can be rented; distribution and experience must be owned.
+
+### Path 3: build vertical perpetual markets on Hyperliquid
+
+Copying Hyperliquid means rebuilding order books, matching, oracles, funding, insurance funds, liquidations, market making, wallets, APIs, and market issuance. This is an entire exchange, not a few deployed contracts.
+
+For a resource-constrained team, a more realistic approach is HIP-3, building on existing liquidity and trading habits with:
+
+- Commodity, index, or equity perpetuals;
+- Regional and emerging assets;
+- Markets for particular communities;
+- Research, strategies, APIs, and professional terminals;
+- Vertical account layers and risk tools.
+
+This gives up some infrastructure control in return for a lower cold-start cost. The question becomes which trading demand is underserved, rather than how to build a new exchange.
+
+## Why BSC, Ethereum, and new chains are not the default answer
+
+### BSC: strong with distribution, difficult without it
+
+BSC has many retail users, stablecoins, and high-frequency trading, but PancakeSwap and the Binance ecosystem have established strong gateways. With wallets, KOLs, trading bots, or regional markets, BSC can rank in the first tier. With technical ability alone, lower fees do not overcome existing network effects.
+
+### Ethereum: the capital center, not the retail execution layer
+
+Ethereum still has the deepest blue-chip liquidity, stablecoins, institutional capital, and security ecosystem. It fits asset issuance, protocol treasuries, high-value settlement, and cross-chain liquidity hubs.
+
+For retail perpetuals, however, fees, confirmation speed, and liquidation response are not advantages. A more sensible structure is:
+
+> Ethereum handles the asset and capital layers; Base, Solana, or Hyperliquid handles trading execution.
+
+### Monad and Sui: suitable for an option-like bet
+
+Both Monad and Sui can technically support high-performance trading, but early growth may be incentive-driven. Stablecoins, market makers, and organic user retention still need validation. They fit testing, ecosystem partnerships, or a second deployment, not the only choice without capital and market-making commitments.
+
+## Matching is not the hardest part of a new perpetual exchange
+
+Perp teams often overestimate matching performance and underestimate tail risk. Surviving extreme markets depends on:
+
+- Whether index prices can be manipulated;
+- How the system degrades when oracles lag;
+- How to handle a liquidity vacuum after market makers cancel;
+- Whether the liquidation engine creates cascading deficits;
+- How large a gap the insurance fund can cover;
+- Whether the two legs of cross-market hedges lose connectivity;
+- Whether a few accounts can manipulate funding.
+
+TPS improves order-processing speed; it does not solve these problems automatically. A faster Perp DEX without risk isolation simply amplifies mistakes faster.
+
+## Go / No-Go before launch
+
+### Go
+
+- At least one clear, measurable traffic gateway already exists;
+- Market makers commit real inventory and quotes;
+- There are exclusive assets, regional markets, or trading use cases;
+- The target chain has enough stablecoins and usable spot depth;
+- The product differs clearly in price, speed, asset coverage, or experience;
+- Oracles, liquidations, insurance funds, and extreme-market behavior have been tested.
+
+### Delay
+
+- The product merely copies Uniswap, PancakeSwap, Jupiter, or Hyperliquid;
+- There is no wallet, trader, protocol, or exchange distribution;
+- Volume mainly depends on token incentives;
+- No market makers are confirmed before launch;
+- Discussion focuses on TPS without a complete risk engine;
+- Deployment begins on several chains, fragmenting capital and team attention;
+- One month of growth is used to prove long-term demand.
+
+## Conclusion
+
+The point of chain selection is to find the market structure that fits the team’s resources, rather than the chain with the highest performance.
+
+- Choose **Solana** with Rust, trading bots, market makers, and new-asset resources;
+- Choose **Base** with Solidity, USDC, wallet products, and compliance capabilities;
+- Choose **Hyperliquid HIP-3** for vertical perpetuals without rebuilding all infrastructure;
+- Move **BSC** into the first tier when Binance-ecosystem or regional distribution exists;
+- Use an **Ethereum + Base** layered structure for institutions, RWA, stablecoins, and capital settlement.
+
+**Core judgment: first establish where users come from, who supplies liquidity, and who bears extreme-market risk; then discuss the deployment chain. Performance is necessary, but distribution and risk capabilities are the long-term moat.**

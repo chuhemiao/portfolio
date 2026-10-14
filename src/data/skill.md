@@ -24,6 +24,9 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 - Only published variants appear in article language links. Missing translations fall back to the original article's actual language. Related articles exclude other variants of the same article, and topic membership is shared across a translation group.
 - Research registry generation keeps the original article once per translation group, regardless of original language. Keep `researchProjectSlug` on topical report originals to exclude an additional project entry.
 - The site supports all three UI languages independently of historical article translation coverage; changing UI language does not translate article bodies.
+- Blog, home, and topic lists select one actual translation per group for the current locale. `?lang=all` exposes all variants explicitly; locale filters never treat a source fallback as a translated body.
+- `pnpm content:translate:research -- --write --report` creates fully supported offline template translations only. Unmatched prose stays pending in `scripts/lib/translations/research-template-status.json`; existing translations are preserved. Use `--check --report` to validate after dictionary changes.
+- Generated translations bind `translationSourceHash` to the original MDX. Content validation and builds reject stale hashes; source updates require translation review. This template report covers only its own source family, not all historical article coverage.
 
 ```bash
 pnpm quick:add -- "日本語の記事" --language ja

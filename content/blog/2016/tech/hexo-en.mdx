@@ -1,0 +1,47 @@
+---
+title: My Journey with Hexo
+publishedAt: '2016-01-09'
+summary: My journey with Hexo
+category: tech
+slug: hexo-en
+language: en
+translationKey: hexo
+sourceSlug: hexo
+---
+# My journey with Hexo
+## Before installing Node.js, install g++ and libssl-dev if absent:
++ sudo apt-get update
++ sudo apt-get install g++
++ sudo apt-get install libssl-dev
++ Install Node: apt-get install nodejs
++ node -v — test
+## Install Git
++ sudo apt-get install git
++ git --version — check the version
++ git config --global user.email "535101602@qq.com"  // email used to register GitHub
++ git config --global user.name "chuhemiao"  // GitHub username
+## Register a GitHub account yourself; otherwise you cannot proceed. GitCafe is another option.
+- Generate a key:
+	+ ssh-keygen -t rsa -C "535101602@qq.com"
+	+ After pressing Enter, enter the passphrase twice when prompted (at a yes/no prompt, type yes, not y).
+	+ Then use cd ~/.ssh/; the directory contains id_rsa and id_rsa.pub. Use cat id_rsa.pub and copy its contents into a GitHub SSH key.
+	+ ssh -T git@github.com test connectivity
+## Install Hexo
++ npm install -g hexo
++ hexo init <directory-name>
++ cd into this directory; hexo d -g generates the service and static pages
++ http://localhost:4000, enter the address in a browser to view
+## Write posts
++ Run the new command; generated posts go to```hexo\source\_posts\```in this directory.
++ hexo new "name"
++ layout is optional and defaults to post. Check the scaffolds directory for available layouts; filenames are layout names. Add your own layout by adding a file, or edit an existing one. The default post layout is hexo\scaffolds\post.md.
+## The editor supports Markdown, so it is best to learn the syntax first. Link:[markdown](http://www.appinn.com/markdown/);
+## Changing themes: I use the simple pacman theme. Link:[themes](https://github.com/hexojs/hexo/wiki/Themes)
++ Changing themes is easy: edit theme in _config.yml in the Hexo directory to the name of the theme you downloaded with Git.
++ git clone https://github.com/chuhemiao/pacman
+## Custom pages
++ A new page is generated under hexo\source\
++ hexo new page "name"
+## Add a 404 page (requires a configured domain)
++ Create 404.html under hexo/source and edit its contents.
+

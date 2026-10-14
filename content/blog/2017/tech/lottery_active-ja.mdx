@@ -1,0 +1,60 @@
+---
+title: 基本的な抽選アルゴリズム
+publishedAt: '2017-08-03'
+summary: 当選確率の配列を定義する
+category: tech
+slug: lottery_active-ja
+language: ja
+translationKey: lottery_active
+sourceSlug: lottery_active
+---
+## 当選確率の配列を定義する
+```php
+private $innerRate = array(
+'1' => 1,
+'2' => 200,
+'3' => 500,
+'4' => 100000,
+'5' => 300000,
+'6' => 1693000,
+);
+```
+### 関数を呼び出す
+
+1.`$i = $this->getRand($this->innerRate)`;
+2.返された $i に応じて処理する。if と switch のどちらでもよい。
+```php
+if($i==1)
+{
+	echo "一等奖";
+}else{
+	echo "二等奖";
+}
+```
+### 基本関数
+```php
+private function getRand($proArr)
+{
+    $result = '';
+    // 概率数组的总概率精度
+    $proSum = array_sum($proArr);
+    // 概率数组循环
+    foreach ($proArr as $key => $proCur) {
+        $randNum = mt_rand(1, $proSum); // 抽取随机数
+        if ($randNum <= $proCur) {
+            $result = $key; // 得出结果
+            break;
+        } else {
+            $proSum -= $proCur;
+        }
+    }
+    unset($proArr);
+    return $result;
+}
+```
+
+
+
+
+
+

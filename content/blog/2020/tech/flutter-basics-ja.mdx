@@ -1,0 +1,158 @@
+---
+title: "Flutter の基礎"
+publishedAt: "2020-05-29"
+summary: "Stateful widget、ナビゲーション、パッケージ・アセット管理、状態管理。"
+category: "tech"
+slug: "flutter-basics-ja"
+language: "ja"
+translationKey: "flutter-basics"
+sourceSlug: "flutter-basics"
+---
+
+### Stateful widget と Stateless widget
+
++ Stateful widget と Stateless widget には、次の二つの違いがある。
+    + Stateful widget はライフサイクル中に変化する状態を持てるが、Stateless widget は不変である。
+    + Stateful widget は少なくとも二つのクラスから構成される。
+        - StatefulWidget クラス。
+        - State クラス。StatefulWidget 自体は不変だが、State クラスが保持する状態はライフサイクル中に変化することがある。
+
+### Navigator と MaterialPageRoute：ルート管理
+
++ モバイル開発の Route は通常ページを指し、Web のシングルページアプリにおける Route と同じ意味で使われる。Android では Activity、iOS では ViewController に対応することが多い。ルート管理はページ間の移動を管理するもので、ナビゲーション管理とも呼ばれる。
+
++ ナビゲーションはルートのスタックを保持する。push は新しいページを開き、pop はページを閉じる操作に対応する。ルート管理は主にこのスタックの管理を指す。
+
+// 路由跳转例子，调用Navigator.push方法，return到一个新的路由页面（NewRoute）
+
+onPressed: () {
+  //导航到新路由   
+  Navigator.push( context,
+   MaterialPageRoute(builder: (context) {
+      return NewRoute();
+   }));
+},
+
++ ルート：MaterialPageRoute
+    - MaterialPageRoute は PageRoute を継承する。PageRoute は画面全体を占めるモーダルなルートを表す抽象クラスで、ルートの構築や遷移アニメーションのインターフェースとプロパティを定義する。Material ライブラリの MaterialPageRoute は、各プラットフォームの画面遷移に合ったアニメーションを提供する。
+
+    - Android では、新しいページが画面下から上へスライドする。閉じるときは現在のページが上から下へ移動して消え、前のページが表示される。
+    - iOS では、新しいページが右端から左へスライドして表示され、前のページは左へ移動して消える。閉じる場合は逆で、現在のページが右へ出ていき、前のページが左から入る。
+
++ MaterialPageRoute の引数
+
+MaterialPageRoute({
+    WidgetBuilder builder,
+    RouteSettings settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+})
+
+builder は WidgetBuilder 型のコールバックで、ページの内容を構築し widget を返す。通常は新しいルートのインスタンスを返すように実装する。
+
+settings はルート名や初期ルート（ホーム）かどうかなどの設定を含む。
+
+maintainState：新しいルートを push しても、デフォルトでは前のルートがメモリに保持される。使われていないルートのリソースを解放したい場合は false にする。
+
+fullscreenDialog は新しいページが全画面モーダルダイアログかどうかを表す。iOS では true の場合、横方向ではなく画面下からスライドする。
+
++ ルート：Navigator
+    - Navigator はルート管理のコンポーネントで、ページを開いたり閉じたりするメソッドを提供する。アクティブなルートをスタックで管理し、通常は最上部のルートが画面に表示される。ここではよく使う二つのメソッドを紹介する。
+        +  Future push(BuildContext context, Route route)
+        +  指定したルートを push して新しいページを開く。戻り値の Future は、そのルートを pop して閉じる際の返却データを受け取る。
+        +  bool pop(BuildContext context, [ result ])
+        +  最上部のルートを pop する。result はページを閉じるとき、前のページに返すデータ。
+
++ ログイン状態の確認：onGenerateRoute
+    - 名前付きルートを開くときに呼ばれることがある。Navigator.pushNamed(...) で指定した名前がルートテーブルに登録済みなら、その builder が使われる。登録されていない場合だけ onGenerateRoute でルートを生成する。
+    - ルート遷移前のグローバルな前処理。
+
+### pubspec：パッケージ管理
+
++ Flutter はプロジェクトルートの pubspec.yaml でサードパーティーの依存パッケージを管理する。
+
++ YAML は直感的で人が読みやすい形式だ。XML や JSON と比べて構文が単純で解析しやすく、設定ファイルによく使われる。Flutter も YAML を設定に使う。
++ YAML の例と項目の説明：
+    - name：アプリやパッケージの名前。
+    - description：アプリやパッケージの説明。
+    - version：アプリやパッケージのバージョン。
+    - dependencies：アプリやパッケージが依存するパッケージやプラグイン。
+    - dev_dependencies：Flutter アプリ自体ではなく、開発環境で使うツール。
+    - flutter：Flutter 関連の設定。
++ dependencies はアプリのソースの一部としてコンパイルされ、最終的な配布パッケージに含まれる。dev_dependencies は開発やテストを効率化するツールで、Flutter の自動テスト用パッケージなどが該当する。
+
+name: flutter_in_action
+description: First Flutter application.
+
+version: 1.0.0+1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  // 新添加的依赖
+  english_words: ^3.1.3
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
++ 新しいパッケージは dependencies に追加し、flutter packages get を実行する。
+### pubspec：アセット管理
++ assets はアプリに含めるファイルを指定する。パスは pubspec.yaml の場所を基準とする。宣言順序は関係なく、実際の配置先は任意のフォルダーでよい（この例では assets）。
++ flutter:
+  assets:
+    - images/my_icon.png
+    - images/background.png
+
++ pubspec に指定した画像アセットは、次のどちらの方法でも読み込める。
+
+Image(
+  image: AssetImage("images/my_icon.png"),
+  width: 100.0
+);
+
+Image.asset("images/avatar.png",
+  width: 100.0,
+)
+
++ ネットワーク画像を読み込む：
+
+Image(
+  image: NetworkImage(
+      "https://avatars2.githubusercontent.com/u/20411648?s=460&v=4"),
+  width: 100.0,
+)
+
+Image.network(
+  "https://avatars2.githubusercontent.com/u/20411648?s=460&v=4",
+  width: 100.0,
+)
+
++ Image の引数
+
+const Image({
+  ...
+  this.width, //图片的宽
+  this.height, //图片高度
+  this.color, //图片的混合色值
+  this.colorBlendMode, //混合模式
+  this.fit,//缩放模式
+  this.alignment = Alignment.center, //对齐方式
+  this.repeat = ImageRepeat.noRepeat, //重复方式
+  ...
+})
+
+### Pub リポジトリ
+
++ Pub（https://pub.dev/ ）は Google 公式の Dart パッケージリポジトリで、Node の npm や Android の jcenter に相当する。必要なパッケージやプラグインを探すことも、自作のものを公開することもできる。
+
+### 状態管理
+
++ 公式が示す以下の原則が判断の助けになる。
+
+    - チェックボックスの選択やスライダー位置など、ユーザーデータに関する状態は親 Widget が管理するのが望ましい。
+    - 色やアニメーションなど、見た目に関する状態は Widget 自身が管理するのが望ましい。
+    - 複数の Widget が共有する状態は、共通の親 Widget が管理するのが望ましい。

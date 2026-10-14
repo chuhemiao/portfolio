@@ -1,0 +1,26 @@
+---
+title: Nginx の 413 Request Entity Too Large を解決する
+publishedAt: '2016-09-20'
+summary: サーバーを移行した後に起きた問題
+category: tech
+slug: Entity_Too_Large-ja
+language: ja
+translationKey: Entity_Too_Large
+sourceSlug: Entity_Too_Large
+---
+## サーバーを移行した後に起きた問題
+1.session の既定保存先は`/tmp/session`（php-fpm.conf で変更）。session の設定パスが正しいか確認する。
+
+2.ファイルのアップロードで発生：`413 Request Entity Too Large`
++ 起動中の Nginx の設定を探す(`whereis nginx.conf`)
++ http{} の部分を見つけて、次に変更する：`client_max_body_size 800m`。既定値は 2m のはず。
+
+3.php.ini の既定設定を変更する
++ `post_max_size = 800M`（既定値：2M）;
++ `upload_max_filesize = 800M`（既定値：2M）;
+
+4. Nginx と php-fpm を再起動する
++ `kill -HUP 'cat /usr/local/nginx/nginx.pid' `
++ php-fpm を再起動する
+
+5.シングルサインオンの認証が失敗し続ける場合、暗号化関数の拡張が不足している可能性がある(`mcrypt、mbstring`)

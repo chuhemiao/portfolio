@@ -607,6 +607,7 @@ publishedAt: ${yamlSingleQuoted(DATE)}
 summary: ${yamlSingleQuoted(summary)}
 slug: ${yamlSingleQuoted(slug)}
 category: 'research'
+language: 'en'
 ---
 
 # ${name} / ${symbol}: ${type} value capture, liquidity, and token risk

@@ -1,0 +1,125 @@
+---
+title: "2020 年版 macOS の Ethereum 開発環境構築と Truffle による最初の dapp"
+publishedAt: "2020-04-19"
+summary: "HomeBrew, Xcode, go-ethereum, Ganache, nodejs, Truffle, VsCode."
+category: "tech"
+slug: "2020-macos-eth-truffle-dapps-ja"
+language: "ja"
+translationKey: "2020-macos-eth-truffle-dapps"
+sourceSlug: "2020-macos-eth-truffle-dapps"
+---
+
+### Ethereum 開発に必要なツール
+
+- HomeBrew
+
+- Xcode コマンドラインツール
+
+- go-ethereum
+
+- Ganache
+
+- nodejs と npm
+
+- Truffle
+
+- VsCode
+
+### HOMEBREW をインストールする
+
+- インストール済みなら、この手順は省略する。
+
+- <https://brew.sh/> を開き、赤い枠の内容をコピーする： `/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"`
+
+![homebrew](https://cdn.bsatoshi.com/2019/12/14/15763112879761.jpg)
+
+### Xcode をインストールする
+
+- 通常は入っているはずだが、なければ Google でインストール方法を調べよう。
+
+### geth をインストールする
+
+- brew tap ethereum/ethereum
+- brew install ethereum
+
+- geth -h を入力して確認する。図のような表示が出ればインストール完了。
+
+### nodejs と npm
+
+- brew install node
+
+- node -v でインストールが成功したか確認する。
+
+- npm -v
+
+### truffle をインストールする
+
+- npm install -g truffle
+
+- truffle -v でインストールが成功したか確認する。
+
+### Ganache をインストールする
+
+- ブラウザーで次のリンクを開く：<https://www.trufflesuite.com/ganache>
+
+- Ganache for MacOS をダウンロードし、dmg ファイルを開いて手順に従う。
+
+- ソフトを起動すると、以下の図のようにデバッグできる。
+
+![Ganache をインストールする](https://cdn.bsatoshi.com/2019/12/14/15763116506866.jpg)
+
+### VsCode をインストールする
+
+- <https://code.visualstudio.com/> を開き、ダウンロードして起動する。
+
+- 拡張機能をインストールする。まず手順 1 の場所をクリックし、入れたい拡張機能の名前を検索して install をクリックする。
+
+![VsCode をインストールする](https://cdn.bsatoshi.com/2019/12/14/15763119152803.jpg)
+
+### 最初の dapp を作成する
+
+- 上記のソフトがインストール済みであることを確認し、Ganache を開く。割り当てられたテストネットのアカウントと残高が表示される。
+
+- ターミナルを開き、ディレクトリを作成する：mkdir blockchain-test
+- cd blockchain-test
+- 先ほどインストールした truffle でプロジェクトを作成する。サンプルが付属する truffle box をおすすめする。ドキュメントと既存のプロジェクトはこちら：<https://www.trufflesuite.com/boxes>
+
+- 今回は [pet-shop](https://www.trufflesuite.com/boxes/pet-shop) を使う。まず sudo truffle unbox pet-shop を実行する。
+
+![最初の dapp を作成する](https://cdn.bsatoshi.com/2019/12/14/15763125307985.jpg)
+
+- 作成されたプロジェクトのディレクトリは以下のとおり。
+
+![最初の dapp を作成する](https://cdn.bsatoshi.com/2019/12/14/15763126268873.jpg)
+
+- contracts/ : すべてのスマートコントラクトの Solidity コードを含む。サンプルの Migrations.sol コントラクトは後で紹介する。
+
+- migrations/ : 主に Truffle がスマートコントラクトをデプロイするためのマイグレーションコマンド群。
+
+- test/ : JavaScript と Solidity のテストケースを含む。
+
+- truffle-config.js : ポート、テストネット、メインネットなどの Truffle 設定。
+
+- node_modules ： インストールされた基本パッケージ。
+
+- bs-config.json:スマートコントラクトのコンパイル関連設定。
+
+- src：プロジェクトのメインエントリーファイル。
+
+- 以下を順番に実行する：
+  - truffle compile
+  - truffle migrate
+  - truffle test
+  - npm run dev
+
+- アプリケーションが起動しているのを確認できる：
+
+![truffle最初の dapp を作成する](https://cdn.bsatoshi.com/2019/12/14/15763132463521.jpg)
+
+- 通常はブラウザーが自動的に開く。<http://localhost:3000> に直接アクセスして結果を見ることもできる。
+
+![truffle最初の dapp を作成する](https://cdn.bsatoshi.com/2019/12/14/15763132695654.jpg)
+
+- <http://localhost:3001> にアクセスすると、以下の図のようにスマートコントラクトとのやり取りと現在の dapp の動作状況を確認できる。
+
+![truffle最初の dapp を作成する](https://cdn.bsatoshi.com/2019/12/14/15763134408246.jpg)

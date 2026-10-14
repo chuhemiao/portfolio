@@ -1,0 +1,462 @@
+---
+title: 'Quantus（QTC）：マイニングプールの現状と接続ガイド'
+publishedAt: '2026-10-13'
+summary: 'Quantus は Kryptex、LuckyPool、Quanpool、K1Pool などの GPU マイニングプールに対応しています。集中度、手数料、報酬方式を比較し、SRBMiner、HiveOS、K1Pool、自前ノードの接続と安全設定を説明します。'
+slug: 'quantus-qtc-mining-pools-setup-guide-ja'
+category: 'research'
+language: 'ja'
+translationKey: 'quantus-qtc-mining-pools-setup-guide'
+sourceSlug: 'quantus-qtc-mining-pools-setup-guide'
+researchProjectSlug: 'quantus-qtc-post-quantum-payment-l1-research'
+---
+
+## TL;DR
+
+**2026-10-12 UTC 時点**で、$QTC に対応する GPU マイニングプールは複数あります。比較的大きなプールには **Kryptex、LuckyPool、Quanpool、K1Pool、JetskiPool、Qelvpool** があります。
+
+まず動かしてみたい場合の選択肢は次のとおりです。
+
+- **最も手軽：Kryptex**。地域別接続先、SRBMiner 設定、HiveOS 手順がそろっています。
+- **集中を抑える：LuckyPool または Quanpool**。
+- **アカウント管理が必要：K1Pool**。
+- **ノードを自分で運用：公式の `quantus-node + quantus-miner`**。プールに依存しませんが、運用負担は大きくなります。
+
+注意点として、**公式 `quantus-miner` の主な接続先は、ローカル Quantus ノードの QUIC マイニングサービスです。通常のプールの Stratum アドレスへ直接接続するソフトではありません。** プールでは、各プールが対応する SRBMiner、Krig、BzMiner などを使います。
+
+---
+
+## 利用可能なプール
+
+プールの状態とハッシュレートは頻繁に変わります。以下は **2026-10-12 UTC 前後の公開データ**です。手数料や最低支払額も変わり得るため、開始前にプールのページを確認してください。
+
+### 主なプール
+
+| プール | 確認されたハッシュレート | 手数料／方式 | 接続方法 | 向いている利用者 |
+|---|---:|---|---|---|
+| **Kryptex** | 約28.7 TH/s。確認できたプールの中で高い比率 | 公式ガイドでは PROP／SOLO とも約1%。プール一覧では3%で、集計基準に差があります | `qtc-<region>.kryptex.network:7049` | 初心者、Windows、HiveOS |
+| **LuckyPool** | 約7.7 TH/s | 約1%、PROP | プールのページから設定を取得 | 単一プールへの集中を減らしたい人 |
+| **Quanpool** | 約1.89 TH/s | 約1%、PPLNS | ウォレットを入力し、生成された最新コマンドをコピー | ローカルノードを運用したくない人 |
+| **K1Pool** | 約113.9 GH/s | 約1%、PPLNS | `eu/us/cn.quantus.k1pool.com:5660` | プールのアカウント管理が必要な人 |
+| **JetskiPool** | 約108.7 GH/s | 約1%、PPLNS | プール側のページから取得 | 小規模運用、予備プール |
+| **Qelvpool** | 独自ページでは約6.27 GH/s | 1%、PPLNS。最低支払額は約0.10 $QTC、毎時支払い | ウェブページで設定 | 独立した小規模プールを使いたい人 |
+
+ハッシュレートの出典は [MiningPoolStats — Quantus](https://miningpoolstats.stream/quantus) です。当時の全ネットワーク推定は約 **48.6 TH/s** でしたが、約 **20%** は既知のプールに帰属していません。公式統計ではなく、公開一覧の推定値として扱います。
+
+各プールのページ：
+
+- [Kryptex Quantus Pool](https://pool.kryptex.com/qtc)
+- [LuckyPool Quantus](https://quantus.luckypool.io/)
+- [Quanpool](https://quanpool.com/)
+- [K1Pool Quantus](https://k1pool.com/pool/quantus)
+- [Qelvpool Quantus](https://qelvhash.com/pool/quantus)
+
+MiningPoolStats には RabbitMiner、Himpool、Pooly、Suprnova、NushyPool、RPlant、AriaBrain、C3Pool、AlphaPool、QuicPool、SkyPool、CoinXPool、F4Pool、NurseryPool など、小規模または SOLO のプールも掲載されています。ただし、当時のハッシュレートが非常に小さい、あるいはゼロのプールもありました。「Quantus 対応」という表示だけで判断せず、最近のブロック、マイナー数、支払履歴、実際のハッシュレートを確認します。
+
+### プール選びの考え方
+
+Kryptex のシェアは、確認できたプールの中で明らかに高くなっています。集中を抑えるなら、次の構成を検討できます。
+
+- 主力を **LuckyPool または Quanpool** にする。
+- Kryptex を予備として残す。
+- K1Pool、Qelvpool は小規模テストに使う。
+- 表面上の手数料だけでなく、**プール規模、最近のブロック、最低支払額、支払履歴**も見る。
+
+---
+
+## 方法1：Kryptex ですぐに始める
+
+初めて $QTC を掘る人に向いた方法です。完全な Quantus ノードは不要で、ウォレット、対応 GPU、マイニングソフトがあれば始められます。
+
+### 1. ウォレットを準備する
+
+公式 Quantus Wallet でウォレットを作成または復元し、`qz...` で始まる Quantus アドレスを用意します。
+
+公式の採掘手順では、報酬の受取先は **Wormhole アドレス**です。自前ノードの場合は Wormhole アドレスを別途生成する必要があります。プールは通常の Quantus ウォレットアドレスを受け付けることが多いものの、報酬を長期間取引所に直接送るより、自分で管理するウォレットを使うほうがよいでしょう。[Quantus Mining Guide](https://docs.quantus.com/guides/mining/) [Quantus Wallet](https://www.quantus.com/wallet/)
+
+### 2. ソフトを選ぶ
+
+Kryptex の採掘ガイドには、主に次のソフトが掲載されています。
+
+- **SRBMiner-MULTI**：NVIDIA と AMD RDNA GPU に対応。
+- **Krig Miner**：Kryptex のソフトで、AMD と NVIDIA に対応。
+- HiveOS ではカスタムマイナー設定を使用可能。
+
+Kryptex の説明では、NVIDIA RTX 3000 シリーズ以降、AMD RX 6000 シリーズ以降が実用上適しています。GPU ごとの効率は実測が必要です。[Kryptex Quantus Mining Guide](https://pool.kryptex.com/articles/how-to-mine-quantus-en)
+
+### 3. Windows で SRBMiner を使う
+
+SRBMiner をダウンロードして展開し、フォルダ内に `mine-qtc.bat` を作成します。以下のウォレット部分を自分のアドレスに置き換えてください。
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet qzYOUR_Quantus_ADDRESS ^
+  --worker rig01
+```
+
+`qtc-eu.kryptex.network:7049` は、近い地域の接続先に変更します。
+
+| 地域 | アドレス |
+|---|---|
+| グローバル | `qtc.kryptex.network:7049` |
+| ヨーロッパ | `qtc-eu.kryptex.network:7049` |
+| 北米 | `qtc-us.kryptex.network:7049` |
+| 南米 | `qtc-br.kryptex.network:7049` |
+| シンガポール | `qtc-sg.kryptex.network:7049` |
+| 香港 | `qtc-hk.kryptex.network:7049` |
+| ロシア | `qtc-ru.kryptex.network:7049` |
+| 中東 | `qtc-ae.kryptex.network:7049` |
+
+SSL を使う場合は、次を追加します。
+
+```bat
+--tls true
+```
+
+設定例：
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-hk.kryptex.network:7049 ^
+  --wallet qzYOUR_Quantus_ADDRESS ^
+  --worker 4090-rig01 ^
+  --tls true
+```
+
+次のファイルをダブルクリックして実行します。
+
+```text
+mine-qtc.bat
+```
+
+アドレスのページに安定したハッシュレートと有効シェアが表示されるまで、通常 **10–15分**ほどかかります。
+
+### 4. SOLO モード
+
+Kryptex は SOLO に対応しています。ウォレットアドレスの前に `solo:` を付けます。
+
+```bat
+SRBMiner-MULTI.exe ^
+  --disable-cpu ^
+  --algorithm quantus ^
+  --pool qtc-eu.kryptex.network:7049 ^
+  --wallet solo:qzYOUR_Quantus_ADDRESS ^
+  --worker solo-rig01
+```
+
+SOLO では収入が安定しません。
+
+- ブロックを発見したときに、ブロック報酬全体を受け取ります。
+- 発見できない間は、長期間収入がない場合があります。
+- 小規模なハッシュレートには、通常 PROP または PPLNS のほうが適します。
+- 大きなハッシュレートがあり、収入の変動を受け入れられる場合に向きます。
+
+### 5. HiveOS
+
+Kryptex では、Quantus は HiveOS の標準内蔵コインとして用意されていません。ただし、プールのページにカスタム Flight Sheet があります。
+
+1. [Kryptex Quantus Pool](https://pool.kryptex.com/qtc) を開く。
+2. **HiveOS** を選ぶ。
+3. SRBMiner と地域を選ぶ。
+4. 生成された Flight Sheet JSON をコピーする。
+5. HiveOS で **Flight Sheets → Import from Clipboard** を選ぶ。
+6. 自分の $QTC ウォレットを選ぶ。
+7. 採掘機に適用する。
+
+別のコインの設定をそのまま使わず、アルゴリズム欄が次の値であることを確認します。
+
+```text
+quantus
+```
+
+---
+
+## 方法2：K1Pool を使う
+
+プールアカウント、統計画面、個別の支払設定が必要な利用者向けです。
+
+### 1. サーバーを選ぶ
+
+K1Pool が公開している Quantus の接続先：
+
+| 地域 | アドレス |
+|---|---|
+| ヨーロッパ | `eu.quantus.k1pool.com:5660` |
+| 米国 | `us.quantus.k1pool.com:5660` |
+| 中国 | `cn.quantus.k1pool.com:5660` |
+| ロシア／ヨーロッパ予備 | `ru.quantus.k1pool.org:5660` |
+
+K1Pool の説明では、これらのポートは GPU 採掘に対応し、一部は通常の TCP と SSL の両方を受け付けます。開始前に、ページで生成される設定を使うのがよいでしょう。[K1Pool Quantus](https://k1pool.com/pool/quantus)
+
+### 2. アカウントを登録する
+
+K1Pool では匿名採掘はできません。手順は次のとおりです。
+
+1. [K1Pool](https://k1pool.com/pool/quantus) に登録またはログインする。
+2. プール内部のアカウントアドレスを取得する。
+3. そのアドレスを接続設定の wallet に使う。
+4. 管理画面に、実際の Quantus 報酬受取ウォレットを登録する。
+5. 最低支払額を設定する。
+6. 採掘開始後、5–10分待って Worker を確認する。
+
+SRBMiner の設定は、おおむね次の形式です。
+
+```bat
+SRBMiner-MULTI.exe ^
+  --algorithm quantus ^
+  --pool eu.quantus.k1pool.com:5660 ^
+  --wallet YOUR_K1POOL_ACCOUNT.worker01
+```
+
+K1Pool に掲載されている対応ソフト：
+
+- SRBMiner-MULTI
+- Suprminer
+- BzMiner
+- PeakMiner
+- Krig Miner
+
+アカウント、ウォレット、Worker の欄は更新される可能性があります。[How to Start Mining](https://k1pool.com/pool/quantus/how-to-start) ページで生成されるコマンドをコピーするほうが、すべて手入力するより確実です。
+
+---
+
+## 方法3：Quanpool や小規模プールを使う
+
+Quanpool は、ローカルノードを運用せず、比較的小さなプールを利用したい人に向いています。
+
+基本手順：
+
+1. [Quanpool](https://quanpool.com/) を開く。
+2. 自分の `qz...` Quantus アドレスを入力する。
+3. GPU マイナーを選ぶ。
+4. PPLNS を選ぶ。
+5. 生成された最新の採掘コマンドをコピーする。
+6. `.bat`、Shell、HiveOS のカスタム設定に貼り付ける。
+7. Worker がオンラインになるまで待つ。
+
+Quanpool は現在のプール設定に応じてコマンドを生成するため、Stratum アドレスを推測して手入力することは勧めません。コミュニティーの Quantus ガイドも、ページの **Start Mining** コマンドをそのままコピーするよう案内しています。[コミュニティー採掘ガイド](https://github.com/0xmoei/quantus/blob/master/README.md)
+
+Qelvpool のページには次の条件が掲載されています。
+
+- PPLNS 手数料は約1%。
+- 最低支払額は約0.10 $QTC。
+- 毎時支払い。
+- SRBMiner-MULTI と qelvminer に対応。
+
+Kryptex への依存を減らすなら、Quanpool、LuckyPool、Qelvpool を試すことができます。ただし、有効シェアと支払履歴を少なくとも数時間観察してから判断します。
+
+---
+
+## 方法4：自前ノードと公式マイナー
+
+自前ノードではプール手数料は不要ですが、次の負担が生じます。
+
+- ノードの同期。
+- ディスクとネットワーク。
+- ノードのアップグレード。
+- miner／node のバージョン整合。
+- ファイアウォールと鍵の管理。
+- ブロックが見つからないことによる収入変動。
+
+公式の現在の対象は **mainnet** であり、終了した `planck` テストネットではありません。ノードは少なくとも **v1.0.1+** を使います。Linux ARM64 には公式のネイティブ `quantus-miner` 配布がなく、Linux x86_64、macOS、WSL2 の利用が推奨されています。[公式 Mining Guide](https://docs.quantus.com/guides/mining/)
+
+### 1. 自動インストール
+
+Linux、macOS、WSL2 では、次のように実行します。
+
+```bash
+curl -fsSL https://docs.quantus.com/scripts/quantus-mining.sh -o quantus-mining.sh
+chmod +x quantus-mining.sh
+
+./quantus-mining.sh setup
+./quantus-mining.sh start
+```
+
+スクリプトが行う処理：
+
+- Quantus ノードをダウンロード。
+- 外部マイナーをダウンロード。
+- ノード識別情報を生成。
+- Wormhole mining 設定を生成。
+- `CHAIN=mainnet` を使用。
+- ノードとマイナーを起動。
+
+設定の確認：
+
+```bash
+./quantus-mining.sh config show
+```
+
+古い Planck 設定がある場合は、メインネットへ切り替えます。
+
+```bash
+./quantus-mining.sh config set CHAIN mainnet
+./quantus-mining.sh setup --force
+```
+
+Planck のチェーンデータを mainnet へコピーしないでください。また、次のオプションは使いません。
+
+```bash
+--force-authoring
+```
+
+これはメインネットの採掘に参加するための必須オプションではありません。
+
+### 2. Wormhole 報酬アドレスを生成する
+
+採掘報酬は通常の透明アドレスではなく、Wormhole アドレスに送られます。
+
+Quantus ウォレットがすでにある場合は、同じ24語のシードフレーズから派生させる方法が推奨されています。
+
+```bash
+./quantus-node key quantus --scheme wormhole --words
+```
+
+コマンドからシードフレーズの入力を求められます。シードフレーズをコマンド行へ直接書かないでください。
+
+独立した採掘ウォレットを新規作成する場合：
+
+```bash
+./quantus-node key quantus --scheme wormhole
+```
+
+保存が必要な出力：
+
+| 出力 | 用途 |
+|---|---|
+| Address | 報酬の入金を確認 |
+| Inner Hash | ノードの `--rewards-inner-hash` に指定 |
+| Secret phrase | ウォレットと報酬を復元する唯一の情報 |
+
+**シードフレーズ、Inner Hash、マイナー認証ファイルを他人へ送らないでください。**
+
+### 3. ノードを手動起動する
+
+Linux の例：
+
+```bash
+RUST_LOG=info ./quantus-node \
+  --validator \
+  --chain mainnet \
+  --node-key-file ~/.quantus/node_key.p2p \
+  --rewards-inner-hash <YOUR_INNER_HASH> \
+  --miner-listen-port 9833
+```
+
+`--miner-listen-port 9833` はローカル採掘サービスを開き、ノード内蔵の CPU 採掘を無効にします。
+
+### 4. 公式外部マイナーを起動する
+
+Linux の標準チェーンディレクトリ：
+
+```bash
+CHAIN_DIR="$HOME/.local/share/quantus-node/chains/mainnet"
+```
+
+別のターミナルで起動します。
+
+```bash
+./quantus-miner serve \
+  --node-addr 127.0.0.1:9833 \
+  --auth-token-file "$CHAIN_DIR/miner-auth-token" \
+  --tls-cert-sha256-file "$CHAIN_DIR/miner-tls-cert-sha256" \
+  --gpu-devices 1 \
+  --cpu-workers 0
+```
+
+オプションの意味：
+
+- `--gpu-devices 1`：1番の GPU を使用。
+- `--gpu-devices 0,1`：複数の GPU を使用。
+- `--cpu-workers 0`：CPU 採掘を無効化。
+- CPU だけを使う場合は、`--cpu-workers` を増やす。
+- `miner-auth-token` と `miner-tls-cert-sha256` を公開スクリプトに含めたり、GitHub にコミットしたりしない。
+
+公式説明では、ノードとマイナーは `quantus-miner/2` プロトコルを合わせる必要があります。両者は別々にリリースされるため、二つのプロジェクトの `latest` を無条件に組み合わせてはいけません。[Quantus QPoW Docs](https://docs.quantus.com/deep-dives/qpow/) [Quantus Miner Releases](https://github.com/Quantus-Network/quantus-miner/releases)
+
+---
+
+## 監視、収益、安全性
+
+### ノードの監視
+
+公式ドキュメントにある監視先：
+
+- ノードのテレメトリー：[telemetry.quantus.cat](https://telemetry.quantus.cat/)
+- エクスプローラー：[explorer.quantus.com](https://explorer.quantus.com/)
+- ローカル Prometheus：`http://localhost:9615/metrics`
+- ローカル RPC：`http://localhost:9944`
+
+Linux でログを確認：
+
+```bash
+tail -f ~/.local/share/quantus-node/chains/mainnet/network/quantus-node.log
+```
+
+macOS の一般的なパス：
+
+```bash
+~/Library/Application Support/quantus-node/chains/mainnet/
+```
+
+### よくある問題
+
+| 問題 | 最初に確認する項目 |
+|---|---|
+| マイナーがすぐ終了する | ノードとマイナーのバージョン、認証 token、TLS 指紋 |
+| `no application protocol` | マイニングプロトコルのバージョン不一致 |
+| ノード同期が遅い | ディスク、ネットワーク、Peer 数、ファイアウォール |
+| ハッシュレートがあるのに報酬がない | 報酬アドレス、Inner Hash、ノード同期の完了 |
+| Pool Worker がオフライン | Stratum アドレス、`quantus` アルゴリズム、ウォレット形式、ポート |
+| Windows の同期が止まる | Windows Defender が RocksDB をスキャンしている可能性。チェーンデータのディレクトリを除外する方法を検討 |
+| Linux ARM64 で起動できない | 現在、公式ネイティブ ARM64 miner がないため、x86_64 または macOS を使用 |
+
+### ファイアウォール
+
+公式の推奨：
+
+- 主に公開するのは P2P ポート `30333`。
+- 採掘用 `9833/UDP` はローカルまたはプライベートネットワークに限定。
+- RPC `9944` はローカルに限定。
+- Prometheus `9615` はローカルに限定。
+- リモート GPU 採掘には WireGuard、Tailscale、VPC などを使用。
+- **9833 を `0.0.0.0/0` へ直接公開しない。**
+
+### プールの収益見積もりをそのまま使わない
+
+$QTC のブロック報酬は現在の供給量に応じて減少します。公式の式は次のとおりです。
+
+```text
+Block Reward = (MaxSupply - CurrentSupply) / EmissionDivisor
+```
+
+メインネットの `EmissionDivisor` は `50,000,000` で、Bitcoin のような半減期はありません。収益は次の要因で変わります。
+
+- GPU の実測ハッシュレート。
+- ネットワーク全体のハッシュレート。
+- プール手数料。
+- 電気料金。
+- stale share と拒否率。
+- $QTC の価格。
+- プールの支払ルール。
+- 機器の消費電力と冷却。
+
+GPU 型番、電気料金、実際の消費電力が分からない状態で、ウェブページの「1日あたり収益」だけを根拠にハードウェアを購入することは勧めません。
+
+---
+
+## 結論
+
+多くの利用者には、次の順序が適しています。
+
+1. 公式 Quantus ウォレットを作成する。
+2. **Kryptex + SRBMiner** でまず動作を確認する。
+3. 30–60分、有効シェア、拒否率、消費電力を観察する。
+4. プールの分散を重視するなら、一部を **LuckyPool、Quanpool、Qelvpool** へ移す。
+5. ノードの保守と更新を引き受けられる場合に、自前ノードを検討する。
+
+初心者には、まずプール方式が適しています。自前ノードは、完全な管理権を求め、同期と運用のコストを引き受けるマイナー向けです。

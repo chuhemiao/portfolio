@@ -1,5 +1,5 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
-import { getBlogPosts, getPostsForTopic, getPostHref } from '@/data/blog';
+import { getBlogPosts, getPostsForTopic, getPostHref, getLocalizedPosts } from '@/data/blog';
 import { TOPICS } from '@/data/topics';
 import { getTranslator, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
@@ -42,13 +42,13 @@ export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
   // blog-index.json is already sorted newest-first by the content compiler.
   const posts = await getBlogPosts();
-  const sortedPosts = posts;
+  const sortedPosts = getLocalizedPosts(posts, locale);
   const topicPostSlugs = Object.fromEntries(TOPICS.map((topic) => [topic.slug, getPostsForTopic(topic.slug).map((post) => post.slug)]));
 
   const blogJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: `${DATA.name} Blog`,
+    name: `${DATA.name} ${t('Blog', '博客', 'ブログ')}`,
     description: t('My thoughts on software development, life, crypto, and more.', '关于软件开发、生活与加密资产的思考。', 'ソフトウェア開発、暮らし、暗号資産についての考察。'),
     inLanguage: locale,
     url: `${DATA.url}/${locale}/blog`,
@@ -62,8 +62,8 @@ export async function renderPage(locale: Locale) {
   const itemListJsonLd = {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: `${DATA.name} Blog Posts`,
-    description: 'Articles on Web3, DeFi, crypto investing, and blockchain technology.',
+    name: `${DATA.name} ${t('Blog Posts', '博客文章', 'ブログ記事')}`,
+    description: t('Articles on Web3, DeFi, crypto investing, and blockchain technology.', '关于 Web3、DeFi、加密资产投资和区块链技术的文章。', 'Web3、DeFi、暗号資産投資、ブロックチェーン技術に関する記事。'),
     url: `${DATA.url}/${locale}/blog`,
     itemListElement: sortedPosts.map((post, index) => ({
       '@type': 'ListItem',

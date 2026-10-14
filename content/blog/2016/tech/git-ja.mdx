@@ -1,0 +1,127 @@
+---
+title: 'Git の使い方'
+publishedAt: '2016-06-28'
+summary: '隠しディレクトリ .git と、リポジトリの基本操作。'
+category: 'tech'
+slug: 'git-ja'
+language: 'ja'
+translationKey: 'git'
+sourceSlug: 'git'
+---
+
+## Git のインストール
+
+`homebrew http://brew.sh/`
+
+`git config --global user.name 'chuhemiao'`
+
+`git config --global user.email 'yifeng826@vip.qq.com'`
+
+## リポジトリを作る
+
+ディレクトリを作り、Git の管理対象にします。
+
+`mkdir gitrepository`
+
+`git init`
+
+隠しディレクトリ `.git` が作られます。
+
+## ファイルを追加する
+
+1. 新しいファイルを作成：
+
+`touch README.md`
+
+`vim READEME.md`
+
+`Welcome to git world!!!`
+
+`git status / git status -s`
+
+`git add READEME.md`
+
+`git commit -m 'add a reademe file'`
+
+2. ファイルを変更する場合も、同じ流れです。
+
+`git diff filename` で変更を確認できます。`git diff HEAD -- readme.txt` は、作業ツリーと最新コミットとの差を表示します。
+
+## バージョンを戻す
+
+`git reset HEAD filename`
+
+`--hard` は慎重に使います。
+
+`git reset --hard HEAD^ `：前のバージョンへ戻る。
+
+`git reset --hard HEAD~n`：n個前へ戻る。存在しなければエラー。
+
+`git reset --hard commitid`：指定したコミットへ戻る。
+
+`git revert commitid`
+
+1回コミットし、その後2回変更した場合、履歴は次で確認します。
+
+`git log --pretty=oneline`
+
+`git reflog` は操作を記録し、戻り先を決めるための commit ID を探すのに使います。
+
+## 作業ツリーとステージング領域
+
+1. 作業ツリーは、作成した `gitrepository` です。
+2. `git init` が生成した `.git` がリポジトリで、ステージング領域を含みます。
+
+`.git` に含まれるもの：
+
+- stage、ステージング領域。
+- 最初のブランチ `master`。
+- `master` を指す `HEAD`。
+
+`git add filename` は、作業ツリーの変更を stage に追加します。
+
+`git commit` は、stage の内容を現在のブランチ、ここでは `master` に記録します。
+
+## 変更を管理する
+
+変更後に `git add ,git commit` を行って記録します。
+
+## 変更を取り消す
+
+`git checkout -- README.md` は、`README.md` の作業ツリー内の変更を取り消します。
+
+まだ stage に追加していなければ、リポジトリと同じ状態へ戻ります。
+
+`git reset HEAD README.md ` は変更を stage から外し、作業ツリーへ戻します。
+
+stage に追加した後に再び変更した場合は、stage に追加したときの状態へ戻ります。
+
+`git commit` 済みなら、バージョンを戻します。
+
+つまり、最後の `git commit` または `git add` の状態に戻す操作です。
+
+## ファイルを削除する
+
+`rm README.md`
+
+`git rm README.md`
+
+`git add` のみでコミット前の場合、このメモでは `git rm -f README.md` を復元不能として扱っています。`rm README.md` で消した場合は、`git checkout -- README.md` で復元します。
+
+stage の内容を戻す：
+
+`git reset HEAD README.md`
+
+`git checkout -- README.md`
+
+これで復元します。
+
+## リモートを追加する
+
+`git remote add origin https://github.com/chuhemiao/baqiye.git`
+
+`git push -u origin master`
+
+`git pull`：リモートから最新のコードを取得。
+
+`git clone`：リモートのコードを複製。

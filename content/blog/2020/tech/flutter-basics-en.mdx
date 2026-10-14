@@ -1,0 +1,158 @@
+---
+title: "Flutter basics"
+publishedAt: "2020-05-29"
+summary: "Stateful widgets, navigation, package and asset management, and state management."
+category: "tech"
+slug: "flutter-basics-en"
+language: "en"
+translationKey: "flutter-basics"
+sourceSlug: "flutter-basics"
+---
+
+### Stateful widget and Stateless widget
+
++ Stateful and stateless widgets differ in two ways:
+    + A Stateful widget can have state that changes during its lifecycle, whereas a Stateless widget is immutable.
+    + A Stateful widget consists of at least two classes:
+        - A StatefulWidget class.
+        - A State class. The StatefulWidget class itself is immutable, but the state held in State may change during the widget lifecycle.
+
+### Navigator and MaterialPageRoute: route management
+
++ In mobile development, a Route usually means a page, matching the route concept in single-page web apps. It typically corresponds to an Activity on Android or a ViewController on iOS. Route management manages transitions between pages and is also called navigation management.
+
++ Navigation maintains a route stack. Pushing a route opens a new page, and popping it closes the page. Route management primarily manages this stack.
+
+// 路由跳转例子，调用Navigator.push方法，return到一个新的路由页面（NewRoute）
+
+onPressed: () {
+  //导航到新路由   
+  Navigator.push( context,
+   MaterialPageRoute(builder: (context) {
+      return NewRoute();
+   }));
+},
+
++ Routes: MaterialPageRoute
+    - MaterialPageRoute extends PageRoute, an abstract class representing a modal route covering the entire screen. PageRoute defines interfaces and properties for route construction and transition animations. The Material component library provides MaterialPageRoute with transitions matching each platform:
+
+    - On Android, a new page slides from the bottom toward the top. On closing, the current page slides down and disappears, revealing the previous page.
+    - On iOS, a new page slides in from the right until fully visible, while the previous page slides left and disappears. Closing reverses this: the current page exits to the right and the previous page enters from the left.
+
++ MaterialPageRoute parameters
+
+MaterialPageRoute({
+    WidgetBuilder builder,
+    RouteSettings settings,
+    bool maintainState = true,
+    bool fullscreenDialog = false,
+})
+
+builder is a WidgetBuilder callback that constructs the page content and returns a widget. We usually implement it to return an instance of the new route.
+
+settings contains route configuration such as its name and whether it is the initial route (home page).
+
+maintainState: by default, pushing a new route keeps the previous route in memory. Set maintainState to false to release its resources when it is no longer needed.
+
+fullscreenDialog specifies whether the new page is a full-screen modal dialog. On iOS, true makes the page slide in from the bottom rather than horizontally.
+
++ Routes: Navigator
+    - Navigator manages routes and provides methods to open and exit pages. It uses a stack of active routes, with the displayed page usually at the top. Here are its two most commonly used methods:
+        +  Future push(BuildContext context, Route route)
+        +  Pushes the given route (opens a new page) and returns a Future that receives the result when the route is popped (closed).
+        +  bool pop(BuildContext context, [ result ])
+        +  Pops the top route. result is the data returned to the previous page when the page closes.
+
++ Check login status: the onGenerateRoute property
+    - It may be called when opening a named route. With Navigator.pushNamed(...), a registered route uses its builder from the route table; onGenerateRoute is called only when the name is not registered there.
+    - Global preprocessing before route transitions.
+
+### pubspec: package management
+
++ Flutter uses pubspec.yaml in the project root to manage third-party dependencies.
+
++ YAML is an intuitive, human-readable format. Compared with XML or JSON, its syntax is simple and easy to parse, so it is often used for configuration, including Flutter configuration.
++ YAML example and field descriptions:
+    - name: application or package name.
+    - description: description of the app or package.
+    - version: app or package version.
+    - dependencies: other packages or plugins the app or package depends on.
+    - dev_dependencies: development tools, rather than dependencies of the Flutter app itself.
+    - flutter: Flutter configuration options.
++ dependencies are compiled with the app source into the final package. dev_dependencies are tools used during development to improve development and testing efficiency, such as Flutter automated testing packages.
+
+name: flutter_in_action
+description: First Flutter application.
+
+version: 1.0.0+1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^0.1.2
+  // 新添加的依赖
+  english_words: ^3.1.3
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+
++ To use a new package, add it under dependencies and run: flutter packages get
+### pubspec: asset management
++ assets specifies files to include in the application. Each asset path is relative to pubspec.yaml. Declaration order does not matter, and assets can live in any directory (assets in this example).
++ flutter:
+  assets:
+    - images/my_icon.png
+    - images/background.png
+
++ Load an asset image configured in pubspec; either method works.
+
+Image(
+  image: AssetImage("images/my_icon.png"),
+  width: 100.0
+);
+
+Image.asset("images/avatar.png",
+  width: 100.0,
+)
+
++ Load a network image:
+
+Image(
+  image: NetworkImage(
+      "https://avatars2.githubusercontent.com/u/20411648?s=460&v=4"),
+  width: 100.0,
+)
+
+Image.network(
+  "https://avatars2.githubusercontent.com/u/20411648?s=460&v=4",
+  width: 100.0,
+)
+
++ Image parameters
+
+const Image({
+  ...
+  this.width, //图片的宽
+  this.height, //图片高度
+  this.color, //图片的混合色值
+  this.colorBlendMode, //混合模式
+  this.fit,//缩放模式
+  this.alignment = Alignment.center, //对齐方式
+  this.repeat = ImageRepeat.noRepeat, //重复方式
+  ...
+})
+
+### Pub repository
+
++ Pub (https://pub.dev/ ) is Google's official Dart package repository, similar to npm for Node or jcenter for Android. You can find packages and plugins there, or publish your own.
+
+### State management
+
++ These official guidelines can help you decide:
+
+    - For user data, such as checkbox selection or slider position, the parent widget should preferably manage state.
+    - For visual state, such as colors and animations, the widget itself should preferably manage it.
+    - State shared by multiple widgets should preferably be managed by their common parent.

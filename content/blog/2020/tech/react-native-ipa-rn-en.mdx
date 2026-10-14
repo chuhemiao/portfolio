@@ -1,0 +1,55 @@
+---
+title: "React Native Android and IPA packaging guide, with RN tips"
+publishedAt: "2020-07-19"
+summary: "Set the container width and position the text; its CSS lineHeight should exceed the outer text height."
+category: "tech"
+slug: "react-native-ipa-rn-en"
+language: "en"
+translationKey: "react-native-ipa-rn"
+sourceSlug: "react-native-ipa-rn"
+---
+
+### CSS tip: vertical text
++ Set the outer container width, position the text, and set its CSS line height (`lineHeight` should exceed the outer text height).
+### iOS
++ `error Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65. To debug build logs further, consider building your app with Xcode.app, by opening cleaaan.xcworkspace`
++ Code 65 may be related to iOS package management: `cd ios && pod repo update && pod install && pod update`.
++ If the iOS keyboard covers the content, use the APSL component: `[react-native-keyboard-aware-scrollview](https://github.com/APSL/react-native-keyboard-aware-scroll-view)`.
+
+### JavaScript
++ `TypeError: Invalid attempt to spread non-iterable instance`
++ A possible cause is assigning or converting data and objects in a way that makes them non-iterable. Check assignments between the API response and the data defined in the current state: is `[...aaa]` used, where aaa is the state array or object? The `...` may be causing the error; try removing it.
+
+### Package a React Native iOS IPA
++ `mkdir release_ios`
++ `npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output release_ios/main.jsbundle --assets-dest release_ios/`
++ Add the files under `release_ios` to the Xcode project: select the project name → Add Files to the project → select `release_ios` → choose the folders option `Create folder references` → Add.
++ Add the certificate and provisioning profile, then package: Product → Archive → Distribute App. There are four choices, including iOS App Store distribution, Development testing, and Enterprise packages. Continue through the steps and export the IPA.
+
+### Package a React Native Android APK
++ 1. Generate a keystore.
++ 2. Set the Gradle variables.
++ 3. Add the signing configuration to the project's Gradle configuration.
++ 4. `cd  android `
++ 5. `./gradlew assembleRelease`
++ keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+For detailed steps, see:
++ [React Native official APK packaging guide](https://www.react-native.cn/docs/signed-apk-android)
++ [Signing and packaging an APK in newer React Native releases](https://www.devio.org/2019/11/08/react-native-Release-APP-Signature-Package-APK/)
++ Notice: sudo may be required on macOS.
+    - Run sudo ./gradlew assembleRelease.
+
+### HTTP requests fail after installing an Android release APK
++ By default, a React Native release APK on Android 9.0 or later cannot make HTTP requests.
+
+![AndroidManifest.xml](media/15944435878136/15951436861022.jpg)
+
++ Edit `/当前项目名/android/app/src/main/AndroidManifest.xml` and add `android:usesCleartextTraffic="true"` to application.
+
+### RN development references and recommended React resources
++ [React Native Chinese website](https://www.react-native.cn/)
++ [Common RN examples and demos](https://reactnativeexample.com/)
++ [React and RN techniques and RN cheat sheets; highly recommended](https://shenbao.github.io/ishehui/index.html)
++ [Essential data concepts: Store, Redux, Reducer, action, and more](https://cn.redux.js.org/)
++ [Exploring React source code](https://react.iamkasong.com/)

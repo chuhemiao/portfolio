@@ -1,0 +1,37 @@
+---
+title: composer.lock Locked During git pull
+publishedAt: '2017-10-29'
+summary: >-
+  composer.lock is locked during git pull, meaning the current file is not up to
+  date
+category: tech
+slug: git_composer_lock-en
+language: en
+translationKey: git_composer_lock
+sourceSlug: git_composer_lock
+---
+
+# composer.lock is locked during git pull, meaning the current file is not up to date
+
+1. git fetch origin
+2. git reset --hard origin/master
+3. git pull
+
+# Your local changes to the following files would be overwritten by merge
+
+```PHP 
+error: Your local changes to the following files would be overwritten by merge:
+protected/config/main.php
+Please, commit your changes or stash them before you can merge.
+``` 
+
++ Solution:
+
+	- To keep the changes made on the production server and merge only the new configuration entries, use the following:
+	- git stash
+	- git pull
+	- git stash pop
+
++ Then use git diff -w followed by the filename to check the automatic merge.
+
++ Likewise, the method above can be used to take the remote repository as the latest code.

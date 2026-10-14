@@ -1,0 +1,70 @@
+---
+title: Fix Go get Failures When Installing Gin
+publishedAt: '2019-07-23'
+summary: Problem description
+category: tech
+slug: go-gin-golang-x-en
+language: en
+translationKey: go-gin-golang-x
+sourceSlug: go-gin-golang-x
+---
+
+### 1.Problem description
+
+```
+Go get 出现超时问题：“golang unrecognized import path "golang.org/x/net   unrecognized import path "golang.org/x/sys"  Unknown SSL protocol error in connection to gopkg.in:443 "”
+```
+
+### 2.Solutions
+
++ Online solution one: download manually
+```
+mkdir $GOPATH/src/golang.org/x
+cd $GOPATH/src/golang.org/x
+git clone git@github.com:golang/text.git
+```
+
+### Solution two: configure a proxy
+
+```
+export http_proxy=https://proxyAddress:port
+export https_proxy=https://proxyAddress:port
+```
+
+### 3.Best solution
+
++ Go Mod is supported from Go 1.11, with a package-download solution using https://goproxy.io/ as a direct download proxy. Official setup:
+
++ macos/linux  
+
+```
+export GO111MODULE=on 
+export GOPROXY=https://goproxy.io
+```
+
++ On Windows, configure with PowerShell (enter this for the currently configured GOPATH)
+
+```
+$env:GO111MODULE="on"
+$env:GOPROXY="https://goproxy.io"
+```
+
+![go-gin-golang](https://cdn.bsatoshi.com/2019/07/23/72B1D829-1628-4CC9-8129-053951E159C2.png)
+
++ Include quotes here; otherwise on or the address causes an error. After this, Go get and other commands worked smoothly.
+
+### Notice： If your Go version is >=1.13, use
+
+```
+go env -w GOPROXY=https://goproxy.io,direct
+go env -w GOPRIVATE=*.corp.example.com
+```
+
+
+Gin successfully installed with Go and managed with Go mod
+
+![Install Gin with Go](https://cdn.bsatoshi.com/2019/07/23/1C3E1CAC-D142-49F0-95C8-5243B1EB701C.png)
+
+References:
+https://goproxy.io/
+[Resolve go get golang.org/x package failures in one step](https://segmentfault.com/a/1190000018264719)

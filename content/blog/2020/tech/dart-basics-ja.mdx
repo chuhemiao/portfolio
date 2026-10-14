@@ -1,0 +1,169 @@
+---
+title: "Dart の基礎"
+publishedAt: "2020-06-19"
+summary: "var キーワード、変数、関数、Future、Stream の基礎。"
+category: "tech"
+slug: "dart-basics-ja"
+language: "ja"
+translationKey: "dart-basics"
+sourceSlug: "dart-basics"
+---
+
+### 変数宣言
++ var キーワード
++ 強い型付けの言語であり、宣言後に型は変更できない。
+
+            var z;
+            z = "hello world";
+            // 下面代码在dart中会报错，因为变量t的类型已经确定为String，
+            // 类型一旦确定后则不能再更改其类型。
+            z = 1000;
+            
++ dynamic と Object
+    + Object は Dart の全オブジェクトの基底クラスであり、Function や Null を含め、すべての型が Object のサブクラスとなる。そのため、Object として宣言したオブジェクトには任意の型のデータを代入できる。dynamic も var と同じくキーワードで、宣言した変数には任意のオブジェクトを代入できる。 
+    + dynamic と Object の共通点は、後から別の型の値を代入できること。
+    + 違いは、dynamic のオブジェクトにはコンパイラーがあらゆる操作を許す一方、Object のオブジェクトでは Object のプロパティとメソッドしか使えず、それ以外はコンパイルエラーになること。         
+ dynamic t;
+ Object x;
+ t = "hello world";
+ x = 'Hello Object';
+ //下面代码没有问题
+ t = 1000;
+ x = 1000;
+ 
+ + final と const
+     + 変数の型と値を変更せず、初期化時に固定する。
+     + final と const は var でも型でもない。final 変数への設定は一度だけ。
+     + 違いは、const がコンパイル時定数で、final は初めて使うときに初期化されること。final または const を付けた変数は型を省略できる。
+
+//可以省略String这个类型声明
+final str = "hi world";
+//final String str = "hi world"; 
+const str1 = "hi world";
+//const String str1 = "hi world";
+
+### 関数
+
++ Dart は本格的なオブジェクト指向言語で、関数も Function 型のオブジェクトである。そのため、関数を変数に代入したり、他の関数に引数として渡したりできる。これは関数型プログラミングの典型的な特徴だ。
++ 関数を宣言する：
+
+bool isNoble(int atomicNumber) {
+  return _nobleGases[atomicNumber] != null;
+}
+
++ Dart の関数で戻り値の型を明示しなければ、デフォルトでは dynamic として扱われる。戻り値の型推論はない点に注意。
+
++ 式を一つだけ含む関数では、省略構文を使える。
+
+bool isNoble (int atomicNumber)=> _nobleGases [ atomicNumber ] ！= null ;
+
++ 関数を変数として扱える：
+
+var say = (str){
+  print(str);
+};
+say("hi world");
+
++ 関数を引数として渡す：
+
+void execute(var callback) {
+    callback();
+}
+execute(() => print("xxx"))
+
++ 省略可能な位置引数
+    + 引数のグループを [] で囲み、引数リストの末尾に置くと、省略可能な位置引数になる：
+
+String say(String from, String msg, [String device]) {
+  var result = '$from says $msg';
+  if (device != null) {
+    result = '$result with a $device';
+  }
+  return result;
+}
+
+テスト：say('Bob', 'Howdy'); // 結果：Bob says Howdy
+
+テスト：say('Bob', 'Howdy', 'smoke signal'); // 結果：Bob says Howdy with a smoke signal
+
++ **省略可能な名前付き引数（よく使う）**
+    + 関数の定義時に {param1, param2, …} を引数リストの末尾に置き、名前付き引数を指定する。例：
+
+//设置[bold]和[hidden]标志
+void enableFlags({bool bold, bool hidden}) {
+    // ... 
+}
+
++ 呼び出し時に名前付き引数を指定できる。例：paramName: value。
+
+enableFlags(bold: true, hidden: false);
+
+**注意：省略可能な位置引数と名前付き引数は併用できない。**
+
+### 非同期処理のサポート
+
++ Dart のライブラリには Future や Stream を返す関数が多い。これらの非同期関数は、I/O など時間のかかる処理を設定した後、処理の完了を待たずに戻る。
+
++ async と await は非同期プログラミングを支え、同期コードに似た形で非同期コードを書ける。
+
++ Future
+    - Future は JavaScript の Promise に似ており、非同期処理の最終的な成功または失敗と結果の値を表す。
+    - 非同期処理を扱い、成功したら成功時の処理を実行し、失敗したらエラーを捕捉するか後続の処理を停止する。
+    - 一つの Future が持つ結果は一つで、成功か失敗のいずれか。
+    -  Future の API の戻り値も Future なので、簡単にチェーンできる。
+
++ Future の API と特徴の例
+    - Future.then：成功時の処理
+    - Future.catchError：エラーを捕捉
+    - Future.whenComplete：リクエストの流れの中で追加の処理を行う
+    - Future.wait：すべての Future が成功するのを待って進む
+    - 結果は成功か失敗だけなので、エラーが捕捉されると then は実行されない。
+
+// 延迟2s返回结果："hi world!"
+Future.delayed(new Duration(seconds: 2),(){
+   return "hi world!";
+}).then((data){
+    // 执行成功走这
+   print(data);
+}).catchError((e){
+   //执行失败会走到这里  
+   print(e);
+}).whenComplete((){
+   //无论成功或失败都会走到这里
+});
+// wait等待结果，4s后看到hello world
+Future.wait([
+  // 2秒后返回结果  
+  Future.delayed(new Duration(seconds: 2), () {
+    return "hello";
+  }),
+  // 4秒后返回结果  
+  Future.delayed(new Duration(seconds: 4), () {
+    return " world";
+  })
+]).then((results){
+  print(results[0]+results[1]);
+}).catchError((e){
+  print(e);
+});
+
++ Async/await
+    + 同期処理の書き方で非同期コードを書く。Dart の Future が Future を返す性質を使ってチェーンでき、Async/await を直接使うこともできる。
+
+// 登陆之后保存用户信息
+task() async {
+   try{
+    String id = await login("alice","******");
+    String userInfo = await getUserInfo(id);
+    await saveUserInfo(userInfo);
+    //执行接下来的操作   
+   } catch(e){
+    //错误处理   
+    print(e);   
+   }  
+}
+
+### Stream
++  Stream も非同期イベントのデータを受け取る。Future と異なり、成功・失敗を含む複数の非同期処理の結果を受け取れる。 
++  非同期タスク中に成功や失敗のイベントを何度も発生させ、結果のデータや例外を渡せる。 
++  Stream はネットワークからのダウンロードやファイルの読み書きなど、データを繰り返し読み取る非同期タスクでよく使われる。

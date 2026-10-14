@@ -1,0 +1,35 @@
+---
+title: Nginx の問題メモ
+publishedAt: '2016-06-30'
+summary: '`Nginx [emerg]: bind() to 0.0.0.0:80 failed (98: Address already in use)`'
+category: tech
+slug: nginx_problem-ja
+language: ja
+translationKey: nginx_problem
+sourceSlug: nginx_problem
+---
+
+# `Nginx [emerg]: bind() to 0.0.0.0:80 failed (98: Address already in use)`
+ 
+1.`server name` が重複して紐づけられているという意味だが、この警告はサーバーの動作には影響しない。動作中の Nginx と読み込む新しい設定の間の重複なので、この警告は不要だということになる。
+
+2.コマンドでポート 80 を使用するプログラムを停止する
+	+ `sudo fuser -k 80/tcp`
+
+3.Nginx の設定ファイルを指定する
+	+ 実行時に -c で設定ファイルを指定できる。例：`/etc/nginx/sbin/nginx -c /data/conf/nginx.conf`ほかの内容のパスは `nginx.conf` で指定する。
+4.Nginx の再起動： `/usr/local/nginx/sbin/nginx -s reload `
+5.Nginx プロセスが動作中か確認する
+	+ `ps aux | grep nginx`
+6.Nginx がポート 80 または設定したポートで待ち受けているか確認する
+	+ `netstat -tnlp | grep nginx`
+7.ログの末尾を確認する
+	+ `tail -n error.log`
+8. Nginx またはほかのサービスをグローバルに追加する
+	+ `vim /etc/profile`
+	+ `PATH=$PATH:/usr/local/nginx/sbin/nginx`    末尾に必要なサービスのインストール先を指定する
+	+ `source /etc/profile`
+
+6.終了する：`php-fpm`：`pkill   php-fpm`
+
+

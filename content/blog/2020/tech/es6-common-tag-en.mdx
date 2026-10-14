@@ -1,0 +1,65 @@
+---
+title: 'ES6 Syntax: Template Literals'
+publishedAt: '2020-08-04'
+summary: Template literal concepts and uses
+category: tech
+slug: es6-common-tag-en
+language: en
+translationKey: es6-common-tag
+sourceSlug: es6-common-tag
+---
+
+
+
+### Template literal concepts and uses
+
++ Template literals use backticks (` `) instead of the double or single quotes used for ordinary strings.
++ Template literals can contain placeholders with the syntax ${expression}. The expressions and surrounding text are passed to a default function that joins all the parts. If a template literal starts with an expression, it is called a tagged template literal. The expression is usually a function, called after the template is processed, which can manipulate the template before the final result is output.
++ To use a backtick (`) inside a template literal, put an escape character (\) before it.
+
+Simply put, template literals are special syntax for handling particular characters, displaying data, and inserting placeholders in React templates, with a more elegant representation.
+
+```
+// 旧方式
+var a = 5;
+var b = 10;
+console.log('Fifteen is ' + (a + b) + ' and\nnot ' + (2 * a + b) + '.');
+
+// 新方式
+
+var a = 5;
+var b = 10;
+console.log(`Fifteen is ${a + b} and
+not ${2 * a + b}.`);
+
+// 最终结果
+// "Fifteen is 15 and
+// not 20."
+
+```
+
+### Syntax forms
+
+```
+// 单行字符串
+`string text` 
+
+// 多行字符串 方便换行
+`string text line 1
+ string text line 2`
+
+// 嵌套模板
+`string text ${expression} string text`
+
+// 根据不同的状态展示不同的class
+const classes = `header ${ isLargeScreen() ? '' :
+ `icon-${item.isCollapsed ? 'expander' : 'collapser'}` }`;
+
+// 自定义的标签函数处理模板字符串
+tag `string text ${expression} string text`
+
+```
+
+### Avoiding cumbersome regular expressions
+
++ Use [common-tags](https://github.com/zspecza/common-tags) directly for basic whitespace removal and data processing. See its documentation for more uses.

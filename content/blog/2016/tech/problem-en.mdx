@@ -1,0 +1,56 @@
+---
+title: 'Useful Tricks and Small Problems'
+publishedAt: '2016-05-24'
+summary: 'Checking installed PHP extensions with php -m, plus practical troubleshooting notes.'
+category: 'thoughts'
+slug: 'problem-en'
+language: 'en'
+translationKey: 'problem'
+sourceSlug: 'problem'
+---
+
+## Skills
+
+1. Check installed PHP extensions: `php -m`.
+2. Reload Nginx: `service nginx reload`.
+3. Configure a domestic Composer mirror: `composer config repo.packagist composer https://packagist.phpcomposer.com`.
+4. Laravel 5.2 does not install authentication views by default: `php artisan make:auth --views`.
+5. Generate a key: `php artisan key:generate`.
+6. Export a database: `mysqldump` with the username, password, and database, redirecting the result to an SQL file: `mysqldump -uUSERNAME -pPASSWORD DATABASE > DATABASE.sql`.
+7. Refresh the current page: `onclick="window.location.reload();"`.
+8. Navigate on click: `onclick="document.location='http://www.baidu.com'"`.
+9. Chrome caches DNS. Revisiting a previously broken page may still fail; restart the browser.
+10. Convert a date to a timestamp, then format day, month, and year: `date('d M Y',strtotime($value->date))`.
+11. `php -i` provides the same environment information as `phpinfo`.
+12. `php -m` lists installed extensions.
+
+## Problems
+
+1. PHP 5.3 does not support the `[ ]` array syntax.
+2. If PHP installation fails, uninstall and reinstall. `skip-broken` skips broken packages:
+
+`yum install -y --skip-broken php-devel`
+
+3. If php-fpm reports a missing user, change `user` and `group` in `php-fpm.conf` to the user running the process:
+
+`ERROR: [pool www] cannot get uid for user '@chuhe@'`
+
+`ERROR: FPM initialization failed`
+
+4. A locked SVN operation:
+
+- Run `svn cleanup` with the current directory.
+- Use `jobs` to find stopped jobs.
+- Use `kill %` followed by the job number for the stuck task.
+- `ping idiot6.com` checks server reachability.
+- `telnet idiot6.com 3690` checks the port.
+
+5. Check how PHP was installed: `rpm -qa php`.
+6. Packages with `devel` provide development files needed when compiling another library that depends on them. Packages without it are the already compiled binaries.
+7. When the SMS verification page is embedded, the session can change with each message.
+8. Customize Laravel 5.2 pagination by changing the class attribute in `BootstrapFourPresenter.php`.
+9. For SQL sorting, the `order by` field should be an integer; otherwise it sorts by bytes.
+
+> Pitfalls encountered these days.
+>
+> By 梦遥奇缘

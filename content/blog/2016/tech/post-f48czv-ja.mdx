@@ -1,0 +1,36 @@
+---
+title: PHP でユーザーの IP アドレスを取得する
+publishedAt: '2016-03-15'
+summary: ユーザーの IP アドレスを取得する
+category: tech
+slug: post-f48czv-ja
+language: ja
+translationKey: post-f48czv
+sourceSlug: post-f48czv
+---
+
+# ユーザーの IP アドレスを取得する
+			public  function getClientIP()
+			    {
+			        if (isset($_SERVER)) {
+			            if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+			                $realip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+			            } else 
+			                if (isset($_SERVER["HTTP_CLIENT_IP"])) {
+			                    $realip = $_SERVER["HTTP_CLIENT_IP"];
+			                } else {
+			                    $realip = $_SERVER["REMOTE_ADDR"];
+			                }
+			        } else {
+			            if (getenv("HTTP_X_FORWARDED_FOR")) {
+			                $realip = getenv("HTTP_X_FORWARDED_FOR");
+			            } else 
+			                if (getenv("HTTP_CLIENT_IP")) {
+			                    $realip = getenv("HTTP_CLIENT_IP");
+			                } else {
+			                    $realip = getenv("REMOTE_ADDR");
+			                }
+			        }
+			        
+			        return addslashes($realip);
+			    }

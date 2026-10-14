@@ -1,0 +1,34 @@
+---
+title: React Native Bugs and Fixes
+publishedAt: '2020-07-24'
+summary: >-
+  Xiaomi phones cannot install APKs with `adb install orsudo npx react-native
+  run-android` to install APKs
+category: tech
+slug: react-native-bug-en
+language: en
+translationKey: react-native-bug
+sourceSlug: react-native-bug
+---
+
+###  Xiaomi phones cannot install APKs with `adb install orsudo npx react-native run-android` to install APKs
+
+ + First make sure you have enabled the port with `adb reverse tcp:8081 tcp:8081`, then run`sudo npx react-native run-android`; the following error appears: `Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]`
+ + Solution: on Xiaomi (Mi 8 Lite), test packages require permission to install apps over USB. Enabling developer options and connecting USB alone only allows charging. Go to Settings → Additional settings → Developer options → enable USB installation.
+ + Then run adb install to install the APK, or use`sudo npx react-native run-android`to install.
+
+### Some Oppo models cannot use the camera and storage
+
+`Android APIv29 FileNotFoundException EACCES (Permission denied)`
+
+Change the application configuration:`android:requestLegacyExternalStorage="true"`
+
+### iOS requests work, but some Xiaomi and Oppo Android models cannot use axios and keep showing Network error (Android)
+
++ RN version:0.62.2
++ axios ：0.19.2
++ Change the Android configuration:`android > gradle.properties` => `FLIPPER_VERSION=0.39.0 `
+
+### Some Android models cannot accept screen taps when debug is open
+
++ When debug is open, do not switch screens. Keep the debug window in front and debug through the terminal (this needs two screens; otherwise it does not work).

@@ -1,0 +1,34 @@
+---
+title: CentOS の Git から GitHub に接続する
+publishedAt: '2015-10-22'
+summary: Git のインストール
+category: tech
+slug: git-centos-github-ja
+language: ja
+translationKey: git-centos-github
+sourceSlug: git-centos-github
+---
+
+1.  Git のインストール
+
+    * sudo apt-get install git git-core
+
+    * Git の設定
+
+    * $ git config --global user.name &quot;chuhe&quot;
+
+    * $ git config --global user.email chuhe@qq.com
+2.  鍵の生成
+
+    * $ ssh-keygen -t rsa -C &quot;chuhe@qq.com&quot; // メールアドレスは上と同じ
+
+    * vim /home/linx/.ssh/id_rsa.pub // 中の鍵をコピーするか、直接 cat を使う
+3.  GitHub を開く → アバター → settings → SSH KEYS → add SSH key → コピーした内容を key に貼り付ける（title は任意）→ 保存。
+4.  重要な部分
+
+    * テスト：$ ssh git@github.com
+
+    * 成功時の出力：chuhe@ubuntu:~$ ssh -T git@github.com  Hi chuhemiao! You've successfully authenticated, but GitHub does not provide shell access.
+
+    * Enter を押し続けて yes/no の確認が出た場合は、y ではなく yes と入力すること！
+5.  最後の手順で一日以上悩んだ。偶然、yes と入力すればよいというブログを見つけた。つらい！

@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import matter from 'gray-matter';
-import { buildTranslationGroups, toIndexMetadata } from './lib/content/discovery.mjs';
+import { buildTranslationGroups, hashSource, toIndexMetadata, validateTranslationProvenance } from './lib/content/discovery.mjs';
 
 const CONTENT_DIR = path.join(process.cwd(), 'content');
 const BLOG_CONTENT_DIR = path.join(CONTENT_DIR, 'blog');
@@ -118,7 +118,7 @@ function main() {
     }
 
     try {
-      posts.push({ ...toIndexMetadata(metadata), slug, draft: isDraft(metadata, filePath) });
+      posts.push({ ...toIndexMetadata(metadata), slug, sourceHash: hashSource(source), draft: isDraft(metadata, filePath) });
     } catch (error) {
       errors.push(`${relativePath}: ${error.message}`);
     }
@@ -141,6 +141,7 @@ function main() {
   }
 
   try {
+    validateTranslationProvenance(posts);
     buildTranslationGroups(posts);
   } catch (error) {
     errors.push(error.message);

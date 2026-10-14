@@ -1,0 +1,87 @@
+---
+title: 'Linux コマンド'
+publishedAt: '2015-08-20'
+summary: 'システム、資源、ディスク、ネットワーク、プロセス、ユーザー、サービス、パッケージのコマンド。'
+category: 'thoughts'
+slug: 'linux-ja'
+language: 'ja'
+translationKey: 'linux'
+sourceSlug: 'linux'
+---
+
+1. `fs -du -s -h FILE_PATH`：対象ファイルの容量を確認。
+
+## システム
+
+| コマンド | 用途 |
+|---|---|
+| `uname -a` | カーネル、OS、CPU の情報 |
+| `head -n 1 /etc/issue` | OS のバージョン |
+| `cat /proc/cpuinfo` | CPU 情報 |
+| `hostname` | ホスト名 |
+| `lspci -tv` | PCI デバイス一覧 |
+| `lsusb -tv` | USB デバイス一覧 |
+| `lsmod` | 読み込まれたカーネルモジュール |
+| `env` | 環境変数 |
+
+## 資源
+
+| コマンド | 用途 |
+|---|---|
+| `free -m` | メモリーと swap の使用量 |
+| `df -h` | 各パーティションの使用量 |
+| `du -sh <DIRECTORY>` | ディレクトリの容量 |
+| `grep MemTotal /proc/meminfo` | メモリー総量 |
+| `grep MemFree /proc/meminfo` | 空きメモリー |
+| `uptime` | 稼働時間、ユーザー数、負荷 |
+| `cat /proc/loadavg` | システム負荷 |
+
+## ディスクとパーティション
+
+| コマンド | 用途 |
+|---|---|
+| `mount \| column -t` | マウント状態 |
+| `fdisk -l` | パーティション一覧 |
+| `swapon -s` | swap 一覧 |
+| `hdparm -i /dev/hda` | IDE ディスクのパラメーター |
+| `dmesg \| grep IDE` | 起動時の IDE 検出状況 |
+
+## ネットワーク
+
+| コマンド | 用途 |
+|---|---|
+| `ifconfig` | ネットワークインターフェースの属性 |
+| `iptables -L` | ファイアウォール設定 |
+| `route -n` | 経路表 |
+| `netstat -lntp` | 待ち受けポート |
+| `netstat -antp` | 確立済み接続 |
+| `netstat -s` | ネットワーク統計 |
+
+## プロセス
+
+| コマンド | 用途 |
+|---|---|
+| `ps -ef` | プロセス一覧 |
+| `top` | リアルタイムの状態 |
+
+## ユーザー
+
+| コマンド | 用途 |
+|---|---|
+| `w` | アクティブユーザー |
+| `id <USERNAME>` | 指定ユーザーの情報 |
+| `last` | ログイン履歴 |
+| `cut -d: -f1 /etc/passwd` | ユーザー一覧 |
+| `cut -d: -f1 /etc/group` | グループ一覧 |
+| `crontab -l` | 現在のユーザーの定期実行設定 |
+
+## サービス
+
+| コマンド | 用途 |
+|---|---|
+| `chkconfig --list` | システムサービス一覧 |
+| `chkconfig --list \| grep on` | 有効なサービス |
+
+## パッケージ
+
+`rpm -qa`：導入済みパッケージ一覧。

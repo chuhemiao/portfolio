@@ -1,0 +1,103 @@
+---
+title: "Installing an iOS app with a plist manifest"
+publishedAt: "2017-01-18"
+summary: "The server and every download URL must use HTTPS."
+category: "tech"
+slug: "plist-en"
+language: "en"
+translationKey: "plist"
+sourceSlug: "plist"
+---
+
+## Resources to prepare
+1. The server must support `https`, and the download source for each file must also use `https`.
+2. Two PNG icons for the installed app: one `57*57` and one `114*114`.
+3. The files to access can be placed among the resources on a `web` server and accessed directly.
+4. The files are `autoninstall.html` and `dai.plist`. The download page is `https://idiot6.com/autoninstall.html` (this domain is a test address and is not accessible).
+5. Configure the doLocation URL in autoinstall.html, and the `bundle-identifier`, images, and title in dai.plist.
+6. A serious pitfall: plist files are cached. If an upgrade or faulty configuration has already gone live, create a new `plist` file and update its path in `autoinstall.html`.
+7. The configuration files are shown below:
+
+```html
+<html>
+<head>
+<title>标题</title>
+<meta http-equiv="Content-Type" content="text/HTML; charset=utf-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<meta http-equiv="expires" content="0">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+<script type="text/javascript">
+function doLocation(url)
+{
+  var a = document.createElement("a");
+  if(!a.click) {
+    window.location = url;
+    return;
+  }
+  a.setAttribute("href", url);
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+}
+</script>
+</head>
+<body>
+<script type="text/javascript">
+doLocation('itms-services://?action=download-manifest&url=https://idiot6.com/dai.plist');
+</script>
+</body>
+</html>
+```
+
+```html
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>items</key>
+	<array>
+		<dict>
+			<key>assets</key>
+			<array>
+				<dict>
+					<key>kind</key>
+					<string>software-package</string>
+					<key>url</key>
+					<string>①ipa文件地址</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>full-size-image</string>
+					<key>needs-shine</key>
+					<true/>
+					<key>url</key>
+					<string>②图片资源114x114.png</string>
+				</dict>
+				<dict>
+					<key>kind</key>
+					<string>display-image</string>
+					<key>needs-shine</key>
+					<true/>
+					<key>url</key>
+					<string>③图片资源57x57.png</string>
+				</dict>
+			</array>
+			<key>metadata</key>
+			<dict>
+				<key>bundle-identifier</key>
+				<string>④bundle-id</string>
+				<key>bundle-version</key>
+				<string>1.0.0</string>
+				<key>kind</key>
+				<string>software</string>
+				<key>subtitle</key>
+				<string>⑤标题</string>
+				<key>title</key>
+				<string>⑤标题</string>
+			</dict>
+		</dict>
+	</array>
+</dict>
+</plist>
+```

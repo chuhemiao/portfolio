@@ -1,0 +1,55 @@
+---
+title: "React Native の Android・IPA ビルドガイドと RN の小技"
+publishedAt: "2020-07-19"
+summary: "外側の幅を設定し、文字を配置する。CSS の lineHeight は外側の文字領域の高さより大きくする。"
+category: "tech"
+slug: "react-native-ipa-rn-ja"
+language: "ja"
+translationKey: "react-native-ipa-rn"
+sourceSlug: "react-native-ipa-rn"
+---
+
+### CSS の小技：文字を縦書きにする
++ 外側の幅を設定し、文字を配置して CSS の行高を指定する（`lineHeight` は外側の文字領域の高さより大きくする）。
+### iOS 関連
++ `error Failed to build iOS project. We ran "xcodebuild" command but it exited with error code 65. To debug build logs further, consider building your app with Xcode.app, by opening cleaaan.xcworkspace`
++ code 65 は iOS のパッケージ管理に関係する可能性がある。`cd ios && pod repo update && pod install && pod update`。
++ iOS のキーボードが内容を覆う場合は APSL のコンポーネントを使う：`[react-native-keyboard-aware-scrollview](https://github.com/APSL/react-native-keyboard-aware-scroll-view)`。
+
+### JavaScript 関連
++ `TypeError: Invalid attempt to spread non-iterable instance`
++ データとオブジェクトの変換や代入により、データを反復できなくなった可能性がある。API 取得後のデータと現在の state のデータを相互に代入する際、`[...aaa]` を使っていないか確認する。aaa は state に定義した配列やオブジェクト。この `...` が原因かもしれないので、外して試してみる。
+
+### React Native iOS の IPA を作成する
++ `mkdir release_ios`
++ `npx react-native bundle --entry-file index.js --platform ios --dev false --bundle-output release_ios/main.jsbundle --assets-dest release_ios/`
++ `release_ios` 内のファイルを Xcode プロジェクトに追加する。プロジェクト名 → Add Files to プロジェクト → `release_ios` を選択 → folders の種類を `Create folder references` にする → Add。
++ 証明書とプロビジョニングプロファイルを追加してビルドする。Product → Archive → Distribute App。選択肢は 4 つあり、iOS App Store 公開、Development テスト、Enterprise 配布などを選ぶ。その後は手順を進めて IPA を書き出す。
+
+### React Native Android の APK を作成する
++ 1. keystore を生成する。
++ 2. Gradle 変数を設定する。
++ 3. プロジェクトの Gradle 設定に署名設定を追加する。
++ 4. `cd  android `
++ 5. `./gradlew assembleRelease`
++ keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+
+詳しい手順は以下を参照：
++ [React Native 公式の APK ビルドガイド](https://www.react-native.cn/docs/signed-apk-android)
++ [新しい React Native でアプリを公開するための署名付き APK 作成](https://www.devio.org/2019/11/08/react-native-Release-APP-Signature-Package-APK/)
++ 注意：macOS では sudo が必要な場合がある。
+    - sudo ./gradlew assembleRelease を実行する。
+
+### Android の release 版をインストールすると HTTP リクエストができない
++ React Native の release APK では、Android 9.0 以降でデフォルトのまま HTTP リクエストを送れない。
+
+![AndroidManifest.xml](media/15944435878136/15951436861022.jpg)
+
++ `/当前项目名/android/app/src/main/AndroidManifest.xml` を修正し、application に `android:usesCleartextTraffic="true"` を追加する。
+
+### RN 開発の参考資料と React 関連技術のおすすめ
++ [React Native 中国語サイト](https://www.react-native.cn/)
++ [RN のよく使うサンプルとデモ](https://reactnativeexample.com/)
++ [React・RN の技術と RN チートシート。ぜひ参照したい](https://shenbao.github.io/ishehui/index.html)
++ [Store、Redux、Reducer、action など、必須のデータ関連知識](https://cn.redux.js.org/)
++ [React ソースコードの解説](https://react.iamkasong.com/)
