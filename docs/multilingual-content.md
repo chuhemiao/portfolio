@@ -18,6 +18,8 @@ Research 卡片说明和分类、Telegram 随想、Weekly Research 与首页周�
 
 ## 添加译文
 
+新增 Blog、Research、Thoughts 等文章时，默认在同一次工作中完成 `zh-CN`、`en`、`ja` 三个完整版本，包含标题、摘要、正文、图表说明及必要的来源边界。仅在用户明确要求其他范围时调整。语言分组、真实译文切换和导出验证通过后，才算新增完成。
+
 每种语言保存一个 MDX 文件。推荐显式设置 `language`、`translationKey` 和 `sourceSlug`。
 
 假设既有原文的 slug 为 `bitcoin-research`：

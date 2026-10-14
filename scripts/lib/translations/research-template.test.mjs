@@ -92,6 +92,17 @@ test('real CLI defaults to dry-run, creates atomically and reruns without rewrit
   assert.equal(f.run('--write').status,0);assert.equal(fs.readFileSync(f.target('ja'),'utf8'),bytes);assert.equal(fs.statSync(f.target('ja')).mtimeMs,before);
   assert.equal(f.run('--check').status,0);assert.equal(fs.readdirSync(path.dirname(f.source)).some(name=>name.endsWith('.tmp')),false);
 });
+test('CLI accepts one leading pnpm separator and rejects other separators before mutation',t=>{
+  const f=fixture(t);
+  const direct=f.run('--dry-run'),forwarded=f.run('--','--dry-run');
+  assert.equal(forwarded.status,0,forwarded.stderr);assert.equal(forwarded.stdout,direct.stdout);
+  assert.equal(fs.existsSync(f.target('ja')),false);
+  for(const args of [['--','--','--write'],['--write','--'],['--source','--'],['--','--unknown']]){
+    const invalid=f.run(...args);assert.equal(invalid.status,1);assert.equal(fs.existsSync(f.target('ja')),false);assert.equal(fs.existsSync(f.target('zh-CN')),false);
+  }
+  const write=f.run('--','--write');assert.equal(write.status,0,write.stderr);assert.equal(JSON.parse(write.stdout).created,2);
+  assert.equal(f.run('--','--check').status,0);
+});
 test('rule expansion retains original provenance; source changes fail without overwriting',t=>{
   const f=fixture(t);assert.equal(f.run('--write').status,0);
   const target=f.target('ja');const bytes=fs.readFileSync(target,'utf8').replace(/^translationRuleHash:.+$/m,'translationRuleHash: original-rule-version');fs.writeFileSync(target,bytes);

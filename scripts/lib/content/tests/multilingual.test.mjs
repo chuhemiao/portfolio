@@ -7,10 +7,42 @@ import test from 'node:test';
 
 import { buildTranslationGroups, hashSource, toIndexMetadata, validateTranslationProvenance } from '../discovery.mjs';
 import { buildRelations, buildTopicIndex } from '../indexes.mjs';
+import { extractToc, markdownToHTML } from '../markdown.mjs';
 import { selectResearchPosts } from '../../../sync-research-registry.mjs';
 
 const post = (slug, language, extra = {}) => ({
   slug, language, title: slug, summary: '', publishedAt: '2026-10-13', category: 'research', ...extra
+});
+
+test('Japanese kana headings have usable anchors matching the table of contents', async () => {
+  const markdown = '## トークンのキャッシュフロー\n\n## インフラとしての位置づけ\n\n## 用户与收入\n\n## Users and revenue';
+  const toc = extractToc(markdown);
+  const html = await markdownToHTML(markdown);
+  assert.deepEqual(toc.map((item) => item.id), [
+    'トークンのキャッシュフロー', 'インフラとしての位置づけ', '用户与收入', 'users-and-revenue'
+  ]);
+  for (const item of toc) assert.ok(html.includes(`id="${item.id}"`));
+  assert.ok(!html.includes('id=""'));
+});
+
+test('formatted and repeated headings use the same unique anchors in HTML and the TOC', async () => {
+  const markdown = '## 手順 3：探す：`php.ini`設定\n\n## Fees & Revenue\n\n## [リンク](https://example.com) **見出し**\n\n## Fees & Revenue\n\n## !!!\n\n```sh\n## not a heading\n```';
+  const toc = extractToc(markdown);
+  const html = await markdownToHTML(markdown);
+  assert.deepEqual(toc.map((item) => item.id), [
+    '手順-3探すphpini設定', 'fees-revenue', 'リンク-見出し', 'fees-revenue-1', 'section'
+  ]);
+  for (const item of toc) assert.ok(html.includes(`id="${item.id}"`), item.id);
+  assert.equal(toc[0].text, '手順 3：探す：php.ini設定');
+  assert.equal(toc.length, 5);
+});
+
+test('automatic heading IDs preserve the accessible footnote heading target', async () => {
+  const markdown = '## Notes\n\nSource reference[^1].\n\n[^1]: Supporting evidence.';
+  const html = await markdownToHTML(markdown);
+  assert.ok(html.includes('aria-describedby="footnote-label"'));
+  assert.ok(html.includes('id="footnote-label"'));
+  assert.deepEqual(extractToc(markdown).map((item) => item.id), ['notes']);
 });
 
 test('generated translations reject changed, missing or self-referencing sources', () => {

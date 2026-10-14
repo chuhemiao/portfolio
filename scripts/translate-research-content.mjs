@@ -10,6 +10,8 @@ function files(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(e=>e
 function atomicCreate(target, content){const temporary=target+`.${process.pid}.tmp`;try{fs.writeFileSync(temporary,content,{flag:'wx'});fs.linkSync(temporary,target);}finally{if(fs.existsSync(temporary))fs.unlinkSync(temporary);}}
 function main(){
   const args=process.argv.slice(2);const valid=new Set(['--write','--check','--dry-run','--source','--limit','--report','--help']);
+  if(args[0]==='--')args.shift();
+  if(args.includes('--'))throw new Error('Unexpected argument separator: --');
   let selected=null,limit=Infinity,report=false;
   for(let i=0;i<args.length;i++){
     if(!valid.has(args[i]))throw new Error('Unknown argument: '+args[i]);

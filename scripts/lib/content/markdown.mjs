@@ -38,15 +38,41 @@ function rehypeMermaid() {
 function generateId(text) {
   return text
     .toLowerCase()
-    .replace(/[^\w\s\u4e00-\u9fff-]/g, '')
+    .replace(/[^\p{L}\p{N}\p{M}_\s-]/gu, '')
     .replace(/\s+/g, '-');
 }
 
-function addHeadingIds(html) {
-  return html.replace(/<(h[1-6])>([^<]+)<\/h[1-6]>/g, (_, tag, content) => {
-    const id = generateId(content);
-    return `<${tag} id="${id}">${content}</${tag}>`;
-  });
+function headingText(node) {
+  if (node.type === 'html') return '';
+  if (node.type === 'text' || node.type === 'inlineCode') return node.value;
+  if (node.type === 'image') return node.alt ?? '';
+  if (node.type === 'element' && node.tagName === 'img') return node.properties?.alt ?? '';
+  return (node.children ?? []).map(headingText).join('');
+}
+
+function headingIds() {
+  const used = new Set();
+  return (text) => {
+    const base = generateId(text) || 'section';
+    let id = base;
+    let suffix = 0;
+    while (used.has(id)) id = `${base}-${++suffix}`;
+    used.add(id);
+    return id;
+  };
+}
+
+function rehypeHeadingIds() {
+  return (tree) => {
+    const nextId = headingIds();
+    function walk(node) {
+      if (node.type === 'element' && /^h[1-6]$/.test(node.tagName) && !node.properties?.id) {
+        node.properties = { ...node.properties, id: nextId(headingText(node)) };
+      }
+      for (const child of node.children ?? []) walk(child);
+    }
+    walk(tree);
+  };
 }
 
 let processor = null;
@@ -57,6 +83,7 @@ function getProcessor() {
       .use(remarkParse)
       .use(remarkGfm)
       .use(remarkRehype)
+      .use(rehypeHeadingIds)
       .use(rehypeMermaid)
       .use(rehypePrettyCode, {
         // https://rehype-pretty.pages.dev/#usage
@@ -75,24 +102,21 @@ function getProcessor() {
 
 export async function markdownToHTML(markdown) {
   const p = await getProcessor().process(markdown);
-  return addHeadingIds(p.toString());
+  return p.toString();
 }
 
 export function extractToc(markdown) {
-  const headingRegex = /^(#{1,6})\s+(.+)$/gm;
+  const tree = unified().use(remarkParse).use(remarkGfm).parse(markdown);
   const toc = [];
-  let match;
-
-  while ((match = headingRegex.exec(markdown)) !== null) {
-    const level = match[1].length;
-    const text = match[2].trim();
-    const id = text
-      .toLowerCase()
-      .replace(/[^\w\s\u4e00-\u9fff-]/g, '')
-      .replace(/\s+/g, '-');
-    toc.push({ id, text, level });
+  const nextId = headingIds();
+  function walk(node) {
+    if (node.type === 'heading') {
+      const text = headingText(node);
+      toc.push({ id: nextId(text), text, level: node.depth });
+    }
+    for (const child of node.children ?? []) walk(child);
   }
-
+  walk(tree);
   return toc;
 }
 

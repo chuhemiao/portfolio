@@ -1,7 +1,7 @@
 ```skill
 ---
 name: portfolio-research-map-builder
-description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio Research Map content. Covers Surf-first crypto data refresh, local duplicate checks, MDX placement, /research card sync, logo sync, depth audit, candidate backlog, and quick content creation scripts.
+description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio Research Map content. Covers local and user-provided crypto data, local duplicate checks, MDX placement, /research card sync, logo sync, depth audit, candidate backlog, and quick content creation scripts.
 ---
 
 # Portfolio Research Map Builder
@@ -17,6 +17,7 @@ description: Use when adding, upgrading, auditing, or syncing kkdemian portfolio
 
 ## Multilingual Content
 
+- New Blog, Research, and Thoughts articles default to complete `zh-CN`, `en`, and `ja` versions in the same task, including titles, summaries, full bodies, chart labels, and source limitations. Empty scaffolds or summary-only translations do not complete a new publication. Follow an explicit user scope override when given.
 - Supported article languages are `zh-CN`, `en`, and `ja`. Legacy `zh`, `en-US`, and `ja-JP` metadata is normalized at build time. Set `language` explicitly for new content, especially Japanese text without kana.
 - Keep one MDX file per language. Existing `translationSlug` pairs and matching `-en` / `-ja` / `-zh-CN` suffixes remain supported.
 - Use the same stable `translationKey` for all language variants. The original article can keep its existing slug. Set `sourceSlug` to that original slug when variants use unrelated slugs or the original is ambiguous.

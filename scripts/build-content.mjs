@@ -33,7 +33,7 @@ import { runCompileJobs } from './lib/content/pool.mjs';
 
 // Bump when the markdown pipeline or artifact format changes: every cached
 // artifact from an older version is then recompiled instead of reused.
-export const CONTENT_COMPILER_VERSION = 5;
+export const CONTENT_COMPILER_VERSION = 8;
 
 function parseArgs(argv) {
   const options = { force: false, workers: undefined };
