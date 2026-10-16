@@ -11,6 +11,14 @@ export type ResearchProject = {
 // Synced by `pnpm sync:research:logos` into `public/research-logos/`.
 
 export const PROJECTS = [
+  {
+    name: 'NeoSoul / DNA',
+    description: 'Prediction-market agents with real products; revenue, DNA usage and 87% locked supply need validation',
+    type: 'AI/Trading',
+    slug: 'neosoul-dna-launch-products-tokenomics-research',
+    color: '#8B5CF6',
+    initial: 'NS',
+  },
   // CEX
   {
     name: 'Binance',
