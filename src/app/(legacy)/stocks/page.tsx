@@ -4,21 +4,26 @@ import { DATA } from '@/data/resume';
 import {
   AAPL_CASE_STUDY,
   ACTIVITY_DIVERGENCE,
+  CONCENTRATION_READING,
   DATA_AS_OF,
+  DIVIDEND_LABEL,
+  GRADE_LABEL,
   GRADE_RUBRIC,
   ISSUERS,
   MARKET_SNAPSHOTS,
-  PERPS_NOTE,
+  METHOD_NOTE,
+  POR_LABEL,
   REGULATORY_NOTES,
-  RISKS,
-  RISK_WEIGHTS,
   TOP_TOKENS,
-  TWO_PATHS,
+  TURNOVER_READING,
   UNDERLYING_CONCENTRATION,
-  VENUES,
-  VETO_CHECKS,
+  UNKNOWN_LABEL,
+  US_LABEL,
+  VOTING_LABEL,
   WATCH_SIGNALS,
+  WRAPPER_LABEL,
   WRAPPER_RUBRIC,
+  pick,
   type Grade,
 } from '@/data/tokenized-equities';
 import type { Metadata } from 'next';
@@ -46,15 +51,6 @@ const GRADE_TONE: Record<Grade, string> = {
   unrated: 'border-border text-subtle',
 };
 
-const SEVERITY_TONE = {
-  high: 'border-negative text-negative',
-  medium: 'border-brand text-brand',
-  low: 'border-border text-subtle',
-} as const;
-
-const issuerName = (slug: string | null) =>
-  slug ? ISSUERS.find((i) => i.slug === slug)?.name ?? slug : null;
-
 const TH = 'border-b border-border-strong px-3 py-2.5 text-left font-mono text-[10.5px] font-normal uppercase tracking-[0.12em] text-subtle';
 
 export default async function Page() { return renderPage('en'); }
@@ -62,6 +58,8 @@ export default async function Page() { return renderPage('en'); }
 export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
   const href = (url: string) => localizeHref(url, locale);
+  const L = <T extends readonly [string, string, string]>(value: T) => pick(value, locale);
+  const issuerName = (slug: string | null) => (slug ? ISSUERS.find((i) => i.slug === slug)?.name ?? slug : null);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -71,6 +69,7 @@ export async function renderPage(locale: Locale) {
       'Issuer-level and instrument-level attributes for tokenized US equities: legal wrapper, custody, proof of reserve, redemption terms and order-book depth.',
     url: `${DATA.url}${href('/stocks')}`,
     creator: { '@type': 'Person', name: DATA.name, url: DATA.url },
+    inLanguage: locale,
     temporalCoverage: DATA_AS_OF,
   };
 
@@ -114,9 +113,7 @@ export async function renderPage(locale: Locale) {
 
         {/* ── 市场规模 ─────────────────────────────────────────── */}
         <section className='border-b border-border py-12'>
-          <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>
-            {t('Market size', '市场规模', '市場規模')}
-          </h2>
+          <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>{t('Market size', '市场规模', '市場規模')}</h2>
           <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>
             {t(
               'Two methodologies, two totals. The gap is scope, not error — one counts shares registered on-chain, the other only third-party wrappers.',
@@ -134,16 +131,14 @@ export async function renderPage(locale: Locale) {
                     {snap.source} ↗
                   </Link>
                 </div>
-                <p className='mb-4 font-mono text-[10.5px] leading-[1.6] text-subtle'>{snap.scope}</p>
+                <p className='mb-4 font-mono text-[10.5px] leading-[1.6] text-subtle'>{L(snap.scope)}</p>
                 {snap.metrics.map((m) => (
-                  <div key={m.label} className='flex items-baseline justify-between gap-4 border-b border-border py-2 last:border-0'>
-                    <span className='text-[13px] text-muted-foreground'>{m.label}</span>
+                  <div key={m.label[0]} className='flex items-baseline justify-between gap-4 border-b border-border py-2 last:border-0'>
+                    <span className='text-[13px] text-muted-foreground'>{L(m.label)}</span>
                     <span className='flex shrink-0 items-baseline gap-2'>
                       <span className='tnum font-mono text-[13.5px] font-medium'>{m.value}</span>
                       {m.delta && (
-                        <span className={`tnum font-mono text-[11px] ${m.delta.startsWith('−') ? 'text-negative' : 'text-positive'}`}>
-                          {m.delta}
-                        </span>
+                        <span className={`tnum font-mono text-[11px] ${m.delta.startsWith('−') ? 'text-negative' : 'text-positive'}`}>{m.delta}</span>
                       )}
                     </span>
                   </div>
@@ -152,7 +147,6 @@ export async function renderPage(locale: Locale) {
             ))}
           </div>
 
-          {/* 活跃度背离 */}
           <div className='rounded border border-negative/40 bg-surface p-5'>
             <div className='mono-label mb-3 text-negative'>
               {t('Market cap up, usage down', '市值在涨，活跃度在跌', '時価総額は上昇、利用は低下')}
@@ -171,7 +165,7 @@ export async function renderPage(locale: Locale) {
                 </div>
               ))}
             </div>
-            <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>{ACTIVITY_DIVERGENCE.reading}</p>
+            <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>{L(ACTIVITY_DIVERGENCE.reading)}</p>
           </div>
         </section>
 
@@ -190,8 +184,8 @@ export async function renderPage(locale: Locale) {
           <div className='grid gap-px border border-border bg-border sm:grid-cols-2'>
             {WRAPPER_RUBRIC.map((item) => (
               <div key={item.kind} className='bg-background p-5'>
-                <div className='mb-2 font-mono text-[11px] tracking-[0.12em] text-brand'>{item.label.toUpperCase()}</div>
-                <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>{item.meaning}</p>
+                <div className='mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-brand'>{L(WRAPPER_LABEL[item.kind])}</div>
+                <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>{L(item.meaning)}</p>
               </div>
             ))}
           </div>
@@ -202,7 +196,7 @@ export async function renderPage(locale: Locale) {
           <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Issuers', '发行方', '発行体')}</h2>
 
           <div className='overflow-x-auto'>
-            <table className='w-full min-w-[920px] border-collapse border border-border text-[13px]'>
+            <table className='w-full min-w-[960px] border-collapse border border-border text-[13px]'>
               <thead>
                 <tr>
                   {[
@@ -223,32 +217,40 @@ export async function renderPage(locale: Locale) {
                   <tr key={issuer.slug} className='border-b border-border align-top last:border-0'>
                     <td className='px-3 py-3'>
                       <div className='font-semibold'>{issuer.name}</div>
-                      <div className='mt-0.5 font-mono text-[10.5px] text-subtle'>{issuer.jurisdiction}</div>
+                      <div className='mt-0.5 font-mono text-[10.5px] text-subtle'>{L(issuer.jurisdiction)}</div>
                       {issuer.instrumentCount !== undefined && (
                         <div className='tnum mt-0.5 font-mono text-[10.5px] text-subtle'>
                           {issuer.instrumentCount}+ {t('instruments', '个标的', '銘柄')}
                         </div>
                       )}
                     </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{issuer.wrapper}</td>
+                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(WRAPPER_LABEL[issuer.wrapper])}</td>
                     <td className={`px-3 py-3 font-mono text-[11px] ${issuer.voting === 'full' ? 'text-positive' : issuer.voting === 'none' ? 'text-negative' : 'text-muted-foreground'}`}>
-                      {issuer.voting}
+                      {L(VOTING_LABEL[issuer.voting])}
                     </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{issuer.dividend}</td>
+                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(DIVIDEND_LABEL[issuer.dividend])}</td>
                     <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>
-                      {issuer.redemption.available === 'unknown' ? 'unknown' : issuer.redemption.available ? 'yes' : 'no'}
+                      {issuer.redemption.available === 'unknown'
+                        ? t('unknown', '未知', '不明')
+                        : issuer.redemption.available
+                          ? t('yes', '支持', '可')
+                          : t('no', '不支持', '不可')}
                       {issuer.redemption.minimumUsd !== undefined && (
-                        <span className='tnum block text-subtle'>min {usd(issuer.redemption.minimumUsd)}</span>
+                        <span className='tnum block text-subtle'>
+                          {t('min', '最低', '最低')} {usd(issuer.redemption.minimumUsd)}
+                        </span>
                       )}
-                      {issuer.redemption.refusable && <span className='block text-negative'>refusable</span>}
+                      {issuer.redemption.refusable && (
+                        <span className='block text-negative'>{t('refusable', '可被拒绝', '拒否可能')}</span>
+                      )}
                     </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{issuer.proofOfReserve.kind}</td>
+                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(POR_LABEL[issuer.proofOfReserve.kind])}</td>
                     <td className={`px-3 py-3 font-mono text-[11px] ${issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground'}`}>
-                      {issuer.usPersons}
+                      {L(US_LABEL[issuer.usPersons])}
                     </td>
                     <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(issuer.onchainValueUsd)}</td>
                     <td className='px-3 py-3'>
-                      <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>{issuer.grade}</span>
+                      <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>{L(GRADE_LABEL[issuer.grade])}</span>
                     </td>
                   </tr>
                 ))}
@@ -256,11 +258,20 @@ export async function renderPage(locale: Locale) {
             </table>
           </div>
 
+          <dl className='mt-3 flex flex-wrap gap-x-5 gap-y-1.5'>
+            {GRADE_RUBRIC.map((row) => (
+              <div key={row.grade} className='flex items-baseline gap-2'>
+                <dt className={`shrink-0 rounded-sm border px-1.5 font-mono text-[10.5px] ${GRADE_TONE[row.grade]}`}>{L(GRADE_LABEL[row.grade])}</dt>
+                <dd className='m-0 text-[11.5px] text-subtle'>{L(row.short)}</dd>
+              </div>
+            ))}
+          </dl>
+
           <div className='mt-6 grid gap-px border border-border bg-border sm:grid-cols-2'>
-            {ISSUERS.filter((i) => i.note).map((issuer) => (
+            {ISSUERS.map((issuer) => (
               <div key={issuer.slug} className='bg-background p-5'>
                 <div className='mb-1.5 text-[13.5px] font-semibold'>{issuer.name}</div>
-                <p className='text-[13px] leading-[1.7] text-muted-foreground'>{issuer.note}</p>
+                <p className='text-[13px] leading-[1.7] text-muted-foreground'>{L(issuer.note)}</p>
                 {issuer.distribution.length > 0 && (
                   <div className='mt-2.5 flex flex-wrap gap-1.5'>
                     {issuer.distribution.map((d) => (
@@ -279,13 +290,7 @@ export async function renderPage(locale: Locale) {
             <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Largest tokens', '代币排行', '主要トークン')}</h2>
             <span className='tnum font-mono text-[11.5px] text-subtle'>2026-10-15 · CoinGecko / Castle Labs</span>
           </div>
-          <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>
-            {t(
-              'Turnover separates the issuers more sharply than size does. SPCXB trades roughly its own market cap in a day; STRCX and CRCLON barely move.',
-              '换手率比规模更能区分发行方。SPCXB 一天的成交额差不多等于它自己的市值，而 STRCX 和 CRCLON 几乎不动。',
-              '回転率は規模以上に発行体を分けます。SPCXB は一日で時価総額に近い出来高、STRCX と CRCLON はほとんど動きません。'
-            )}
-          </p>
+          <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>{L(TURNOVER_READING)}</p>
           <div className='overflow-x-auto'>
             <table className='w-full min-w-[640px] border-collapse border border-border text-[13px]'>
               <thead>
@@ -322,25 +327,17 @@ export async function renderPage(locale: Locale) {
             </table>
           </div>
 
-          <h3 className='mb-3 mt-10 text-base font-semibold'>
-            {t('Where the demand sits', '需求集中在哪', '需要の集中先')}
-          </h3>
+          <h3 className='mb-3 mt-10 text-base font-semibold'>{t('Where the demand sits', '需求集中在哪', '需要の集中先')}</h3>
           <div className='grid gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5'>
             {UNDERLYING_CONCENTRATION.map((item) => (
               <div key={item.underlying} className='bg-background p-4'>
                 <div className='tnum font-mono text-[17px] font-medium'>{usd(item.valueUsd)}</div>
                 <div className='mt-1 text-[12.5px] leading-[1.5] text-muted-foreground'>{item.underlying}</div>
-                {item.note && <div className='mt-1 font-mono text-[10px] text-subtle'>{item.note}</div>}
+                {item.note && <div className='mt-1 font-mono text-[10px] text-subtle'>{L(item.note)}</div>}
               </div>
             ))}
           </div>
-          <p className='mt-3 font-mono text-[11px] leading-[1.7] text-subtle'>
-            {t(
-              'Crypto-linked names, high-beta tech, and companies an ordinary brokerage cannot reach.',
-              '三类资产：加密概念股、高波动科技股，以及普通券商买不到的标的。',
-              '暗号資産関連銘柄、高ベータのテック株、一般の証券会社では買えない銘柄の三種類。'
-            )}
-          </p>
+          <p className='mt-3 font-mono text-[11px] leading-[1.7] text-subtle'>{L(CONCENTRATION_READING)}</p>
         </section>
 
         {/* ── 案例 ─────────────────────────────────────────────── */}
@@ -351,13 +348,7 @@ export async function renderPage(locale: Locale) {
             </h2>
             <span className='tnum font-mono text-[11.5px] text-subtle'>{AAPL_CASE_STUDY.asOf}</span>
           </div>
-          <p className='mb-6 max-w-[740px] text-[14px] leading-[1.7] text-muted-foreground'>
-            {t(
-              `A Saturday. The underlying last closed at ${AAPL_CASE_STUDY.underlyingClose}, yet all four tokens kept trading. Off-hours quotes are a market maker’s opinion, not a market price.`,
-              `周六。底层股票最后收于 ${AAPL_CASE_STUDY.underlyingClose}，但四个代币仍在交易。非交易时段的报价是做市商的意见，不是市场价格。`,
-              `土曜日。原資産は ${AAPL_CASE_STUDY.underlyingClose} で引けましたが、四つのトークンは取引を続けています。休場中の気配はマーケットメイカーの提示であり市場価格ではありません。`
-            )}
-          </p>
+          <p className='mb-6 max-w-[740px] text-[14px] leading-[1.7] text-muted-foreground'>{L(AAPL_CASE_STUDY.lede)}</p>
           <div className='overflow-x-auto'>
             <table className='w-full min-w-[860px] border-collapse border border-border text-[13px]'>
               <thead>
@@ -379,7 +370,7 @@ export async function renderPage(locale: Locale) {
                   <tr key={row.ticker} className='border-b border-border last:border-0'>
                     <td className='px-3 py-3'>
                       <div className='font-mono text-[12.5px] font-medium'>{row.ticker}</div>
-                      <div className='font-mono text-[10.5px] text-subtle'>{row.chain}</div>
+                      <div className='font-mono text-[10.5px] text-subtle'>{row.chain ?? L(UNKNOWN_LABEL)}</div>
                     </td>
                     <td className='px-3 py-3 text-[12.5px] text-muted-foreground'>
                       {issuerName(row.issuerSlug) ?? <span className='text-negative'>{t('unresolved', '未能解析', '特定不可')}</span>}
@@ -401,143 +392,11 @@ export async function renderPage(locale: Locale) {
             {AAPL_CASE_STUDY.rows.map((row) => (
               <p key={row.ticker} className='text-[13px] leading-[1.7] text-muted-foreground'>
                 <span className='font-mono text-[12px] text-foreground'>{row.ticker}</span>
-                <span className='mx-2 text-subtle'>·</span>{row.note}
+                <span className='mx-2 text-subtle'>·</span>{L(row.note)}
               </p>
             ))}
           </div>
-          <p className='mt-5 font-mono text-[11px] leading-[1.7] text-subtle'>
-            {t(
-              'Volume is 24h base quantity × last price. Depth is the top 20 levels converted at mid, not full book depth. Addresses in the data file come from a mapping snapshot marked "observed" — never an issuer whitelist.',
-              '成交额为 24h 基础资产数量 × 最新成交价折算；深度为买卖盘前 20 档按中间价估算，不等于完整订单簿。数据文件中的合约地址来自标记为 observed 的映射快照，不是发行方白名单。',
-              '出来高は 24h 数量 × 直近価格、板は上位 20 段を仲値換算した推定です。データ内のアドレスは observed 状態であり発行体のホワイトリストではありません。'
-            )}
-          </p>
-        </section>
-
-        {/* ── 交易场所 ─────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Venues', '交易场所', '取引場所')}</h2>
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[760px] border-collapse border border-border text-[13px]'>
-              <thead>
-                <tr>
-                  {[
-                    t('Venue', '场所', '取引所'),
-                    t('Tokens', '交易的代币', '取扱トークン'),
-                    t('Terms', '费用 / 特点', '手数料・特徴'),
-                    t('Hours', '交易时间', '取引時間'),
-                  ].map((h) => <th key={h} className={TH}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {VENUES.map((v) => (
-                  <tr key={v.name} className='border-b border-border align-top last:border-0'>
-                    <td className='px-3 py-3 font-medium'>{v.name}</td>
-                    <td className='px-3 py-3 font-mono text-[11.5px] text-muted-foreground'>{v.tokens}</td>
-                    <td className='px-3 py-3 text-[12.5px] leading-[1.6] text-muted-foreground'>{v.terms}</td>
-                    <td className='px-3 py-3 font-mono text-[11.5px] text-muted-foreground'>{v.hours}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className='mt-6 rounded border border-border-strong bg-surface p-5'>
-            <div className='mono-label mb-2 text-brand'>{PERPS_NOTE.title}</div>
-            <p className='mb-2 text-[13.5px] leading-[1.75] text-muted-foreground'>{PERPS_NOTE.body}</p>
-            <Link href={PERPS_NOTE.url} target='_blank' rel='noopener' className='font-mono text-[11.5px] text-subtle hover:text-foreground'>
-              {t('source', '来源', '出典')} ↗
-            </Link>
-          </div>
-        </section>
-
-        {/* ── 两条路线 ─────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>{t('Two paths', '两条路线', '二つの路線')}</h2>
-          <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>
-            {t(
-              'After the Innovation Exemption and the Nasdaq rule, the contest shifts from "who can route around regulation offshore" to "who can offer full shareholder rights and reach US liquidity".',
-              '在 Innovation Exemption 和 Nasdaq 规则之后，竞争重点从「谁能在境外绕开监管」转向「谁能提供完整股东权利并接入美国流动性」。',
-              'Innovation Exemption と Nasdaq のルール以降、競争の焦点は「規制を回避できるか」から「完全な株主権を提供し米国の流動性に接続できるか」へ移ります。'
-            )}
-          </p>
-          <div className='grid gap-px border border-border bg-border sm:grid-cols-2'>
-            {TWO_PATHS.map((path) => (
-              <div key={path.label} className='bg-background p-5'>
-                <div className='mb-1 text-[15px] font-semibold'>{path.label}</div>
-                <div className='mb-3 font-mono text-[11px] text-subtle'>{path.who}</div>
-                <p className='mb-1.5 text-[13px] leading-[1.65] text-positive'>+ {path.pros}</p>
-                <p className='text-[13px] leading-[1.65] text-negative'>− {path.cons}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 风险 ─────────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Risks', '风险', 'リスク')}</h2>
-          <div className='border border-border'>
-            {RISKS.map((row) => (
-              <div key={row.risk} className='flex flex-wrap items-baseline gap-x-4 gap-y-1 border-b border-border px-4 py-3 last:border-0'>
-                <span className={`shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[10.5px] uppercase ${SEVERITY_TONE[row.severity]}`}>
-                  {row.severity}
-                </span>
-                <span className='text-[13.5px] font-medium'>{row.risk}</span>
-                <span className='min-w-0 flex-[1_1_320px] text-[12.5px] leading-[1.6] text-muted-foreground'>{row.detail}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* ── 筛选框架 ─────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Screening framework', '筛选框架', 'スクリーニング基準')}</h2>
-
-          <div className='mb-8 flex flex-wrap gap-8'>
-            <div className='min-w-0 flex-[1_1_320px]'>
-              <div className='mono-label mb-3'>{t('Risk weights', '风险权重', 'リスク配点')}</div>
-              {RISK_WEIGHTS.map((row) => (
-                <div key={row.dimension} className='border-b border-border py-2.5 last:border-0'>
-                  <div className='flex items-baseline justify-between gap-3'>
-                    <span className='text-[13.5px] font-medium'>{row.dimension}</span>
-                    <span className='tnum shrink-0 font-mono text-[12px] text-brand'>{row.weight}%</span>
-                  </div>
-                  <p className='mt-1 text-[12.5px] leading-[1.6] text-subtle'>{row.question}</p>
-                </div>
-              ))}
-            </div>
-            <div className='min-w-0 flex-[1_1_320px]'>
-              <div className='mono-label mb-3'>{t('Grades', '分级', 'グレード')}</div>
-              {GRADE_RUBRIC.map((row) => (
-                <div key={row.grade} className='flex gap-3 border-b border-border py-2.5 last:border-0'>
-                  <span className={`h-fit shrink-0 rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[row.grade]}`}>{row.grade}</span>
-                  <p className='text-[12.5px] leading-[1.65] text-muted-foreground'>{row.meaning}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className='mono-label mb-3'>{t('Veto checks — any single hit disqualifies', '一票否决项 —— 命中任意一条即排除', '一発除外条件')}</div>
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[720px] border-collapse border border-border text-[13px]'>
-              <thead>
-                <tr>
-                  {[t('Check', '检查项', '項目'), t('Pass', '合格条件', '合格条件'), t('Veto', '一票否决信号', '除外シグナル')].map((h) => (
-                    <th key={h} className={TH}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {VETO_CHECKS.map((row) => (
-                  <tr key={row.check} className='border-b border-border align-top last:border-0'>
-                    <td className='px-3 py-3 text-[13px] font-medium'>{row.check}</td>
-                    <td className='px-3 py-3 text-[12.5px] leading-[1.6] text-muted-foreground'>{row.pass}</td>
-                    <td className='px-3 py-3 text-[12.5px] leading-[1.6] text-negative'>{row.veto}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <p className='mt-5 font-mono text-[11px] leading-[1.7] text-subtle'>{L(METHOD_NOTE)}</p>
         </section>
 
         {/* ── 监管 + 观察信号 ──────────────────────────────────── */}
@@ -545,14 +404,14 @@ export async function renderPage(locale: Locale) {
           <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Regulatory record', '监管进展', '規制の動き')}</h2>
           <div className='space-y-px border border-border bg-border'>
             {REGULATORY_NOTES.map((note) => (
-              <div key={note.title} className='bg-background p-5'>
+              <div key={note.title[0]} className='bg-background p-5'>
                 <div className='mb-2 flex flex-wrap items-baseline gap-3'>
                   <span className='tnum font-mono text-[12px] text-brand'>{note.date}</span>
                   <Link href={note.url} target='_blank' rel='noopener' className='text-[14px] font-semibold hover:text-brand'>
-                    {note.title} ↗
+                    {L(note.title)} ↗
                   </Link>
                 </div>
-                <p className='text-[13.5px] leading-[1.75] text-muted-foreground'>{note.summary}</p>
+                <p className='text-[13.5px] leading-[1.75] text-muted-foreground'>{L(note.summary)}</p>
               </div>
             ))}
           </div>
@@ -560,9 +419,9 @@ export async function renderPage(locale: Locale) {
           <h3 className='mb-3 mt-10 text-base font-semibold'>{t('What to watch next', '接下来看什么', '次に見る指標')}</h3>
           <ol className='border border-border'>
             {WATCH_SIGNALS.map((signal, i) => (
-              <li key={signal} className='flex gap-4 border-b border-border px-4 py-3 last:border-0'>
+              <li key={signal[0]} className='flex gap-4 border-b border-border px-4 py-3 last:border-0'>
                 <span className='tnum shrink-0 font-mono text-[12px] text-brand'>{String(i + 1).padStart(2, '0')}</span>
-                <span className='text-[13.5px] leading-[1.65] text-muted-foreground'>{signal}</span>
+                <span className='text-[13.5px] leading-[1.65] text-muted-foreground'>{L(signal)}</span>
               </li>
             ))}
           </ol>

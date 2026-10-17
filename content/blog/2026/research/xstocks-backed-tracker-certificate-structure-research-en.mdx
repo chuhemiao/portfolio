@@ -1,0 +1,146 @@
+---
+title: 'xStocks (Backed): a Jersey certificate, the Kraken acquisition, and turnover structure'
+publishedAt: '2026-10-17'
+summary: 'xStocks wraps US equities as bearer debt certificates issued by a Jersey SPV: holders get economic exposure, not voting rights. Its real advantage is distribution rather than size — Kraken owns both issuance and trading, and its Solana DEX depth runs hundreds of times deeper than its nearest rival. Third by assets, healthiest by turnover.'
+slug: 'xstocks-backed-tracker-certificate-structure-research-en'
+category: 'research'
+language: 'en'
+translationKey: 'xstocks-backed-tracker-certificate-structure-research'
+sourceSlug: 'xstocks-backed-tracker-certificate-structure-research'
+---
+
+## TL;DR
+
+**xStocks has the most complete legal documentation and the most genuine on-chain liquidity in the category — and it is not selling you a stock.** What you buy is a tracker certificate issued by Backed Assets (JE) Limited in Jersey: a bearer debt instrument with real shares held 1:1 behind it, no voting rights, and recourse that runs to the collateral rather than to the company.
+
+By size it has slipped to third ($847M as of 2026-10-16), yet its turnover structure and DeFi composability both beat the larger Ondo. **My read: among the offshore wrappers, xStocks is the one whose structure actually survives inspection; its ceiling is not the product but the Jersey jurisdiction it sits in.**
+
+---
+
+## The legal structure: you hold a debt claim
+
+Backed's product legal overview states this plainly, which deserves credit — not many issuers in this category put "you are not a shareholder" in writing.
+
+The facts that matter:
+
+- The issuer is **Backed Assets (JE) Limited**, a special purpose company registered in **Jersey**
+- Each xStock is collateralised **1:1** by the corresponding share or ETF
+- The underlying is held by a **regulated custodian and broker**
+- It uses **segregated accounts** and a **tri-party Account Control Agreement**
+- There is an **independent Security Agent**
+- The instrument is a **tracker certificate / bearer debt instrument**
+- Holders receive economic exposure and **no voting rights over the underlying share**
+
+As structures go this is solid: segregated accounts and an independent security agent mean that in an issuer bankruptcy the collateral should sit outside the general estate. But "should" is doing real work in that sentence — whether a Jersey segregation arrangement is enforceable across jurisdictions has never been tested by an actual default.
+
+**That is the blind spot across the whole category: everyone advertises 1:1 collateral, and nobody has been through an issuer failure.**
+
+## Proof of reserve: what it does and does not prove
+
+Backed runs Chainlink Proof of Reserve:
+
+1. When a user buys, the issuer buys the matching underlying
+2. A third-party network firm reads custodian account balances
+3. **Securities in settlement are counted as in-transit assets**
+4. The Chainlink PoR network verifies the collateral data
+5. **Updated daily, or whenever reserves move more than 10%**
+
+Step three is easy to overlook and genuinely well designed — without counting securities in T+N settlement, the reserve figure would show a phantom shortfall on every trading day.
+
+But the limits need stating. PoR **cannot** show that:
+
+- Holders have direct shareholder rights in the underlying
+- The issuer will not default legally or operationally
+- Custody arrangements are enforceable in every jurisdiction
+- Redemption will not be blocked by KYC, compliance or liquidity conditions
+- The contracts, bridges or venues are free of bugs
+
+**Reserve safety is one component of safety, not the whole of it.** The full picture is reserve safety + legal recourse + custody segregation + contract security + redemption capacity + venue operational risk.
+
+## Dividends and redemption: rebasing, and a $5,000 floor
+
+- **Dividends** are generally **reinvested into the same stock** and reflected through **rebasing** of the token balance — not paid as cash
+- **Secondary market**: 24/7, depending on the venue
+- **Primary issuance and redemption**: typically **24/5**
+- Issuing or redeeming directly with the issuer requires **KYC**
+- **Minimum direct ticket: $5,000**
+- **Not offered to US persons**
+
+Rebasing is unintuitive for ordinary users: your token count changes while the unit price does not. It matters for tax and cost-basis work, where people routinely mistake a rebase for an airdrop.
+
+The $5,000 primary minimum means something blunt: **for most retail holders the redemption channel does not exist, and the only exit is the secondary market.** That demotes "redeemable" from a safety property to a theoretical one, and the grade has to come down accordingly.
+
+## Distribution is the moat
+
+In December 2025 **Kraken acquired Backed Finance outright**, putting issuance and trading on one balance sheet. Kraken raised $500M at a $15B valuation in the same period and is pursuing a 2026 IPO.
+
+Current distribution: **Kraken, Bybit, OKX**, plus Telegram Wallet as a pipe to hundreds of millions of users.
+
+That explains a counter-intuitive comparison. Thirty-day DEX volume on Solana:
+
+| Underlying | xStocks | Ondo |
+|---|---:|---:|
+| NVDA | **$37.7M** | $0.04M |
+| TSLA | **$30.8M** | $0.002M |
+| S&P 500 | **$137.4M** | — |
+
+xStocks runs hundreds to thousands of times deeper on Solana. Ondo's flow moves through RFQ and mint/redeem rather than DEX pools — defensible by design, but it costs composability. And **"can sit in a pool, can serve as collateral" is the only differentiation tokenized equities have over an ordinary brokerage.**
+
+## Size and turnover: third place, healthiest structure
+
+As of 2026-10-16:
+
+| Issuer | On-chain value | Trend |
+|---|---:|---|
+| Ondo Stocks | $984M | Share fell from 58% to roughly a third |
+| bStocks | $914M | Only launched 2026-06-11 |
+| **xStocks** | **$847M** | $601.7M in early September |
+
+At the single-token level xStocks holds the top of the leaderboard: **STRCX $158.9M** (largest in the market), **MSTRX $110.5M**, **CRCLX $93.2M**, **TSLAX $67.9M**.
+
+Turnover separates them more sharply than size:
+
+| Token | Market cap | 24h volume | Turnover |
+|---|---:|---:|---:|
+| STRCX | $158.9M | $442K | **<1%** |
+| CRCLX | $93.2M | $26.7M | **29%** |
+| TSLAX | $67.9M | $8.8M | **13%** |
+
+STRCX is Strategy's preferred stock and barely moves — that is allocation, not trading. CRCLX and TSLAX show normal double-digit turnover. Against bStocks' SPCXB (90% turnover, −12% on the week), xStocks' holder base looks markedly more long-term.
+
+**One methodology caveat worth stating**: the September report counts 714 instruments including ETFs, the October one counts 100+. The gap is too wide to be real change — almost certainly "contracts deployed" versus "instruments with live supply". The two are not comparable, and neither should be quoted as coverage.
+
+## A real slice of the book
+
+2026-09-19, a Saturday, with AAPL last closed at $335.19 (18 Sept, 20:04 UTC):
+
+**AAPLX / Bybit**: roughly $158K of 24h volume, a 2.68 bps spread, about $18.0K of bid depth against $175K of ask depth, and +0.32% versus the close.
+
+Ask depth is nearly ten times bid depth. **Being able to buy is not the same as being able to sell; entry and exit are not symmetric.** At the same moment AAPLB on Binance showed a 0.30 bps spread but only $8.8K of ask depth — the two books fail in opposite directions.
+
+That +0.32% premium should not be called a depeg either. The underlying market was shut; the price may reflect a weekend risk premium, an unbalanced book, differing redemption costs, or an expectation about Monday's open. **Only continuous observation at the same timestamp, same quote currency, same reference price and same legal structure can tell you whether an instrument genuinely drifts.**
+
+## Risks
+
+| Risk | Severity | Detail |
+|---|---|---|
+| No voting rights | High | Stated in the documents; not a grey area |
+| Jersey jurisdiction | High | Segregation untested by a real default |
+| $5,000 redemption floor | Medium | Retail has no practical redemption route |
+| US persons barred | Medium | Buying through grey channels forfeits the protections too |
+| Rebasing comprehension | Medium | Easily mistaken for an airdrop; distorts tax and cost basis |
+| Inconsistent instrument counts | Low | 714 and 100+ coexist; unusable for comparison |
+
+## What I will watch
+
+1. **Whether Kraken folds xStocks into the main app after the IPO** — the dividing line for whether the distribution advantage scales another order of magnitude
+2. **Whether the primary redemption floor comes down** — below four figures, "redeemable" stops being theoretical
+3. **Whether the Solana DEX depth holds** — its core edge over Ondo; lose it and only the paperwork is left
+4. **Whether a voting-rights roadmap appears** — Robinhood has published one, xStocks has not
+5. **How PoR behaves in a real reserve shortfall** — daily updates and a 10% threshold sound reasonable but are untested
+
+---
+
+**Bottom line.** Among the offshore wrappers, xStocks is the only one I would currently grade A: complete legal documentation, verifiable proof of reserve, genuine on-chain depth. But an A does not make it equivalent to holding the share — its ceiling is pinned by the Jersey jurisdiction and the $5,000 redemption floor. **If you want shareholder rights, this route never gets you there; if you want 24/7 economic exposure and DeFi composability, it is currently the best-executed option.**
+
+*Figures as of 2026-10-16 (size, leaderboard) and 2026-09-19 (the AAPL book slice); structural terms from Backed's product legal overview and FAQ. Research, not investment advice.*

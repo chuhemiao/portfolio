@@ -1,0 +1,157 @@
+---
+title: 'Ondo Stocks: first by balance, halved by share, and the cost of the RFQ route'
+publishedAt: '2026-10-17'
+summary: 'Ondo still leads on on-chain value, but its share fell from 58% to roughly a third — the market doubled while it stood still. The sharper signal is turnover: on the same Circle exposure, CRCLON turns over under 1% a day while the bStocks and xStocks versions run 27–29%. Its balance is custody, not circulation.'
+slug: 'ondo-stocks-share-decline-rfq-liquidity-research-en'
+category: 'research'
+language: 'en'
+translationKey: 'ondo-stocks-share-decline-rfq-liquidity-research'
+sourceSlug: 'ondo-stocks-share-decline-rfq-liquidity-research'
+---
+
+## TL;DR
+
+**Ondo is still the largest issuer by on-chain value ($984M as of 2026-10-16), and it is losing the lead.** Its share fell from 58% in February 2026 to roughly a third — not because it shrank, but because the market doubled while it stood still.
+
+The real problem is not the size table but turnover. **On the same Circle exposure, CRCLON turns over under 1% in a day; the bStocks version does 27% and the xStocks version 29%.** Three tokens tracking one company, about thirty times apart in activity.
+
+**My read: Ondo's $984M looks like a custody balance rather than live money. It leads on compliance narrative and instrument coverage, and neither substitutes for distribution.**
+
+---
+
+## The legal structure: the token and the share are different assets
+
+The issuer is **Ondo Global Markets**, registered in the **British Virgin Islands**, renamed Ondo Stocks in July 2026.
+
+Official material describes the tokens as fully backed by the corresponding share or ETF. The Broadridge partnership announcement draws the boundary more clearly:
+
+- **The Ondo token and the share or ETF held as collateral are different assets**
+- Token holders **do not directly hold shareholder rights in the underlying**
+- Some governance works by holders **expressing views to the issuer**, which is not the same as voting the share
+
+That framing is considerably more honest than "1:1 backed", and closer to the truth. **"Fully backed" describes a collateral relationship, not an ownership one.**
+
+Ondo's secondary-market terms spell out several conditions worth reading one by one:
+
+- The issuer gives **no guarantee that any secondary market continues to exist**
+- **No guarantee that any particular token has sufficient liquidity**
+- Secondary market prices **need not equal the issue price**
+- Redemption requires customer due diligence and KYC
+- The issuer **may refuse redemption** where it suspects a transaction fails legal or internal control requirements
+- Holder recourse **may be limited mainly to the relevant collateral and what the offering documents provide**
+
+The second-to-last point is substantive. **"May refuse redemption" means redemption is a service, not a right.** Grading has to separate that from "has a redemption channel" — it is what pins Ondo at B rather than A.
+
+## The share narrative: the company says 70%, the data says a third
+
+This is the claim to be most careful with.
+
+Ondo states publicly that it holds **over 70% share** among tokenized equity issuers. On CoinGecko's basis the real figure is roughly **a third**.
+
+The timeline:
+
+| Date | Ondo share |
+|---|---:|
+| 2026-02 | **58%** |
+| 2026-03 | 53% |
+| 2026-08 | 34.9% |
+| 2026-09 | 31% |
+| 2026-10 | about a third |
+
+Over the same period the market went from roughly $1B to $3.5B (rwa.xyz basis), while Ondo moved from the $1B TVL it reported in June to $984M now — **the market more than tripled and it barely moved.**
+
+**That 70% should be treated as a marketing figure and kept out of any research conclusion.** Numbers like it usually rest on a narrow definition of "issuer" — counting third-party wrappers only, excluding exchange-issued tokens. When you meet one, go back to a neutral source.
+
+## Balance is not turnover
+
+This is the most informative comparison in the file. All three issuers run a Circle-exposure token:
+
+| Token | Issuer | Market cap | 24h volume | Turnover |
+|---|---|---:|---:|---:|
+| CRCLB | bStocks | $143.4M | $38.2M | **27%** |
+| CRCLX | xStocks | $93.2M | $26.7M | **29%** |
+| **CRCLON** | **Ondo** | **$92.4M** | **$619K** | **<1%** |
+
+One underlying company, three versions, roughly thirty times apart.
+
+NVDA's on-chain activity has the same shape over 30 days:
+
+| Token | Issuer | Chain | Transfers | Unique receivers |
+|---|---|---|---:|---:|
+| NVDAB | bStocks | BNB Chain | **6,054,752** | **121,181** |
+| NVDAON | Ondo | BNB Chain | 209,663 | 40,753 |
+| NVDAON | Ondo | Ethereum | 9,324 | 1,122 |
+
+A single bStocks NVDA token sees **29 times** Ondo's transfer count.
+
+Solana DEX volume is more extreme still over 30 days: NVDA, xStocks **$37.7M** against Ondo **$0.04M**; TSLA, xStocks **$30.8M** against Ondo **$0.002M**.
+
+## What the RFQ route costs
+
+None of this means Ondo lacks liquidity. Its flow runs through **RFQ and mint/redeem channels**, quoted by market makers when a user initiates, rather than sitting in DEX pools.
+
+The design is defensible: RFQ often executes large orders better than a shallow AMM pool, and avoids impermanent loss and MEV. Jupiter's screener shows `RFQ` for some Ondo tokens instead of a fixed dollar liquidity figure.
+
+But the cost is real:
+
+1. **DeFi composability is close to zero** — a token not in a pool cannot be an AMM pair, and integrating it into lending markets is harder
+2. **Off-hours quote quality is uncertain** — RFQ depends on a market maker choosing to quote; spreads and price impact can widen on weekends and while the underlying is shut
+3. **Ordinary AMM metrics do not apply** — you need quote response time, fill rate and slippage at increasing order size, and none of that is public
+
+**And "can sit in a pool, can serve as collateral" is the only differentiation tokenized equities have over an ordinary brokerage.** Coinbase's tokens total just $7.5M, yet they already trade on Uniswap and Aerodrome, work as Aave collateral and can be borrowed against on Morpho. On that axis $7.5M has more optionality than $984M.
+
+## The only issuer seriously returning voting rights
+
+Credit where it is due: Ondo is the only large issuer working the voting problem properly.
+
+Its 2026 custodial version will support proxy voting through **Broadridge** — the incumbent proxy-voting infrastructure in traditional securities, not a crypto-native improvisation.
+
+It is also expanding geographically, working with SBI to bring Japanese equities on-chain.
+
+**If proxy voting actually ships, Ondo's legal-structure grade needs redoing.** Robinhood has published a plan for 1:1 redemption plus voting; Ondo is taking the Broadridge proxy route. Whichever lands first may reset the pass mark for the whole category.
+
+## A slice of the book
+
+2026-09-19, a Saturday, with AAPL last closed at $335.19:
+
+**AAPLON / Gate**: roughly $94.7K of 24h volume, a 5.65 bps spread, about $16.2K of bid depth against $12.0K of ask depth, and +0.21% versus the close.
+
+This is the **most balanced** of the four AAPL books — bid to ask at about 1.35:1, against 6.4:1 for AAPLB on Binance and 0.10:1 for AAPLX on Bybit.
+
+**Balance is a virtue, but the scale is small.** Adequate for small limit orders; not for size without live RFQ.
+
+## A size figure that is easy to misread
+
+Ondo's protocol TVL is around $3.56B, but **the overwhelming majority sits in Treasury products like USDY and OUSG, not stock tokens.** The equities line is currently a strategic loss leader bought with share.
+
+By the same logic, comparing Securitize's $3.88B TVL to Ondo on "stock TVL" is a mismatch — that figure is mostly funds such as BUIDL. **Lock the methodology before comparing, or you end up counting a Treasury fund as an equities moat.**
+
+The ONDO token itself: $0.368, around $1.79B market cap, roughly $103M of 24h volume. The market is pricing an RWA platform, not a category leader's premium.
+
+## Risks
+
+| Risk | Severity | Detail |
+|---|---|---|
+| No direct shareholder rights | High | Stated in the Broadridge announcement; proxy voting not yet live |
+| Redemption may be refused | High | Written into the terms — a service, not a right |
+| BVI jurisdiction | High | Recourse may be limited to the collateral and offering documents |
+| Continuing share loss | Medium | 58% to a third, with no sign of reversal |
+| No DeFi composability | Medium | The structural cost of the RFQ route |
+| Self-reported share | Medium | 70% against a third; verify before quoting |
+| Inconsistent instrument counts | Low | 395+ and 100+ coexist |
+
+## What I will watch
+
+1. **Whether absolute TVL recovers above $1B** — below $800M confirms the lead has changed hands
+2. **When Broadridge proxy voting is genuinely usable** — the only lever that re-rates its legal structure
+3. **Whether CRCLON turnover escapes <1%** — if it stays there, "leader" means a custody ranking
+4. **Whether it starts seeding DEX liquidity** — abandoning the pure RFQ route would be a clear strategic turn
+5. **Whether more venues follow Bitget in delisting Ondo tokens** — losing distribution is more dangerous than losing size
+
+---
+
+**Bottom line.** Ondo leads on regulatory path, instrument coverage and the voting-rights question, and those are real long-term assets. But **a fall from 58% to a third says one thing plainly: asset coverage and a compliance narrative do not substitute for distribution.** The balance is there; the money is not moving through it.
+
+For now I grade it B: issuer and underlying are clear, but redemption is gated by KYC and issuer discretion, and secondary liquidity is the weakest among the major wrappers. **If Broadridge proxy voting ships, that grade needs rebuilding. Until then, first by size is not first by quality.**
+
+*Figures as of 2026-10-16 (size, share, leaderboard) and 2026-09-19 (the AAPL book slice); transfer and DEX data on a 30-day basis. Structural terms from Ondo's secondary market restrictions and the Broadridge announcement. Research, not investment advice.*

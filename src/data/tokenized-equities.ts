@@ -1,3 +1,5 @@
+import type { Locale } from '@/lib/i18n';
+
 /**
  * Tokenized US equities tracker.
  *
@@ -7,30 +9,78 @@
  * collateral, redemption rights and bankruptcy recourse. So the model is two
  * levels — issuers and instruments — rather than one flat table of tickers.
  *
- * Every figure carries the date it was measured. Market data in this category
- * moves within days; the page renders the as-of date beside the numbers.
+ * Every prose field is a [en, zh, ja] tuple: this site ships all three locales
+ * together, and a page whose chrome is translated but whose body is not reads
+ * as broken. Every figure carries the date it was measured.
  */
 
-export type Wrapper =
-  | 'direct-security' // Token is the registered security.
-  | 'tracker-certificate' // Bearer debt instrument tracking the share.
-  | 'debt-claim' // Claim on the issuer, collateral held off-chain.
-  | 'price-exposure' // Economic exposure only, no share held against it.
-  | 'unknown';
+export type L10n = readonly [en: string, zh: string, ja: string];
 
+export const pick = (value: L10n, locale: Locale) =>
+  locale === 'zh-CN' ? value[1] : locale === 'ja' ? value[2] : value[0];
+
+export type Wrapper = 'direct-security' | 'tracker-certificate' | 'debt-claim' | 'price-exposure' | 'unknown';
 export type Dividend = 'distributed' | 'reinvested' | 'pass-through' | 'none' | 'unknown';
 export type Voting = 'full' | 'proxy' | 'planned' | 'none' | 'unknown';
 export type UsAccess = 'blocked' | 'accredited' | 'restricted' | 'allowed' | 'unknown';
 export type LiquidityKind = 'cex-orderbook' | 'amm' | 'rfq' | 'mixed' | 'unknown';
-
-/** Internal research grade, not a regulatory rating. See GRADE_RUBRIC. */
 export type Grade = 'A' | 'B' | 'C' | 'D' | 'unrated';
+
+/** Enum values render as mono tags; these are their localized labels. */
+export const WRAPPER_LABEL: Record<Wrapper, L10n> = {
+  'direct-security': ['direct security', '直接证券', '直接証券'],
+  'tracker-certificate': ['tracker certificate', '跟踪凭证', 'トラッカー証券'],
+  'debt-claim': ['issuer claim', '发行方债权', '発行体への請求権'],
+  'price-exposure': ['price exposure', '价格敞口', '価格エクスポージャー'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export const VOTING_LABEL: Record<Voting, L10n> = {
+  full: ['full', '完整', '完全'],
+  proxy: ['proxy', '代理投票', '代理議決'],
+  planned: ['planned', '计划中', '予定'],
+  none: ['none', '无', 'なし'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export const DIVIDEND_LABEL: Record<Dividend, L10n> = {
+  distributed: ['distributed', '现金分配', '現金分配'],
+  reinvested: ['reinvested', '再投资', '再投資'],
+  'pass-through': ['pass-through', '经济穿透', '経済的パススルー'],
+  none: ['none', '无', 'なし'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export const US_LABEL: Record<UsAccess, L10n> = {
+  blocked: ['blocked', '不开放', '利用不可'],
+  accredited: ['accredited', '合格投资者', '適格投資家'],
+  restricted: ['restricted', '受限', '制限あり'],
+  allowed: ['allowed', '开放', '利用可'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export const POR_LABEL: Record<'chainlink-por' | 'attestation' | 'none' | 'unknown', L10n> = {
+  'chainlink-por': ['Chainlink PoR', 'Chainlink PoR', 'Chainlink PoR'],
+  attestation: ['attestation', '自行披露', '自己開示'],
+  none: ['none', '无', 'なし'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export const GRADE_LABEL: Record<Grade, L10n> = {
+  A: ['A', 'A', 'A'],
+  B: ['B', 'B', 'B'],
+  C: ['C', 'C', 'C'],
+  D: ['D', 'D', 'D'],
+  unrated: ['unrated', '未评级', '未評価'],
+};
+
+export const UNKNOWN_LABEL: L10n = ['unknown', '未知', '不明'];
 
 export type Issuer = {
   slug: string;
   name: string;
   entity?: string;
-  jurisdiction: string;
+  jurisdiction: L10n;
   wrapper: Wrapper;
   voting: Voting;
   dividend: Dividend;
@@ -38,115 +88,86 @@ export type Issuer = {
     available: boolean | 'unknown';
     kyc: boolean | 'unknown';
     minimumUsd?: number;
-    hours?: string;
     refusable?: boolean;
-    note?: string;
   };
-  proofOfReserve: { kind: 'chainlink-por' | 'attestation' | 'none' | 'unknown'; cadence?: string; note?: string };
-  custody?: string;
+  proofOfReserve: { kind: 'chainlink-por' | 'attestation' | 'none' | 'unknown' };
   usPersons: UsAccess;
   chains: string[];
   instrumentCount?: number;
   onchainValueUsd?: number;
   distribution: string[];
   grade: Grade;
-  note?: string;
-  sources: string[];
+  note: L10n;
 };
 
-export type TokenRow = {
-  ticker: string;
-  issuerSlug: string | null;
-  marketCapUsd: number;
-  volume24hUsd: number;
-  change7dPct: number;
-};
-
-export type Instrument = {
-  ticker: string;
-  underlying: string;
-  issuerSlug: string | null;
-  chain: string;
-  /** Observed in a token mapping snapshot — NOT an issuer whitelist. */
-  address?: string;
-  venue: string;
-  liquidity: LiquidityKind;
-  volume24hUsd?: number;
-  spreadBps?: number;
-  /** Top-20 levels converted at mid. Not full book depth. */
-  bidDepthUsd?: number;
-  askDepthUsd?: number;
-  premiumPct?: number;
-  note?: string;
-};
-
-export type Venue = {
-  name: string;
-  tokens: string;
-  terms: string;
-  hours: string;
-};
-
-export type RiskRow = { risk: string; severity: 'high' | 'medium' | 'low'; detail: string };
+export type TokenRow = { ticker: string; issuerSlug: string | null; marketCapUsd: number; volume24hUsd: number; change7dPct: number };
 
 export type MarketSnapshot = {
   date: string;
   source: string;
   sourceUrl: string;
-  scope: string;
-  metrics: { label: string; value: string; delta?: string; note?: string }[];
+  scope: L10n;
+  metrics: { label: L10n; value: string; delta?: string }[];
 };
 
 /* ────────────────────────────────────────────────────────────────────────── */
 
 export const DATA_AS_OF = '2026-10-16';
 
-/** Two methodologies, two totals. The gap is scope, not error. */
 export const MARKET_SNAPSHOTS: MarketSnapshot[] = [
   {
     date: '2026-10-16',
     source: 'rwa.xyz',
     sourceUrl: 'https://app.rwa.xyz/stocks',
-    scope: 'Includes shares registered on-chain (Securitize, Exodus, Forward Industries, FGRS)',
+    scope: [
+      'Includes shares registered on-chain (Securitize, Exodus, Forward Industries, FGRS)',
+      '包含以链上形式登记的股份（Securitize、Exodus、Forward Industries、FGRS）',
+      'オンチェーン登記株を含む（Securitize、Exodus、Forward Industries、FGRS）',
+    ],
     metrics: [
-      { label: 'Distributed value', value: '$3.50B', delta: '+19~24% / 30d' },
-      { label: 'Holders', value: '4.42M' },
-      { label: 'Monthly transfer volume', value: '$10.26B', delta: '−73% / 30d' },
-      { label: 'Monthly active addresses', value: '1.386M', delta: '−60% / 30d' },
+      { label: ['Distributed value', '分发规模', '流通規模'], value: '$3.50B', delta: '+19~24% / 30d' },
+      { label: ['Holders', '持有人', '保有者'], value: '4.42M' },
+      { label: ['Monthly transfer volume', '月转账量', '月間送金量'], value: '$10.26B', delta: '−73% / 30d' },
+      { label: ['Monthly active addresses', '月活地址', '月間アクティブ'], value: '1.386M', delta: '−60% / 30d' },
     ],
   },
   {
     date: '2026-10-15',
     source: 'CoinGecko via Castle Labs',
     sourceUrl: 'https://castlelabs.io/research/tokenized-stocks',
-    scope: 'Third-party wrapped tokens only',
+    scope: ['Third-party wrapped tokens only', '仅统计第三方包装的代币', '第三者ラッパーのトークンのみ'],
     metrics: [
-      { label: 'Tokens tracked', value: '250' },
-      { label: 'Total market cap', value: '$2.50B' },
-      { label: '24h volume', value: '$1.02B' },
+      { label: ['Tokens tracked', '追踪代币数', '対象トークン数'], value: '250' },
+      { label: ['Total market cap', '合计市值', '時価総額'], value: '$2.50B' },
+      { label: ['24h volume', '24h 成交', '24h 出来高'], value: '$1.02B' },
     ],
   },
 ];
 
-/** Market cap is rising while usage falls — the single most important
- *  divergence in the category right now. */
 export const ACTIVITY_DIVERGENCE = {
   asOf: '2026-10-16',
   marketCap: '+19~24%',
   transfers: '−73%',
   activeAddresses: '−60%',
-  reading:
+  reading: [
     'New supply is settling into custody rather than circulating. Growth here is accumulation, not adoption.',
+    '新增的主要是沉淀在托管里的持仓，而不是在流通。这里的增长是囤积，不是采用。',
+    '新規供給は流通せず保管に滞留しています。ここでの成長は採用ではなく蓄積です。',
+  ] as L10n,
 };
 
-/** Demand concentrates in crypto-linked names, high-beta tech, and companies
- *  ordinary brokerages cannot reach. */
-export const UNDERLYING_CONCENTRATION = [
-  { underlying: 'Circle (CRCL)', valueUsd: 350_500_000, note: 'Across 5 issuers' },
-  { underlying: 'Strategy STRC (preferred)', valueUsd: 225_700_000 },
-  { underlying: 'SpaceX', valueUsd: 211_500_000, note: 'Not listed on any public exchange' },
+export const UNDERLYING_CONCENTRATION: { underlying: string; valueUsd: number; note?: L10n }[] = [
+  { underlying: 'Circle (CRCL)', valueUsd: 350_500_000, note: ['Across 5 issuers', '分布在 5 家发行方', '5 社の発行体に分散'] },
+  { underlying: 'Strategy STRC', valueUsd: 225_700_000, note: ['Preferred stock', '优先股', '優先株'] },
+  { underlying: 'SpaceX', valueUsd: 211_500_000, note: ['Not publicly listed', '未公开上市', '未上場'] },
   { underlying: 'Strategy (MSTR)', valueUsd: 207_000_000 },
   { underlying: 'NVIDIA (NVDA)', valueUsd: 156_000_000 },
+];
+
+export const CONCENTRATION_READING: L10n = [
+  'Crypto-linked names, high-beta tech, and companies an ordinary brokerage cannot reach.',
+  '三类资产：加密概念股、高波动科技股，以及普通券商买不到的标的。',
+  '暗号資産関連、高ベータのテック株、一般の証券会社では買えない銘柄の三種類。',
 ];
 
 export const ISSUERS: Issuer[] = [
@@ -154,11 +175,11 @@ export const ISSUERS: Issuer[] = [
     slug: 'ondo',
     name: 'Ondo Stocks',
     entity: 'Ondo Global Markets (BVI)',
-    jurisdiction: 'British Virgin Islands',
+    jurisdiction: ['British Virgin Islands', '英属维尔京群岛', '英領バージン諸島'],
     wrapper: 'debt-claim',
     voting: 'proxy',
     dividend: 'unknown',
-    redemption: { available: true, kyc: true, refusable: true, note: 'No guarantee a secondary market exists; redemption may be refused on compliance grounds.' },
+    redemption: { available: true, kyc: true, refusable: true },
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Ethereum', 'BNB Chain', 'Solana', 'HyperEVM'],
@@ -166,65 +187,65 @@ export const ISSUERS: Issuer[] = [
     onchainValueUsd: 984_000_000,
     distribution: ['LI.FI', 'Jupiter'],
     grade: 'B',
-    note: 'Renamed from Ondo Global Markets in July 2026. Leads on multi-chain reach and DeFi integration. The company claims over 70% issuer share; on CoinGecko’s basis it is roughly a third — treat the 70% as marketing.',
-    sources: [
-      'https://docs.ondo.finance/ondo-stocks/secondary-market-restrictions',
-      'https://finance.yahoo.com/markets/crypto/articles/ondo-global-markets-tops-1b-103215556.html',
+    note: [
+      'Renamed from Ondo Global Markets in July 2026. Leads on multi-chain reach and DeFi integration. The company claims over 70% issuer share; on CoinGecko’s basis it is roughly a third — treat the 70% as marketing.',
+      '2026 年 7 月从 Ondo Global Markets 更名。多链覆盖和 DeFi 集成领先。公司自称发行方份额超过 70%，但按 CoinGecko 口径约三分之一 —— 那个 70% 应视为宣传口径。',
+      '2026 年 7 月に Ondo Global Markets から改称。マルチチェーン対応と DeFi 統合で先行。同社はシェア 70% 超と主張しますが、CoinGecko 基準では約三分の一で、70% は広報上の数字と見るべきです。',
     ],
   },
   {
     slug: 'bstocks',
     name: 'bStocks',
     entity: 'BTech Holdings Limited',
-    jurisdiction: 'ADGM (FSRA-listed certificates)',
+    jurisdiction: ['ADGM (FSRA-listed certificates)', 'ADGM（FSRA 正式上市凭证）', 'ADGM（FSRA 上場証券）'],
     wrapper: 'tracker-certificate',
     voting: 'none',
     dividend: 'pass-through',
-    redemption: { available: true, kyc: true, minimumUsd: 5, note: '1:1 free conversion between Binance stock positions and bStocks.' },
-    proofOfReserve: { kind: 'attestation', note: 'Binance publishes a collateral page.' },
-    custody: '1:1 custody',
+    redemption: { available: true, kyc: true, minimumUsd: 5 },
+    proofOfReserve: { kind: 'attestation' },
     usPersons: 'blocked',
     chains: ['BNB Chain'],
     instrumentCount: 80,
     onchainValueUsd: 914_000_000,
     distribution: ['Binance'],
     grade: 'B',
-    note: 'Launched 2026-06-11 and already second by size. Highest turnover in the category — SPCXB trades roughly its own market cap in a day. Dividends take a 30% US withholding deduction before being reinvested through a multiplier. Single chain: BSC deposits only, so a wrong-network transfer loses the asset.',
-    sources: [],
+    note: [
+      'Launched 2026-06-11 and already second by size. Highest turnover in the category — SPCXB trades roughly its own market cap in a day. Dividends take a 30% US withholding deduction before being reinvested through a multiplier. Single chain: BSC deposits only, so a wrong-network transfer loses the asset.',
+      '2026-06-11 上线，规模已居第二。换手率全场最高 —— SPCXB 一天成交额约等于自身市值。分红先扣 30% 美国预扣税，再按乘数复投。单链：只支持 BSC 充值，转错网络会丢失资产。',
+      '2026-06-11 開始で既に規模は二位。回転率は最高で、SPCXB は一日で時価総額に近い出来高。配当は米国源泉 30% を控除後、乗数で再投資。BSC のみ対応のため、誤ったネットワーク送金は資産を失います。',
+    ],
   },
   {
     slug: 'xstocks',
     name: 'xStocks (Backed)',
     entity: 'Backed Assets (JE) Limited',
-    jurisdiction: 'Jersey',
+    jurisdiction: ['Jersey', '泽西岛', 'ジャージー島'],
     wrapper: 'tracker-certificate',
     voting: 'none',
     dividend: 'reinvested',
-    redemption: { available: true, kyc: true, minimumUsd: 5000, hours: 'Primary issue/redeem 24/5; secondary 24/7 by venue' },
-    proofOfReserve: { kind: 'chainlink-por', cadence: 'Daily, or when reserves move more than 10%', note: 'A third-party network firm reads custodian balances and counts securities in settlement.' },
-    custody: 'Regulated custodian and broker, segregated accounts, tri-party Account Control Agreement, independent Security Agent',
+    redemption: { available: true, kyc: true, minimumUsd: 5000 },
+    proofOfReserve: { kind: 'chainlink-por' },
     usPersons: 'blocked',
     chains: ['Solana', 'Ethereum', 'Arbitrum', 'BSC', 'TON', 'Tron', 'Mantle', 'Ink', 'Monad', 'Optimism', 'X Layer', 'Hyperliquid'],
     instrumentCount: 100,
     onchainValueUsd: 847_000_000,
     distribution: ['Kraken', 'Bybit', 'OKX'],
     grade: 'A',
-    note: 'Widest chain coverage in the category and the most complete public legal documentation. Acquired by Kraken in Dec 2025, putting issuance and trading on one balance sheet. Dividends arrive as rebasing, not cash. No voting rights; Jersey issuer.',
-    sources: [
-      'https://docs.xstocks.fi/docs/product-legal-overview',
-      'https://docs.xstocks.fi/docs/frequently-asked-questions',
-      'https://backed.fi/news-updates/chainlink-proof-of-reserve-is-now-active',
+    note: [
+      'Widest chain coverage and the most complete public legal documentation. Acquired by Kraken in Dec 2025, putting issuance and trading on one balance sheet. Chainlink proof of reserve updates daily or on a 10% move. Dividends arrive as rebasing, not cash; primary redemption needs KYC and a $5,000 minimum.',
+      '链覆盖最广，公开法律文件也最完整。2025 年 12 月被 Kraken 全资收购，发行端与交易端并入同一张资产负债表。Chainlink 储备证明日更，或储备变动超 10% 时更新。分红以 rebasing 形式到账而非现金；一级赎回需 KYC，最低 $5,000。',
+      'チェーン対応が最も広く、法的文書の公開も最も充実。2025 年 12 月に Kraken が買収し、発行と取引を同一の財務基盤に統合。Chainlink の準備金証明は日次、または 10% 変動時に更新。配当は現金ではなくリベースで反映され、一次償還は KYC と最低 $5,000 が必要です。',
     ],
   },
   {
     slug: 'robinhood',
     name: 'Robinhood Stock Tokens',
     entity: 'Robinhood Assets (Jersey) Limited',
-    jurisdiction: 'Jersey',
+    jurisdiction: ['Jersey', '泽西岛', 'ジャージー島'],
     wrapper: 'debt-claim',
     voting: 'planned',
     dividend: 'unknown',
-    redemption: { available: 'unknown', kyc: true, note: 'Plans 1:1 redemption into real shares.' },
+    redemption: { available: 'unknown', kyc: true },
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Robinhood Chain'],
@@ -232,13 +253,16 @@ export const ISSUERS: Issuer[] = [
     onchainValueUsd: 151_000_000,
     distribution: ['Robinhood app'],
     grade: 'B',
-    note: 'Tokenized debt securities today, but the only major issuer publicly planning 1:1 redemption into real shares plus voting rights. If that ships it is the first large issuer to return shareholder rights. In the EU it also runs 2,000+ CFD-style products that cannot be withdrawn on-chain.',
-    sources: ['https://docs.robinhood.com/chain/stock-tokens/'],
+    note: [
+      'Tokenized debt securities today, but the only major issuer publicly planning 1:1 redemption into real shares plus voting rights. If that ships it is the first large issuer to return shareholder rights. In the EU it also runs 2,000+ CFD-style products that cannot be withdrawn on-chain.',
+      '目前是代币化债务证券，但它是唯一公开计划支持 1:1 赎回成真股并附带投票权的大型发行方。若落地，将是第一家把股东权利还给持有人的大玩家。在欧盟另有 2,000+ 差价合约式产品，不可提到链上。',
+      '現状はトークン化債務証券ですが、1:1 の現物償還と議決権を公表している唯一の大手発行体です。実現すれば株主権を返す最初の大手となります。EU では出金不可の CFD 型商品も 2,000 本以上提供しています。',
+    ],
   },
   {
     slug: 'remora',
     name: 'Remora rStocks',
-    jurisdiction: 'unknown',
+    jurisdiction: ['unknown', '未知', '不明'],
     wrapper: 'unknown',
     voting: 'unknown',
     dividend: 'unknown',
@@ -249,31 +273,36 @@ export const ISSUERS: Issuer[] = [
     onchainValueUsd: 132_000_000,
     distribution: [],
     grade: 'unrated',
-    note: 'Fifth by size with almost no public structural disclosure. Unrated until the issuing entity, custody and redemption terms can be read from primary documents.',
-    sources: [],
+    note: [
+      'Fifth by size with almost no public structural disclosure. Unrated until the issuing entity, custody and redemption terms can be read from primary documents.',
+      '规模第五，但几乎没有公开的结构性披露。在能从正式文件读到发行主体、托管与赎回条款之前，不予评级。',
+      '規模は五位ですが構造の開示がほとんどありません。発行主体・保管・償還条件を一次資料で確認できるまで評価は保留します。',
+    ],
   },
   {
     slug: 'dinari',
     name: 'Dinari dShares',
-    jurisdiction: 'United States',
+    jurisdiction: ['United States', '美国', '米国'],
     wrapper: 'direct-security',
     voting: 'unknown',
     dividend: 'unknown',
     redemption: { available: true, kyc: true },
-    proofOfReserve: { kind: 'unknown', note: 'Underlying held with a qualified custodian.' },
-    custody: 'Qualified custodian',
+    proofOfReserve: { kind: 'unknown' },
     usPersons: 'accredited',
     chains: ['Ethereum', 'Arbitrum', 'Avalanche', 'Base'],
     instrumentCount: 724,
     distribution: [],
     grade: 'B',
-    note: 'The only issuer here open to US persons at all, and then only to accredited investors. Widest instrument coverage in the category — the full S&P 500.',
-    sources: [],
+    note: [
+      'The only issuer here open to US persons at all, and then only to accredited investors. Underlying held with a qualified custodian. Widest instrument coverage in the category — the full S&P 500.',
+      '这张表上唯一对美国用户开放的发行方，且仅限合格投资者。底层由合格托管机构持有。标的覆盖最广 —— 完整的标普 500。',
+      '米国居住者に開かれている唯一の発行体ですが、適格投資家に限られます。原資産は適格カストディアンが保管。銘柄カバレッジは最広で S&P 500 全体に及びます。',
+    ],
   },
   {
     slug: 'backpack',
     name: 'Backpack Securities',
-    jurisdiction: 'unknown',
+    jurisdiction: ['unknown', '未知', '不明'],
     wrapper: 'unknown',
     voting: 'unknown',
     dividend: 'unknown',
@@ -284,50 +313,57 @@ export const ISSUERS: Issuer[] = [
     onchainValueUsd: 30_980_000,
     distribution: ['Backpack'],
     grade: 'unrated',
-    note: 'Exchange issuing its own tokens — the pattern now common to Coinbase, Robinhood and Binance.',
-    sources: [],
+    note: [
+      'Exchange issuing its own tokens — the pattern now common to Coinbase, Robinhood and Binance.',
+      '交易所自己发行代币 —— Coinbase、Robinhood、Binance 现在都走这条路。',
+      '取引所が自ら発行するパターン。Coinbase、Robinhood、Binance も同様です。',
+    ],
   },
   {
     slug: 'coinbase',
     name: 'Coinbase (Base)',
-    jurisdiction: 'ADGM-regulated',
+    jurisdiction: ['ADGM-regulated', '受 ADGM 监管', 'ADGM 規制下'],
     wrapper: 'direct-security',
     voting: 'unknown',
     dividend: 'unknown',
     redemption: { available: 'unknown', kyc: true },
-    proofOfReserve: { kind: 'unknown', note: 'Shares held 1:1 by Alpaca.' },
-    custody: 'Alpaca',
+    proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Base'],
     instrumentCount: 10,
     onchainValueUsd: 7_500_000,
     distribution: ['Uniswap', 'Aerodrome', 'Aave', 'Morpho'],
     grade: 'B',
-    note: 'Launched 2026-08-24 with NVDAc, METAc, AAPLc and GOOGLc. Thirteen contracts deployed, only four with supply. The most DeFi-native of the set: tradable on Uniswap and Aerodrome, usable as Aave collateral, borrowable against on Morpho.',
-    sources: ['https://www.coindesk.com/business/2026/08/24/coinbase-debuts-tokenized-stocks-on-base-network-joining-race-to-bring-equities-on-blockchain'],
+    note: [
+      'Launched 2026-08-24 with NVDAc, METAc, AAPLc and GOOGLc; shares held 1:1 by Alpaca. Thirteen contracts deployed, only four with supply. The most DeFi-native of the set: tradable on Uniswap and Aerodrome, usable as Aave collateral, borrowable against on Morpho.',
+      '2026-08-24 首发 NVDAc、METAc、AAPLc、GOOGLc，股票由 Alpaca 1:1 持有。共部署 13 个合约，只有 4 个有流通量。DeFi 属性最强：可在 Uniswap 和 Aerodrome 交易，可作 Aave 抵押品，可在 Morpho 借贷。',
+      '2026-08-24 に NVDAc、METAc、AAPLc、GOOGLc を開始。株式は Alpaca が 1:1 で保有。13 契約を展開も流通は 4 銘柄のみ。DeFi 親和性が最も高く、Uniswap と Aerodrome で取引、Aave の担保、Morpho での借入に利用できます。',
+    ],
   },
   {
     slug: 'reality',
     name: 'Reality rTokens',
-    jurisdiction: 'unknown',
+    jurisdiction: ['unknown', '未知', '不明'],
     wrapper: 'debt-claim',
     voting: 'none',
     dividend: 'unknown',
     redemption: { available: 'unknown', kyc: 'unknown' },
     proofOfReserve: { kind: 'unknown' },
-    custody: 'Alpaca Securities',
     usPersons: 'blocked',
     chains: ['Arbitrum', 'Morph'],
     instrumentCount: 36,
     distribution: ['Bitget'],
     grade: 'C',
-    note: 'Shares held through Alpaca; holders do not own the stock directly. Replaced the Ondo tokens Bitget previously listed.',
-    sources: [],
+    note: [
+      'Shares held through Alpaca Securities; holders do not own the stock directly. Replaced the Ondo tokens Bitget previously listed.',
+      '股票通过 Alpaca Securities 持有，用户不直接拥有股份。已替换 Bitget 此前上架的 Ondo 代币。',
+      '株式は Alpaca Securities 経由で保有され、利用者が直接所有するわけではありません。Bitget が以前上場していた Ondo トークンを置き換えました。',
+    ],
   },
   {
     slug: 'prestocks',
     name: 'ST0x / PreStocks',
-    jurisdiction: 'unknown',
+    jurisdiction: ['unknown', '未知', '不明'],
     wrapper: 'unknown',
     voting: 'unknown',
     dividend: 'unknown',
@@ -338,12 +374,14 @@ export const ISSUERS: Issuer[] = [
     onchainValueUsd: 20_350_000,
     distribution: [],
     grade: 'unrated',
-    note: 'Small issuers; PreStocks accounts for the figure shown.',
-    sources: [],
+    note: [
+      'Small issuers; PreStocks accounts for the figure shown.',
+      '小型发行方，表中数字来自 PreStocks。',
+      '小規模発行体で、表の数値は PreStocks のものです。',
+    ],
   },
 ];
 
-/** Leaderboard, 2026-10-15, CoinGecko via Castle Labs. */
 export const TOP_TOKENS: TokenRow[] = [
   { ticker: 'STRCX', issuerSlug: 'xstocks', marketCapUsd: 158_900_000, volume24hUsd: 442_000, change7dPct: -0.4 },
   { ticker: 'CRCLB', issuerSlug: 'bstocks', marketCapUsd: 143_400_000, volume24hUsd: 38_200_000, change7dPct: -4.7 },
@@ -355,151 +393,202 @@ export const TOP_TOKENS: TokenRow[] = [
   { ticker: 'SNDKB', issuerSlug: 'bstocks', marketCapUsd: 53_800_000, volume24hUsd: 48_300_000, change7dPct: -20 },
 ];
 
-/** Case study, 2026-09-19, a Saturday. The underlying last closed at $335.19 on
- *  2026-09-18 20:04 UTC, yet all four tokens kept trading. Older than the rest
- *  of this file, kept because the structural point does not expire: one stock,
- *  four issuers, four completely different books. */
+export const TURNOVER_READING: L10n = [
+  'Turnover separates the issuers more sharply than size does. SPCXB trades roughly its own market cap in a day; STRCX and CRCLON barely move.',
+  '换手率比规模更能区分发行方。SPCXB 一天的成交额约等于自身市值，而 STRCX 和 CRCLON 几乎不动。',
+  '回転率は規模以上に発行体を分けます。SPCXB は一日で時価総額に近い出来高、STRCX と CRCLON はほとんど動きません。',
+];
+
+/** Case study, 2026-09-19 — older than the rest of this file, kept because the
+ *  structural point does not expire: one stock, four issuers, four books. */
 export const AAPL_CASE_STUDY = {
   asOf: '2026-09-19',
   underlyingClose: '$335.19',
+  lede: [
+    'A Saturday. The underlying last closed at $335.19, yet all four tokens kept trading. Off-hours quotes are a market maker’s opinion, not a market price.',
+    '周六。底层股票最后收于 $335.19，但四个代币仍在交易。非交易时段的报价是做市商的意见，不是市场价格。',
+    '土曜日。原資産は $335.19 で引けましたが、四つのトークンは取引を継続。休場中の気配はマーケットメイカーの提示であり市場価格ではありません。',
+  ] as L10n,
   rows: [
     {
-      ticker: 'AAPLB', underlying: 'AAPL', issuerSlug: 'bstocks', chain: 'BNB Chain',
-      address: '0x431a3bee82e2ca41e49895cbece5bb0f76a89b7a', venue: 'Binance', liquidity: 'cex-orderbook' as LiquidityKind,
+      ticker: 'AAPLB', issuerSlug: 'bstocks', chain: 'BNB Chain', venue: 'Binance',
+      address: '0x431a3bee82e2ca41e49895cbece5bb0f76a89b7a',
       volume24hUsd: 822_000, spreadBps: 0.3, bidDepthUsd: 56_300, askDepthUsd: 8_800, premiumPct: -0.02,
-      note: 'Tightest quote in the set, but ask depth is a sixth of bid depth. A narrow spread is not two-sided depth.',
+      note: [
+        'Tightest quote in the set, but ask depth is a sixth of bid depth. A narrow spread is not two-sided depth.',
+        '报价最紧，但卖盘深度只有买盘的六分之一。窄价差不等于两边都有深度。',
+        '最も狭い気配ですが、売り板は買い板の六分の一。狭いスプレッドは両側の厚みを意味しません。',
+      ] as L10n,
     },
     {
-      ticker: 'AAPLX', underlying: 'AAPL', issuerSlug: 'xstocks', chain: 'Solana / EVM',
-      address: 'XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp', venue: 'Bybit', liquidity: 'cex-orderbook' as LiquidityKind,
+      ticker: 'AAPLX', issuerSlug: 'xstocks', chain: 'Solana / EVM', venue: 'Bybit',
+      address: 'XsbEhLAtcf6HdfpFZ5xEMdqW8nfAvcsP5bdudRLJzJp',
       volume24hUsd: 158_000, spreadBps: 2.68, bidDepthUsd: 18_000, askDepthUsd: 175_000, premiumPct: 0.32,
-      note: 'Thick on the ask, thin on the bid — getting in and getting out are not symmetric.',
+      note: [
+        'Thick on the ask, thin on the bid — getting in and getting out are not symmetric.',
+        '卖盘厚、买盘薄 —— 买得进和卖得出并不对称。',
+        '売り板は厚く買い板は薄い。買える量と売れる量は対称ではありません。',
+      ] as L10n,
     },
     {
-      ticker: 'AAPLON', underlying: 'AAPL', issuerSlug: 'ondo', chain: 'Ethereum / Solana',
-      address: '0x14c3abf95cb9c93a8b82c1cdcb76d72cb87b2d4c', venue: 'Gate', liquidity: 'cex-orderbook' as LiquidityKind,
+      ticker: 'AAPLON', issuerSlug: 'ondo', chain: 'Ethereum / Solana', venue: 'Gate',
+      address: '0x14c3abf95cb9c93a8b82c1cdcb76d72cb87b2d4c',
       volume24hUsd: 94_700, spreadBps: 5.65, bidDepthUsd: 16_200, askDepthUsd: 12_000, premiumPct: 0.21,
-      note: 'Balanced but small. Fine for small limit orders, not for size without live RFQ.',
+      note: [
+        'Balanced but small. Fine for small limit orders, not for size without live RFQ.',
+        '相对均衡但规模小。小额限价单可以，没有实时 RFQ 时不适合放大仓位。',
+        'バランスは取れていますが小規模。小口の指値なら可、RFQ なしでのサイズ拡大には不向きです。',
+      ] as L10n,
     },
     {
-      ticker: 'AAPLG', underlying: 'AAPL', issuerSlug: null, chain: 'unknown',
-      venue: 'Gate', liquidity: 'unknown' as LiquidityKind,
+      ticker: 'AAPLG', issuerSlug: null, chain: null, venue: 'Gate',
       volume24hUsd: 445_500, spreadBps: 53.3, bidDepthUsd: 5_600, askDepthUsd: 9_300, premiumPct: -0.02,
-      note: 'Issuer could not be resolved in the mapping. High volume, 50x the spread, almost no depth — volume alone must never qualify an instrument.',
+      note: [
+        'Issuer could not be resolved in the mapping. High volume, 50x the spread, almost no depth — volume alone must never qualify an instrument.',
+        '发行方在映射中无法解析。成交量不低，价差却是别人的 50 倍，深度几乎没有 —— 成交量本身永远不能作为入选理由。',
+        '発行体をマッピングで特定できず。出来高はあるがスプレッドは 50 倍、板はほぼ無し。出来高だけで採用してはいけません。',
+      ] as L10n,
     },
-  ] satisfies Instrument[],
+  ],
 };
 
-export const VENUES: Venue[] = [
-  { name: 'Kraken', tokens: 'xStocks', terms: 'Zero commission buying with USDG/USD (spread may apply), $1 minimum', hours: '24/5 in-platform; 24/7 once withdrawn on-chain' },
-  { name: 'Binance', tokens: 'Own bStocks', terms: '1:1 free conversion with Binance stock positions, $5 minimum, collateral page published', hours: '24/7' },
-  { name: 'Bybit', tokens: 'xStocks', terms: '0.20% maker/taker at VIP0; Solana and Mantle withdrawals', hours: '24/7' },
-  { name: 'OKX', tokens: 'xStocks', terms: '40+ instruments, wired into OKX DEX and X Layer', hours: '—' },
-  { name: 'Bitget', tokens: 'Reality rTokens', terms: '0.1%, or 0.05% paid in BGB; replaced the Ondo tokens listed previously', hours: '—' },
-  { name: 'Robinhood', tokens: 'Own Stock Tokens', terms: 'Plus 2,000+ CFD-style products in the EU that cannot be withdrawn', hours: '—' },
-  { name: 'Backpack', tokens: 'Own Backpack Securities', terms: 'Solana', hours: '—' },
+export const METHOD_NOTE: L10n = [
+  'Volume is 24h base quantity × last price. Depth is the top 20 levels converted at mid, not full book depth. Contract addresses come from a mapping snapshot marked "observed" — never an issuer whitelist.',
+  '成交额为 24h 基础资产数量 × 最新成交价折算；深度为买卖盘前 20 档按中间价估算，不等于完整订单簿。合约地址来自标记为 observed 的映射快照，不是发行方白名单。',
+  '出来高は 24h 数量 × 直近価格、板は上位 20 段を仲値換算した推定で全板ではありません。コントラクトアドレスは observed 状態のマッピングであり、発行体のホワイトリストではありません。',
 ];
 
-/** The largest venue for "24/7 US stock exposure" holds no shares at all. */
-export const PERPS_NOTE = {
-  title: 'Perps are the biggest venue, and they are not spot',
-  body:
-    'Under Hyperliquid’s HIP-3 framework, Trade[XYZ] had 92 markets by June 2026, about 98% of HIP-3 volume and roughly 300,000 users. These are synthetic: no custodied shares, no redemption. They compete for the same users as every spot token on this page.',
-  url: 'https://www.kucoin.com/news/flash/trade-xyz-builds-92-markets-and-98-hip-3-volume-on-hyperliquid-in-8-months',
-};
-
-export const RISKS: RiskRow[] = [
-  { risk: 'No shareholder rights', severity: 'high', detail: 'xStocks, Ondo, bStocks and Reality all state plainly that holders get no direct ownership or voting.' },
-  { risk: 'Issuer and custody risk', severity: 'high', detail: 'Issuing entities sit in Jersey, the BVI and ADGM, leaning on custodians such as Alpaca.' },
-  { risk: 'Fragmented liquidity', severity: 'medium', detail: 'The same stock has five or six versions across chains; spreads widen while the underlying market is shut.' },
-  { risk: 'Wrong-network transfers', severity: 'medium', detail: 'bStocks accepts BSC deposits only — sending on another network loses the asset.' },
-  { risk: 'Tax treatment', severity: 'medium', detail: 'bStocks dividends take a 30% US withholding deduction first.' },
-  { risk: 'Speculative turnover', severity: 'medium', detail: 'SPCXB and SNDKB turn over at extreme rates, with weekly drawdowns around −20%.' },
+export const WATCH_SIGNALS: L10n[] = [
+  ['Which venues file for and receive the first TSV approvals.', '首批 TSV 的牌照申请与上线名单。', '最初の TSV 認可を申請・取得する取引場所。'],
+  ['When Robinhood’s 1:1 redemption and voting rights actually ship.', 'Robinhood 的 1:1 赎回与投票权何时真正落地。', 'Robinhood の 1:1 償還と議決権がいつ実装されるか。'],
+  ['Whether rwa.xyz monthly active addresses stop falling.', 'rwa.xyz 的月活地址能否止跌。', 'rwa.xyz の月間アクティブアドレスが下げ止まるか。'],
+  ['Share movement between Ondo, bStocks and xStocks.', 'Ondo、bStocks、xStocks 三家的份额变化。', 'Ondo、bStocks、xStocks のシェア変動。'],
+  ['The volume gap between Hyperliquid stock perps and spot tokens.', 'Hyperliquid 股票永续与现货代币之间的成交量差距。', 'Hyperliquid の株式無期限先物と現物トークンの出来高差。'],
 ];
 
-export const WATCH_SIGNALS = [
-  'Which venues file for and receive the first TSV approvals.',
-  'When Robinhood’s 1:1 redemption and voting rights actually ship.',
-  'Whether rwa.xyz monthly active addresses stop falling.',
-  'Share movement between Ondo, bStocks and xStocks.',
-  'The volume gap between Hyperliquid stock perps and spot tokens.',
+export const WRAPPER_RUBRIC: { kind: Wrapper; meaning: L10n }[] = [
+  {
+    kind: 'direct-security',
+    meaning: [
+      'The token is the registered share. Dividends and voting survive. Usually permissioned and KYC-gated.',
+      '代币就是登记在册的股份。分红和投票权都保留。通常是许可制并需要 KYC。',
+      'トークン自体が登録株式。配当も議決権も残ります。多くは許可制で KYC が必要です。',
+    ],
+  },
+  {
+    kind: 'tracker-certificate',
+    meaning: [
+      'A bearer debt instrument over a share held by a custodian. Economic exposure only; no voting. Recourse runs to the collateral, not to the company.',
+      '针对托管股份的不记名债务凭证。只有经济敞口，没有投票权。追索指向抵押品，而不是公司。',
+      'カストディアンが保有する株式に対する無記名債務証券。経済的エクスポージャーのみで議決権なし。遡求先は担保であり企業ではありません。',
+    ],
+  },
+  {
+    kind: 'debt-claim',
+    meaning: [
+      'A claim on the issuer, collateral held off-chain. If the issuer fails you are a creditor, not a shareholder.',
+      '对发行方的债权，抵押品在链下。发行方违约时，你是债权人，不是股东。',
+      '発行体への請求権で、担保はオフチェーン。発行体が破綻すれば株主ではなく債権者です。',
+    ],
+  },
+  {
+    kind: 'price-exposure',
+    meaning: [
+      'No share held against it. A derivative wearing a ticker.',
+      '背后没有任何股票。一个套着股票代码的衍生品。',
+      '裏付けとなる株式はありません。ティッカーを被せたデリバティブです。',
+    ],
+  },
 ];
 
-/** What the token legally is — the question most products answer badly. */
-export const WRAPPER_RUBRIC: { kind: Wrapper; label: string; meaning: string }[] = [
-  { kind: 'direct-security', label: 'Direct security', meaning: 'The token is the registered share. Dividends and voting survive. Usually permissioned and KYC-gated.' },
-  { kind: 'tracker-certificate', label: 'Tracker certificate', meaning: 'A bearer debt instrument over a share held by a custodian. Economic exposure only; no voting. Recourse runs to the collateral, not to the company.' },
-  { kind: 'debt-claim', label: 'Issuer claim', meaning: 'A claim on the issuer, collateral held off-chain. If the issuer fails you are a creditor, not a shareholder.' },
-  { kind: 'price-exposure', label: 'Price exposure', meaning: 'No share held against it. A derivative wearing a ticker.' },
+/** Compact legend for the grade column; `meaning` is the full definition. */
+export const GRADE_RUBRIC: { grade: Grade; short: L10n; meaning: L10n }[] = [
+  {
+    grade: 'A',
+    short: ['documents, reserves and redemption all verifiable', '文件、储备与赎回均可核验', '書類・準備金・償還をすべて検証可能'],
+    meaning: [
+      'Offering documents, custody, proof of reserve, redemption and official contracts all verifiable; genuine two-sided secondary market.',
+      '发行文件、托管、储备证明、赎回机制与官方合约均可核验；二级市场有真实双向流动性。',
+      '発行書類・保管・準備金証明・償還・公式コントラクトがすべて検証可能で、二次市場に実質的な両側流動性がある。',
+    ],
+  },
+  {
+    grade: 'B',
+    short: ['clear, but redemption is gated', '清晰，但赎回受限', '明確だが償還に制限'],
+    meaning: [
+      'Issuer and underlying clear, but redemption is gated by KYC, RFQ, minimums or geography. Size-limited trading only.',
+      '发行方和底层资产清晰，但赎回受 KYC、RFQ、最低金额或地区限制。只适合限额交易。',
+      '発行体と原資産は明確だが、償還が KYC・RFQ・最低金額・地域で制限される。限度額付きの取引のみ。',
+    ],
+  },
+  {
+    grade: 'C',
+    short: ['information or liquidity incomplete', '信息或流动性不完整', '情報または流動性が不十分'],
+    meaning: [
+      'Price tracking only, or incomplete contract/issuer information, or a very thin book. Not suitable for automated routing.',
+      '只有价格跟踪，或合约/发行方信息不完整，或订单簿极薄。不适合自动路由。',
+      '価格追従のみ、または契約・発行体情報が不完全、もしくは板が極端に薄い。自動ルーティングには不適。',
+    ],
+  },
+  {
+    grade: 'D',
+    short: ['cannot be confirmed — exclude', '无法确认，排除', '確認不能のため除外'],
+    meaning: [
+      'Issuer, underlying, contract or legal rights cannot be confirmed. Exclude.',
+      '发行方、底层、合约或法律权利无法确认。排除。',
+      '発行体・原資産・契約・法的権利が確認できない。除外。',
+    ],
+  },
+  {
+    grade: 'unrated',
+    short: ['too little disclosure to grade', '披露不足，暂不评级', '開示不足で評価保留'],
+    meaning: [
+      'Not enough public structural disclosure to place it on the scale.',
+      '公开的结构性披露不足，无法纳入评级。',
+      '構造に関する公開情報が不足し、評価対象にできない。',
+    ],
+  },
 ];
 
-export const RISK_WEIGHTS = [
-  { dimension: 'Legal structure and holder rights', weight: 25, question: 'Share, certificate, debt claim, or price exposure?' },
-  { dimension: 'Underlying, custody and proof of reserve', weight: 25, question: 'Is there verifiable 1:1 collateral in segregated custody?' },
-  { dimension: 'Redemption and bankruptcy recourse', weight: 20, question: 'If the issuer defaults, can holders reach the collateral?' },
-  { dimension: 'Contract and technical permissions', weight: 15, question: 'Are mint, freeze, upgrade and bridge rights disclosed?' },
-  { dimension: 'Secondary liquidity', weight: 15, question: 'Spread, depth, slippage, RFQ fill rate, exit routes.' },
-];
-
-export const GRADE_RUBRIC: { grade: Grade; meaning: string }[] = [
-  { grade: 'A', meaning: 'Offering documents, custody, proof of reserve, redemption and official contracts all verifiable; genuine two-sided secondary market.' },
-  { grade: 'B', meaning: 'Issuer and underlying clear, but redemption is gated by KYC, RFQ, minimums or geography. Size-limited trading only.' },
-  { grade: 'C', meaning: 'Price tracking only, or incomplete contract/issuer information, or a very thin book. Not suitable for automated routing.' },
-  { grade: 'D', meaning: 'Issuer, underlying, contract or legal rights cannot be confirmed. Exclude.' },
-];
-
-export const VETO_CHECKS = [
-  { check: 'Issuer', pass: 'Verifiable legal entity, site and offering documents', veto: 'Anonymous team, social accounts only, no issuing entity' },
-  { check: 'Underlying', pass: 'Named stock/ETF, ISIN or equivalent, clear ratio', veto: '"Tracks AAPL" with no stated underlying' },
-  { check: 'Custody', pass: 'Named regulated custodian, segregated accounts, bankruptcy remoteness', veto: 'No custodian, only "fully reserved"' },
-  { check: 'Proof of reserve', pass: 'Public PoR, stated cadence, reconcilable against on-chain supply', veto: 'Marketing claims with no supply-to-collateral view' },
-  { check: 'Redemption', pass: 'Stated cash/in-kind redemption, KYC, minimum, timing, fees', veto: 'No redemption terms, or exit depends on one opaque secondary market' },
-  { check: 'Contract', pass: 'Official address, verified code, disclosed mint/freeze/upgrade rights', veto: 'Address absent from the issuer site, or unbounded mint authority' },
-  { check: 'Instrument type', pass: 'Spot token with a clear wrapper relationship', veto: 'Labelled as stock but actually a perpetual or leveraged product' },
-  { check: 'Jurisdiction', pass: "User's region permitted and the venue licensed for it", veto: 'Offering documents bar the region but it is sold anyway' },
-];
-
-export const REGULATORY_NOTES = [
+export const REGULATORY_NOTES: { date: string; title: L10n; summary: L10n; url: string }[] = [
   {
     date: '2026-01-30',
-    title: 'SEC Statement on Tokenized Securities',
-    summary: 'Tokenization changes how a security is recorded and transferred; it does not change its legal character. Whether a third-party token carries voting or dividend rights depends on the structure, never on the name.',
+    title: ['SEC Statement on Tokenized Securities', 'SEC 代币化证券声明', 'SEC トークン化証券に関する声明'],
+    summary: [
+      'Tokenization changes how a security is recorded and transferred; it does not change its legal character. Whether a third-party token carries voting or dividend rights depends on the structure, never on the name.',
+      '代币化改变的是证券的记录和转移方式，不改变其法律属性。第三方代币是否带有投票权或分红权，取决于结构，而不是名称。',
+      'トークン化は証券の記録・移転方法を変えるだけで、法的性質は変えません。第三者トークンに議決権や配当権があるかは構造次第で、名称では決まりません。',
+    ],
     url: 'https://www.sec.gov/newsroom/speeches-statements/corp-fin-statement-tokenized-securities-012826-statement-tokenized-securities',
   },
   {
     date: '2025-12',
-    title: 'DTC no-action letter',
-    summary: 'The DTC received SEC no-action relief to run a three-year tokenization pilot.',
+    title: ['DTC no-action letter', 'DTC 不行动函', 'DTC ノーアクションレター'],
+    summary: [
+      'The DTC received SEC no-action relief to run a three-year tokenization pilot.',
+      'DTC 获得 SEC 不行动函，开展为期三年的代币化试点。',
+      'DTC は SEC のノーアクションを得て三年間のトークン化パイロットを開始しました。',
+    ],
     url: 'https://www.dtcc.com/news/2026/may/04/dtcc-advances-development-of-new-tokenization-service',
   },
   {
     date: '2026-09-17',
-    title: 'SEC Innovation Exemption',
-    summary:
+    title: ['SEC Innovation Exemption', 'SEC Innovation Exemption', 'SEC イノベーション免除'],
+    summary: [
       'Qualifying tokenized securities venues may trade tokenized NMS stock through permissioned AMM pools without registering as an exchange or ATS, subject to caps on instruments and volume; market makers are separately relieved of broker registration. It covers both issuer-direct and unaffiliated third-party tokens. Reported five-year term and equal-rights conditions are secondary readings — check the order itself.',
+      '符合条件的代币化证券交易场所（TSV）可通过许可制 AMM 流动性池交易代币化 NMS 股票，无需注册为交易所或 ATS，但标的数量和成交量有上限；做市方另有豁免，不必注册为券商。范围同时覆盖发行人自发和无关联第三方发行的代币。外界转述的五年期限与权利对等条件属二手解读，应以命令原文为准。',
+      '適格なトークン化証券取引場所（TSV）は、許可制 AMM プールを通じてトークン化 NMS 株を取引でき、取引所や ATS への登録は不要です（銘柄数と出来高に上限）。マーケットメイカーもブローカー登録を免除されます。発行体自身と無関係な第三者の双方を対象とします。五年間という期限や権利同等の条件は二次情報のため、命令原文の確認が必要です。',
+    ],
     url: 'https://www.sec.gov/newsroom/press-releases/2026-90-sec-issues-innovation-exemption-facilitate-trading-tokenized-nms-stock-request-comment',
   },
   {
     date: '2026',
-    title: 'Nasdaq same-order-book rule approved',
-    summary:
+    title: ['Nasdaq same-order-book rule approved', 'Nasdaq 同一订单簿规则获批', 'Nasdaq 同一板ルール承認'],
+    summary: [
       'Qualifying tokenized stocks and ETFs may trade in the same order book, at the same execution priority, as the traditional share — provided the two are fungible and carry identical rights. DTCC reports 50+ institutions in its tokenization service.',
+      '符合条件的代币化股票和 ETF 可以与传统股票在同一个订单簿、按同样的执行优先级交易，前提是两者可互换且权利相同。DTCC 表示已有 50 多家机构加入其代币化服务。',
+      '適格なトークン化株式・ETF は、代替可能で権利が同一であることを条件に、従来株と同じ板・同じ執行優先度で取引できます。DTCC は 50 社超が同サービスに参加と公表しています。',
+    ],
     url: 'https://www.dechert.com/knowledge/onpoint/2026/3/sec-issues-landmark-interpretation-on-the-application-of-federal.html',
-  },
-];
-
-/** The structural fork this market now faces. */
-export const TWO_PATHS = [
-  {
-    label: 'Offshore wrappers',
-    who: 'xStocks, bStocks, Ondo',
-    pros: '24/7 trading, self-custody, composable into DeFi',
-    cons: 'No shareholder rights; closed to US persons',
-  },
-  {
-    label: 'Onshore licensed',
-    who: 'Nasdaq/DTC rails, TSVs, Dinari, Robinhood’s planned redeemable version',
-    pros: 'Full rights, access to US liquidity',
-    cons: 'Permissioned, and the licence is the bottleneck',
   },
 ];
