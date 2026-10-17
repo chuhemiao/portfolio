@@ -35,7 +35,7 @@ export const ResumeCard = ({
   const cardBody = (
     <Card
       className={cn(
-        "group rounded border border-border bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:",
+        "group rounded border border-border bg-surface p-4 transition-all duration-300 hover:border-border-strong",
         hasDescription && "cursor-pointer"
       )}
     >

@@ -335,7 +335,7 @@ export async function renderPage(locale: Locale, slug: string) {
                           {formatLocaleDate(p.metadata.publishedAt, locale)}
                         </div>
                       </div>
-                      <ArrowUpRightIcon className="mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      <ArrowUpRightIcon className="mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform" />
                     </Link>
                   ))}
                 </div>

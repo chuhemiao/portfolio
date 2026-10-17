@@ -120,13 +120,13 @@ export async function renderPage(locale: Locale, slug: string) {
                 <BlurFade key={post.slug} delay={BLUR_FADE_DELAY * 4 + id * 0.04}>
                   <Link
                     href={getPostHref(post, locale)}
-                    className='group block rounded border border-border bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong'>
+                    className='group block rounded border border-border bg-surface p-5 transition-all duration-300 hover:border-border-strong'>
                     <div className='flex items-start justify-between gap-3'>
                       <h3 className='text-sm font-semibold leading-snug text-foreground line-clamp-2'>
                         {post.metadata.title}
                         {post.metadata.language !== locale && <span className='ml-2 text-[10px] font-normal text-muted-foreground'>{t('Original', '原文', '原文')}: {post.metadata.language}</span>}
                       </h3>
-                      <ArrowUpRightIcon className='mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
+                      <ArrowUpRightIcon className='mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform duration-300' />
                     </div>
                     {post.metadata.summary && (
                       <p className='mt-2 text-xs leading-5 text-muted-foreground line-clamp-2'>

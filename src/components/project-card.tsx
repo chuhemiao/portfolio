@@ -45,7 +45,7 @@ export function ProjectCard({
 
   return (
     <Card
-      className="group flex h-full flex-col overflow-hidden rounded border border-border bg-surface transition-all duration-300 ease-out hover:-translate-y-1 hover:border-border-strong hover:"
+      className="group flex h-full flex-col overflow-hidden rounded border border-border bg-surface transition-all duration-300 ease-out hover:border-border-strong"
     >
       <Link href={projectHref} className={cn("block cursor-pointer", className)}>
         {video && (
@@ -57,7 +57,7 @@ export function ProjectCard({
               loop
               muted
               playsInline
-              className="pointer-events-none mx-auto h-44 w-full object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+              className="pointer-events-none mx-auto h-44 w-full object-cover object-top transition-transform duration-500"
             />
           </div>
         )}
@@ -69,7 +69,7 @@ export function ProjectCard({
               alt={title}
               width={500}
               height={300}
-              className="h-44 w-full overflow-hidden object-cover object-top transition-transform duration-500 group-hover:scale-[1.03]"
+              className="h-44 w-full overflow-hidden object-cover object-top transition-transform duration-500"
             />
           </div>
         )}
@@ -79,7 +79,7 @@ export function ProjectCard({
           <time className="rounded-sm border border-border bg-surface px-2.5 py-1 text-[11px] font-medium tracking-[0.04em] text-muted-foreground">
             {dates}
           </time>
-          <ArrowUpRightIcon className="size-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-foreground" />
+          <ArrowUpRightIcon className="size-4 shrink-0 text-muted-foreground transition-all duration-300 group-hover:text-foreground" />
         </div>
         <div className="space-y-3">
           <CardTitle className="text-lg leading-tight tracking-[-0.03em]">

@@ -24,7 +24,7 @@ export function HackathonCard({
   links,
 }: Props) {
   return (
-    <li className="group rounded border border-border bg-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:">
+    <li className="group rounded border border-border bg-surface p-4 transition-all duration-300 hover:border-border-strong">
       <div className="flex gap-4">
         <div className="flex-none">
           <div className="rounded-2xl bg-white/95 p-1 ring-1 ring-black/5">

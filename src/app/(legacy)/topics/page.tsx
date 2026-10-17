@@ -45,7 +45,7 @@ export function renderPage(locale: Locale) {
             <BlurFade key={topic.slug} delay={BLUR_FADE_DELAY * 2 + id * 0.04}>
               <Link
                 href={href(`/topics/${topic.slug}`)}
-                className='group flex h-full flex-col rounded border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:'>
+                className='group flex h-full flex-col rounded border border-border bg-surface p-6 transition-all duration-300 hover:border-border-strong'>
                 {/* Emoji + accent dot */}
                 <div className='flex items-start justify-between'>
                   <span className='text-3xl'>{topic.emoji}</span>
@@ -80,7 +80,7 @@ export function renderPage(locale: Locale) {
                       </span>
                     )}
                   </div>
-                  <ArrowRightIcon className='size-4 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5' />
+                  <ArrowRightIcon className='size-4 text-muted-foreground transition-transform duration-300' />
                 </div>
               </Link>
             </BlurFade>

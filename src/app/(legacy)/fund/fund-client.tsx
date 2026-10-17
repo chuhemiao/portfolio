@@ -71,7 +71,7 @@ export default function FundClient() {
               className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
                 selectedCategory === cat.key
                   ? 'border-border-strong bg-foreground text-background'
-                  : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
+                  : 'border-border bg-surface text-muted-foreground hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
               }`}>
               {d(cat.label)}
             </button>
@@ -84,7 +84,7 @@ export default function FundClient() {
             <BlurFade
               delay={BLUR_FADE_DELAY * 3 + id * 0.05}
               key={`${asset.name}-${asset.category}`}>
-              <div className='group flex h-full flex-col overflow-hidden rounded border border-border bg-surface p-4-[2px] transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2'>
+              <div className='group flex h-full flex-col overflow-hidden rounded border border-border bg-surface p-4 transition-all duration-300 hover:border-border-strong hover:bg-surface-2'>
                 <div className='flex items-start justify-between mb-2'>
                   <div>
                     <h3 className='text-[15px] font-semibold tracking-[-0.02em] text-foreground'>{d(asset.name)}</h3>
