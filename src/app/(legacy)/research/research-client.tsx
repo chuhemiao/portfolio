@@ -40,23 +40,23 @@ function ProjectLogo({ project }: { project: ResearchProject }) {
   if (!project.logoUrl || error) {
     return (
       <div
-        className='relative flex w-full aspect-square items-center justify-center rounded-[1.15rem] text-base font-semibold text-white ring-1 ring-black/10 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.55)]'
+        className='relative flex w-full aspect-square items-center justify-center rounded text-base font-semibold text-white ring-1 ring-black/10'
         style={{ backgroundColor: fallbackColor(project.slug) }}>
-        <div className='absolute inset-0 rounded-[1.15rem] bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]' />
+        <div className='absolute inset-0 rounded bg-[linear-gradient(180deg,rgba(255,255,255,0.16),rgba(255,255,255,0.02))]' />
         <span className='relative tracking-tight'>{project.initial}</span>
       </div>
     );
   }
 
   return (
-    <div className='relative w-full aspect-square overflow-hidden rounded-[1.15rem] p-[1px] shadow-[0_20px_45px_-30px_rgba(15,23,42,0.45)] transition-transform duration-300 group-hover:scale-[1.015]'>
+    <div className='relative w-full aspect-square overflow-hidden rounded p-[1px] transition-transform duration-300 group-hover:scale-[1.015]'>
       <div
         className='absolute inset-0 opacity-70'
         style={{
           background: `linear-gradient(160deg, ${project.color}24, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.96) 100%)`,
         }}
       />
-      <div className='relative flex h-full w-full items-center justify-center rounded-[1.1rem] bg-white/95 p-3 ring-1 ring-black/5 shadow-[inset_0_1px_0_rgba(255,255,255,0.8)] dark:shadow-black/20'>
+      <div className='relative flex h-full w-full items-center justify-center rounded bg-white/95 p-3 ring-1 ring-black/5 dark:shadow-black/20'>
         <img
           src={project.logoUrl}
           alt={project.name}
@@ -152,15 +152,13 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
   return (
     <div className='relative min-h-[100dvh] overflow-x-clip'>
       <div className='pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,#f8fafc_0%,#eff6ff_34%,#f8fafc_100%)] dark:bg-[linear-gradient(180deg,#030712_0%,#06111f_38%,#020617_100%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-0 h-[30rem] bg-[radial-gradient(circle_at_12%_14%,rgba(59,130,246,0.18),transparent_30%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.14),transparent_24%),radial-gradient(circle_at_50%_22%,rgba(99,102,241,0.1),transparent_32%)] dark:bg-[radial-gradient(circle_at_12%_14%,rgba(56,189,248,0.2),transparent_28%),radial-gradient(circle_at_86%_12%,rgba(16,185,129,0.16),transparent_22%),radial-gradient(circle_at_50%_22%,rgba(59,130,246,0.14),transparent_34%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-[24rem] h-[34rem] bg-[radial-gradient(circle_at_20%_30%,rgba(148,163,184,0.1),transparent_24%),radial-gradient(circle_at_82%_24%,rgba(125,211,252,0.14),transparent_22%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(15,23,42,0.55),transparent_22%),radial-gradient(circle_at_82%_24%,rgba(14,165,233,0.12),transparent_24%)]' />
 
       {/* A-Z floating index — left side, hidden by default, visible on hover */}
       <div className='group fixed left-0 top-1/2 z-50 hidden -translate-y-1/2 lg:flex'>
         {/* trigger strip */}
         <div className='flex h-full w-3 cursor-pointer items-center justify-center' />
         {/* index panel */}
-        <div className='pointer-events-none ml-1 flex translate-x-[-110%] flex-col items-center gap-[2px] rounded-xl border border-border/60 bg-background/90 px-2 py-3 shadow-lg backdrop-blur-md transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 opacity-0'>
+        <div className='pointer-events-none ml-1 flex translate-x-[-110%] flex-col items-center gap-[2px] rounded-xl border border-border bg-surface px-2 py-3 transition-all duration-300 group-hover:pointer-events-auto group-hover:translate-x-0 group-hover:opacity-100 opacity-0'>
           {ALPHABET.map((letter) => {
             const active = !!letterMap[letter];
             return (
@@ -171,7 +169,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
                 className={`flex h-5 w-5 items-center justify-center rounded text-[10px] font-semibold tracking-wide transition-colors duration-150 ${
                   active
                     ? 'text-foreground hover:bg-foreground/10 cursor-pointer'
-                    : 'text-muted-foreground/30 cursor-default'
+                    : 'text-subtle cursor-default'
                 }`}>
                 {letter}
               </button>
@@ -182,7 +180,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
 
       <section className='relative mx-auto flex min-h-[100dvh] w-full max-w-[1150px] flex-col gap-8 px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         <header className='space-y-5 sm:space-y-6'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground'>
             <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' />
             {t('Research index', '研究索引', 'リサーチインデックス')}
           </div>
@@ -205,13 +203,13 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
             placeholder={t('Search by symbol or name...', '搜索代币符号或项目名称…', 'シンボルまたは名前で検索…')}
             value={query}
             onChange={(e) => handleQueryChange(e.target.value)}
-            className='w-full rounded-full border border-border/70 bg-background/60 px-4 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm outline-none transition-all duration-200 focus:border-foreground/30 focus:bg-background/85'
+            className='w-full rounded-sm border border-border bg-surface px-4 py-2 text-[13px] text-foreground placeholder:text-subtle outline-none transition-all duration-200 focus:border-border-strong focus:bg-surface'
           />
           {query && (
             <button
               onClick={() => handleQueryChange('')}
               aria-label={t('Clear search', '清空搜索', '検索をクリア')}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground'>
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-foreground'>
               ✕
             </button>
           )}
@@ -220,10 +218,10 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
         <div className='flex flex-wrap gap-2.5'>
           <button
             onClick={() => handleCategoryChange({ kind: 'all' })}
-            className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+            className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
               categoryFilter.kind === 'all'
-                ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                ? 'border-border-strong bg-foreground text-background'
+                : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
             }`}>
             {t('All', '全部', 'すべて')}
             <span className={`ml-1.5 text-[10px] ${categoryFilter.kind === 'all' ? 'opacity-70' : 'opacity-50'}`}>
@@ -239,10 +237,10 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
               <button
                 key={labelFor(label)}
                 onClick={() => handleCategoryChange({ kind: 'group', label, types })}
-                className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+                className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
                   isActive
-                    ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                    : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                    ? 'border-border-strong bg-foreground text-background'
+                    : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
                 }`}>
                 {labelFor(label)}
                 <span className={`ml-1.5 text-[10px] ${isActive ? 'opacity-70' : 'opacity-50'}`}>{count}</span>
@@ -252,7 +250,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
 
           <button
             onClick={() => setShowAllCategories((v) => !v)}
-            className='rounded-full border border-dashed border-border/70 bg-background/60 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'>
+            className='rounded-sm border border-dashed border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'>
             {showAllCategories ? t('Hide categories', '收起分类', 'カテゴリーを閉じる') : t('All categories', '全部分类', 'すべてのカテゴリー')}
           </button>
         </div>
@@ -265,10 +263,10 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
                 <button
                   key={labelFor(type)}
                   onClick={() => handleCategoryChange({ kind: 'type', type })}
-                  className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+                  className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
                     isActive
-                      ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                      : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                      ? 'border-border-strong bg-foreground text-background'
+                      : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
                   }`}>
                   {labelFor(type)}
                   <span className={`ml-1.5 text-[10px] ${isActive ? 'opacity-70' : 'opacity-50'}`}>
@@ -290,7 +288,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
               key={project.slug}
               id={`project-${project.slug}`}
               href={articleHref}
-              className='group relative flex min-h-[16.5rem] flex-col gap-3 overflow-hidden rounded-[1.4rem] border border-border/60 bg-background/72 p-4 shadow-[0_18px_40px_-34px_rgba(15,23,42,0.6)] backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:bg-background/84 hover:shadow-[0_28px_55px_-34px_rgba(15,23,42,0.78)]'>
+              className='group relative flex min-h-[16.5rem] flex-col gap-3 overflow-hidden rounded border border-border bg-surface p-4-[2px] transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:bg-surface-2 hover:'>
               <div
                 className='absolute inset-x-4 top-0 h-px opacity-70 transition-opacity duration-300 group-hover:opacity-100'
                 style={{
@@ -303,7 +301,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
                   <span className='pr-1 text-[15px] font-semibold leading-5 tracking-[-0.025em] text-foreground'>
                     {project.name}
                   </span>
-                  <span className='shrink-0 rounded-full border border-border/70 bg-background/80 px-2 py-1 text-[10px] font-medium tracking-[0.08em] text-muted-foreground shadow-sm backdrop-blur-sm'>
+                  <span className='shrink-0 rounded-sm border border-border bg-surface px-2 py-1 text-[10px] font-medium tracking-[0.08em] text-muted-foreground'>
                     {labelFor(project.type)}
                   </span>
                 </div>
@@ -328,7 +326,7 @@ export default function ResearchClient({ postLinks }: { postLinks: Record<string
           <div className='flex justify-center'>
             <button
               onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
-              className='rounded-full border border-border/70 bg-background/60 px-5 py-2 text-[12px] font-medium text-muted-foreground backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'>
+              className='rounded-sm border border-border bg-surface px-5 py-2 text-[12px] font-medium text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'>
               {t(`Load more (${filtered.length - visibleCount} remaining)`, `加载更多（剩余 ${filtered.length - visibleCount} 个）`, `さらに表示（残り ${filtered.length - visibleCount} 件）`)}
             </button>
           </div>

@@ -34,9 +34,9 @@ function LanguageNavigation({ pathname, translations }: { pathname: string; tran
   const article = /^\/blog\/.+/.test(stripLocale(pathname));
 
   return (
-    <nav aria-label={t('Site language', '网站语言', 'サイトの言語')} className="relative z-40 mx-auto flex w-full max-w-6xl justify-end px-4 pt-3 sm:px-6 lg:px-8">
-      <div className="relative inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/90 pl-3 pr-2 shadow-sm">
-        <LanguagesIcon aria-hidden="true" className="size-3.5 text-muted-foreground" />
+    <nav aria-label={t('Site language', '网站语言', 'サイトの言語')} className="shrink-0">
+      <div className="relative inline-flex h-[34px] items-center gap-1 rounded border border-border pl-2.5 pr-1 transition-colors hover:border-border-strong">
+        <LanguagesIcon aria-hidden="true" className="size-3.5 text-subtle" />
         <select
           aria-label={t('Site language', '网站语言', 'サイトの言語')}
           value={locale}
@@ -47,7 +47,7 @@ function LanguageNavigation({ pathname, translations }: { pathname: string; tran
               : localizeHref(pathname, language);
             window.location.assign(target + window.location.search + window.location.hash);
           }}
-          className="w-24 cursor-pointer appearance-none rounded-full bg-transparent py-2 pl-1 pr-6 text-xs font-medium text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="w-[5.75rem] cursor-pointer appearance-none bg-transparent py-1.5 pl-1 pr-5 font-mono text-[12px] text-muted-foreground outline-none"
         >
           {LOCALES.map((language) => (
             <option key={language} value={language} lang={language} className="bg-background text-foreground">
@@ -55,7 +55,7 @@ function LanguageNavigation({ pathname, translations }: { pathname: string; tran
             </option>
           ))}
         </select>
-        <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-3 size-3 text-muted-foreground" />
+        <ChevronDownIcon aria-hidden="true" className="pointer-events-none absolute right-2 size-3 text-subtle" />
       </div>
     </nav>
   );

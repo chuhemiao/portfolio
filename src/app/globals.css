@@ -3,142 +3,315 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-      --background: 0 0% 100%;
-      --foreground: 210 11.1% 3.53%;
+  /* Research terminal tokens. Dark is the default surface; light mirrors it.
+     Rules: 3 radii only (2 / 4 / 9999), hierarchy comes from surface lightness
+     (never shadow), and exactly one brand hue plus two semantic hues. */
+  :root {
+    --background: 220 23% 5%;
+    --foreground: 220 22% 92%;
 
-      --card: 0 0% 100%;
-      --card-foreground: 210 11.1% 3.53%;
+    --surface: 218 21% 8%;
+    --surface-2: 222 24% 11%;
 
-      --popover: 0 0% 100%;
-      --popover-foreground: 210 11.1% 3.53%;
+    --card: 218 21% 8%;
+    --card-foreground: 220 22% 92%;
 
-      --primary: 0 0% 9%;
-      --primary-foreground: 0 0% 98%;
+    --popover: 218 21% 8%;
+    --popover-foreground: 220 22% 92%;
 
-      --secondary: 0 0% 96.1%;
-      --secondary-foreground: 0 0% 9%;
+    --primary: 36 71% 58%;
+    --primary-foreground: 220 23% 5%;
 
-      --muted: 0 0% 96.1%;
-      --muted-foreground: 0 0% 45.1%;
+    --secondary: 222 24% 11%;
+    --secondary-foreground: 220 22% 92%;
 
-      --accent: 0 0% 96.1%;
-    --accent-foreground: 0 0% 9%;
+    --muted: 222 24% 11%;
+    --muted-foreground: 218 12% 64%;
 
-      --destructive: 0 84.2% 60.2%;
-      --destructive-foreground: 0 0% 98%;
+    --subtle: 218 10% 53%;
 
-      --border: 0 0% 89.8%;
-      --input: 0 0% 89.8%;
-      --ring: 0 0% 3.9%;
+    --accent: 222 24% 11%;
+    --accent-foreground: 220 22% 92%;
 
-      --radius: 0.5rem;
-    }
+    --brand: 36 71% 58%;
+    --brand-foreground: 220 23% 5%;
 
-    .dark {
-      --background: 210 11.1% 3.53%;
-      --foreground: 0 0% 98%;
+    --positive: 151 50% 53%;
+    --negative: 12 86% 59%;
 
-      --card: 210 11.1% 3.53%;
-      --card-foreground: 0 0% 98%;
+    --destructive: 12 86% 59%;
+    --destructive-foreground: 220 23% 5%;
 
-      --popover: 210 11.1% 3.53%;
-      --popover-foreground: 0 0% 98%;
+    --border: 222 20% 17%;
+    --border-strong: 219 18% 22%;
+    --input: 219 18% 22%;
+    --ring: 36 71% 58%;
 
-      --primary: 0 0% 98%;
-      --primary-foreground: 0 0% 9%;
-
-      --secondary: 0 0% 14.9%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 0 0% 14.9%;
-      --muted-foreground: 0 0% 63.9%;
-
-      --accent: 0 0% 14.9%;
-      --accent-foreground: 0 0% 98%;
-
-      --destructive: 0 62.8% 30.6%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 0 0% 14.9%;
-      --input: 0 0% 14.9%;
-      --ring: 0 0% 83.1%;
-    }
+    --radius: 0.25rem;
   }
 
-  @layer base {
-    * {
-      @apply border-border;
-    }
-    body {
-      @apply bg-background text-foreground;
-    }
+  .light {
+    --background: 60 11% 98%;
+    --foreground: 220 18% 10%;
+
+    --surface: 0 0% 100%;
+    --surface-2: 60 7% 95%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 18% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 18% 10%;
+
+    --primary: 36 81% 33%;
+    --primary-foreground: 60 11% 98%;
+
+    --secondary: 60 7% 95%;
+    --secondary-foreground: 220 18% 10%;
+
+    --muted: 60 7% 95%;
+    --muted-foreground: 220 11% 38%;
+
+    --subtle: 219 9% 46%;
+
+    --accent: 60 7% 95%;
+    --accent-foreground: 220 18% 10%;
+
+    --brand: 36 81% 33%;
+    --brand-foreground: 60 11% 98%;
+
+    --positive: 153 73% 28%;
+    --negative: 11 75% 41%;
+
+    --destructive: 11 75% 41%;
+    --destructive-foreground: 60 11% 98%;
+
+    --border: 228 10% 90%;
+    --border-strong: 227 9% 81%;
+    --input: 227 9% 81%;
+    --ring: 36 81% 33%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
 
-  h3 code {
-    @apply !text-lg md:!text-xl;
-  }
-  
-  pre {
-    @apply !px-0 rounded-lg overflow-x-auto py-4
-  }
-   
-  pre [data-line] {
-    @apply px-4
+  body {
+    @apply bg-background text-foreground;
   }
 
-  code {
-    @apply text-sm md:text-base !leading-loose;
+  /* Dates, prices, counts and deltas must align in columns everywhere. */
+  .tnum,
+  table td,
+  table th {
+    font-variant-numeric: tabular-nums;
   }
-  
-  pre > code {
-    counter-reset: line;
+
+  ::selection {
+    background: hsl(var(--brand) / 0.28);
   }
-  
-  code[data-theme*=" "],
-  code[data-theme*=" "] span {
-    color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
   }
-   
-  @media (prefers-color-scheme: dark) {
-    code[data-theme*=" "],
-    code[data-theme*=" "] span {
-      color: var(--shiki-dark);
-      background-color: var(--shiki-dark-bg);
-    }
+}
+
+@layer components {
+  /* The highest-frequency component on the site: one index row. */
+  .idx-row {
+    @apply grid items-baseline gap-5 border-b border-border px-3 py-[15px] transition-colors;
   }
-  
-  code[data-line-numbers] {
-    counter-reset: line;
+
+  .idx-row:hover {
+    background: hsl(var(--surface-2));
   }
-  
-  code[data-line-numbers] > [data-line]::before {
-    counter-increment: line;
-    content: counter(line);
-    @apply inline-block w-4 mr-4 text-right text-gray-500;
+
+  .mono-label {
+    @apply font-mono text-[11px] uppercase tracking-[0.16em] text-subtle;
   }
- 
-  code {
-    counter-reset: line;
-  }
- 
-  code > [data-line]::before {
+}
+
+h3 code {
+  @apply !text-lg md:!text-xl;
+}
+
+pre {
+  @apply !px-0 rounded overflow-x-auto py-4;
+}
+
+pre [data-line] {
+  @apply px-4;
+}
+
+code {
+  @apply text-sm md:text-base !leading-loose;
+}
+
+pre > code {
+  counter-reset: line;
+}
+
+code[data-theme*=" "],
+code[data-theme*=" "] span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+.light code[data-theme*=" "],
+.light code[data-theme*=" "] span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+code[data-line-numbers] {
+  counter-reset: line;
+}
+
+code[data-line-numbers] > [data-line]::before {
   counter-increment: line;
   content: counter(line);
- 
-  /* Other styling */
+  @apply inline-block w-4 mr-4 text-right text-subtle;
+}
+
+code {
+  counter-reset: line;
+}
+
+code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
   display: inline-block;
   width: 1rem;
   margin-right: 2rem;
   text-align: right;
-  color: gray;
+  color: hsl(var(--subtle));
 }
- 
+
 code[data-line-numbers-max-digits="2"] > [data-line]::before {
   width: 2rem;
 }
- 
-code[data-line-numbers-max-digits="3"] > [data-line]::before {
-  width: 3rem;
+
+/* ── Article reading layer ───────────────────────────────────────────────
+   The terminal chrome is sans + mono; long-form body text switches to serif.
+   Tailwind Typography wraps its rules in :where(), so these plain selectors
+   win without !important. */
+@layer components {
+  .article-prose {
+    overflow-wrap: anywhere;
+  }
+
+  .article-prose p,
+  .article-prose li {
+    font-family: var(--font-serif), Georgia, "Songti SC", serif;
+    font-size: 17px;
+    line-height: 1.85;
+    color: hsl(var(--foreground) / 0.88);
+  }
+
+  .article-prose h2 {
+    margin-top: 3rem;
+    margin-bottom: 1rem;
+    scroll-margin-top: 5rem;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: hsl(var(--foreground));
+  }
+
+  .article-prose h3 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    scroll-margin-top: 5rem;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.015em;
+    color: hsl(var(--foreground));
+  }
+
+  .article-prose strong {
+    font-weight: 600;
+    color: hsl(var(--foreground));
+  }
+
+  .article-prose a {
+    color: hsl(var(--brand));
+    text-decoration: none;
+    border-bottom: 1px solid hsl(var(--brand) / 0.35);
+  }
+
+  .article-prose a:hover {
+    border-bottom-color: hsl(var(--brand));
+  }
+
+  .article-prose blockquote {
+    border-left: 2px solid hsl(var(--brand));
+    background: hsl(var(--surface));
+    padding: 1rem 1.25rem;
+    font-style: normal;
+    quotes: none;
+  }
+
+  .article-prose blockquote p {
+    margin: 0;
+  }
+
+  .article-prose :not(pre) > code {
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 0.9em;
+    background: hsl(var(--surface-2));
+    border: 1px solid hsl(var(--border));
+    border-radius: 2px;
+    padding: 0.1em 0.35em;
+  }
+
+  .article-prose :not(pre) > code::before,
+  .article-prose :not(pre) > code::after {
+    content: none;
+  }
+
+  .article-prose pre {
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--surface));
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .article-prose table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    border: 1px solid hsl(var(--border));
+    border-collapse: collapse;
+    font-size: 13.5px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .article-prose th {
+    border-bottom: 1px solid hsl(var(--border-strong));
+    padding: 0.7rem 1rem;
+    font-family: var(--font-mono), ui-monospace, monospace;
+    font-size: 10.5px;
+    font-weight: 400;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: hsl(var(--subtle));
+  }
+
+  .article-prose td {
+    border-bottom: 1px solid hsl(var(--border));
+    padding: 0.75rem 1rem;
+    color: hsl(var(--muted-foreground));
+  }
+
+  .article-prose img {
+    max-width: 100%;
+    border: 1px solid hsl(var(--border));
+  }
+
+  .article-prose hr {
+    border-color: hsl(var(--border));
+  }
 }

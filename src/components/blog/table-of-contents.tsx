@@ -55,7 +55,7 @@ export default function TableOfContents({
 
   return (
     <aside className={className}>
-      <div className="border-l-2 border-border/50 pl-3">
+      <div className="border-l-2 border-border pl-3">
         <h2 className="text-xs font-medium uppercase tracking-wider mb-3 text-muted-foreground">
           {t('On this page', '本页目录', '目次')}
         </h2>

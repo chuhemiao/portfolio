@@ -230,18 +230,26 @@ export async function renderPage(locale: Locale, slug: string) {
                 __html: JSON.stringify(breadcrumbJsonLd),
               }}
             />
-            <h1 className="title max-w-[650px] text-2xl font-medium tracking-tighter">
+            <h1 className="mb-4 max-w-[760px] text-[27px] font-semibold leading-[1.22] tracking-[-0.028em] sm:text-[38px]">
               {post.metadata.title}
             </h1>
-            <div className="mt-2 mb-4 flex max-w-[650px] flex-wrap items-center justify-between gap-3 text-sm">
-              <Suspense fallback={<p className="h-5" />}>
-                <time
-                  dateTime={publishedAtIso}
-                  className="text-sm text-neutral-600 dark:text-neutral-400"
-                >
+            {post.metadata.summary && (
+              <p className="mb-6 max-w-[760px] font-serif text-[17px] leading-[1.75] text-muted-foreground sm:text-[18px]">
+                {post.metadata.summary}
+              </p>
+            )}
+            <div className="mb-8 flex flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-5 font-mono text-[12px] tracking-[0.04em] text-subtle">
+              <Suspense fallback={<span className="h-5" />}>
+                <time dateTime={publishedAtIso} className="tnum">
                   {formatLocaleDate(post.metadata.publishedAt, locale)}
                 </time>
               </Suspense>
+              {post.metadata.category && (
+                <>
+                  <span aria-hidden="true">·</span>
+                  <span className="uppercase">{categoryLabel(post.metadata.category, locale)}</span>
+                </>
+              )}
             </div>
             {LOCALES.some((target) => !translations[target]) && (
               <p className="mb-8 text-xs text-muted-foreground">
@@ -250,7 +258,7 @@ export async function renderPage(locale: Locale, slug: string) {
             )}
             <article
               lang={language}
-              className="prose max-w-none break-words dark:prose-invert [overflow-wrap:anywhere] prose-pre:max-w-full prose-pre:overflow-x-auto prose-img:max-w-full [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto"
+              className="article-prose prose max-w-none break-words dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: post.source }}
             ></article>
 
@@ -262,7 +270,7 @@ export async function renderPage(locale: Locale, slug: string) {
                   <Link
                     key={t.slug}
                     href={href(`/topics/${t.slug}`)}
-                    className="inline-flex items-center gap-1 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-foreground transition-colors hover:border-foreground/20"
+                    className="inline-flex items-center gap-1 rounded-sm border border-border bg-surface px-3 py-1 text-xs font-medium text-foreground transition-colors hover:border-border-strong"
                   >
                     {t.emoji} {t.name}
                   </Link>
@@ -271,7 +279,7 @@ export async function renderPage(locale: Locale, slug: string) {
             )}
 
             {/* Subscribe CTA */}
-            <div className="mt-10 rounded-[1.5rem] border border-border/60 bg-background/76 p-6 backdrop-blur-sm">
+            <div className="mt-10 rounded border border-border bg-surface p-6">
               <div className="flex items-center gap-2 mb-3">
                 <RssIcon className="size-4 text-muted-foreground" />
                 <span className="text-sm font-semibold text-foreground">{t("Stay updated", "订阅更新", "最新情報を受け取る")}</span>
@@ -283,7 +291,7 @@ export async function renderPage(locale: Locale, slug: string) {
                 <Link
                   href={DATA.contact.social.TelegramChannel.url}
                   target="_blank"
-                  className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/90 px-4 py-2 text-sm font-semibold text-foreground transition-all hover:border-foreground/15"
+                  className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-4 py-2 text-sm font-semibold text-foreground transition-all hover:border-border-strong"
                 >
                   <DATA.contact.social.TelegramChannel.icon className="size-3.5" />
                   {t("Follow on Telegram", "关注 Telegram", "Telegram でフォロー")}
@@ -291,7 +299,7 @@ export async function renderPage(locale: Locale, slug: string) {
                 <Link
                   href={DATA.contact.social.X.url}
                   target="_blank"
-                  className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-foreground/15 hover:text-foreground"
+                  className="inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-4 py-2 text-sm font-medium text-muted-foreground transition-all hover:border-border-strong hover:text-foreground"
                 >
                   <DATA.contact.social.X.icon className="size-3.5" />
                   {t("Follow on X", "关注 X", "X でフォロー")}
@@ -316,7 +324,7 @@ export async function renderPage(locale: Locale, slug: string) {
                     <Link
                       key={p.slug}
                       href={getPostHref(p, locale)}
-                      className="group flex items-start justify-between gap-3 rounded-[1.25rem] border border-border/60 bg-background/78 px-4 py-3.5 transition-all hover:border-foreground/15"
+                      className="group flex items-start justify-between gap-3 rounded border border-border bg-surface px-4 py-3.5 transition-all hover:border-border-strong"
                     >
                       <div className="min-w-0">
                         <div className="truncate text-sm font-semibold text-foreground">{p.metadata.title}</div>

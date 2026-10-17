@@ -45,7 +45,6 @@ export async function renderPage(locale: Locale, slug: string) {
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
-      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_50%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_50%,rgba(2,6,23,1)_100%)]' />
 
       <main className='relative mx-auto w-full max-w-5xl px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Breadcrumb */}
@@ -59,7 +58,7 @@ export async function renderPage(locale: Locale, slug: string) {
 
         {/* Hero */}
         <BlurFade delay={BLUR_FADE_DELAY * 2}>
-          <div className='relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/78 p-6 shadow-[0_28px_80px_-46px_rgba(15,23,42,0.45)] backdrop-blur-md sm:p-10'>
+          <div className='relative overflow-hidden rounded border border-border bg-surface p-6 sm:p-10'>
             <div
               className='pointer-events-none absolute inset-0 opacity-5'
               style={{ background: `radial-gradient(circle at top left, ${topic.accentColor}, transparent 60%)` }}
@@ -77,7 +76,7 @@ export async function renderPage(locale: Locale, slug: string) {
               <p className='max-w-2xl text-[15px] leading-8 text-muted-foreground'>
                 {topic.description}
               </p>
-              <div className='rounded-[1.35rem] border border-border/60 bg-background/80 p-4'>
+              <div className='rounded border border-border bg-surface p-4'>
                 <div className='text-xs font-semibold uppercase tracking-[0.14em] text-muted-foreground'>
                   {t('Why it matters', '为何值得关注', '注目する理由')}
                 </div>
@@ -85,12 +84,12 @@ export async function renderPage(locale: Locale, slug: string) {
               </div>
               <div className='flex flex-wrap gap-2'>
                 {topic.postCount > 0 && (
-                  <span className='rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground'>
+                  <span className='rounded-sm border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground'>
                     {topic.postCount}+ {t('posts', '篇文章', '記事')}
                   </span>
                 )}
                 {topic.projectCount > 0 && (
-                  <span className='rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground'>
+                  <span className='rounded-sm border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground'>
                     {topic.projectCount} {t('projects', '个项目', 'プロジェクト')}
                   </span>
                 )}
@@ -103,7 +102,7 @@ export async function renderPage(locale: Locale, slug: string) {
         <section className='mt-8 space-y-5'>
           <BlurFade delay={BLUR_FADE_DELAY * 3}>
             <div className='flex items-center justify-between gap-4'>
-              <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
+              <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
                 <BookOpenIcon className='size-3' />
                 {t('Related Posts', '相关文章', '関連記事')}
               </div>
@@ -121,7 +120,7 @@ export async function renderPage(locale: Locale, slug: string) {
                 <BlurFade key={post.slug} delay={BLUR_FADE_DELAY * 4 + id * 0.04}>
                   <Link
                     href={getPostHref(post, locale)}
-                    className='group block rounded-[1.5rem] border border-border/60 bg-background/78 p-5 shadow-[0_12px_30px_-22px_rgba(15,23,42,0.45)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15'>
+                    className='group block rounded border border-border bg-surface p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong'>
                     <div className='flex items-start justify-between gap-3'>
                       <h3 className='text-sm font-semibold leading-snug text-foreground line-clamp-2'>
                         {post.metadata.title}
@@ -147,7 +146,7 @@ export async function renderPage(locale: Locale, slug: string) {
             </div>
           ) : (
             <BlurFade delay={BLUR_FADE_DELAY * 4}>
-              <div className='rounded-[1.5rem] border border-border/60 bg-background/76 p-6 text-center text-sm text-muted-foreground'>
+              <div className='rounded border border-border bg-surface p-6 text-center text-sm text-muted-foreground'>
                 {t('No tagged posts yet — check back soon.', '暂无相关文章。', '関連記事はまだありません。')}
               </div>
             </BlurFade>
@@ -156,7 +155,7 @@ export async function renderPage(locale: Locale, slug: string) {
 
         {/* CTA to Research */}
         <BlurFade delay={BLUR_FADE_DELAY * 5}>
-          <div className='mt-8 rounded-[1.75rem] border border-border/60 bg-background/76 p-6 shadow-[0_20px_48px_-36px_rgba(15,23,42,0.45)] backdrop-blur-sm'>
+          <div className='mt-8 rounded border border-border bg-surface p-6'>
             <div className='flex items-center justify-between gap-6'>
               <div className='space-y-1'>
                 <div className='text-sm font-semibold text-foreground'>{t(`Explore ${topic.name} projects in the Research Map`, `在研究地图中探索${topic.name}项目`, `リサーチマップで${topic.name}のプロジェクトを探す`)}</div>
@@ -168,7 +167,7 @@ export async function renderPage(locale: Locale, slug: string) {
               </div>
               <Link
                 href={href('/research')}
-                className='inline-flex shrink-0 items-center gap-2 rounded-full border border-border/60 bg-background/90 px-4 py-2.5 text-sm font-semibold text-foreground transition-all hover:border-foreground/15 hover:bg-background'>
+                className='inline-flex shrink-0 items-center gap-2 rounded-sm border border-border bg-surface px-4 py-2.5 text-sm font-semibold text-foreground transition-all hover:border-border-strong hover:bg-background'>
                 <SearchIcon className='size-4' />
                 {t('Research Map', '研究地图', 'リサーチマップ')}
               </Link>

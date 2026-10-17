@@ -121,7 +121,7 @@ function MetricCard({
 }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='rounded-lg border p-3 bg-background/80'>
+    <div className='rounded-lg border p-3 bg-surface'>
       <p className='text-xs text-muted-foreground mb-1'>{d(title)}</p>
       <p className='text-sm font-semibold break-words'>{d(value)}</p>
       {hint && <p className='text-[11px] text-muted-foreground mt-1'>{d(hint)}</p>}
@@ -132,7 +132,7 @@ function MetricCard({
 function ListBlock({ title, items }: { title: string; items: string[] }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='rounded-lg border p-4 bg-background/70'>
+    <div className='rounded-lg border p-4 bg-surface'>
       <h3 className='text-sm font-semibold mb-2'>{d(title)}</h3>
       <ul className='space-y-1 text-sm text-muted-foreground'>
         {items.map((item) => (
@@ -156,7 +156,7 @@ function StrategyCard({
 }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='rounded-xl border p-4 bg-background/80 space-y-4'>
+    <div className='rounded-xl border p-4 bg-surface space-y-4'>
       <div className='space-y-2'>
         <h3 className='text-sm font-semibold'>{d(title)}</h3>
         <p className='text-sm text-muted-foreground'>{d(description)}</p>

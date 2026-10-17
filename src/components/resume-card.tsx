@@ -35,14 +35,14 @@ export const ResumeCard = ({
   const cardBody = (
     <Card
       className={cn(
-        "group rounded-[1.35rem] border border-border/60 bg-background/78 p-4 shadow-[0_14px_35px_-32px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_26px_50px_-34px_rgba(15,23,42,0.72)]",
+        "group rounded border border-border bg-surface p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:",
         hasDescription && "cursor-pointer"
       )}
     >
       <div className="flex gap-4">
         <div className="flex-none">
-          <div className="rounded-2xl bg-white/95 p-1 ring-1 ring-black/5 shadow-[0_10px_28px_-20px_rgba(15,23,42,0.45)]">
-            <Avatar className="size-12 rounded-[1rem] bg-background">
+          <div className="rounded-2xl bg-white/95 p-1 ring-1 ring-black/5">
+            <Avatar className="size-12 rounded bg-background">
               <AvatarImage
                 src={logoUrl}
                 alt={altText}
@@ -64,7 +64,7 @@ export const ResumeCard = ({
                     {badges.map((badge, index) => (
                       <Badge
                         variant="secondary"
-                        className="rounded-full border border-border/60 bg-secondary/70 text-[11px]"
+                        className="rounded-full border border-border bg-secondary/70 text-[11px]"
                         key={index}
                       >
                         {badge}

@@ -1,29 +1,15 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import { categoryLabel, formatLocaleDate, getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { PROJECTS } from '@/data/research-projects';
-import BlurFade from '@/components/magicui/blur-fade';
 import { DATA } from '@/data/resume';
 import { TOPICS, localizedTopic } from '@/data/topics';
 import { WEEKLY_REPORTS } from '@/data/weekly-research';
 import { getLocalizedWeeklyReport } from '@/lib/weekly-localization';
 import { getBlogPosts, getLocalizedPosts, getPostHref } from '@/data/blog';
-import {
-  ArrowRightIcon,
-  ArrowUpRightIcon,
-  BookOpenIcon,
-  RadioIcon,
-  SearchIcon,
-  LayoutGridIcon,
-  ActivityIcon,
-  TrendingUpIcon,
-  RssIcon,
-} from 'lucide-react';
+import { ArrowRightIcon, ArrowUpRightIcon, SearchIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import NewsletterForm from '@/components/newsletter-form';
-
-const BLUR_FADE_DELAY = 0.04;
 
 export const metadata: Metadata = localizedPageMetadata('/', 'en', {
   title: 'Home',
@@ -55,8 +41,6 @@ const FEATURED_RESEARCH = [
     type: 'CEX',
     slug: 'binance_2025_report',
     description: "World's largest exchange · 300M+ users · $168B daily volume",
-    color: '#F0B90B',
-    initial: 'BN',
     logoUrl: '/research-logos/binance_2025_report.png',
   },
   {
@@ -64,8 +48,6 @@ const FEATURED_RESEARCH = [
     type: 'Perp DEX',
     slug: 'hyperliquid_report_2026',
     description: 'On-chain order book perpetuals · $10B+ daily volume',
-    color: '#00C2FF',
-    initial: 'HL',
     logoUrl: '/research-logos/hyperliquid_report_2026.png',
   },
   {
@@ -73,8 +55,6 @@ const FEATURED_RESEARCH = [
     type: 'CEX',
     slug: 'coinbase_report_2026',
     description: 'US-regulated exchange evolving into diversified financial platform',
-    color: '#0052FF',
-    initial: 'CB',
     logoUrl: '/research-logos/coinbase_report_2026.png',
   },
   {
@@ -82,8 +62,6 @@ const FEATURED_RESEARCH = [
     type: 'L1',
     slug: 'solana-sol-monolithic-execution-powerhouse-or-fragile-high-beta-trading',
     description: 'High-throughput L1 · DeFi, NFT, and payments hub',
-    color: '#9945FF',
-    initial: 'SOL',
     logoUrl: '/research-logos/solana-sol-monolithic-execution-powerhouse-or-fragile-high-beta-trading.png',
   },
 ];
@@ -96,26 +74,46 @@ export async function renderPage(locale: Locale) {
   // blog-index.json is already sorted newest-first by the content compiler.
   const allPosts = await getBlogPosts();
   const localizedPosts = getLocalizedPosts(allPosts, locale);
-  const latestPosts = localizedPosts.slice(0, 4);
+  const latestPosts = localizedPosts.slice(0, 8);
   const postBySlug = new Map(allPosts.map(post => [post.slug, post]));
-  const SITE_STATS = [
-    { value: localizedPosts.length.toLocaleString(locale), label: t('Articles', '文章', '記事') },
-    { value: PROJECTS.length.toLocaleString(locale), label: t('Projects', '项目', 'プロジェクト') },
-    { value: TOPICS.length.toLocaleString(locale), label: t('Topics', '主题', 'トピック') },
-    { value: t('Weekly', '每周', '毎週'), label: t('Updates', '更新', '更新') },
-  ];
-  const HERO_CTAS = [
-    { label: t('Explore Research', '探索研究', 'リサーチを見る'), href: '/research', icon: SearchIcon },
-    { label: t('Browse Topics', '浏览主题', 'トピックを見る'), href: '/topics', icon: LayoutGridIcon },
-    { label: t('Track Listings', '追踪上币', '上場情報を追う'), href: '/watch', icon: RadioIcon },
-    { label: t('Oscillator', '震荡指标', 'オシレーター'), href: '/oscillator', icon: ActivityIcon },
-  ];
+  const topics = TOPICS.map(topic => localizedTopic(topic, locale));
+
   const featuredDescriptions: Record<string, string> = {
     Binance: t("World's largest exchange · 300M+ users · $168B daily volume", '全球最大交易所 · 3 亿以上用户 · 日交易量 1680 亿美元', '世界最大の取引所 · ユーザー 3 億人以上 · 日次取引量 1680 億ドル'),
     Hyperliquid: t('On-chain order book perpetuals · $10B+ daily volume', '链上订单簿永续合约 · 日交易量超 100 亿美元', 'オンチェーン注文板の無期限先物 · 日次取引量 100 億ドル以上'),
     Coinbase: t('US-regulated exchange evolving into diversified financial platform', '美国受监管交易所，向多元金融平台发展', '米国の規制に準拠する取引所から総合金融プラットフォームへ'),
     Solana: t('High-throughput L1 · DeFi, NFT, and payments hub', '高吞吐量 L1 · DeFi、NFT 与支付生态', '高スループット L1 · DeFi、NFT、決済の拠点'),
   };
+
+  const STATS = [
+    { value: PROJECTS.length.toLocaleString(locale), label: 'PROJECTS' },
+    { value: localizedPosts.length.toLocaleString(locale), label: 'RESEARCH NOTES' },
+    { value: TOPICS.length.toLocaleString(locale), label: 'TOPICS' },
+    { value: 'ZH EN JA', label: 'LANGUAGES' },
+  ];
+
+  const TOOLS = [
+    { label: t('Oscillator', '震荡指标', 'オシレーター'), href: '/oscillator', desc: t('ALT/BTC strength & breadth', 'ALT/BTC 强度与市场广度', 'ALT/BTC の強さと広がり') },
+    { label: t('Watch', '上币追踪', '上場ウォッチ'), href: '/watch', desc: t('Exchange listing signals', '交易所上币信号', '取引所の上場シグナル') },
+    { label: t('Fear & Greed', '恐惧贪婪', '恐怖と強欲'), href: '/fear', desc: t('Sentiment gauge', '市场情绪指标', '市場センチメント') },
+    { label: t('Fund', '投资', '投資'), href: '/fund', desc: t('Capital allocation framework', '资本配置框架', '資本配分のフレームワーク') },
+  ];
+
+  const EXCHANGES = [
+    {
+      name: 'Binance',
+      initial: 'BN',
+      url: DATA.contact.social.binance.url,
+      desc: t('Spot & futures · referral signup', '现货 / 合约 · 返佣开户', '現物・先物 · 紹介リンク'),
+    },
+    {
+      name: 'Hyperliquid',
+      initial: 'HL',
+      url: DATA.contact.social.hyper.url,
+      desc: t('On-chain order book perps', '链上订单簿永续 · 开户', 'オンチェーン注文板の無期限先物'),
+    },
+  ];
+
   const localizedBrief = WEEKLY_REPORTS[0] ? getLocalizedWeeklyReport(WEEKLY_REPORTS[0], locale) : undefined;
   const weeklyBrief = localizedBrief?.report;
 
@@ -134,406 +132,228 @@ export async function renderPage(locale: Locale) {
   };
 
   return (
-    <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
-      {/* Background */}
-      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[36rem] bg-[radial-gradient(circle_at_10%_14%,rgba(14,165,233,0.16),transparent_26%),radial-gradient(circle_at_88%_12%,rgba(16,185,129,0.12),transparent_22%),radial-gradient(circle_at_48%_18%,rgba(59,130,246,0.10),transparent_28%)] dark:bg-[radial-gradient(circle_at_10%_14%,rgba(56,189,248,0.18),transparent_26%),radial-gradient(circle_at_88%_12%,rgba(16,185,129,0.16),transparent_22%),radial-gradient(circle_at_48%_18%,rgba(29,78,216,0.18),transparent_28%)]' />
+    <div>
+      <script
+        type='application/ld+json'
+        suppressHydrationWarning
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
 
-      <main className='relative mx-auto flex min-h-[100dvh] w-full max-w-6xl flex-col gap-6 px-4 pb-dock-safe pt-6 sm:gap-8 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
-        <script
-          type='application/ld+json'
-          suppressHydrationWarning
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
-        />
-
-        {/* ── HERO ───────────────────────────────────────────────── */}
-        <section
-          id='hero'
-          className='grid items-start gap-5 lg:grid-cols-[minmax(0,1.2fr)_21rem]'>
-
-          <BlurFade delay={BLUR_FADE_DELAY}>
-            <div className='relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/78 p-6 shadow-[0_28px_80px_-46px_rgba(15,23,42,0.45)] backdrop-blur-md sm:p-8 lg:p-10'>
-              <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.14),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.10),transparent_26%)]' />
-              <div className='relative space-y-8'>
-                {/* Badge */}
-                <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground shadow-sm backdrop-blur'>
-                  <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' />
-                  {t("Crypto Research Hub · kkdemian", "加密研究中心 · kkdemian", "暗号資産リサーチハブ · kkdemian")}
-                </div>
-
-                {/* Headline */}
-                <div className='space-y-4'>
-                  <h1 className='max-w-3xl text-3xl font-semibold tracking-[-0.06em] text-foreground sm:text-[2.75rem] sm:leading-tight lg:text-[3.1rem] lg:leading-[1.08]'>
-                    {t("Professional Crypto Research, Market Structure & Thesis Discovery", "专业加密研究、市场结构与投资观点发现", "暗号資産リサーチ、市場構造、投資テーマの発見")}
-                  </h1>
-                  <p className='max-w-2xl text-[15px] leading-8 text-muted-foreground sm:text-[17px]'>
-                    {t("Track emerging protocols, understand market structure, and explore research-driven views across DeFi, exchanges, stablecoins, AI×Crypto, and capital allocation.", "追踪新兴协议，理解市场结构，探索 DeFi、交易所、稳定币、AI × Crypto 与资本配置的研究观点。", "新しいプロトコルと市場構造を追い、DeFi、取引所、ステーブルコイン、AI × Crypto、資本配分の研究を読む。")}
-                  </p>
-                </div>
-
-                {/* CTAs */}
-                <div className='grid gap-3 sm:grid-cols-2 lg:grid-cols-4'>
-                  {HERO_CTAS.map((cta) => (
-                    <Link
-                      key={cta.label}
-                      href={href(cta.href)}
-                      className='group flex items-center justify-between rounded-[1.25rem] border border-border/60 bg-background/78 px-4 py-3 shadow-[0_10px_26px_-20px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_18px_34px_-22px_rgba(15,23,42,0.6)]'>
-                      <div className='flex items-center gap-2.5'>
-                        <cta.icon className='size-4 text-foreground' />
-                        <span className='text-sm font-medium text-foreground'>{cta.label}</span>
-                      </div>
-                      <ArrowRightIcon className='size-3.5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5' />
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Stats strip */}
-                <div className='grid grid-cols-4 gap-3'>
-                  {SITE_STATS.map((s) => (
-                    <div
-                      key={s.label}
-                      className='rounded-[1.15rem] border border-border/60 bg-background/72 px-4 py-3'>
-                      <div className='text-xl font-semibold tracking-[-0.05em] text-foreground sm:text-2xl'>
-                        {s.value}
-                      </div>
-                      <div className='mt-0.5 text-xs tracking-[0.08em] text-muted-foreground'>
-                        {s.label}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </BlurFade>
-
-          {/* Right column */}
-          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-1'>
-            {/* Profile card */}
-            <BlurFade delay={BLUR_FADE_DELAY * 2}>
-              <div className='rounded-[1.75rem] border border-border/60 bg-background/78 p-5 shadow-[0_22px_48px_-36px_rgba(15,23,42,0.55)] backdrop-blur-sm'>
-                <div className='flex items-center gap-4'>
-                  <div className='rounded-[1.3rem] bg-white/95 p-1 ring-1 ring-black/5 shadow-[0_10px_24px_-16px_rgba(15,23,42,0.4)]'>
-                    <Avatar className='size-16 rounded-[1.1rem] bg-background'>
-                      <AvatarImage alt={DATA.name} src={DATA.avatarUrl} />
-                      <AvatarFallback>{DATA.initials}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <div className='min-w-0'>
-                    <div className='text-base font-semibold text-foreground'>{DATA.name}</div>
-                    <p className='mt-0.5 text-sm leading-6 text-muted-foreground'>
-                      {t("Web3 Product Engineer · Researcher", "Web3 产品工程师 · 研究者", "Web3 プロダクトエンジニア · リサーチャー")}
-                    </p>
-                  </div>
-                </div>
-                <div className='mt-4 flex flex-wrap gap-2'>
-                  {[DATA.contact.social.X, DATA.contact.social.GitHub, DATA.contact.social.TelegramChannel, DATA.contact.social.Youtube].map((s) => (
-                    <Link
-                      key={s.name}
-                      href={s.url}
-                      target='_blank'
-                      className='inline-flex items-center gap-1.5 rounded-full border border-border/60 bg-background/80 px-2.5 py-1 text-xs font-medium text-foreground transition-colors hover:border-foreground/15'>
-                      <s.icon className='size-3.5' />
-                      {s.name}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </BlurFade>
-
-            {/* Quick entry links */}
-            <BlurFade delay={BLUR_FADE_DELAY * 3}>
-              <div className='rounded-[1.75rem] border border-border/60 bg-background/78 p-5 shadow-[0_22px_48px_-36px_rgba(15,23,42,0.55)] backdrop-blur-sm'>
-                <div className='text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
-                  {t("Quick access", "快捷入口", "クイックアクセス")}
-                </div>
-                <div className='mt-3 space-y-2'>
-                  {[
-                    { title: t("Research archive", "研究归档", "リサーチアーカイブ"), href: '/research', text: t("Long-form theses on exchanges, DeFi, infra, AI, and market structure", "交易所、DeFi、基础设施、AI 与市场结构的深度研究", "取引所、DeFi、基盤、AI、市場構造の詳細なリサーチ") },
-                    { title: t("Capital map", "资本地图", "資本マップ"), href: '/fund', text: t("Assets, sectors, and platforms I keep tracking", "持续跟踪的资产、赛道与平台", "継続的に追う資産、分野、プラットフォーム") },
-                    { title: t("Thought stream", "思考动态", "考察ストリーム"), href: '/thoughts', text: t("Shorter notes and recurring market observations", "短篇笔记与持续市场观察", "短いメモと日々の市場観察") },
-                  ].map((item) => (
-                    <Link
-                      key={item.title}
-                      href={href(item.href)}
-                      className='group block rounded-[1.15rem] border border-border/60 bg-background/75 px-4 py-3 transition-all duration-300 hover:border-foreground/15 hover:bg-background/90'>
-                      <div className='flex items-center justify-between gap-3'>
-                        <div className='text-sm font-semibold text-foreground'>{item.title}</div>
-                        <ArrowUpRightIcon className='size-3.5 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-                      </div>
-                      <p className='mt-1 text-xs leading-5 text-muted-foreground'>{item.text}</p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </BlurFade>
+      {/* ── HERO · search is the page, not a decoration ───────────── */}
+      <section className='border-b border-border'>
+        <div className='mx-auto max-w-[1240px] px-4 pb-14 pt-14 sm:px-8 sm:pt-16'>
+          <div className='mb-6 flex items-center gap-2.5'>
+            <span aria-hidden='true' className='block size-1.5 bg-positive' />
+            <span className='mono-label'>
+              {t('Research terminal · updated weekly', '研究终端 · 每周更新', 'リサーチターミナル · 毎週更新')}
+            </span>
           </div>
-        </section>
 
-        {/* ── TOPICS NAVIGATION ──────────────────────────────────── */}
-        <section id='topics'>
-          <BlurFade delay={BLUR_FADE_DELAY * 4}>
-            <div className='rounded-[1.9rem] border border-border/60 bg-background/76 p-6 shadow-[0_22px_54px_-38px_rgba(15,23,42,0.55)] backdrop-blur-sm sm:p-8'>
-              <div className='flex items-center justify-between gap-4'>
-                <div className='flex items-center gap-3'>
-                  <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
-                    <span className='h-1.5 w-1.5 rounded-full bg-sky-500' />
-                    {t("Topics", "主题", "トピック")}
-                  </div>
-                  <h2 className='text-base font-semibold tracking-[-0.03em] text-foreground'>
-                    {t("Browse by Theme", "按主题浏览", "テーマ別に閲覧")}
-                  </h2>
-                </div>
-                <Link
-                  href={href('/topics')}
-                  className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground'>
-                  {t("View all", "查看全部", "すべて見る")}
-                  <ArrowRightIcon className='size-3.5' />
-                </Link>
-              </div>
+          <h1 className='mb-4 max-w-[820px] text-[30px] font-semibold leading-[1.15] tracking-[-0.03em] sm:text-[44px] sm:leading-[1.12]'>
+            {t('Crypto market structure, written up as a searchable research library', '把加密市场结构写成一个可检索的研究库', '暗号資産の市場構造を、検索できるリサーチ資料に')}
+          </h1>
+          <p className='mb-9 max-w-[640px] text-[15px] leading-[1.75] text-muted-foreground sm:text-base'>
+            {t(
+              'Exchanges, perp DEXs, stablecoins, L1/L2, RWA, AI × Crypto — tracked over time, taken apart one by one, kept current.',
+              '交易所、永续 DEX、稳定币、L1/L2、RWA、AI × Crypto —— 长期跟踪、逐个拆解、持续更新。',
+              '取引所、無期限 DEX、ステーブルコイン、L1/L2、RWA、AI × Crypto —— 長く追い、ひとつずつ分解し、更新し続ける。'
+            )}
+          </p>
 
-              <div className='mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
-                {TOPICS.map(topic => localizedTopic(topic, locale)).map((topic) => (
-                  <Link
-                    key={topic.slug}
-                    href={href(`/topics/${topic.slug}`)}
-                    className='group rounded-[1.35rem] border border-border/60 bg-background/78 p-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_16px_36px_-22px_rgba(15,23,42,0.5)]'>
-                    <div className='text-xl'>{topic.emoji}</div>
-                    <div className='mt-2 text-sm font-semibold text-foreground'>{topic.name}</div>
-                    <p className='mt-1 text-xs leading-5 text-muted-foreground line-clamp-2'>
-                      {topic.tagline}
-                    </p>
-                    <div className='mt-3 flex flex-wrap gap-1.5'>
-                      {topic.postCount > 0 && (
-                        <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
-                          {topic.postCount} {t('posts', '篇文章', '記事')}
-                        </span>
-                      )}
-                      {topic.projectCount > 0 && (
-                        <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
-                          {topic.projectCount} {t('projects', '个项目', 'プロジェクト')}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </BlurFade>
-        </section>
+          <Link
+            href={href('/research')}
+            className='mb-5 flex h-[60px] max-w-[760px] items-center gap-3.5 rounded border border-border-strong bg-surface px-4 transition-colors hover:border-subtle'
+          >
+            <SearchIcon aria-hidden='true' className='size-[18px] shrink-0 text-subtle' />
+            <span className='min-w-0 truncate text-[15px] text-subtle sm:text-base'>
+              {t('Search projects, tokens, exchanges, topics…', '搜索项目、代币、交易所、研究主题…', 'プロジェクト、トークン、取引所、トピックを検索…')}
+            </span>
+            <span className='ml-auto hidden shrink-0 rounded-sm border border-border px-[7px] py-[3px] font-mono text-[11px] text-subtle sm:block'>
+              {PROJECTS.length.toLocaleString(locale)}
+            </span>
+          </Link>
 
-        {/* ── FEATURED RESEARCH ──────────────────────────────────── */}
-        <section id='research' className='space-y-5'>
-          <BlurFade delay={BLUR_FADE_DELAY * 5}>
-            <div className='flex items-center justify-between gap-4'>
-              <div className='space-y-1'>
-                <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
-                  <span className='h-1.5 w-1.5 rounded-full bg-violet-500' />
-                  {t("Research Map", "研究地图", "リサーチマップ")}
-                </div>
-                <h2 className='text-2xl font-semibold tracking-[-0.05em] text-foreground sm:text-3xl'>
-                  {t(`${PROJECTS.length.toLocaleString(locale)} projects analyzed`, `已研究 ${PROJECTS.length.toLocaleString(locale)} 个项目`, `${PROJECTS.length.toLocaleString(locale)} プロジェクトを分析`)}
-                </h2>
-              </div>
+          <div className='mb-11 flex max-w-[900px] flex-wrap gap-2'>
+            <Link
+              href={href('/research')}
+              className='rounded-sm bg-brand px-3 py-1.5 font-mono text-[12px] text-brand-foreground'
+            >
+              {t('All', '全部', 'すべて')}
+            </Link>
+            {topics.map((topic) => (
               <Link
-                href={href('/research')}
-                className='inline-flex items-center gap-1.5 text-sm font-medium text-foreground transition-colors hover:text-muted-foreground'>
-                {t("Explore all", "探索全部", "すべて見る")}
-                <ArrowRightIcon className='size-4' />
+                key={topic.slug}
+                href={href(`/topics/${topic.slug}`)}
+                className='rounded-sm border border-border px-3 py-1.5 font-mono text-[12px] text-muted-foreground transition-colors hover:border-border-strong hover:text-foreground'
+              >
+                {topic.name}
               </Link>
-            </div>
-          </BlurFade>
-
-          <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-            {FEATURED_RESEARCH.map((project, id) => (
-              <BlurFade key={project.slug} delay={BLUR_FADE_DELAY * 6 + id * 0.04}>
-                <Link
-                  href={postBySlug.has(project.slug) ? getPostHref(postBySlug.get(project.slug)!, locale) : `/blog/${project.slug}`}
-                  className='group block h-full rounded-[1.6rem] border border-border/60 bg-background/78 p-5 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:shadow-[0_24px_48px_-28px_rgba(15,23,42,0.65)]'>
-                  {/* Logo */}
-                  <div
-                    className='flex size-10 items-center justify-center rounded-xl text-sm font-bold text-white shadow-sm'
-                    style={{ backgroundColor: project.color }}>
-                    {project.initial}
-                  </div>
-                  <div className='mt-4 space-y-1'>
-                    <div className='flex items-center gap-2'>
-                      <span className='text-sm font-semibold text-foreground'>{project.name}</span>
-                      <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
-                        {project.type}
-                      </span>
-                    </div>
-                    <p className='text-xs leading-5 text-muted-foreground line-clamp-3'>
-                      {featuredDescriptions[project.name] ?? project.description}
-                    </p>
-                  </div>
-                  <div className='mt-4 flex items-center gap-1 text-xs font-medium text-muted-foreground transition-colors group-hover:text-foreground'>
-                    {t("Read research", "阅读研究", "リサーチを読む")}
-                    <ArrowUpRightIcon className='size-3 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-                  </div>
-                </Link>
-              </BlurFade>
             ))}
           </div>
-        </section>
 
-        {/* ── CONTENT ROW: Latest Posts + Weekly Brief ────────────── */}
-        <section
-          id='content'
-          className='grid gap-5 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]'>
-
-          {/* Latest Posts */}
-          <BlurFade delay={BLUR_FADE_DELAY * 7}>
-            <div className='h-full rounded-[1.9rem] border border-border/60 bg-background/76 p-6 shadow-[0_22px_54px_-38px_rgba(15,23,42,0.55)] backdrop-blur-sm sm:p-8'>
-              <div className='flex items-center justify-between gap-4'>
-                <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
-                  <BookOpenIcon className='size-3' />
-                  {t("Latest from the blog", "最新文章", "最新の記事")}
+          <div className='grid grid-cols-2 gap-px border-y border-border bg-border sm:grid-cols-4'>
+            {STATS.map((stat) => (
+              <div key={stat.label} className='bg-background px-4 py-4 sm:px-6 sm:py-5'>
+                <div className='tnum font-mono text-[22px] font-medium tracking-[-0.02em] sm:text-[28px]'>
+                  {stat.value}
                 </div>
-                <Link
-                  href={href('/blog')}
-                  className='inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground'>
-                  {t('All posts', '全部文章', 'すべての記事')} <ArrowRightIcon className='size-3.5' />
-                </Link>
-              </div>
-              <div className='mt-5 space-y-3'>
-                {latestPosts.map((post) => (
-                  <Link
-                    key={post.slug}
-                    href={getPostHref(post, locale)}
-                    className='group block rounded-[1.25rem] border border-border/60 bg-background/80 px-4 py-3.5 transition-all duration-300 hover:border-foreground/15 hover:bg-background/95'>
-                    <div className='flex items-start justify-between gap-3'>
-                      <div className='min-w-0'>
-                        <div className='truncate text-sm font-semibold text-foreground'>
-                          {post.metadata.title}
-                          {post.metadata.language !== locale && <span className='ml-2 text-[10px] font-normal text-muted-foreground'>{t('Original', '原文', '原文')}: {post.metadata.language}</span>}
-                        </div>
-                        <p className='mt-1 line-clamp-2 text-xs leading-5 text-muted-foreground'>
-                          {post.metadata.summary}
-                        </p>
-                      </div>
-                      <ArrowUpRightIcon className='mt-0.5 size-3.5 shrink-0 text-muted-foreground transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5' />
-                    </div>
-                    <div className='mt-2 flex items-center gap-2'>
-                      {post.metadata.category && (
-                        <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium capitalize text-muted-foreground'>
-                          {categoryLabel(post.metadata.category, locale)}
-                        </span>
-                      )}
-                      <span className='text-[10px] text-muted-foreground'>
-                        {formatLocaleDate(post.metadata.publishedAt, locale, {
-                          month: 'short',
-                          day: 'numeric',
-                          year: 'numeric',
-                        })}
-                      </span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </BlurFade>
-
-          {/* Weekly Brief */}
-          <BlurFade delay={BLUR_FADE_DELAY * 8}>
-            <div className='flex h-full flex-col gap-5'>
-              {weeklyBrief && (
-                <div className='flex-1 rounded-[1.75rem] border border-border/60 bg-background/76 p-5 shadow-[0_22px_48px_-36px_rgba(15,23,42,0.55)] backdrop-blur-sm sm:p-6'>
-                  <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
-                    <TrendingUpIcon className='size-3' />
-                    {t("Weekly Brief", "每周简报", "ウィークリーブリーフ")}
-                  </div>
-                  <div className='mt-4 space-y-2'>
-                    <div className='text-[11px] font-medium uppercase tracking-[0.12em] text-muted-foreground'>
-                      {formatLocaleDate(weeklyBrief.id, locale)}
-                      {localizedBrief?.fallbackOriginal && <> · {t('Translation pending · original report', '译文待补充 · 显示原报告', '翻訳準備中 · 原文のレポートを表示')}</>}
-                    </div>
-                    <h3 lang={localizedBrief?.language} className='text-base font-semibold tracking-[-0.03em] text-foreground leading-snug'>
-                      {weeklyBrief.headline}
-                    </h3>
-                  </div>
-                  {weeklyBrief.coreCrypto && (
-                    <div className='mt-4 rounded-[1.1rem] border border-border/60 bg-background/80 px-3.5 py-2.5'>
-                      <p lang={localizedBrief?.language} className='text-xs leading-6 text-muted-foreground line-clamp-4'>
-                        {weeklyBrief.coreCrypto}
-                      </p>
-                    </div>
-                  )}
+                <div className='mt-1 truncate font-mono text-[10px] tracking-[0.14em] text-subtle sm:text-[11px]'>
+                  {stat.label}
                 </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 索引 + 侧栏 ───────────────────────────────────────────── */}
+      <div className='mx-auto flex max-w-[1240px] flex-wrap items-start gap-12 px-4 pt-14 sm:px-8 lg:gap-14'>
+        <main className='min-w-0 flex-[999_1_560px]'>
+          <div className='mb-5 flex items-baseline justify-between gap-4'>
+            <h2 className='text-xl font-semibold tracking-[-0.015em]'>
+              {t('Latest', '最近更新', '最新の更新')}
+            </h2>
+            <Link href={href('/blog')} className='font-mono text-[12px] text-muted-foreground transition-colors hover:text-foreground'>
+              {t('All', '全部', 'すべて')} {localizedPosts.length.toLocaleString(locale)} →
+            </Link>
+          </div>
+
+          <div className='grid grid-cols-[84px_minmax(0,1fr)] gap-5 border-b border-border-strong px-3 pb-2.5 font-mono text-[11px] tracking-[0.14em] text-subtle sm:grid-cols-[92px_minmax(0,1fr)_130px]'>
+            <div>{t('DATE', '日期', '日付')}</div>
+            <div>{t('TITLE', '标题', 'タイトル')}</div>
+            <div className='hidden sm:block'>{t('CATEGORY', '分类', 'カテゴリ')}</div>
+          </div>
+
+          {latestPosts.map((post) => (
+            <Link
+              key={post.slug}
+              href={getPostHref(post, locale)}
+              className='idx-row grid-cols-[84px_minmax(0,1fr)] sm:grid-cols-[92px_minmax(0,1fr)_130px]'
+            >
+              <div className='tnum font-mono text-[12px] text-subtle'>
+                {post.metadata.publishedAt}
+              </div>
+              <div className='truncate text-[14.5px] leading-[1.5]'>{post.metadata.title}</div>
+              <div className='hidden font-mono text-[11px] tracking-[0.06em] text-muted-foreground sm:block'>
+                {post.metadata.category ? categoryLabel(post.metadata.category, locale) : '—'}
+              </div>
+            </Link>
+          ))}
+
+          <h2 className='mb-5 mt-12 text-xl font-semibold tracking-[-0.015em]'>
+            {t('Featured research', '重点研究', '注目のリサーチ')}
+          </h2>
+          <div className='grid gap-px border border-border bg-border sm:grid-cols-2'>
+            {FEATURED_RESEARCH.map((project) => (
+              <Link
+                key={project.slug}
+                href={postBySlug.has(project.slug) ? getPostHref(postBySlug.get(project.slug)!, locale) : href(`/blog/${project.slug}`)}
+                className='block bg-background p-5 transition-colors hover:bg-surface-2'
+              >
+                <div className='mb-3 flex items-center gap-2.5'>
+                  <img src={project.logoUrl} alt='' className='size-[26px] shrink-0 rounded-sm' loading='lazy' />
+                  <span className='text-[15px] font-semibold'>{project.name}</span>
+                  <span className='rounded-sm border border-border px-1.5 py-0.5 font-mono text-[10px] tracking-[0.08em] text-subtle'>
+                    {project.type}
+                  </span>
+                </div>
+                <p className='text-[13px] leading-[1.65] text-muted-foreground'>
+                  {featuredDescriptions[project.name] ?? project.description}
+                </p>
+              </Link>
+            ))}
+          </div>
+        </main>
+
+        <aside className='flex min-w-0 flex-[1_1_320px] flex-col gap-8'>
+          {weeklyBrief && (
+            <section className='rounded border border-border bg-surface p-5'>
+              <div className='mono-label mb-3.5'>
+                {t('Weekly brief', '本周简报', 'ウィークリーブリーフ')}
+                {localizedBrief?.fallbackOriginal && <> · {t('original', '原文', '原文')}</>}
+              </div>
+              <div className='tnum mb-2 font-mono text-[11px] tracking-[0.1em] text-subtle'>
+                {formatLocaleDate(weeklyBrief.id, locale)}
+              </div>
+              <h3 lang={localizedBrief?.language} className='mb-3 text-base font-semibold leading-[1.5]'>
+                {weeklyBrief.headline}
+              </h3>
+              {weeklyBrief.coreCrypto && (
+                <p lang={localizedBrief?.language} className='mb-3 line-clamp-4 text-[13px] leading-[1.7] text-muted-foreground'>
+                  {weeklyBrief.coreCrypto}
+                </p>
               )}
+              <Link href={href('/pulse')} className='font-mono text-[12px] text-brand transition-opacity hover:opacity-80'>
+                {t('Read in full', '读全文', '全文を読む')} →
+              </Link>
+            </section>
+          )}
 
-              {/* Market tools */}
-              <div className='rounded-[1.75rem] border border-border/60 bg-background/76 p-5 shadow-[0_20px_46px_-38px_rgba(15,23,42,0.55)] backdrop-blur-sm'>
-                <div className='text-xs font-medium uppercase tracking-[0.18em] text-muted-foreground'>
-                  {t("Market tools", "市场工具", "市場ツール")}
-                </div>
-                <div className='mt-3 space-y-2'>
-                  {[
-                    { label: t("Oscillator", "震荡指标", "オシレーター"), href: '/oscillator', desc: t("ALT/BTC strength & breadth", "ALT/BTC 强度与市场广度", "ALT/BTC の強さと市場の広がり"), icon: ActivityIcon },
-                    { label: t("Watch", "上币追踪", "上場ウォッチ"), href: '/watch', desc: t("Exchange listing signals", "交易所上币信号", "取引所の上場シグナル"), icon: RadioIcon },
-                    { label: t("Fund", "投资", "投資"), href: '/fund', desc: t("Capital allocation framework", "资本配置框架", "資本配分のフレームワーク"), icon: TrendingUpIcon },
-                  ].map((tool) => (
-                    <Link
-                      key={tool.label}
-                      href={href(tool.href)}
-                      className='group flex items-center justify-between gap-3 rounded-[1.15rem] border border-border/60 bg-background/80 px-3.5 py-3 transition-all duration-300 hover:border-foreground/15 hover:bg-background/95'>
-                      <div className='flex items-center gap-3'>
-                        <tool.icon className='size-4 text-foreground' />
-                        <div>
-                          <div className='text-sm font-semibold text-foreground'>{tool.label}</div>
-                          <p className='text-xs text-muted-foreground'>{tool.desc}</p>
-                        </div>
-                      </div>
-                      <ArrowRightIcon className='size-3.5 text-muted-foreground transition-transform duration-300 group-hover:translate-x-0.5' />
-                    </Link>
-                  ))}
-                </div>
-              </div>
+          <section>
+            <div className='mono-label mb-3'>{t('Market tools', '市场工具', '市場ツール')}</div>
+            <div className='overflow-hidden rounded border border-border'>
+              {TOOLS.map((tool, i) => (
+                <Link
+                  key={tool.href}
+                  href={href(tool.href)}
+                  className={`flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2 ${i < TOOLS.length - 1 ? 'border-b border-border' : ''}`}
+                >
+                  <span className='min-w-0'>
+                    <span className='block text-sm font-semibold'>{tool.label}</span>
+                    <span className='mt-0.5 block text-[12px] text-subtle'>{tool.desc}</span>
+                  </span>
+                  <ArrowRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
+                </Link>
+              ))}
             </div>
-          </BlurFade>
-        </section>
+          </section>
 
-        {/* ── NEWSLETTER / CONVERSION ─────────────────────────────── */}
-        <section id='subscribe'>
-          <BlurFade delay={BLUR_FADE_DELAY * 9}>
-            <div className='relative overflow-hidden rounded-[1.9rem] border border-border/60 bg-background/76 p-6 shadow-[0_22px_54px_-38px_rgba(15,23,42,0.55)] backdrop-blur-sm sm:p-8'>
-              <div className='pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(16,185,129,0.08),transparent_30%),radial-gradient(circle_at_bottom_left,rgba(59,130,246,0.08),transparent_30%)]' />
-              <div className='relative grid gap-6 lg:grid-cols-[1fr_auto]'>
-                <div className='space-y-3'>
-                  <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
-                    <RssIcon className='size-3' />
-                    {t("Stay updated", "订阅更新", "更新を受け取る")}
-                  </div>
-                  <h2 className='text-2xl font-semibold tracking-[-0.04em] text-foreground'>
-                    {t("Weekly research updates, market signals, and listing intelligence.", "每周研究更新、市场信号与上币情报。", "毎週のリサーチ、市場シグナル、上場情報。")}
-                  </h2>
-                  <p className='max-w-xl text-sm leading-7 text-muted-foreground'>
-                    {t("Join the Telegram channel for real-time thoughts, or subscribe to the newsletter for structured weekly digests.", "加入 Telegram 频道获取实时思考，或订阅邮件，接收每周研究摘要。", "Telegram で最新の考察を読む、またはニュースレターで毎週のリサーチ要約を受け取る。")}
-                  </p>
-                  <div className='max-w-md'>
-                    <NewsletterForm />
-                  </div>
-                </div>
-                <div className='flex flex-col justify-center gap-3 sm:flex-row lg:flex-col'>
-                  <Link
-                    href={DATA.contact.social.TelegramChannel.url}
-                    target='_blank'
-                    className='inline-flex items-center justify-center gap-2 rounded-full border border-border/60 bg-background/90 px-5 py-3 text-sm font-semibold text-foreground shadow-sm transition-all hover:border-foreground/15 hover:bg-background'>
-                    <DATA.contact.social.TelegramChannel.icon className='size-4' />
-                    {t("Follow on Telegram", "关注 Telegram", "Telegram をフォロー")}
-                  </Link>
-                  <Link
-                    href={DATA.contact.social.X.url}
-                    target='_blank'
-                    className='inline-flex items-center justify-center gap-2 rounded-full border border-border/70 bg-background/80 px-5 py-3 text-sm font-medium text-muted-foreground transition-all hover:border-foreground/15 hover:text-foreground'>
-                    <DATA.contact.social.X.icon className='size-4' />
-                    {t("Follow on X", "关注 X", "X をフォロー")}
-                  </Link>
-                </div>
-              </div>
+          {/* Referral links keep a fixed, labelled slot instead of an unlabelled dock icon. */}
+          <section>
+            <div className='mono-label mb-3'>{t('Exchanges', '交易入口', '取引所')}</div>
+            <div className='overflow-hidden rounded border border-border'>
+              {EXCHANGES.map((ex, i) => (
+                <Link
+                  key={ex.name}
+                  href={ex.url}
+                  target='_blank'
+                  rel='sponsored noopener'
+                  className={`flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2 ${i < EXCHANGES.length - 1 ? 'border-b border-border' : ''}`}
+                >
+                  <span className='flex size-7 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-[11px] font-medium text-muted-foreground'>
+                    {ex.initial}
+                  </span>
+                  <span className='min-w-0 flex-grow'>
+                    <span className='block text-sm font-semibold'>{ex.name}</span>
+                    <span className='block text-[12px] text-subtle'>{ex.desc}</span>
+                  </span>
+                  <ArrowUpRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
+                </Link>
+              ))}
             </div>
-          </BlurFade>
-        </section>
-      </main>
+            <p className='mt-2 font-mono text-[10.5px] tracking-[0.04em] text-subtle'>
+              {t('Referral links · research stays independent', '含邀请链接 · 不影响研究结论', '紹介リンク · リサーチの結論には影響しません')}
+            </p>
+          </section>
+        </aside>
+      </div>
+
+      {/* ── 订阅 ──────────────────────────────────────────────────── */}
+      <section className='mx-auto mt-16 max-w-[1240px] px-4 sm:px-8'>
+        <div className='flex flex-wrap items-center gap-8 rounded border border-border bg-surface p-6 sm:p-8'>
+          <div className='min-w-0 flex-[999_1_380px]'>
+            <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>
+              {t('One email a week: research updates and listing intelligence', '每周一封，研究更新与上币情报', '週に一通、リサーチ更新と上場情報')}
+            </h2>
+            <p className='text-sm leading-[1.7] text-muted-foreground'>
+              {t('No reposted price feeds — only what I write myself. Unsubscribe anytime.', '不转发行情，只发自己写的东西。随时退订。', '相場の転載はなし、自分で書いたものだけ。いつでも解除できます。')}
+            </p>
+          </div>
+          <div className='min-w-0 flex-[1_1_340px]'>
+            <NewsletterForm />
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

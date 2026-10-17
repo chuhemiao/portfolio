@@ -10,7 +10,7 @@ export default function NotFoundScreen() {
       <p className="text-sm text-muted-foreground">404</p>
       <h1 className="text-2xl font-semibold">{t('Page not found', '页面不存在', 'ページが見つかりません')}</h1>
       <p className="text-sm text-muted-foreground">{t('This page or translation is not available.', '此页面或译文尚不可用。', 'このページまたは翻訳は利用できません。')}</p>
-      <Link href={href('/')} className="rounded-full border px-4 py-2 text-sm">{t('Back to home', '返回首页', 'ホームに戻る')}</Link>
+      <Link href={href('/')} className="rounded-sm border px-4 py-2 text-sm">{t('Back to home', '返回首页', 'ホームに戻る')}</Link>
     </main>
   );
 }

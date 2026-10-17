@@ -157,7 +157,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
       {/* Header */}
       <BlurFade delay={BLUR_FADE_DELAY}>
         <div className='space-y-4'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground'>
             <span className='h-1.5 w-1.5 rounded-full bg-sky-500' />
             {t('Writing', '文章', '記事')}
           </div>
@@ -175,20 +175,20 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
       {/* Search */}
       <BlurFade delay={BLUR_FADE_DELAY * 1.2}>
         <div className='relative max-w-sm'>
-          <SearchIcon className='absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground/60' />
+          <SearchIcon className='absolute left-3 top-1/2 -translate-y-1/2 size-4 text-subtle' />
           <input
             type='text'
             placeholder={t('Search posts...', '搜索文章…', '記事を検索…')}
             aria-label={t('Search posts', '搜索文章', '記事を検索')}
             value={searchQuery}
             onChange={handleSearchChange}
-            className='w-full rounded-full border border-border/70 bg-background/60 px-4 py-2 pl-9 text-[13px] text-foreground placeholder:text-muted-foreground/60 backdrop-blur-sm outline-none transition-all duration-200 focus:border-foreground/30 focus:bg-background/85'
+            className='w-full rounded-sm border border-border bg-surface px-4 py-2 pl-9 text-[13px] text-foreground placeholder:text-subtle outline-none transition-all duration-200 focus:border-border-strong focus:bg-surface'
           />
           {searchQuery && (
             <button
               aria-label={t('Clear search', '清除搜索', '検索をクリア')}
               onClick={() => { setSearchQuery(''); setCurrentPage(1); updateUrl(selectedCategory, selectedLanguage, { query: '' }); }}
-              className='absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-foreground'
+              className='absolute right-3 top-1/2 -translate-y-1/2 text-subtle hover:text-foreground'
             >
               <XIcon className='size-3.5' />
             </button>
@@ -203,10 +203,10 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
             <button
               key={category.key}
               onClick={() => handleCategoryChange(category.key)}
-              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
                 selectedCategory === category.key
-                  ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                  : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                  ? 'border-border-strong bg-foreground text-background'
+                  : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
               }`}
             >
               {categoryLabel(category.key, locale)}
@@ -235,8 +235,8 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
               }}
               className={`rounded-full border px-3 py-1 text-[11px] font-medium transition-colors ${
                 selectedLanguage === key
-                  ? 'border-foreground/70 bg-foreground text-background'
-                  : 'border-border/60 bg-background/60 text-muted-foreground hover:text-foreground'
+                  ? 'border-border-strong bg-foreground text-background'
+                  : 'border-border bg-surface text-muted-foreground hover:text-foreground'
               }`}
             >
               {label}
@@ -255,8 +255,8 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
               onClick={() => handleTopicChange(t.slug)}
               className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[10px] font-medium transition-all duration-200 ${
                 selectedTopic === t.slug
-                  ? 'border-foreground/60 bg-foreground/10 text-foreground'
-                  : 'border-border/60 bg-background/60 text-muted-foreground hover:border-foreground/20 hover:text-foreground'
+                  ? 'border-border-strong bg-foreground/10 text-foreground'
+                  : 'border-border bg-surface text-muted-foreground hover:border-border-strong hover:text-foreground'
               }`}
             >
               {t.emoji} {localizedTopic(t, locale).name}
@@ -286,7 +286,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
 
       {/* Empty state */}
       {filteredPosts.length === 0 && (
-        <div className='rounded-[1.5rem] border border-border/60 bg-background/76 p-10 text-center'>
+        <div className='rounded border border-border bg-surface p-10 text-center'>
           <p className='text-sm text-muted-foreground'>{t('No posts found. Try adjusting your filters.', '没有匹配的文章，请调整筛选条件。', '該当する記事がありません。絞り込み条件を変更してください。')}</p>
           <button onClick={clearFilters} className='mt-3 text-xs text-foreground underline underline-offset-4'>
             {t('Clear all filters', '清除所有筛选', 'すべての絞り込みをクリア')}
@@ -300,7 +300,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
           <BlurFade delay={BLUR_FADE_DELAY * 2 + id * 0.04} key={post.slug}>
             <Link
               href={articleHref(post.slug, post.metadata.language ?? "en")}
-              className='group block rounded-[1.35rem] border border-border/60 bg-background/78 px-5 py-4 shadow-[0_10px_26px_-20px_rgba(15,23,42,0.4)] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:shadow-[0_16px_32px_-20px_rgba(15,23,42,0.55)]'
+              className='group block rounded border border-border bg-surface px-5 py-4 transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:'
             >
               <div className='flex items-start justify-between gap-4'>
                 <div className='min-w-0 flex-1'>
@@ -314,11 +314,11 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
                   )}
                   <div className='mt-2.5 flex flex-wrap items-center gap-2'>
                     {post.metadata.category && (
-                      <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium capitalize text-muted-foreground'>
+                      <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] font-medium capitalize text-muted-foreground'>
                         {categoryLabel(post.metadata.category, locale)}
                       </span>
                     )}
-                    <span className='rounded-full border border-border/60 px-2 py-0.5 text-[10px] text-muted-foreground'>
+                    <span className='rounded-sm border border-border px-2 py-0.5 text-[10px] text-muted-foreground'>
                       <span lang={post.metadata.language}>{LANGUAGE_NAMES[post.metadata.language]}</span>
                       {selectedLanguage === 'auto' && post.metadata.language !== locale && <span lang={locale}> · {t('Original · translation unavailable', '原文 · 暂无此语言译文', '原文 · この言語の翻訳はありません')}</span>}
                     </span>
@@ -337,11 +337,11 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
       {/* Pagination */}
       {totalPages > 1 && (
         <BlurFade delay={BLUR_FADE_DELAY * 3}>
-          <div className='flex items-center justify-center gap-2 mt-8 pt-4 border-t border-border/60'>
+          <div className='flex items-center justify-center gap-2 mt-8 pt-4 border-t border-border'>
             <button
               onClick={() => handlePageChange(visiblePage - 1)}
               disabled={visiblePage === 1}
-              className='h-9 rounded-full border border-border/70 bg-background/60 px-4 text-xs font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-background/85 disabled:cursor-not-allowed disabled:opacity-40'
+              className='h-9 rounded-sm border border-border bg-surface px-4 text-xs font-medium text-foreground transition-all hover:border-border-strong hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-40'
             >
               {t('Previous', '上一页', '前へ')}
             </button>
@@ -355,8 +355,8 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
                     onClick={() => handlePageChange(page)}
                     className={`size-9 rounded-full border text-xs font-medium transition-all ${
                       visiblePage === page
-                        ? 'border-foreground/80 bg-foreground text-background'
-                        : 'border-border/70 bg-background/60 text-muted-foreground hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                        ? 'border-border-strong bg-foreground text-background'
+                        : 'border-border bg-surface text-muted-foreground hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
                     }`}
                   >
                     {page}
@@ -367,7 +367,7 @@ export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListI
             <button
               onClick={() => handlePageChange(visiblePage + 1)}
               disabled={visiblePage === totalPages}
-              className='h-9 rounded-full border border-border/70 bg-background/60 px-4 text-xs font-medium text-foreground transition-all hover:border-foreground/20 hover:bg-background/85 disabled:cursor-not-allowed disabled:opacity-40'
+              className='h-9 rounded-sm border border-border bg-surface px-4 text-xs font-medium text-foreground transition-all hover:border-border-strong hover:bg-surface-2 disabled:cursor-not-allowed disabled:opacity-40'
             >
               {t('Next', '下一页', '次へ')}
             </button>

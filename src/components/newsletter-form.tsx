@@ -36,7 +36,7 @@ export default function NewsletterForm() {
 
   if (status === 'done') {
     return (
-      <div className='flex items-center gap-2 text-sm text-emerald-600 dark:text-emerald-400'>
+      <div className='flex items-center gap-2 text-sm text-positive'>
         <CheckIcon className='size-4' />
         <span>{t("Subscribed! You'll hear from me soon.", '订阅成功！稍后将收到更新。', '登録しました！更新をお届けします。')}</span>
       </div>
@@ -44,7 +44,7 @@ export default function NewsletterForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className='flex items-center gap-2'>
+    <form onSubmit={handleSubmit} className='flex flex-wrap items-center gap-2'>
       <input
         type='email'
         required
@@ -53,15 +53,15 @@ export default function NewsletterForm() {
         value={email}
         onChange={e => setEmail(e.target.value)}
         disabled={status === 'loading'}
-        className='flex-1 rounded-full border border-border/70 bg-background/70 px-4 py-2 text-[13px] text-foreground placeholder:text-muted-foreground/60 outline-none transition focus:border-foreground/30 disabled:opacity-50'
+        className='h-11 min-w-0 flex-1 rounded border border-border-strong bg-background px-3.5 text-sm text-foreground outline-none transition-colors placeholder:text-subtle focus:border-brand disabled:opacity-50'
       />
       <button
         type='submit'
         disabled={status === 'loading'}
-        className='inline-flex items-center gap-1.5 rounded-full bg-foreground px-4 py-2 text-[13px] font-medium text-background transition hover:opacity-80 disabled:opacity-50'>
+        className='inline-flex h-11 shrink-0 items-center gap-1.5 rounded bg-brand px-5 text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90 disabled:opacity-50'>
         {status === 'loading' ? t('Subscribing…', '订阅中…', '登録中…') : <><span>{t('Subscribe', '订阅', '登録')}</span><ArrowRightIcon className='size-3' /></>}
       </button>
-      {status === 'error' && <p role='alert' className='text-xs text-red-500'>{error}</p>}
+      {status === 'error' && <p role='alert' className='w-full text-xs text-negative'>{error}</p>}
     </form>
   );
 }

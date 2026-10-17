@@ -72,7 +72,7 @@ function CryptoCardsSection() {
     <div className='space-y-6'>
       {cryptoCards.map((card, id) => (
         <BlurFade delay={BLUR_FADE_DELAY * 2 + id * 0.05} key={card.name}>
-          <div className='border rounded-lg p-6 space-y-4 hover:shadow-md transition-shadow'>
+          <div className='border rounded-lg p-6 space-y-4 transition-shadow'>
             <div className='flex items-start justify-between'>
               <div>
                 <h3 className='font-semibold text-lg'>{d(card.name)}</h3>
@@ -163,7 +163,7 @@ function BooksSection() {
 
       {filteredBooks.map((book, id) => (
         <BlurFade delay={BLUR_FADE_DELAY * 2 + id * 0.05} key={book.title}>
-          <div className='border rounded-lg p-5 hover:shadow-md transition-shadow'>
+          <div className='border rounded-lg p-5 transition-shadow'>
             <div className='flex items-start justify-between gap-4'>
               <div className='flex-1'>
                 <div className='flex items-center gap-2 mb-1 flex-wrap'>
@@ -258,7 +258,7 @@ function DataSourcesSection() {
               href={localizedHref(source.link)}
               target='_blank'
               rel='noopener noreferrer'
-              className='border rounded-lg p-4 hover:shadow-md transition-shadow block'>
+              className='border rounded-lg p-4 transition-shadow block'>
               <div className='flex items-start justify-between mb-2'>
                 <h3 className='font-semibold'>{d(source.name)}</h3>
                 {source.isPaid && (
@@ -331,7 +331,7 @@ function AIToolsSection() {
               href={localizedHref(tool.link)}
               target='_blank'
               rel='noopener noreferrer'
-              className='border rounded-lg p-4 hover:shadow-md transition-shadow block'>
+              className='border rounded-lg p-4 transition-shadow block'>
               <div className='flex items-start justify-between mb-2'>
                 <h3 className='font-semibold'>{d(tool.name)}</h3>
                 <span

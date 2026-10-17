@@ -121,7 +121,7 @@ function PriceChange({ value }: { value: number | null }) {
 function ExchangeCell({ status }: { status: ExchangeListing }) {
   const { d } = useDashboardI18n();
   if (!status.spot && !status.perp) {
-    return <span className='text-muted-foreground/30 text-xs select-none'>—</span>;
+    return <span className='text-subtle text-xs select-none'>—</span>;
   }
   return (
     <div className='flex flex-col gap-0.5 items-center'>
@@ -210,14 +210,12 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
-      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_8%_14%,rgba(14,165,233,0.14),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_8%_14%,rgba(56,189,248,0.16),transparent_26%),radial-gradient(circle_at_88%_10%,rgba(99,102,241,0.14),transparent_22%)]' />
 
       <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 space-y-8 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
 
         {/* ── Hero ─────────────────────────────────────────────────── */}
         <div className='space-y-4'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground backdrop-blur'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
             <RadioIcon className='size-3' /> {d("Listing Intelligence")} </div>
           <div className='space-y-2'>
             <h1 className='text-3xl font-semibold tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl'> {d("Exchange Listing Watch")} </h1>
@@ -225,7 +223,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
               <strong className='text-foreground'>{lookbackDays} {d("days")}</strong>{d(". Data from exchange native APIs.")} </p>
             <p className='max-w-2xl text-xs leading-6 text-muted-foreground'>{d("Also includes the current Binance Alpha inventory. Unknown listing dates are shown as unknown, not as new listings.")}</p>
           </div>
-          <p className='text-[11px] text-muted-foreground/50'> {d("Updated:")} {new Date(generatedAt).toLocaleString(locale, { timeZone: 'UTC', dateStyle: 'medium', timeStyle: 'short' })} {d("UTC")} </p>
+          <p className='text-[11px] text-subtle'> {d("Updated:")} {new Date(generatedAt).toLocaleString(locale, { timeZone: 'UTC', dateStyle: 'medium', timeStyle: 'short' })} {d("UTC")} </p>
           {errors.length > 0 && (
             <div className='rounded-xl border border-amber-500/40 bg-amber-500/20 px-4 py-2.5 text-[12px] leading-5 text-amber-600 dark:text-amber-400'>
               <p>{d("Coverage notes: figures may be incomplete.")}</p>
@@ -240,7 +238,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
         <div className='grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5'>
           {/* Fear & Greed */}
           {fearGreed && (
-            <div className='col-span-2 sm:col-span-1 rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+            <div className='col-span-2 sm:col-span-1 rounded border border-border bg-surface p-4'>
               <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("Fear & Greed")}</p>
               <div className='mt-3 flex items-center gap-3'>
                 <div className='relative size-12 flex-shrink-0'>
@@ -258,7 +256,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             </div>
           )}
           {/* Total MCap */}
-          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+          <div className='rounded border border-border bg-surface p-4'>
             <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("Total MCap")}</p>
             <p className='mt-2 text-xl font-semibold tracking-tight text-foreground'>
               {d(g?.totalMarketCapUsd ? `$${(g.totalMarketCapUsd / 1e12).toFixed(2)}T` : '—')}
@@ -266,7 +264,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             <PriceChange value={g?.marketCapChange24h ?? null} />
           </div>
           {/* BTC Dom */}
-          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+          <div className='rounded border border-border bg-surface p-4'>
             <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("BTC Dom")}</p>
             <p className='mt-2 text-xl font-semibold tracking-tight text-foreground'>
               {d(g?.btcDominance ? `${g.btcDominance.toFixed(1)}%` : '—')}
@@ -274,13 +272,13 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             <p className='text-xs text-muted-foreground'>{d("ETH")} {d(g?.ethDominance ? `${g.ethDominance.toFixed(1)}%` : '—')}</p>
           </div>
           {/* New Listings */}
-          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+          <div className='rounded border border-border bg-surface p-4'>
             <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("New Listings")}</p>
             <p className='mt-2 text-xl font-semibold tracking-tight text-emerald-500'>{recentListingCount}</p>
             <p className='text-xs text-muted-foreground'>{lookbackDays}{d("d window")}</p>
           </div>
           {/* Perp Only */}
-          <div className='rounded-[1.5rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+          <div className='rounded border border-border bg-surface p-4'>
             <p className='text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("Perp Only ⚠")}</p>
             <p className='mt-2 text-xl font-semibold tracking-tight text-red-500'>{perpOnlyCount}</p>
             <p className='text-xs text-muted-foreground'>{d("no spot anywhere")}</p>
@@ -288,7 +286,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
         </div>
 
         {/* ── Signal Legend ─────────────────────────────────────────── */}
-        <div className='rounded-[1.5rem] border border-border/60 bg-background/76 px-5 py-4 backdrop-blur-sm'>
+        <div className='rounded border border-border bg-surface px-5 py-4'>
           <p className='mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("Signal Rating Guide")}</p>
           <div className='flex flex-wrap gap-3'>
             {(Object.keys(SIGNAL_CFG) as SignalRating[]).map(r => (
@@ -320,7 +318,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
                         ? 'border-emerald-500/40 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:border-emerald-500/60'
                         : t.highlight === 'violet'
                           ? 'border-violet-500/40 bg-violet-500/10 text-violet-600 dark:text-violet-400 hover:border-violet-500/60'
-                          : 'border-border/60 bg-background/70 text-muted-foreground hover:border-foreground/20 hover:text-foreground'
+                          : 'border-border bg-surface text-muted-foreground hover:border-border-strong hover:text-foreground'
                   }`}>
                   {t.id === 'buy_signal' && <TrendingUpIcon className='inline size-3 mr-1' />}
                   {d(t.label)}
@@ -331,13 +329,13 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             <div className='flex items-center gap-2'>
               {/* Search */}
               <div className='relative'>
-                <SearchIcon className='absolute left-2.5 top-1/2 -translate-y-1/2 size-3 text-muted-foreground/60' />
+                <SearchIcon className='absolute left-2.5 top-1/2 -translate-y-1/2 size-3 text-subtle' />
                 <input
                   type='text'
                   placeholder={d("Symbol…")}
                   value={search}
                   onChange={e => setSearch(e.target.value)}
-                  className='pl-7 pr-3 py-1.5 rounded-full border border-border/60 bg-background/70 text-xs text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/30 w-24 focus:w-32 transition-all'
+                  className='pl-7 pr-3 py-1.5 rounded-sm border border-border bg-surface text-xs text-foreground placeholder:text-subtle outline-none focus:border-border-strong w-24 focus:w-32 transition-all'
                 />
               </div>
               {/* Sort */}
@@ -347,8 +345,8 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
                   onClick={() => setSortBy(s)}
                   className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                     sortBy === s
-                      ? 'border-foreground/40 bg-muted text-foreground'
-                      : 'border-border/60 bg-background/70 text-muted-foreground hover:text-foreground'
+                      ? 'border-border-strong bg-muted text-foreground'
+                      : 'border-border bg-surface text-muted-foreground hover:text-foreground'
                   }`}>
                   {d(s === 'signal' ? 'Signal' : s === 'date' ? 'Newest' : 'MCap')}
                 </button>
@@ -356,11 +354,11 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             </div>
           </div>
 
-          <div className='overflow-hidden rounded-[1.5rem] border border-border/60 bg-background/78 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm'>
+          <div className='overflow-hidden rounded border border-border bg-surface'>
             <div className='overflow-x-auto'>
               <table className='w-full text-sm min-w-[1100px]'>
                 <thead>
-                  <tr className='border-b border-border/60 bg-muted/20'>
+                  <tr className='border-b border-border bg-muted/20'>
                     <th className='text-left px-4 py-3 font-medium text-muted-foreground text-xs w-[130px]'>{d("Asset")}</th>
                     <th className='text-right px-3 py-3 font-medium text-muted-foreground text-xs'>{d("MCap")}</th>
                     <th className='text-right px-3 py-3 font-medium text-muted-foreground text-xs'>{d("FDV")}</th>
@@ -394,7 +392,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
             </div>
           </div>
 
-          <p className='text-[11px] text-muted-foreground/50'>
+          <p className='text-[11px] text-subtle'>
             {filtered.length} {d("of")} {listings.length} {d("coins · Click any row to see full exchange matrix")} </p>
         </div>
 
@@ -402,7 +400,7 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
         {listings.length > 0 && <PatternSummary listings={listings} />}
 
         {/* ── Data Sources ───────────────────────────────────────────── */}
-        <div className='rounded-[1.5rem] border border-border/60 bg-background/60 p-5 text-[11px] text-muted-foreground/60 leading-relaxed backdrop-blur-sm'>
+        <div className='rounded border border-border bg-surface p-5 text-[11px] text-subtle leading-relaxed'>
           <strong className='text-muted-foreground'>{d("Data sources:")}</strong>{' '} {d("OKX")} <code>/api/v5/public/instruments</code> {d("(listTime) · Bybit")} <code>/v5/market/instruments-info?category=linear</code> {d("(launchTime) · Bitget")} <code>/api/v2/spot/public/symbols</code> {d("(presence only) · Coinbase")} <code>/api/v3/brokerage/market/products</code> {d("(new_at) · Binance")} <code>/fapi/v1/exchangeInfo</code> {d("(onboardDate) · Binance Spot / Upbit / Hyperliquid: presence-only. Prices from Binance 24hr mini-ticker. Fear & Greed from alternative.me. Global from CoinGecko.")} </div>
       </main>
     </div>
@@ -417,7 +415,7 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
   return (
     <>
       <tr
-        className={`border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors cursor-pointer ${
+        className={`border-b border-border last:border-0 hover:bg-muted/20 transition-colors cursor-pointer ${
           coin.perpWithoutSpot ? 'bg-red-500/5' : hasNote ? 'bg-amber-500/5' : ''
         }`}
         onClick={onToggle}>
@@ -443,7 +441,7 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
             <span className={`font-medium ${(coin.marketCap / coin.fdv) >= 0.8 ? 'text-emerald-500' : (coin.marketCap / coin.fdv) >= 0.4 ? 'text-amber-500' : 'text-red-400'}`}>
               {fmtRatio(coin.marketCap, coin.fdv)}
             </span>
-          ) : <span className='text-muted-foreground/40'>—</span>}
+          ) : <span className='text-subtle'>—</span>}
         </td>
         {EXCHANGES.map(e => (
           <td key={e.key} className='px-2 py-2.5 text-center'>
@@ -457,7 +455,7 @@ function CoinRow({ coin, expanded, onToggle }: { coin: ListingCoin; expanded: bo
         <td className='px-3 py-2.5 text-xs text-muted-foreground whitespace-nowrap'>{coin.firstSeenAt === null ? d("Unknown") : fmtDate(coin.firstSeenAt, locale)}</td>
       </tr>
       {expanded && (
-        <tr className='border-b border-border/50 bg-muted/10'>
+        <tr className='border-b border-border bg-muted/10'>
           <td colSpan={14} className='px-4 py-4'>
             <CoinDetail coin={coin} />
           </td>
@@ -490,14 +488,14 @@ function CoinDetail({ coin }: { coin: ListingCoin }) {
                     <div>
                       <span className='text-emerald-600 dark:text-emerald-400 font-medium'>{d("SPOT")}</span>
                       {s.spotListedAt && <span className='ml-2 text-muted-foreground'>{fmtDateFull(s.spotListedAt, locale)}</span>}
-                      {s.spotPairs.length > 0 && <span className='ml-2 text-muted-foreground/60'>{s.spotPairs.slice(0, 4).join(', ')}</span>}
+                      {s.spotPairs.length > 0 && <span className='ml-2 text-subtle'>{s.spotPairs.slice(0, 4).join(', ')}</span>}
                     </div>
                   )}
                   {s.perp && (
                     <div>
                       <span className='text-violet-600 dark:text-violet-400 font-medium'>{d("PERP")}</span>
                       {s.perpListedAt && <span className='ml-2 text-muted-foreground'>{fmtDateFull(s.perpListedAt, locale)}</span>}
-                      {s.perpPairs.length > 0 && <span className='ml-2 text-muted-foreground/60'>{s.perpPairs.slice(0, 4).join(', ')}</span>}
+                      {s.perpPairs.length > 0 && <span className='ml-2 text-subtle'>{s.perpPairs.slice(0, 4).join(', ')}</span>}
                     </div>
                   )}
                 </div>
@@ -575,14 +573,14 @@ function PatternCard({ title, desc, colorClass, borderClass, bgClass, items, inf
 }) {
   const { d } = useDashboardI18n();
   return (
-    <div className={`rounded-[1.35rem] border ${borderClass} ${bgClass} p-4 flex flex-col gap-3 backdrop-blur-sm`}>
+    <div className={`rounded border ${borderClass} ${bgClass} p-4 flex flex-col gap-3`}>
       <div>
         <p className={`text-sm font-semibold ${colorClass}`}>{d(title)}</p>
         <p className='text-xs text-muted-foreground mt-0.5'>{d(desc)}</p>
       </div>
       <div className='flex flex-col gap-1.5'>
         {items.length === 0 ? (
-          <span className='text-xs text-muted-foreground/50'>{d("None detected")}</span>
+          <span className='text-xs text-subtle'>{d("None detected")}</span>
         ) : (
           items.slice(0, 6).map(c => (
             <div key={c.symbol} className='flex items-center justify-between gap-2'>

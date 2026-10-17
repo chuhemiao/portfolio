@@ -20,11 +20,13 @@ const config = {
     },
     extend: {
       fontFamily: {
-        sans: ["var(--font-sans)", ...fontFamily.sans],
+        sans: ["var(--font-sans)", "PingFang SC", "Noto Sans SC", ...fontFamily.sans],
+        mono: ["var(--font-mono)", ...fontFamily.mono],
+        serif: ["var(--font-serif)", "Songti SC", ...fontFamily.serif],
       },
       spacing: {
-        "dock-safe": "7rem",
-        "dock-safe-lg": "8rem",
+        "dock-safe": "4rem",
+        "dock-safe-lg": "5rem",
       },
       colors: {
         border: "hsl(var(--border))",
@@ -60,11 +62,29 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        surface: {
+          DEFAULT: "hsl(var(--surface))",
+          2: "hsl(var(--surface-2))",
+        },
+        subtle: "hsl(var(--subtle))",
+        brand: {
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+        },
+        positive: "hsl(var(--positive))",
+        negative: "hsl(var(--negative))",
+        "border-strong": "hsl(var(--border-strong))",
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        none: "0",
+        sm: "2px",
+        DEFAULT: "4px",
+        md: "4px",
+        lg: "4px",
+        xl: "4px",
+        "2xl": "4px",
+        "3xl": "4px",
+        full: "9999px",
       },
       keyframes: {
         "accordion-down": {

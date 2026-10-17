@@ -40,7 +40,7 @@ import {
 // ─── Shared atoms ─────────────────────────────────────────────────────────────
 
 const CARD =
-  'rounded-[1.5rem] border border-border/60 bg-background/78 shadow-[0_16px_36px_-28px_rgba(15,23,42,0.5)] backdrop-blur-sm';
+  'rounded border border-border bg-surface';
 const EYEBROW =
   'text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground';
 
@@ -73,7 +73,7 @@ function Section({
           <h2 className='text-base font-semibold tracking-tight'>{d(title)}</h2>
         </div>
         {subtitle && (
-          <span className='text-[10px] text-muted-foreground/60 uppercase tracking-widest'>
+          <span className='text-[10px] text-subtle uppercase tracking-widest'>
             {d(subtitle)}
           </span>
         )}
@@ -106,7 +106,7 @@ function XSource({ href, label = 'X source' }: { href?: string; label?: string }
       href={href}
       target='_blank'
       rel='noopener noreferrer'
-      className='inline-flex items-center gap-1 text-[10px] font-medium text-muted-foreground/70 hover:text-foreground transition-colors'>
+      className='inline-flex items-center gap-1 text-[10px] font-medium text-subtle hover:text-foreground transition-colors'>
       <LinkIcon className='size-3' />
       {d(label)}
     </a>
@@ -117,7 +117,7 @@ function Engagement({ likes, retweets }: { likes?: number; retweets?: number }) 
   const { locale } = useDashboardI18n();
   if (likes == null && retweets == null) return null;
   return (
-    <div className='flex items-center gap-3 text-[10px] text-muted-foreground/70'>
+    <div className='flex items-center gap-3 text-[10px] text-subtle'>
       {likes != null && (
         <span className='inline-flex items-center gap-0.5'>
           <HeartIcon className='size-3' /> {likes.toLocaleString(locale)}
@@ -138,7 +138,7 @@ function TrendIcon({ trend }: { trend?: string }) {
     return <TrendingUpIcon className='size-3.5 text-emerald-500' />;
   if (trend === 'down')
     return <TrendingDownIcon className='size-3.5 text-red-500' />;
-  return <MinusIcon className='size-3.5 text-muted-foreground/60' />;
+  return <MinusIcon className='size-3.5 text-subtle' />;
 }
 
 // ─── Part 1: World Cup ────────────────────────────────────────────────────────
@@ -215,7 +215,7 @@ function WorldCupBlock({ data }: { data: PulseData['worldCup'] }) {
                         </span>
                       )}
                       {m.reason && (
-                        <p className='text-xs text-muted-foreground/80 mt-0.5'>{m.reason}</p>
+                        <p className='text-xs text-subtle mt-0.5'>{m.reason}</p>
                       )}
                       <div className='mt-1'>
                         <XSource href={m.link} />
@@ -236,7 +236,7 @@ function WorldCupBlock({ data }: { data: PulseData['worldCup'] }) {
                       </span>
                       {c.idea}
                       {c.example && (
-                        <p className='text-xs text-muted-foreground/70 mt-0.5'> {d("e.g.")} {c.example}
+                        <p className='text-xs text-subtle mt-0.5'> {d("e.g.")} {c.example}
                         </p>
                       )}
                       <div className='mt-1'>
@@ -271,7 +271,7 @@ function IntelRow({ item }: { item: IntelItem }) {
         <p className='text-[11px] text-amber-500 mt-0.5'>{d("影响：")}{item.impact}</p>
       )}
       {item.why && (
-        <p className='text-[11px] text-muted-foreground/70 mt-0.5'>{item.why}</p>
+        <p className='text-[11px] text-subtle mt-0.5'>{item.why}</p>
       )}
     </li>
   );
@@ -335,7 +335,7 @@ function SimpleList({ items }: { items: SimpleEntry[] }) {
                 </p>
               </div>
               {s.view && (
-                <p className='text-[11px] text-muted-foreground/70 mt-0.5'>{s.view}</p>
+                <p className='text-[11px] text-subtle mt-0.5'>{s.view}</p>
               )}
             </li>
           ))}
@@ -464,7 +464,7 @@ function MindshareRankRow({ item }: { item: MindshareRank }) {
 
   return (
     <li className='flex items-center gap-3 text-sm'>
-      <span className='w-6 text-xs text-muted-foreground/60 tabular-nums text-right'>
+      <span className='w-6 text-xs text-subtle tabular-nums text-right'>
         {item.rank}
       </span>
       <Link href={item.link}>
@@ -578,7 +578,7 @@ function RisksBlock({ items }: { items: RiskItem[] }) {
               <li key={idx} className='p-4 text-sm leading-snug flex items-start gap-2.5'>
                 <span
                   className={`text-[9px] font-bold px-1.5 py-0.5 rounded border leading-none uppercase ${
-                    RISK_COLOR[r.type] ?? 'bg-muted/60 text-muted-foreground border-border/50'
+                    RISK_COLOR[r.type] ?? 'bg-muted/60 text-muted-foreground border-border'
                   }`}>
                   {d(r.type)}
                 </span>
@@ -644,13 +644,11 @@ export default function PulseClient({ data }: { data: PulseData }) {
   const { locale, d } = useDashboardI18n();
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
-      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_38%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_38%,rgba(2,6,23,1)_100%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] bg-[radial-gradient(circle_at_6%_12%,rgba(99,102,241,0.14),transparent_24%),radial-gradient(circle_at_88%_10%,rgba(14,165,233,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_6%_12%,rgba(139,92,246,0.16),transparent_24%),radial-gradient(circle_at_88%_10%,rgba(56,189,248,0.12),transparent_22%)]' />
 
       <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 space-y-10 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Hero */}
         <div className='space-y-4'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground backdrop-blur'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
             <ActivityIcon className='size-3' /> {d("Weekly Pulse")} </div>
           <div className='space-y-2'>
             <h1 className='text-3xl font-semibold tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl'> {d("Pulse ·")} {data.weekOf}
@@ -660,7 +658,7 @@ export default function PulseClient({ data }: { data: PulseData }) {
               {d(data.context)}
             </p>
           </div>
-          <p className='text-[11px] text-muted-foreground/50'> {d("Updated:")}{' '}
+          <p className='text-[11px] text-subtle'> {d("Updated:")}{' '}
             {new Date(data.updatedAt).toLocaleString(locale, {
               dateStyle: 'medium',
               timeStyle: 'short',

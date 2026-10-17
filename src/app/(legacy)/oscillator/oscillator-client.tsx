@@ -81,14 +81,14 @@ function UpdateNotice({ data }: { data: OscillatorData }) {
   const snapshotTime = data.snapshotAsOf ?? data.generatedAt;
 
   return (
-    <div className='rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm shadow-sm shadow-amber-500/5'>
+    <div className='rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm shadow-amber-500/5'>
       <div className='flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between'>
         <div className='space-y-1'>
           <p className='font-semibold text-foreground'>{d("Market Snapshot")}</p>
           <p className='text-muted-foreground'> {d("Updated by an explicit snapshot refresh. Market moves after the source timestamps are not reflected yet.")} </p>
           {data.freshness ? <p className='text-xs text-muted-foreground'>{d("Available history:")} {data.freshness.historyAvailable}/{data.freshness.historyTotal} {d("focus assets. Missing history remains unavailable.")}</p> : null}
         </div>
-        <div className='shrink-0 rounded-xl border border-amber-500/20 bg-background/70 px-3 py-2 text-xs text-muted-foreground'>
+        <div className='shrink-0 rounded-xl border border-amber-500/20 bg-surface px-3 py-2 text-xs text-muted-foreground'>
           <p className='font-medium text-foreground'>{d(formatSnapshotAge(snapshotTime))}</p>
           <p>{d("Snapshot as of")} {formatSnapshotTimestamp(snapshotTime, locale)}</p>
         </div>
@@ -100,7 +100,7 @@ function UpdateNotice({ data }: { data: OscillatorData }) {
 function StatCard({ label, value, hint }: { label: string; value: string; hint: string }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='rounded-2xl border border-border/70 bg-background/75 p-4 shadow-sm'>
+    <div className='rounded-2xl border border-border bg-surface p-4'>
       <p className='text-[11px] uppercase tracking-[0.16em] text-muted-foreground'>{d(label)}</p>
       <p className='mt-2 text-2xl font-semibold tracking-tight'>{d(value)}</p>
       <p className='mt-2 text-xs text-muted-foreground'>{d(hint)}</p>
@@ -157,11 +157,11 @@ function RankBadges({
   return (
     <div className='flex flex-wrap items-center gap-1.5'>
       {coingeckoRank ? (
-        <span className='rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700'> {d("CG #")}{coingeckoRank}
+        <span className='rounded-sm border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-700'> {d("CG #")}{coingeckoRank}
         </span>
       ) : null}
       {coinmarketcapRank ? (
-        <span className='rounded-full border border-sky-500/20 bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-700'> {d("CMC #")}{coinmarketcapRank}
+        <span className='rounded-sm border border-sky-500/20 bg-sky-500/10 px-2 py-0.5 text-[10px] font-medium text-sky-700'> {d("CMC #")}{coinmarketcapRank}
         </span>
       ) : null}
     </div>
@@ -174,7 +174,7 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
   const actionStyle = ACTION_STYLES[result.action] ?? '';
 
   return (
-    <div className='rounded-2xl border border-border/70 bg-background/80 p-4 shadow-sm shadow-black/5 space-y-4'>
+    <div className='rounded-2xl border border-border bg-surface p-4 shadow-black/5 space-y-4'>
       <div className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
         <div className='space-y-2'>
           <div className='flex flex-wrap items-center gap-2'>
@@ -190,10 +190,10 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
               {d(result.coin.category === 'veteran' ? 'Veteran' : 'Single-Cycle')}
             </span>
             {result.researchFocus ? (
-              <span className='rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-700'> {d("Research")} </span>
+              <span className='rounded-sm border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-700'> {d("Research")} </span>
             ) : null}
             {result.binanceSymbol ? (
-              <span className='rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2 py-0.5 text-[10px] text-zinc-700'>
+              <span className='rounded-sm border border-zinc-500/20 bg-zinc-500/10 px-2 py-0.5 text-[10px] text-zinc-700'>
                 {result.binanceSymbol}
               </span>
             ) : null}
@@ -269,7 +269,7 @@ function MetricCard({
         : 'border-border';
 
   return (
-    <div className={`rounded-xl border bg-background/60 p-3 ${accentClass}`}>
+    <div className={`rounded-xl border bg-surface p-3 ${accentClass}`}>
       <p className='text-[10px] uppercase tracking-[0.14em] text-muted-foreground'>{d(label)}</p>
       <p className={`mt-1 text-sm font-semibold ${toneClass}`}>{d(value)}</p>
     </div>
@@ -279,7 +279,7 @@ function MetricCard({
 function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='overflow-hidden rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5'>
+    <div className='overflow-hidden rounded-2xl border border-border bg-surface shadow-black/5'>
       <div className='overflow-x-auto'>
         <table className='min-w-[980px] w-full text-sm'>
           <thead className='bg-muted/35 text-left text-[11px] uppercase tracking-[0.16em] text-muted-foreground'>
@@ -297,7 +297,7 @@ function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
           </thead>
           <tbody>
             {rows.map((row) => (
-              <tr key={row.symbol} className='border-t border-border/60 align-top'>
+              <tr key={row.symbol} className='border-t border-border align-top'>
                 <td className='px-4 py-3 text-xs text-muted-foreground'>
                   <div className='space-y-1'>
                     <p>{d(row.bestRank ? `#${row.bestRank}` : 'N/A')}</p>
@@ -312,16 +312,16 @@ function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
                     </div>
                     <div className='flex flex-wrap gap-1.5'>
                       {row.researchFocus ? (
-                        <span className='rounded-full border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-700'> {d("Research")} </span>
+                        <span className='rounded-sm border border-amber-500/20 bg-amber-500/10 px-2 py-0.5 text-[10px] text-amber-700'> {d("Research")} </span>
                       ) : null}
                       {row.dualTop300 ? (
-                        <span className='rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-700'> {d("Dual")} </span>
+                        <span className='rounded-sm border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] text-emerald-700'> {d("Dual")} </span>
                       ) : null}
-                      <span className='rounded-full border border-zinc-500/20 bg-zinc-500/10 px-2 py-0.5 text-[10px] text-zinc-700'>
+                      <span className='rounded-sm border border-zinc-500/20 bg-zinc-500/10 px-2 py-0.5 text-[10px] text-zinc-700'>
                         {d(row.currentRatioSource === 'usd-derived' ? 'USD-derived ALT/BTC' : row.currentRatioSource)}
                       </span>
                       {row.researchType ? (
-                        <span className='rounded-full border border-border bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground'>
+                        <span className='rounded-sm border border-border bg-muted/40 px-2 py-0.5 text-[10px] text-muted-foreground'>
                           {d(row.researchType)}
                         </span>
                       ) : null}
@@ -445,7 +445,7 @@ function BtcHeatIndicatorCard({ indicator }: { indicator: BtcIndicator }) {
       : '—';
 
   return (
-    <div className='group relative rounded-xl border border-border/70 bg-background/60 p-3 space-y-2'>
+    <div className='group relative rounded-xl border border-border bg-surface p-3 space-y-2'>
       <div className='flex items-start justify-between gap-2'>
         <p className={`text-[11px] leading-tight text-muted-foreground ${description ? 'cursor-help underline decoration-dashed underline-offset-2' : ''}`}>
           {d(nameEn)}
@@ -466,7 +466,7 @@ function BtcHeatIndicatorCard({ indicator }: { indicator: BtcIndicator }) {
         />
       </div>
       {description ? (
-        <div className='pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-64 rounded-xl border border-border bg-popover px-3 py-2 text-xs text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100'>
+        <div className='pointer-events-none absolute bottom-full left-0 z-50 mb-2 w-64 rounded-xl border border-border bg-popover px-3 py-2 text-xs text-popover-foreground opacity-0 transition-opacity group-hover:opacity-100'>
           {d(description)}
         </div>
       ) : null}
@@ -524,7 +524,7 @@ function BtcHeatTab() {
       ) : null}
 
       {/* Score header */}
-      <div className='rounded-2xl border border-border/70 bg-background/80 p-5 shadow-sm shadow-black/5 space-y-4'>
+      <div className='rounded-2xl border border-border bg-surface p-5 shadow-black/5 space-y-4'>
         <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
           <div className='space-y-1'>
             <p className='text-[11px] uppercase tracking-[0.16em] text-muted-foreground'>{d("Market Heat Score")}</p>
@@ -556,7 +556,7 @@ function BtcHeatTab() {
         </div>
         <HeatScoreBar score={data.score} />
         {data.suggestion ? (
-          <p className='text-sm text-muted-foreground border-t border-border/50 pt-3'>
+          <p className='text-sm text-muted-foreground border-t border-border pt-3'>
             {d(data.score <= 15
               ? 'Extreme fear — historically a strong accumulation window. Consider building 60–80% of planned BTC allocation.'
               : data.score <= 30
@@ -617,8 +617,8 @@ function FaqSection({ items }: { items: FaqItem[] }) {
   const { d } = useDashboardI18n();
   const [open, setOpen] = useState<number | null>(null);
   return (
-    <div className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
-      <div className='px-5 py-4 border-b border-border/50'>
+    <div className='rounded-2xl border border-border bg-surface shadow-black/5 overflow-hidden'>
+      <div className='px-5 py-4 border-b border-border'>
         <h3 className='text-sm font-semibold tracking-tight'>{d("FAQ")}</h3>
       </div>
       <div className='divide-y divide-border/50'>
@@ -721,7 +721,7 @@ const NEWS_CATEGORY_KEYS: Record<string, string> = {
 function SectionLabel({ icon, label }: { icon: string; label: string }) {
   const { d } = useDashboardI18n();
   return (
-    <div className='flex items-center gap-2 py-3 px-5 border-b border-border/50 bg-muted/20'>
+    <div className='flex items-center gap-2 py-3 px-5 border-b border-border bg-muted/20'>
       <span className='text-sm'>{icon}</span>
       <span className='text-xs font-semibold tracking-wider text-muted-foreground uppercase'>{d(label)}</span>
     </div>
@@ -747,7 +747,7 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
   const t = getTranslator(locale);
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div lang={language} className='rounded-2xl border border-border/70 bg-background/80 shadow-sm shadow-black/5 overflow-hidden'>
+    <div lang={language} className='rounded-2xl border border-border bg-surface shadow-black/5 overflow-hidden'>
       {fallbackOriginal && <p className='px-5 pt-3 text-xs text-muted-foreground' lang={locale}>{t('Translation pending · original report', '译文待补充 · 显示原报告', '翻訳準備中 · 原文のレポートを表示')}</p>}
       {/* Header */}
       <button
@@ -755,7 +755,7 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
         className='w-full flex items-center justify-between gap-4 px-5 py-4 text-left hover:bg-muted/20 transition-colors'
       >
         <div className='flex items-center gap-3 min-w-0'>
-          <span className='shrink-0 rounded-full bg-amber-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-600'> {d("日报")} </span>
+          <span className='shrink-0 rounded-sm bg-amber-500/15 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-widest text-amber-600'> {d("日报")} </span>
           <div className='min-w-0'>
             <p className='text-[11px] font-medium tracking-widest text-muted-foreground uppercase leading-none mb-1'>
               {report.dateRange}{report.generatedAt ? ` · ${report.generatedAt}` : ''}
@@ -767,7 +767,7 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
       </button>
 
       {open ? (
-        <div className='border-t border-border/50 divide-y divide-border/40'>
+        <div className='border-t border-border divide-y divide-border/40'>
 
           {/* Core Judgment */}
           {(report.coreMacro || report.coreCrypto || (report.coreActions && report.coreActions.length > 0)) ? (
@@ -798,7 +798,7 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
                       ))}
                     </ul>
                     {report.disclaimer ? (
-                      <p className='text-[11px] text-muted-foreground/60 pt-1'>⚠️ {report.disclaimer}</p>
+                      <p className='text-[11px] text-subtle pt-1'>⚠️ {report.disclaimer}</p>
                     ) : null}
                   </div>
                 ) : null}
@@ -830,7 +830,7 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
                 {report.geopolitics.map((geo, i) => (
                   <div key={i} className='px-5 py-4 space-y-2'>
                     <div>
-                      <span className='inline-block rounded-full border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-rose-600'>
+                      <span className='inline-block rounded-sm border border-rose-500/30 bg-rose-500/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-widest text-rose-600'>
                         {geo.title}
                       </span>
                       <p className='mt-1 text-xs font-medium text-muted-foreground'>{geo.subtitle}</p>
@@ -856,11 +856,11 @@ function WeeklyReportCard({ report, defaultOpen, language, fallbackOriginal }: {
                         </span>
                         <span className='text-sm font-medium leading-snug'>{news.title}</span>
                       </div>
-                      <span className='shrink-0 text-[10px] text-muted-foreground/60 mt-0.5'>{news.source}</span>
+                      <span className='shrink-0 text-[10px] text-subtle mt-0.5'>{news.source}</span>
                     </div>
                     <p className='text-xs text-muted-foreground leading-relaxed'>{news.summary}</p>
                     {news.action ? (
-                      <p className='text-xs text-foreground/70 leading-relaxed'>
+                      <p className='text-xs text-muted-foreground leading-relaxed'>
                         <span className='text-amber-600 font-medium'>👉 </span>{news.action}
                       </p>
                     ) : null}
@@ -918,7 +918,7 @@ function TabPill({
       className={`rounded-full border px-4 py-2 text-sm font-medium transition-colors ${
         active
           ? 'border-foreground bg-foreground text-background'
-          : 'border-border bg-background text-muted-foreground hover:border-foreground/30 hover:text-foreground'
+          : 'border-border bg-background text-muted-foreground hover:border-border-strong hover:text-foreground'
       }`}
     >
       {children}
@@ -968,7 +968,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
       {/* Header */}
       <div className='space-y-4'>
         <div className='space-y-4'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground'>
             <span className='h-1.5 w-1.5 rounded-full bg-amber-500' /> {d("Market monitor")} </div>
           <h1 className='text-4xl font-semibold tracking-[-0.06em] text-foreground sm:text-5xl'>{d("oscillator")}</h1>
           <p className='max-w-3xl text-[15px] leading-7 text-muted-foreground'> {d("An altcoin strength monitor built in two layers: a focused oscillator watchlist for your highest-conviction names, and a broader market table covering the CoinGecko / CoinMarketCap top 500 with Binance BTC-pair context.")} </p>
@@ -1011,7 +1011,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
                 className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
                   focusFilter === tab
                     ? 'border-foreground bg-foreground text-background'
-                    : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                    : 'border-border bg-background text-muted-foreground hover:border-border-strong'
                 }`}
               >
                 {d(tab === 'all' ? 'All Grades' : `${tab} Grade`)}
@@ -1025,7 +1025,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
                 className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
                   categoryFilter === tab
                     ? 'border-foreground bg-foreground text-background'
-                    : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                    : 'border-border bg-background text-muted-foreground hover:border-border-strong'
                 }`}
               >
                 {d(tab === 'all' ? 'All Types' : tab === 'veteran' ? 'Veteran' : 'Single-Cycle')}
@@ -1068,7 +1068,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
                   className={`rounded-full border px-3 py-1.5 text-xs transition-colors ${
                     universeFilter === tab
                       ? 'border-foreground bg-foreground text-background'
-                      : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                      : 'border-border bg-background text-muted-foreground hover:border-border-strong'
                   }`}
                 >
                   {d(label)}
@@ -1079,7 +1079,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder={d("Search token / symbol")}
-              className='h-10 rounded-full border border-border bg-background px-4 text-sm outline-none transition focus:border-foreground/30'
+              className='h-10 rounded-sm border border-border bg-background px-4 text-sm outline-none transition focus:border-border-strong'
             />
           </div>
 
@@ -1094,13 +1094,13 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
           <UniverseTable rows={paginatedUniverse.items} />
 
           {paginatedUniverse.totalPages > 1 ? (
-            <div className='flex flex-col gap-3 rounded-2xl border border-border/70 bg-background/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between'>
+            <div className='flex flex-col gap-3 rounded-2xl border border-border bg-surface px-4 py-3 sm:flex-row sm:items-center sm:justify-between'>
               <p className='text-xs text-muted-foreground'> {d("Page")} {paginatedUniverse.currentPage} {d("of")} {paginatedUniverse.totalPages} · {UNIVERSE_PAGE_SIZE} {d("rows per page")} </p>
               <div className='flex flex-wrap items-center gap-2'>
                 <button
                   onClick={() => setUniversePage((page) => Math.max(1, page - 1))}
                   disabled={paginatedUniverse.currentPage === 1}
-                  className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+                  className='h-9 rounded-sm border border-border bg-background px-4 text-xs text-foreground transition hover:border-border-strong disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
                 > {d("Previous")} </button>
                 {Array.from({ length: paginatedUniverse.totalPages }, (_, index) => index + 1).map((page) => (
                   <button
@@ -1109,7 +1109,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
                     className={`size-9 rounded-full border text-xs transition-colors ${
                       page === paginatedUniverse.currentPage
                         ? 'border-foreground bg-foreground text-background'
-                        : 'border-border bg-background text-muted-foreground hover:border-foreground/30'
+                        : 'border-border bg-background text-muted-foreground hover:border-border-strong'
                     }`}
                   >
                     {page}
@@ -1120,7 +1120,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
                     setUniversePage((page) => Math.min(paginatedUniverse.totalPages, page + 1))
                   }
                   disabled={paginatedUniverse.currentPage === paginatedUniverse.totalPages}
-                  className='h-9 rounded-full border border-border bg-background px-4 text-xs text-foreground transition hover:border-foreground/30 disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
+                  className='h-9 rounded-sm border border-border bg-background px-4 text-xs text-foreground transition hover:border-border-strong disabled:cursor-not-allowed disabled:text-muted-foreground disabled:hover:border-border'
                 > {d("Next")} </button>
               </div>
             </div>

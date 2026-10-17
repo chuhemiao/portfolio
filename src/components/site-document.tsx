@@ -1,20 +1,40 @@
 import { Analytics } from "@/components/analytics";
-import Navbar from "@/components/navbar";
+import SiteHeader from "@/components/site-header";
+import SiteFooter from "@/components/site-footer";
 import { ThemeProvider } from "@/components/theme-provider";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { Inter as FontSans } from "next/font/google";
+import {
+  IBM_Plex_Sans as FontSans,
+  IBM_Plex_Mono as FontMono,
+  IBM_Plex_Serif as FontSerif,
+} from "next/font/google";
 import "@/app/globals.css";
 import { LocaleProvider } from "@/components/locale-provider";
-import LanguageSwitcher, { LanguageSwitcherFallback } from "@/components/language-switcher";
-import { Suspense } from "react";
 import { type Locale } from "@/lib/i18n";
 
 const fontSans = FontSans({
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-sans",
+  display: "swap",
+});
+
+const fontMono = FontMono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  variable: "--font-mono",
+  display: "swap",
+});
+
+const fontSerif = FontSerif({
+  subsets: ["latin"],
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  variable: "--font-serif",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -117,17 +137,17 @@ export default function SiteDocument({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
-          fontSans.variable
+          fontSans.variable,
+          fontMono.variable,
+          fontSerif.variable
         )}
       >
-        <ThemeProvider attribute="class" defaultTheme="light">
+        <ThemeProvider attribute="class" defaultTheme="dark">
           <LocaleProvider locale={locale}>
             <TooltipProvider delayDuration={0}>
-              <Suspense fallback={<LanguageSwitcherFallback />}>
-                <LanguageSwitcher />
-              </Suspense>
+              <SiteHeader />
               {children}
-              <Navbar />
+              <SiteFooter />
             </TooltipProvider>
           </LocaleProvider>
         </ThemeProvider>

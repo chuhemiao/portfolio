@@ -21,14 +21,12 @@ export function renderPage(locale: Locale) {
   const href = (url: string) => localizeHref(url, locale);
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
-      <div className='pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(248,250,252,1)_0%,rgba(241,245,249,0.92)_50%,rgba(248,250,252,1)_100%)] dark:bg-[linear-gradient(180deg,rgba(2,6,23,1)_0%,rgba(7,17,33,0.96)_50%,rgba(2,6,23,1)_100%)]' />
-      <div className='pointer-events-none absolute inset-x-0 top-0 -z-10 h-[28rem] bg-[radial-gradient(circle_at_20%_10%,rgba(14,165,233,0.12),transparent_26%),radial-gradient(circle_at_80%_15%,rgba(139,92,246,0.10),transparent_22%)] dark:bg-[radial-gradient(circle_at_20%_10%,rgba(56,189,248,0.14),transparent_26%),radial-gradient(circle_at_80%_15%,rgba(139,92,246,0.14),transparent_22%)]' />
 
       <main className='relative mx-auto w-full max-w-6xl px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         {/* Header */}
         <BlurFade delay={BLUR_FADE_DELAY}>
           <div className='mb-8 space-y-4'>
-            <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground backdrop-blur'>
+            <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.16em] text-muted-foreground'>
               <LayoutGridIcon className='size-3' />
               {t('Topics', '主题', 'トピック')}
             </div>
@@ -47,7 +45,7 @@ export function renderPage(locale: Locale) {
             <BlurFade key={topic.slug} delay={BLUR_FADE_DELAY * 2 + id * 0.04}>
               <Link
                 href={href(`/topics/${topic.slug}`)}
-                className='group flex h-full flex-col rounded-[1.75rem] border border-border/60 bg-background/78 p-6 shadow-[0_16px_38px_-28px_rgba(15,23,42,0.5)] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:shadow-[0_24px_50px_-28px_rgba(15,23,42,0.65)]'>
+                className='group flex h-full flex-col rounded border border-border bg-surface p-6 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:'>
                 {/* Emoji + accent dot */}
                 <div className='flex items-start justify-between'>
                   <span className='text-3xl'>{topic.emoji}</span>
@@ -72,12 +70,12 @@ export function renderPage(locale: Locale) {
                 <div className='mt-5 flex items-center justify-between'>
                   <div className='flex flex-wrap gap-1.5'>
                     {topic.postCount > 0 && (
-                      <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
+                      <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
                         {topic.postCount} {t('posts', '篇文章', '記事')}
                       </span>
                     )}
                     {topic.projectCount > 0 && (
-                      <span className='rounded-full border border-border/60 bg-background/80 px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
+                      <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] font-medium text-muted-foreground'>
                         {topic.projectCount} {t('projects', '个项目', 'プロジェクト')}
                       </span>
                     )}

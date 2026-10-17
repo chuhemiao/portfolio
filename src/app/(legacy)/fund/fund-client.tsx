@@ -47,7 +47,7 @@ export default function FundClient() {
     <section className='space-y-8'>
       <BlurFade delay={BLUR_FADE_DELAY}>
         <div className='space-y-4'>
-          <div className='inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground shadow-sm backdrop-blur-md'>
+          <div className='inline-flex items-center gap-2 rounded-sm border border-border bg-surface px-3.5 py-1.5 text-[11px] font-medium tracking-[0.18em] text-muted-foreground'>
             <span className='h-1.5 w-1.5 rounded-full bg-emerald-500' /> {d("Capital map")} </div>
           <h1 className='text-4xl font-semibold tracking-[-0.06em] text-foreground sm:text-5xl'> {d("Fund")} </h1>
           <div className='space-y-1.5 text-[15px] leading-7 text-muted-foreground'>
@@ -68,10 +68,10 @@ export default function FundClient() {
             <button
               key={cat.key}
               onClick={() => setSelectedCategory(cat.key)}
-              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] backdrop-blur-sm transition-all duration-200 ${
+              className={`rounded-full border px-3.5 py-1.5 text-[11px] font-medium tracking-[0.02em] transition-all duration-200 ${
                 selectedCategory === cat.key
-                  ? 'border-foreground/80 bg-foreground text-background shadow-[0_12px_28px_-20px_rgba(15,23,42,0.8)]'
-                  : 'border-border/70 bg-background/60 text-muted-foreground hover:-translate-y-0.5 hover:border-foreground/20 hover:bg-background/85 hover:text-foreground'
+                  ? 'border-border-strong bg-foreground text-background'
+                  : 'border-border bg-surface text-muted-foreground hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2 hover:text-foreground'
               }`}>
               {d(cat.label)}
             </button>
@@ -84,7 +84,7 @@ export default function FundClient() {
             <BlurFade
               delay={BLUR_FADE_DELAY * 3 + id * 0.05}
               key={`${asset.name}-${asset.category}`}>
-              <div className='group flex h-full flex-col overflow-hidden rounded-[1.4rem] border border-border/60 bg-background/72 p-4 backdrop-blur-[2px] transition-all duration-300 hover:-translate-y-0.5 hover:border-foreground/15 hover:bg-background/84'>
+              <div className='group flex h-full flex-col overflow-hidden rounded border border-border bg-surface p-4-[2px] transition-all duration-300 hover:-translate-y-0.5 hover:border-border-strong hover:bg-surface-2'>
                 <div className='flex items-start justify-between mb-2'>
                   <div>
                     <h3 className='text-[15px] font-semibold tracking-[-0.02em] text-foreground'>{d(asset.name)}</h3>
@@ -99,11 +99,11 @@ export default function FundClient() {
                       <span className={`rounded-full border px-2 py-0.5 text-[10px] font-medium tracking-[0.06em] ${tierClassNames[asset.tier]}`}> {d("Tier")} {asset.tier}
                       </span>
                     )}
-                    <span className='rounded-full border border-border/70 bg-background/80 px-2 py-0.5 text-[10px] font-medium tracking-[0.06em] text-muted-foreground'>
+                    <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] font-medium tracking-[0.06em] text-muted-foreground'>
                       {d(categoryLabels[asset.category])}
                     </span>
                     {asset.isPrivate && (
-                      <span className='rounded-full border border-border/50 bg-background/60 px-2 py-0.5 text-[10px] text-muted-foreground/70'> {d("private")} </span>
+                      <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] text-subtle'> {d("private")} </span>
                     )}
                     {asset.category === 'prediction' && (
                       asset.hasToken && asset.tokenTicker ? (
@@ -111,7 +111,7 @@ export default function FundClient() {
                           href={asset.coingeckoLink}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='rounded-full border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 transition-opacity hover:opacity-80 dark:text-emerald-400'>
+                          className='rounded-sm border border-emerald-500/40 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 transition-opacity hover:opacity-80 dark:text-emerald-400'>
                           ${asset.tokenTicker}
                         </a>
                       ) : asset.coingeckoLink ? (
@@ -119,9 +119,9 @@ export default function FundClient() {
                           href={asset.coingeckoLink}
                           target='_blank'
                           rel='noopener noreferrer'
-                          className='rounded-full border border-border/50 bg-background/60 px-2 py-0.5 text-[10px] text-muted-foreground/70 hover:opacity-80 transition-opacity'> {d("no token ↗")} </a>
+                          className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] text-subtle hover:opacity-80 transition-opacity'> {d("no token ↗")} </a>
                       ) : (
-                        <span className='rounded-full border border-border/50 bg-background/60 px-2 py-0.5 text-[10px] text-muted-foreground/70'> {d("no token")} </span>
+                        <span className='rounded-sm border border-border bg-surface px-2 py-0.5 text-[10px] text-subtle'> {d("no token")} </span>
                       )
                     )}
                   </div>
@@ -130,7 +130,7 @@ export default function FundClient() {
                   {d(asset.description)}
                 </p>
                 {(asset.link || asset.researchLink) && (
-                  <div className='mt-3 flex items-center gap-3 border-t border-border/60 pt-3'>
+                  <div className='mt-3 flex items-center gap-3 border-t border-border pt-3'>
                     {asset.link && (
                       <a
                         href={localizedHref(asset.link)}

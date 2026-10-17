@@ -24,11 +24,11 @@ export function HackathonCard({
   links,
 }: Props) {
   return (
-    <li className="group rounded-[1.45rem] border border-border/60 bg-background/78 p-4 shadow-[0_16px_34px_-30px_rgba(15,23,42,0.6)] transition-all duration-300 hover:-translate-y-1 hover:border-foreground/15 hover:shadow-[0_28px_48px_-32px_rgba(15,23,42,0.7)]">
+    <li className="group rounded border border-border bg-surface p-4 transition-all duration-300 hover:-translate-y-1 hover:border-border-strong hover:">
       <div className="flex gap-4">
         <div className="flex-none">
-          <div className="rounded-2xl bg-white/95 p-1 ring-1 ring-black/5 shadow-[0_10px_28px_-20px_rgba(15,23,42,0.45)]">
-            <Avatar className="size-14 rounded-[1rem] bg-background">
+          <div className="rounded-2xl bg-white/95 p-1 ring-1 ring-black/5">
+            <Avatar className="size-14 rounded bg-background">
               <AvatarImage src={image} alt={title} className="object-contain" />
               <AvatarFallback>{title[0]}</AvatarFallback>
             </Avatar>
@@ -45,7 +45,7 @@ export function HackathonCard({
               )}
             </div>
             {dates && (
-              <time className="max-w-full self-start rounded-full border border-border/70 bg-background/85 px-2.5 py-1 text-[11px] font-medium leading-5 tracking-[0.04em] text-muted-foreground whitespace-normal break-words xl:max-w-[13rem]">
+              <time className="max-w-full self-start rounded-sm border border-border bg-surface px-2.5 py-1 text-[11px] font-medium leading-5 tracking-[0.04em] text-muted-foreground whitespace-normal break-words xl:max-w-[13rem]">
                 {dates}
               </time>
             )}
@@ -62,7 +62,7 @@ export function HackathonCard({
                   <Badge
                     key={idx}
                     title={link.title}
-                    className="rounded-full border border-border/70 bg-background/90 px-2.5 py-1 text-[11px] font-medium text-foreground"
+                    className="rounded-sm border border-border bg-surface px-2.5 py-1 text-[11px] font-medium text-foreground"
                   >
                     <span className="flex items-center gap-1.5">
                       {link.icon}
