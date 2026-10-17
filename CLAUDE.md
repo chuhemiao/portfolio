@@ -47,8 +47,7 @@
   pnpm status:research:run # 查看研究长任务进度
   pnpm sync:telegram # 手动同步 Telegram 消息
   pnpm typecheck     # TypeScript 检查
-  pnpm worker:dev    # 本地运行 Cloudflare Worker API
-  pnpm preview       # 本地预览 Cloudflare Pages out/
+  pnpm start         # next start，本地起生产服务器
   ```
 - **当前 Research 进度（2026-07-07）**：registry `2811` projects；candidate total `3815`，pending new candidates `381`；depth upgrade queue `0`；本轮最新 1000 篇 depth audit 全部 full-depth pass。
 - **当前 Skill / 工作流**：当前安装目录未发现旧 `research-map-builder` skill；本仓库以 `src/data/skill.md` 作为 repo-local Research Map workflow reference，核心原则是 Surf-first、先本地查重、再写 MDX、再同步 `/research` 与 registry。批量 CMC/CGO 新增使用 `scripts/generate-cmc-cgo-research-batch.mjs`，Surf 子命令已加 timeout 防止长时间挂起，并已补 registry 二次过滤、非拉丁 slug fallback、CoinGecko API 兜底开关、DefiLlama fallback seeding、Surf credit-error 短路、`sync:research --skip-logos` 与大型 `/research` typed array 同步兼容。
@@ -100,6 +99,8 @@
 ## SESSION_LOG
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
+
+- **2026-10-17**：整站改版为「研究终端」并合并进 main（5 个 commit，已推送）。**设计**：`globals.css` 重建 token 体系（深色默认 + `.light`，三档 surface 明度取代半透明卡片，1 个品牌色 + 2 个语义色），`tailwind.config.ts` 把 8 种自定义圆角收敛为 2/4/9999 三档并加 mono/serif，字体 Inter → IBM Plex Sans/Mono/Serif，底部 magicui Dock 换成带文字的 sticky 顶栏（`site-header.tsx`）+ 新页脚（`site-footer.tsx`），首页重写为搜索优先 + 密集索引表，文章页正文切衬线、表格等宽。全站清掉 box-shadow / backdrop-blur / 装饰渐变 / 悬停位移。**教训**：那次 codemod 的 `shadow-[...]` 规则排在 `hover:shadow-[...]` 之前，把前缀后半吃掉留下悬空 `hover:`；`backdrop-blur` 的 `\b` 让 `p-4 backdrop-blur-[2px]` 变成无效的 `p-4-[2px]`，导致卡片 padding 失效 —— 已在 `4c73ffe` 修复。**新板块**：`/stocks` 链上美股追踪（`src/data/tokenized-equities.ts` 两层模型：发行方层管法律包装/托管/赎回/PoR，工具层管深度/价差/溢价；所有正文用 `[en, zh, ja]` 三元组 + `pick()`），配 `tokenized-equities` topic 与导航入口。**架构**：确认 Cloudflare Worker 已废弃 → 去掉 `output: 'export'`、从 `1b1c02a^` 恢复 `src/app/api/subscribe/route.ts`（改为缺 RESEND 环境变量时返回 503 而非谎报成功）、删 `workers/` 与 wrangler 依赖及相关脚本、把失效的 Cloudflare `_headers` 迁进 `next.config` 的 `headers()`（Vercel 从不读 `_headers`，那些 RSS Content-Type 和缓存头此前一直没生效）。build 仍预渲染 14,580 页，唯一动态路由是 `/api/subscribe`。**内容**：按发行方的链上美股深度研究已写 4 家 × 三语 —— xStocks、Ondo 已提交，bStocks、Dinari 由站主自行提交。**未决**：Hyperliquid 邀请链接仍无推荐码；文章内嵌 SVG 图表是浅色底，深色模式下显示为白块（3,000+ 篇）；`navbar.tsx` / `magicui/dock.tsx` 零引用但保留作回滚路径。
 
 - **2026-09-15**：确认生产部署实际在 **Vercel**（`x-vercel-id`，Cloudflare 只做 DNS 代理），`Deploy Cloudflare` workflow 从 2026-09-12 起每次都在 `Setup pnpm` 失败（`pnpm/action-setup@v4` 不允许 `version:` 与 package.json `packageManager` 并存），所以 Cloudflare Pages / Worker 从未真正部署过。据此把增量缓存改挂到 Vercel 的构建缓存：`scripts/lib/content/paths.mjs` 新增 `resolveGeneratedDir()`，优先 `CONTENT_CACHE_DIR`，检测到 `VERCEL` 时用 `${NEXT_DIST_DIR||.next}/cache/content`，其余仍是 `.generated/`；`src/data/blog.ts` 镜像同一套解析（两处注释互指，必须同步），`generate-static-assets.mjs` 改为从 `paths.mjs` 导入常量不再自己拼路径。已验证 `next build` 不会清掉 `.next/cache`，模拟两次 Vercel 构建：第一次 `Compiled: 3002 / 17.45s`，第二次只恢复 `.next/cache` 即 `Cache hits: 3002 / Compiled: 0 / 0.70s`，页面数均 3025。`deploy-cloudflare.yml` 删除，替换为 `ci.yml`（lint + typecheck + content:prepare + content 测试，带 `.generated` 缓存，不重复跑 `next build`）；wrangler 脚本保留在 package.json，Cloudflare 迁移选项未丢。**未决遗留**：`/api/*` 线上 404（该 Worker 从未部署，导致 fear/watch/oscillator 动态数据失效）；`out/` 有 28,637 个文件（其中 24,181 个是 Next 16 无法关闭的 Segment Cache `.txt`），超过 Cloudflare Pages 20,000 上限，未来若真要迁 Cloudflare 需先解决。
 
