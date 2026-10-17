@@ -1,0 +1,131 @@
+---
+title: 'Securitize: what full shareholder rights cost, and a TVL figure that keeps being misused'
+publishedAt: '2026-10-17'
+summary: 'Securitize is a US transfer agent, so holders keep full dividends and voting — a capability that comes from its legal identity, not from product design. The cost is three instruments, $278.3M, permissionless set to no and DeFi out of reach. The most common misreading is comparing its $3.88B TVL to Ondo on "stock TVL": almost all of that figure is funds like BUIDL, not equities.'
+slug: 'securitize-transfer-agent-permissioned-equities-research-en'
+category: 'research'
+language: 'en'
+translationKey: 'securitize-transfer-agent-permissioned-equities-research'
+sourceSlug: 'securitize-transfer-agent-permissioned-equities-research'
+---
+
+## TL;DR
+
+**Securitize is the first issuer in this series whose holders genuinely keep shareholder rights** — full dividends, full voting. Not because the product is better designed, but because of its **legal identity**: a US **transfer agent**.
+
+The cost is equally clear: **three equity instruments, $278.3M, permissionless set to no, DeFi out of reach.**
+
+**My read: it is not in the retail race, and putting it on the same size table as Ondo and xStocks is a category error.** It is institutional primary-market infrastructure.
+
+**One number also needs correcting**: Securitize's $3.88B TVL is overwhelmingly funds such as BUIDL, **not equities**. Comparing that against Ondo on "stock TVL" is the same mistake as using Ondo's $3.56B, most of which is Treasury products.
+
+---
+
+## What being a transfer agent means
+
+This is the key to Securitize, and the first genuine legal difference in the series.
+
+**A transfer agent is an entity registered under US securities law** that maintains the register of security holders, processes transfers, distributes dividends, and relays corporate actions and proxy materials.
+
+**Put plainly: the transfer agent is the official record of who owns the stock.**
+
+So when Securitize tokenizes shares, it is not minting a shadow certificate alongside an existing record — **it is rewriting, on a blockchain, the very register it already maintains.** Token holders are shareholders in law, because the entity that keeps the shareholder register says so.
+
+Against the earlier issuers:
+
+| Issuer | Identity | Relationship to the register |
+|---|---|---|
+| xStocks | Jersey SPV | Custodian holds the shares; the token is SPV debt |
+| Ondo | BVI entity | The token and the collateral are **different assets** |
+| bStocks | ADGM issuer | 1:1 custody, tracker certificate |
+| **Securitize** | **US transfer agent** | **The token is the register entry** |
+
+**That is why it can deliver full dividends and voting while the others cannot.** It is not a question of willingness but of identity. Ondo has to integrate Broadridge to pass votes through; Robinhood has to restructure issuance to offer 1:1 redemption. Securitize has to do neither, because it already sits at the record layer.
+
+## The cost: permissionless set to no
+
+Full rights are not free.
+
+- **Permissionless: no**
+- **DeFi restricted**
+- Instruments: **3**
+- Size: **$278.3M** (2026-09-04 basis, 10.1% share)
+- Chain: Solana
+
+**Under US securities law, every address on the shareholder register has to be a known, compliant party.** That follows directly from being a transfer agent — you cannot simultaneously maintain a compliant register and let arbitrary anonymous addresses transfer in and out.
+
+Which means:
+
+- It cannot enter a Uniswap pool (the pool address is not a compliant holder)
+- It cannot serve as Aave collateral (liquidation would transfer the asset to an arbitrary liquidator)
+- It cannot be sent freely to a friend
+
+**That is the exact mirror of the Coinbase piece.** Coinbase's $7.5M works as Aave collateral and borrows on Morpho precisely because it is not a transfer agent and carries no register obligation.
+
+**The fundamental tension of the whole category sits here: full rights and composability are currently mutually exclusive.**
+
+| | Full shareholder rights | DeFi composability |
+|---|---|---|
+| Securitize / Superstate | ✅ | ❌ |
+| Coinbase | ❓ (unverified) | ✅ |
+| xStocks / Ondo / bStocks | ❌ | partial |
+
+**Whoever breaks that exclusivity defines the next phase.** The SEC's Innovation Exemption permits **permissioned AMM liquidity pools** — **which is precisely what it was designed to break**: the pool itself is permissioned, every address in it is verified, and a compliant register can coexist with an AMM.
+
+**Securitize is the most likely first user of that rule**, because it already has the register and only lacks a compliant pool.
+
+## The TVL figure that keeps being misused
+
+This deserves its own section.
+
+The number usually quoted for Securitize is **$3.88B of TVL**. **Its equities business is $278.3M across three instruments.**
+
+Nearly all of the difference is **fund products such as BUIDL** — tokenized money-market and Treasury exposure, a different asset class entirely.
+
+**Using $3.88B to argue who leads tokenized equities inverts the ranking, and the inverted answer is wrong.**
+
+The same trap has appeared three times in this series:
+
+1. **Ondo's** $3.56B protocol TVL, mostly USDY and OUSG Treasury products
+2. **Robinhood's** $561M quarterly net income, to which stock tokens contribute approximately nothing
+3. **Securitize's** $3.88B TVL, mostly funds like BUIDL
+
+**All three are the same error: taking a broader number as a proxy for one business line.** Lock the methodology before comparing — it is close to the single most useful discipline when reading material about this category.
+
+## What I could not verify
+
+Stated plainly:
+
+1. **Which three instruments these are** — not enumerated in the sources
+2. **Redemption terms** — minimum, KYC scope, settlement time
+3. **Proof of reserve** — the register may itself serve as proof under a transfer agent, but nothing says so
+4. **Current size on the October basis** — the latest source does not list Securitize separately; $278.3M is a September figure
+5. **The access threshold** — how permissioned it is: institutions only, or accredited investors too
+
+**Item 5 matters most.** Institutions-only makes it irrelevant to retail entirely; accredited access makes it a direct competitor to Dinari.
+
+## Risks
+
+| Item | Severity | Detail |
+|---|---|---|
+| Stale size data | Medium | $278.3M is a 2026-09-04 figure; October sources do not list it |
+| Very few instruments | Medium | Three cannot constitute an allocation tool |
+| DeFi unavailable | Medium | A direct consequence of permissioning — a limit, not a flaw |
+| Access threshold unknown | Medium | Institutions-only or accredited decides whether it is relevant to you |
+| Methodology easily misused | Low | The $3.88B TVL is routinely quoted as equity size |
+
+## What I will watch
+
+1. **Whether it becomes one of the first TSVs** — it has the register and lacks only a compliant pool; the shortest path available
+2. **Whether permissioned AMM pools ship** — the only known route to breaking the rights-versus-composability exclusivity
+3. **How far past three instruments it goes** — too few today to tell whether retail is a serious intention
+4. **Whether access drops to accredited investors** — decides whether it competes with Dinari or complements it
+5. **Whether anyone still compares $3.88B as equity size** — a fast test of whether a source can be trusted
+
+---
+
+**Bottom line.** Securitize answers the most fundamental question in this series: **full shareholder rights are achievable, provided you give up permissionlessness.** It is not that composability is beyond it; its legal identity forbids it.
+
+**So the question is not why Securitize is small, but when it will use a permissioned AMM pool to hold both properties at once.** Until then it is institutional infrastructure, irrelevant to most readers — but it defines the ceiling of the rights dimension for the whole category.
+
+*Size and share on a 2026-09-04 basis; the latest source does not list this issuer separately. Five unverified fields are marked in the text. Research, not investment advice.*

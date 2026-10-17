@@ -1,0 +1,137 @@
+---
+title: 'Coinbase (Base): the smallest book in the category, and the only one DeFi actually absorbed'
+publishedAt: '2026-10-17'
+summary: 'Coinbase holds about $7.5M of tokenized stocks, among the smallest in the top ten. It is also the only issuer whose tokens trade on Uniswap and Aerodrome, work as Aave collateral and can be borrowed against on Morpho — and "can sit in a pool, can serve as collateral" is the only differentiation tokenized equities have over a brokerage account. On that axis $7.5M says more than Ondo $984M. It also deployed 13 contracts with supply in four, the cleanest example of deployments not equalling live instruments.'
+slug: 'coinbase-base-tokenized-stocks-defi-composability-research-en'
+category: 'research'
+language: 'en'
+translationKey: 'coinbase-base-tokenized-stocks-defi-composability-research'
+sourceSlug: 'coinbase-base-tokenized-stocks-defi-composability-research'
+---
+
+## TL;DR
+
+**Coinbase's tokenized equities total about $7.5M — one one-hundred-and-thirtieth of Ondo, one one-hundred-and-twentieth of bStocks. On size it does not register.**
+
+It is also **the only issuer whose tokens genuinely entered DeFi**: tradable on Uniswap and Aerodrome, usable as Aave collateral, borrowable against on Morpho.
+
+**And "can sit in a pool, can serve as collateral" is the only differentiation tokenized equities have over an ordinary brokerage.** A token you can only buy on an exchange and hold has no advantage over a brokerage account — it just adds issuer credit risk and redemption limits on top.
+
+**My read: on the question of why this category should exist at all, Coinbase's $7.5M argues the case better than anyone else's hundreds of millions. But it is far too small to show that the model holds under load.**
+
+---
+
+## Structure: a direct security, custodied by Alpaca
+
+- Tokens: the **B20** series
+- Underlying: **held 1:1 by Alpaca**
+- Regulation: **ADGM**
+- Chain: **Base**
+- Size: about **$7.5M** (2026-10-16)
+- US persons: **blocked**
+
+The wrapper is a **direct security**, which under the SEC's four-way split in its Statement on Tokenized Securities (2026-01-30) sits ahead of the tracker certificates used by xStocks and bStocks, and ahead of Ondo's issuer claim.
+
+Restraint is needed though — **"direct security" is a classification, not a guarantee.** I could not verify this product's redemption terms, proof-of-reserve mechanism, or how voting and dividends are handled. As in the Dinari piece: **until those are filled in, a better classification does not mean a better grade.**
+
+## Thirteen contracts, four with supply
+
+The first four launched on 2026-08-24: **NVDAc, METAc, AAPLc, GOOGLc**.
+
+**Thirteen contracts were deployed; only those four carry supply.**
+
+This is the cleanest example in the category of "deployments ≠ live instruments". In the Dinari piece I flagged that its 724 figure cannot separate the two — here Coinbase gives an explicit ratio: **13 : 4, about 31%.**
+
+**Every issuer's instrument count should be read with that discount in mind.** The coexistence of 714 and 100+ for xStocks, and 395+ and 100+ for Ondo, almost certainly comes from the same place.
+
+One more methodology conflict to flag: one source says "10 live", another says "13 contracts, 4 with supply". **I cannot reconcile those two, and the issuer's own disclosure should govern.**
+
+## The only genuinely DeFi-native issuer
+
+This is the heart of it.
+
+On Base, Coinbase's tokens:
+
+- trade through **Uniswap** and **Aerodrome**
+- work as **Aave collateral**
+- can be borrowed against on **Morpho**
+- are priced by **Chainlink** oracles built for tokenized equities
+
+Against the others' liquidity shapes:
+
+| Issuer | Size | Where the liquidity lives |
+|---|---:|---|
+| Ondo | $984M | **RFQ + mint/redeem**, not in DEX pools |
+| bStocks | $914M | **Binance order book**, BSC only |
+| xStocks | $847M | CEX order books + **Solana DEX** |
+| **Coinbase** | **$7.5M** | **Uniswap / Aerodrome / Aave / Morpho** |
+
+xStocks has genuine Solana DEX depth ($37.7M on NVDA over 30 days), which I credited in that piece. But **"tradable" and "acceptable as collateral" are different things** — the second is what composability actually means.
+
+**Only Coinbase's tokens reached the point of being accepted as collateral by lending protocols.**
+
+What that buys: you can hold NVDAc's economic exposure, pledge it for stablecoins, and deploy those elsewhere. **No brokerage account can ever offer that, and it is the only coherent reason for this category to exist.**
+
+## But $7.5M means it has never been stress-tested
+
+The balance has to be stated.
+
+At that size:
+
+1. **Collateral caps on Aave and Morpho are almost certainly tiny** — liquidation depth, oracle latency and bad-debt risk in violent markets simply do not surface at this scale
+2. **Liquidation while the underlying market is shut is an open problem** — US equities close on weekends, on-chain liquidation runs 24/7. If NVDAc is liquidated on a Saturday, where does the liquidation price come from, and how does the dedicated Chainlink oracle behave while the market is closed? **This is what I most want to know and the sources do not answer**
+3. **DEX depth is unknown** — no pool depth or volume figures for Coinbase's tokens appear in the material
+
+**So the accurate statement is: Coinbase has shown the route works technically, not that it holds at scale.**
+
+## Company financials: the mirror image of Robinhood
+
+| Metric | COIN (FY2026 Q2) | HOOD (FY2026 Q2) |
+|---|---:|---:|
+| Revenue | $1,220M | $1,308M |
+| Net income | **−$359M** | +$561M |
+| Operating margin | **−9.3%** | 53.3% |
+| Diluted EPS | **−$1.36** | $0.62 |
+
+Coinbase posted **GAAP losses in two of three recent quarters**.
+
+**But the same conclusion as the Robinhood piece applies: this has no causal link to the tokenized equities business.** A $7.5M book is irrelevant against $1.22B of quarterly revenue. **COIN's loss cannot be used to argue its tokenized stocks are failing, and HOOD's profit cannot be used to argue the reverse.**
+
+What the two share is this: **both have the cash and the licences, and both have invested approximately nothing.** The thing to watch is when either connects main app flow — that day rewrites the table.
+
+## Base versus Robinhood Chain
+
+Both issue on their own chain, and the two are not alike:
+
+- **Robinhood Chain**: closed; the tokens circulate only inside its own app ecosystem
+- **Base**: an open L2 with Uniswap, Aerodrome, Aave and Morpho already on it
+
+**That difference is why Coinbase's $7.5M means more for composability than Robinhood's $151M.** Vertical integration is not itself an advantage; **putting the asset into an ecosystem that already exists is.**
+
+## Risks and unknowns
+
+| Item | Severity | Detail |
+|---|---|---|
+| Too small to test | High | $7.5M cannot demonstrate the model under load |
+| Liquidation while markets are shut | High | On-chain liquidation is 24/7; the pricing source is undocumented |
+| Redemption terms unseen | Medium | Whether redeemable at all, KYC, minimum and timing unverified |
+| No proof of reserve | Medium | Alpaca holds 1:1, but no public PoR mechanism |
+| Rights handling unseen | Medium | A direct security should preserve dividends and votes; no explicit statement found |
+| US persons barred | Medium | In line with peers |
+| Conflicting instrument counts | Low | "10 live" and "13 contracts / 4 with supply" cannot be reconciled |
+
+## What I will watch
+
+1. **Actual collateral size and liquidation history on Aave and Morpho** — the only real evidence the model survives pressure
+2. **Liquidation rules while the market is closed** — weekend pricing, or a pause; this decides whether it can be serious collateral
+3. **How far supply spreads past four instruments** — when the remaining nine contracts activate
+4. **Whether main app flow is connected** — as with Robinhood, the order-of-magnitude line
+5. **Whether it applies for a TSV licence** — a direct-security structure should find "identical rights" easier to satisfy
+
+---
+
+**Bottom line.** By size, Coinbase is close to negligible on this table. **By the question of why the category should exist, it is the only issuer with a decent answer** — the value of a tokenized stock is not 24/7 trading (perps do that better and at far greater scale) but the ability to enter a DeFi balance sheet as collateral.
+
+**Coinbase proved the technology, not the scale.** The others are far larger, and their tokens sit in exchange accounts and custody balances — **which differs from a brokerage account only by the issuer credit risk stacked on top.**
+
+*Figures as of 2026-10-16 (size) and 2026-09-04 (company financials, instrument detail); COIN and HOOD on an FY2026 Q2 basis. Two irreconcilable instrument counts are flagged in the text. Research, not investment advice.*
