@@ -8,6 +8,7 @@ const CONTENT_LINKS = [
   { href: "/research", en: "Research index", zh: "研究索引", ja: "リサーチ索引" },
   { href: "/blog", en: "Writing", zh: "文章", ja: "記事" },
   { href: "/topics", en: "Topics", zh: "主题", ja: "トピック" },
+  { href: "/stocks", en: "Tokenized equities", zh: "链上美股", ja: "オンチェーン米国株" },
   { href: "/thoughts", en: "Thoughts", zh: "思考流", ja: "考察" },
 ];
 

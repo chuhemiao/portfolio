@@ -167,6 +167,21 @@ export const TOPICS: Topic[] = [
     matchKeywords: ['market structure', 'oscillator', 'btc dominance', 'cycle', 'macro', 'breadth', 'rotation', 'regime'],
     relatedTypes: [],
   },
+  {
+    slug: 'tokenized-equities',
+    name: 'Tokenized Equities',
+    emoji: '🏷️',
+    tagline: 'On-chain US stocks and what the token actually is',
+    description:
+      'Issuers, legal wrappers, custody and proof of reserve, redemption terms, trading hours against a closed underlying market, and the gap between headline volume and executable depth.',
+    whyItMatters:
+      'Most tokenized stocks are a claim on the issuer rather than the share. The same ticker can carry different collateral, redemption rights and bankruptcy recourse depending on who issued it, which makes identity — not price — the first thing to establish.',
+    postCount: 0,
+    projectCount: 0,
+    accentColor: '#E0A449',
+    matchKeywords: ['tokenized stock', 'tokenized equity', 'xstocks', 'ondo', 'bstocks', 'securitize', 'superstate', 'dinari', 'rwa stock', '代币化股票', '链上美股'],
+    relatedTypes: ['RWA'],
+  },
 ];
 
 export function getTopicBySlug(slug: string): Topic | undefined {
@@ -227,6 +242,12 @@ const TOPIC_TRANSLATIONS: Record<string, { name: [string, string]; tagline: [str
     tagline: ['量子计算、密码学威胁与后量子安全', '量子計算、暗号技術への脅威、耐量子セキュリティ'],
     description: ['研究量子计算进展、对 ECDSA 和 RSA 等密码标准的威胁，以及区块链网络的后量子密码迁移。', '量子計算の進展、ECDSA や RSA への脅威、ブロックチェーンの耐量子暗号への移行を研究します。'],
     whyItMatters: ['能够破解 ECDSA 的量子计算机会威胁区块链密钥安全。后量子迁移周期较长，需要提前跟踪。', 'ECDSA を破る量子コンピューターはブロックチェーンの鍵の安全性を脅かします。耐量子移行には長い準備期間が必要です。'],
+  },
+  'tokenized-equities': {
+    name: ['链上美股', 'オンチェーン米国株'],
+    tagline: ['链上美股，以及你买的那个代币到底是什么', 'オンチェーン米国株と、そのトークンの正体'],
+    description: ['研究发行方、法律包装、托管与储备证明、赎回条款、底层市场休市时的交易时段，以及名义成交量与可执行深度之间的差距。', '発行体、法的ラッパー、保管と準備金証明、償還条件、原市場が休場中の取引時間、そして名目出来高と執行可能な板の厚みの差を研究します。'],
+    whyItMatters: ['大多数代币化股票是对发行方的债权，而不是股票本身。同一个代码在不同发行方手里，抵押品、赎回权和破产追索都不一样，所以首先要确认的是身份而不是价格。', 'トークン化株式の多くは株式ではなく発行体への請求権です。同じティッカーでも発行体により担保、償還権、破綻時の遡求が異なるため、まず確認すべきは価格ではなく正体です。'],
   },
   'market-structure': {
     name: ['市场结构', '市場構造'],

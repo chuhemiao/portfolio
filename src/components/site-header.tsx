@@ -14,6 +14,7 @@ const NAV = [
   { href: "/research", match: ["/research"], en: "Research", zh: "研究", ja: "リサーチ" },
   { href: "/blog", match: ["/blog"], en: "Writing", zh: "文章", ja: "記事" },
   { href: "/topics", match: ["/topics"], en: "Topics", zh: "主题", ja: "トピック" },
+  { href: "/stocks", match: ["/stocks"], en: "Equities", zh: "链上美股", ja: "米国株" },
   { href: "/thoughts", match: ["/thoughts"], en: "Thoughts", zh: "思考", ja: "考察" },
   { href: "/oscillator", match: ["/oscillator", "/watch", "/fear", "/pulse"], en: "Tools", zh: "工具", ja: "ツール" },
   { href: "/fund", match: ["/fund"], en: "Fund", zh: "投资", ja: "投資" },
