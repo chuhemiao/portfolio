@@ -356,56 +356,6 @@ function renderOgSvg() {
 </svg>`;
 }
 
-function renderHeaders() {
-  return `/*
-  X-Content-Type-Options: nosniff
-
-/rss-*.xml
-  Content-Type: application/rss+xml; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/rss.xml
-  Content-Type: application/rss+xml; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/llms.txt
-  Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=86400
-
-/sitemap.xml
-  Content-Type: application/xml; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/sitemaps/*
-  Content-Type: application/xml; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/robots.txt
-  Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=3600
-
-/manifest.webmanifest
-  Content-Type: application/manifest+json; charset=utf-8
-  Cache-Control: public, max-age=86400
-
-/og.svg
-  Content-Type: image/svg+xml; charset=utf-8
-  Cache-Control: public, max-age=86400
-
-/_next/static/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/article/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/research-logos/*
-  Cache-Control: public, max-age=31536000, immutable
-`;
-}
-
 async function main() {
   const started = Date.now();
   const [posts, topics] = await Promise.all([loadPosts(), loadTopics()]);
@@ -419,7 +369,6 @@ async function main() {
     fs.writeFile(path.join(PUBLIC_DIR, 'robots.txt'), renderRobotsTxt(), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'manifest.webmanifest'), renderManifest(), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'og.svg'), renderOgSvg(), 'utf8'),
-    fs.writeFile(path.join(PUBLIC_DIR, '_headers'), renderHeaders(), 'utf8'),
   ]);
 
   const elapsed = ((Date.now() - started) / 1000).toFixed(2);
