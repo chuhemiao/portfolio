@@ -12,7 +12,7 @@
     "predev": "pnpm content:prepare",
     "dev": "next dev",
     "prebuild": "pnpm content:prepare",
-    "build": "next build && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prune-segment-cache.mjs",
+    "build": "next build && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prune-segment-cache.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/emit-legacy-blog-redirects.mjs",
     "start": "npx --yes serve out",
     "fix": "pnpm dlx fix-react2shell-next@latest",
     "lint": "eslint .",

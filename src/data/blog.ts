@@ -197,10 +197,6 @@ export async function getBlogPosts(): Promise<PostListItem[]> {
   return getContentIndex().items.slice();
 }
 
-export function getBlogSlugs(): string[] {
-  return getContentIndex().entries.map((entry) => entry.slug);
-}
-
 export function getPostMeta(slug: string): PostListItem | null {
   return lookupKey(slug, getContentIndex().itemBySlug) ?? null;
 }

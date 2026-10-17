@@ -1,4 +1,12 @@
-import { getBlogSlugs, getPost, getPostMeta, getRelatedPosts, getRelatedTopicSlugs, getLocalizedPosts, getPostHref } from "@/data/blog";
+// The article renderer, shared by /[locale]/blog/[slug].
+//
+// This used to be the page module for a second route, /blog/<slug>, which
+// rendered every article a second time without a locale prefix. That doubled
+// the static export -- 7,260 extra pages at ~219 KB, 1.86 GB of 3.9 GB -- for
+// URLs the sitemap, RSS and every internal link had already stopped pointing
+// at. The route is gone; scripts/emit-legacy-blog-redirects.mjs writes a small
+// redirect document at each old URL so inbound links keep working.
+import { getPost, getPostMeta, getRelatedPosts, getRelatedTopicSlugs, getLocalizedPosts, getPostHref } from "@/data/blog";
 import { DATA } from "@/data/resume";
 import { TOPICS, localizedTopic } from "@/data/topics";
 import { articleHref, categoryLabel, formatLocaleDate, getTranslator, localizeHref, LOCALES, OG_LOCALES, type Locale } from "@/lib/i18n";
@@ -41,12 +49,6 @@ function toIsoOrNow(value: string) {
     return new Date().toISOString();
   }
   return date.toISOString();
-}
-
-export const dynamicParams = false;
-
-export async function generateStaticParams() {
-  return getBlogSlugs().map((slug) => ({ slug }));
 }
 
 export async function generateMetadata({
@@ -348,10 +350,4 @@ export async function renderPage(locale: Locale, slug: string) {
       <ScrollToTop />
     </>
   );
-}
-
-export default async function Blog({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const post = getPostMeta(slug);
-  return renderPage(post?.metadata.language ?? 'en', slug);
 }

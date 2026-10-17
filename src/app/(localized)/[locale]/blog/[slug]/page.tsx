@@ -1,4 +1,4 @@
-import { generateMetadata as articleMetadata, renderPage } from '@/app/(legacy-articles)/blog/[slug]/page';
+import { generateMetadata as articleMetadata, renderPage } from '@/components/blog/article-view';
 import { getBlogPosts, getPostMeta } from '@/data/blog';
 import type { Locale } from '@/lib/i18n';
 import { notFound } from 'next/navigation';

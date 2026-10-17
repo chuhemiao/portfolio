@@ -105,7 +105,7 @@ function renderLlmsTxt(posts) {
   const blogList = recentPosts
     .map(
       (post) =>
-        `- [${post.metadata.title}](${SITE.url}/blog/${post.slug})${
+        `- [${post.metadata.title}](${SITE.url}${articleHref(post.slug, post.metadata.language)})${
           post.metadata.summary ? `: ${post.metadata.summary}` : ''
         }`
     )
