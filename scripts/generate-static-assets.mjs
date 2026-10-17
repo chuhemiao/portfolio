@@ -132,6 +132,7 @@ ${SITE.summary}
 - [Pulse](${SITE.url}/pulse): Web3 market intelligence dashboard synced from local content snapshots
 - [Fear](${SITE.url}/fear): Bitcoin and crypto market regime dashboard
 - [Fund](${SITE.url}/fund): Live capital map and conviction tracker
+- [Tokenized Equities](${SITE.url}/stocks): On-chain US equities by issuer — legal wrapper, custody, proof of reserve, redemption terms and order-book depth
 - [Blog](${SITE.url}/blog): Technical articles and market analysis
 - [Thoughts](${SITE.url}/thoughts): Short-form crypto market notes and observations
 - [Stack](${SITE.url}/stack): Personal workflow, books, data sources, crypto tools, and AI stack
@@ -217,6 +218,7 @@ function buildSitemapShards(posts, topics) {
     '',
     '/blog',
     '/research',
+    '/stocks',
     '/oscillator',
     '/fund',
     '/thoughts',

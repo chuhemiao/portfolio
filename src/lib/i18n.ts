@@ -49,7 +49,7 @@ export function localizeHref(href: string, locale: Locale): string {
   const pathname = stripLocale(match[1]);
   // Article slugs carry their own language; resolve them through getPostHref.
   if (/^\/blog\/.+/.test(pathname)) return href;
-  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|thoughts|research|fear|fund|oscillator|pulse|stack|watch)\/?$/;
+  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|thoughts|research|stocks|fear|fund|oscillator|pulse|stack|watch)\/?$/;
   if (pathname !== '/' && !routes.test(pathname)) return href;
   return `/${locale}${pathname === '/' ? '' : pathname}${match[2]}`;
 }
