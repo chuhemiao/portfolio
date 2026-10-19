@@ -12,6 +12,14 @@ export type ResearchProject = {
 
 export const PROJECTS = [
   {
+    name: 'PopDEX',
+    description: 'Early on-chain CLOB perpetuals; execution quality, insurance transparency and MegaPop retention need validation',
+    type: 'Perp DEX',
+    slug: 'popdex-btcusdt-perpetual-clob-megapop-risk-research',
+    color: '#F97316',
+    initial: 'PD',
+  },
+  {
     name: 'NeoSoul / DNA',
     description: 'Prediction-market agents with real products; revenue, DNA usage and 87% locked supply need validation',
     type: 'AI/Trading',
