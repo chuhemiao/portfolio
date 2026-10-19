@@ -1,0 +1,143 @@
+---
+title: "Papertrade ($PAPER): Mechanics, Trading, On-Chain Data, and Token Risks"
+publishedAt: "2026-10-19"
+summary: "Papertrade bootstraps House liquidity from user losses and mints PAPER for losing traders. Behind high volume and early distributions, the mismatch between House funds and net exposure, declining revenue, oracle manipulation, and nontransferable tokens remain the central risks."
+slug: "papertrade-paper-mechanism-trading-onchain-token-risks-en"
+category: "thoughts"
+language: "en"
+translationKey: "papertrade-paper-mechanism-trading-onchain-token-risks"
+sourceSlug: "papertrade-paper-mechanism-trading-onchain-token-risks"
+---
+
+## TL;DR
+
+Papertrade is a synthetic perpetuals exchange on Hyperliquid's HyperEVM, offering only BTC and ETH markets with up to 1000x leverage. Users trade against a USDC pool that started at $0, and losing traders receive newly minted $PAPER. In its first 9 days, cumulative volume reached **$1.35T** across **22,869** users. DefiLlama reports cumulative revenue of **$60.79M**, of which **$56.14M** has been distributed to $PAPER stakers. By revenue relative to TVL, it is currently one of the most profitable on-chain protocols.
+
+The model, however, essentially pits traders against the House:
+
+- **85%** of revenue comes from retained user losses: $51.5M of LP Surplus.
+- House funds currently amount to only **$3.38M**, against approximately **$99M** of users' net long exposure.
+- A simultaneous BTC/ETH rise of approximately 3–4% could exhaust House funds, putting profitable traders' withdrawals into a queue.
+- $PAPER currently cannot be transferred and has no market price.
+- Revenue is falling rapidly: approximately $9.3M per day over the first 3 days, versus only $2.37M over the latest 24h.
+
+For an ordinary user, this looks more like a casino offering rebates on losses than an airdrop farm with an arbitrage opportunity.
+
+---
+
+## Mechanics and Team
+
+Papertrade's central design is an exchange with no order book, where users trade against a bootstrapped LP. At both opening and closing, contracts use a precompile to read Hyperliquid's BBO midpoint. Users enter synthetic swaps against the LP; no actual order is placed on Hyperliquid. There is therefore no funding, slippage, or spread, only an OI cap for each asset. [Papertrade Docs](https://docs.papertrade.xyz)
+
+- **Direct LP deposits are not permitted**: the LP grows only through user losses. When it cannot pay, profitable traders receive queued debt, repaid on a first-come, first-served basis using subsequent losses.
+- **Fees are asymmetric**: losing traders pay no additional fee. Profitable closes incur an “asymmetric impact” discount on profits: the smaller the price move, the larger the discount. A 2% fee then applies to the remainder. Profitable moves below 0.2bps receive no payout. [airdrops.io](https://airdrops.io/papertrade/)
+- **Stakers have two revenue sources**: (1) 1% of settled trade PnL; (2) all LP funds exceeding the **$5M** cap. [Papertrade Docs](https://docs.papertrade.xyz)
+
+The cofounders are two well-known, semi-anonymous traders, **Jez (@izebel_eth)** and **Blurr (@blurr)**. [Bankless](https://www.bankless.com/read/what-to-know-about-papertrade-s-launch)
+
+- Contracts are upgradeable, controlled by a **2-of-3 multisig** comprising izebel_eth, blurr, and UngusTrade, with a **7-day timelock**. [airdrops.io](https://airdrops.io/papertrade/)
+- In May 2026, the project announced it had engaged Guardian Audits. [IQ.wiki](https://iq.wiki/wiki/papertrade) Third-party summaries, however, note that the documentation contains no public audit report. This needs independent checking.
+- The project has no VC backing or fundraising record.
+
+| Dimension | Situation | Assessment |
+|---|---|---|
+| Team | Jez and Blurr, semi-anonymous traders | Strong community influence; opaque legal entity |
+| Contract permissions | 2-of-3 multisig, 7-day timelock | Centralized upgrade authority |
+| Audit | Guardian Audits engagement announced; no public report seen | Medium risk |
+| Funding | No VC; fair launch | No selling pressure from unlocks |
+
+## Trading and On-Chain Data
+
+Volume has been enormous since launch, but positions and TVL have declined significantly from their launch peaks. The official Dashboard snapshot at **approximately 06:15 UTC on 2026-10-19** shows:
+
+| Metric | Value | Interpretation |
+|---|---:|---|
+| Cumulative volume | **$1.35T** | $1.24T on 10-17; approximately $55B per day over the past two days |
+| Cumulative liquidations | **$40.7B** | 3.0% of volume |
+| Trade count | **1,460,633** | Approximately $924K average notional per trade |
+| Users | **22,869** | 21,523 on 10-17; approximately 670 added per day |
+| Open interest (OI) | **$458.5M** | $11B at launch, $693M the following day; continuing to contract |
+| Open-position margin | **$9.93M** | Approximately **46x** average effective leverage |
+| TVL | **$64.5M** | ATH of $102.09M on 10-11 |
+
+The materials provide only the following TVL observations, which cannot reconstruct daily changes between them:
+
+| Observation | TVL |
+|---|---:|
+| 2026-10-11 all-time high | $102.09M |
+| 2026-10-19 snapshot at approximately 06:15 UTC | $64.5M |
+
+Users are net long overall, leaving the House with exposure far larger than its funds. BTC positions total $203M long and $119M short, with net longs of **$84.2M**; ETH net longs are **$15.2M**. The House takes the other side of approximately **$99M** in total net longs, with only **$3.38M** in funds (LP balance of $4.69M and unrealized PnL of −$1.31M). A rough estimate suggests a simultaneous BTC/ETH rise of approximately **3.4%** would exhaust House funds and trigger queued debt. Current queued debt is $0.
+
+The $4.69M LP balance is also below the $5M distribution cap. Stakers therefore currently receive only the 1% PnL share, with no overflow.
+
+Revenue sources and distribution, according to DefiLlama as of 2026-10-19:
+
+| Revenue item | Amount | Distribution |
+|---|---:|---|
+| LP Surplus (users' net losses) | **$51.5M** | All to stakers |
+| Fees from profitable traders | $7.95M | 50% to developer addresses, or $3.98M |
+| Liquidation fees | $1.33M | 50% to developer addresses, or $665.8K |
+| **Total** | **$60.79M** | $56.14M to stakers; approximately $4.65M to the team (7.6%) |
+
+Revenue decay is pronounced:
+
+- Approximately $27.9M in the first 3 days, averaging approximately $9.3M per day.
+- $30.56M over the latest 7 days, averaging approximately $4.4M per day.
+- $2.37M over the latest 24h.
+
+DefiLlama's “$2.37B annualized” extrapolation from cumulative data severely overstates sustainable revenue. [DefiLlama](https://defillama.com/protocol/papertrade)
+
+At wallet level, the Paperdash leaderboard shows leading traders with volume concentrated in the $0.7B–$1.9B range: for example, `0x7827…4756` has $1.89B and `0x0f72…a669` has $1.38B. Each wallet accounts for less than 0.2% of total volume, with no extreme concentration evident. These figures come from the Paperdash leaderboard, not an independent, comprehensive HyperEVM on-chain analysis. [Paperdash](https://paperdash.xyz)
+
+## PAPER Token Supply
+
+$PAPER is an ERC-20 token on HyperEVM with a fully fair launch: no premine, team or VC allocation, airdrop, or unlocks. Every token is minted when a user realizes a loss. [Papertrade Docs](https://docs.papertrade.xyz)
+
+| Metric | Value (2026-10-19) |
+|---|---:|
+| Total supply | **8,677,225,186** |
+| Staked | **8,612,435,206 (99.25%)** |
+| Cumulative staking rewards | **$54.06M** USDC |
+| Cumulative distribution per token | Approximately **$0.0062** |
+
+The minting curve works as follows: when the LP is below $2M, each $1 lost mints 100 PAPER. Above that level, the rate declines according to `100 × (120M / (120M + H))²`, where H is the pool's historical peak earnings and can only increase. On 10-17, H was approximately $222.7M, implying approximately **12.3 tokens** minted per $1 lost. The acquisition cost per PAPER had thus risen from approximately 1 cent at launch to approximately **8 cents**. [airdrops.io](https://airdrops.io/papertrade/)
+
+Important concerns:
+
+- Early tokens acquired for 1 cent share the same reward pool as tokens now acquired for approximately 8 cents, substantially diluting returns for later entrants.
+- Cumulative distributions per token are currently approximately 0.6 cents, below the current acquisition cost.
+- If the LP falls below $2M, issuance returns to 100 tokens per $1, creating another round of dilution.
+
+⚠️ **Imitation-token warning**: $PAPER currently cannot be transferred and has no official DEX pair. A token named PAPER exists on Solana with $0 in 24h volume; Coinbase also has a “papertradexyz” page labeled as Solana. Neither is the official token. Do not buy them.
+
+## Risk Incident and Main Risks
+
+**Oracle manipulation has already occurred.** On launch day, 10-10, wallet `0x2025...840e` traded ETH in size on Hyperliquid, moving its BBO price by approximately 0.12%. It used 1000x leverage on Papertrade to earn approximately **$1.28M** on $3.18B in volume, while paying only approximately $52K in Hyperliquid fees. The team subsequently tightened OI limits on-chain and at the relay layer. [The Block via TradingView](https://www.tradingview.com/news/the_block:995b84c64094b:0-trader-nets-1-28-million-on-new-1-000x-exchange-papertrade-by-moving-hyperliquid-s-eth-prices/) DefiLlama records this as an Oracle Manipulation security incident.
+
+| Risk | Severity | Explanation |
+|---|---|---|
+| Queued payouts | High | House funds of $3.38M against approximately $99M net exposure; a one-way market can trigger queued debt, with no fixed payout time |
+| Oracle manipulation | High | Large trades can move the BBO midpoint; the official risk page acknowledges this |
+| No PAPER liquidity | High | Nontransferable, no price, and no scheduled date for enabling transfers |
+| Dilution from hedged token farming | Medium | Delphi's tempest notes that long/short hedging can mint PAPER at low cost [Bankless](https://www.bankless.com/read/what-to-know-about-papertrade-s-launch) |
+| Falling revenue | Medium | Daily revenue fell from approximately $9.3M to $2.37M |
+| Centralization and infrastructure | Medium | A multisig can upgrade contracts; dependence on HyperEVM blockspace, with the Dashboard showing a 3M gas budget per block and 9.62M queued |
+| Extreme leverage | High | At 1000x leverage, an adverse move of approximately 0.052% triggers full liquidation |
+
+## Conclusion
+
+Papertrade's mechanism is genuinely novel. It passes 100% of House profits to token holders; the team receives only 50% of trading and liquidation fees, approximately 7.6% of total revenue. Within 9 days, it generated $60M in revenue and $1.35T in volume. Yet its revenue comes almost entirely from retail losses, without a sustainable fee-based moat. House funds and user exposure are severely mismatched, and oracle manipulation has already occurred. Revenue is falling rapidly, while retaining users depends on a continuing inflow of new loss-bearing funds.
+
+**What to watch**: Focus on four indicators:
+
+1. Whether House funds can remain above $5M, determining whether stakers can resume receiving overflow distributions.
+2. Whether queued debt appears.
+3. When PAPER transfers are enabled, and whether its first market price exceeds the approximately 8-cent acquisition cost.
+4. Whether daily revenue can stabilize above $2M.
+
+If you already trade BTC/ETH with high leverage, PAPER can be treated as a rebate on losses; remember to stake it. Entering solely to farm PAPER, however, means exchanging real losses for a token without a market, whose distributions depend on the next group of losing traders. I do not recommend doing so.
+
+*Data snapshot: Papertrade Dashboard and DefiLlama, 2026-10-19 at approximately 06:15 UTC. This content is not investment advice.*
+
+*Source note: This article is organized from user-provided research, preserving the Dashboard and DefiLlama snapshot at approximately 06:15 UTC on 2026-10-19 and its original source conventions. No Surf calls or independent online verification were made. The 3.4% House stress estimate, token acquisition costs, and annualized revenue are conditional estimates from the materials, not a payout guarantee, market price, or forecast of future revenue. The original TVL chart placeholder has been replaced with the two observations supported by the materials; no historical series has been fabricated.*
