@@ -12,6 +12,22 @@ export type ResearchProject = {
 
 export const PROJECTS = [
   {
+    name: 'APRO / AT',
+    description: 'Multichain oracle expanding into AI and RWA; AT value capture, unlocks and concentrated holdings need validation',
+    type: 'Oracle',
+    slug: 'apro-at-oracle-business-token-trading-structure-research',
+    color: '#2563EB',
+    initial: 'AT',
+  },
+  {
+    name: 'AXIS Robotics',
+    description: 'Research mandate review; identity, paying customers, reproducibility and token rights remain unverified',
+    type: 'AI/DePIN',
+    slug: 'axis-robotics-research-brief-review-evidence-diligence-framework',
+    color: '#2563EB',
+    initial: 'AX',
+  },
+  {
     name: 'PopDEX',
     description: 'Early on-chain CLOB perpetuals; execution quality, insurance transparency and MegaPop retention need validation',
     type: 'Perp DEX',
@@ -6936,9 +6952,9 @@ export const PROJECTS = [
   },
   {
     name: 'Capybobo / PYBOBO',
-    description: 'Capybobo is treated as a DeFi infrastructure watchlist candidate sourced from...',
-    type: 'Infra',
-    slug: 'capybobo-pybobo-defi-infrastructure-token-value-capture-risk',
+    description: 'GameFi and collectible IP; conflicting supply figures, concentrated holdings and product adoption need validation',
+    type: 'GameFi',
+    slug: 'capybobo-pybobo-gamefi-ip-supply-concentration-research',
     color: '#DC2626',
     initial: 'CP',
     logoUrl: "/research-logos/capybobo-pybobo-defi-infrastructure-token-value-capture-risk.svg",
