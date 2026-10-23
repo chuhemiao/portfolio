@@ -1,0 +1,275 @@
+---
+title: '世界のオンチェーン株式と RWA 市場の詳細調査 2026'
+publishedAt: '2026-10-22'
+summary: '市場の定義、世界の需要、三つの発行・取引構成、PAR/CAR から資産運用の機会を分析する。BFunds を計画段階の事例とし、資産検証、申込み・償還会計、執行、持続可能な AUM を考察する。'
+slug: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds-ja'
+category: 'thoughts'
+language: 'ja'
+translationKey: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds'
+sourceSlug: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds'
+---
+
+副題：Tokenized Equities、24/7 Trading、DeFi Capital Activation と Onchain Index Funds  
+調査日：2026 年 10 月 22 日  
+報告の種類：業界構造調査 / 製品機会分析  
+調査の基礎：Binance Research の八つの特集、CoinFound のユーザー提供の米国市場構造調査、RWA.xyz、bStocks の公式説明、SEC の公式文書。
+
+## 0. 要旨
+
+中心的な結論は、トークン化株式では資産供給、ユーザーへの販売、全天候取引の初期需要が確認されたが、開かれたオンチェーン証券運用が、伝統的な証券会社と同規模の市場を長期に得るとはまだ検証されていない、というものだ。競争の対象は発行量だけでなく、取引可能な流動性、権利構造、市場間交換、ほかの金融用途への資金投入能力である。
+
+主な観察：
+
+- RWA.xyz の今回の照会では Distributed Value が約 35 億ドル、月間移転額が約 104.9 億ドル、保有アドレスが約 438 万だった。移転額は取引高ではなく、アドレスは重複を除く実投資家ではない。[S1](https://app.rwa-xyz.com/stocks)
+- 2026-10-20 の bStocks 調査は 125 日で AUM 10 億ドル、増加の約 68% が純流入、累積取引の 56% が通常時間外、上位五資産の比率が 97% から 50% 未満へ低下とする。発行と利用がともに広がった証拠だが、安定成長の約束ではない。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+- 9 月の CAR では株式のオンチェーン金融利用率が約 1.95% から 7.54% へ上昇したが、用途は流動性プールと貸付に集中する。広い運用商品はまだ初期だ。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+- 米国には国外の証券証書と並ぶ二経路がある。DTC/Nasdaq は既存の取引・登録にトークン化権益を組み込み、SEC の 9 月の免除は条件を満たす参加制御されたオンチェーン市場に限定的な実験の余地を与える。[S9](https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072)[S10](https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development)[S11](https://www.sec.gov/rules-regulations/2026/09/4-927)
+- オンチェーン指数ファンドの最重要リスクは ERC-20 の発行可否ではなく、原資産の法的な実体、保管・移転の可否、申込み・償還の会計の整合、価格・流動性の品質、発行者ごとの権利の非代替性だ。
+
+判断として、価値獲得は単なる発行から、発行、販売、執行、担保、運用プロトコルの組合せへ移りうる。ただしポートフォリオ型プロトコルの市場規模に直接の証拠は乏しく、支払い意思と長期 AUM 継続を独立に検証する必要がある。
+
+## 1. 方法、データの範囲、用語
+
+### 1.1 情報の階層
+
+A 級：SEC 規則、取引所・発行者告知、公開技術文書。制度と発行の仕組みの確認に使う。  
+B 級：RWA.xyz、オンチェーンデータ、Binance Research の明確な統計。規模と行動の観察に使う。  
+C 級：業界報道、シナリオ予測、本報告の推論。予測・仮定と明示する。  
+CoinFound の 2026-10-14 の市場構造調査はユーザー提供であり、再確認が必要な分析の参考であって、自動的に公式事実とはならない。
+
+### 1.2 混同してはいけない指標
+
+| 指標 | 意味 | よくある誤用 |
+|---|---|---|
+| Distributed Value | プラットフォームの定義による配布・流通済みのオンチェーントークン化資産価値 | 原証券の全時価総額と同一視 |
+| AUM | 提供元の定義による運用・保管価値 | 新規純流入と同一視 |
+| Onchain Transfer Volume | オンチェーン移転の総価値 | 独立した取引量や収入と同一視 |
+| Trading Volume | プラットフォームや DEX を含みうる約定想定元本 | 実際の純資本形成と同一視 |
+| Holder Addresses | 関連トークンを持つアドレス数 | 重複を除くユーザー数と同一視 |
+| TVL / CAR | 特定 DeFi 用途に投入された資産価値／割合 | 二重計上のない経済的収益と同一視 |
+| Reference NAV | 参照価格によるファンドの原資産純価値 | 常時の約定・償還価格と同一視 |
+
+9 月の *The RWA Activation Era* は株式資産を約 44.3 億ドルと集計したが、今回の RWA.xyz は約 35 億ドルの Distributed Value を示す。時点と範囲が異なり、短期の市場下落とは直接結論できない。[S1](https://app.rwa-xyz.com/stocks)[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+## 2. 市場規模と段階の判断
+
+### 2.1 小さく急拡大する市場で、集計範囲の厳密な限定が必要
+
+照会時の RWA.xyz では約 35 億ドル、保有アドレス約 438 万、月間移転額約 104.9 億ドルだった。[S1](https://app.rwa-xyz.com/stocks) 同じ画面の bStocks は約 12 億ドル、Ondo は約 9.06 億ドル、xStocks は約 6.08 億ドル。発行規模は上位に集中するが、資産数、保有者構造、取引活動では順位が違いうる。
+
+9 月報告は、株式のオンチェーン時価総額が 30 億ドルを超えたことを、同時期のより広い RWA の約 380 億ドルと比べた。公開時の過去のスナップショットであり、10 月の動的画面と同一時点に混ぜてはいけない。[S3](https://www.binance.com/en/research/analysis/rewriting-the-on-chain-economy)
+
+### 2.2 AUM 増加の分解
+
+変化は少なくとも次のように書ける。
+
+AUM(t) - AUM(t-1) = Net Issuance/Redemption + Price P&L + Corporate-Action Adjustment + Other Measurement Changes。
+
+10 月調査では増加の約 68% を純流入が説明し、単なる株価上昇でなく実際の資金を含むことを支える。ただし初期 AUM の高変動や週単位の大きな流出は、短期の指数的成長をそのまま 2027 年予測へ延ばしてはいけないとも示す。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+
+### 2.3 2030 年の規模シナリオは予測と厳密に分ける
+
+9 月の Binance Research は、2030 年の三段階として約 610 億、3490 億、9870 億ドルを引用し、想定するプログラム可能な浸透率は約 0.04%、0.23%、0.65% だった。シナリオであって確定予測ではなく、特定の新商品が得られる市場でもない。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+私たちの解釈では、長期シェアが伸びても、強い証券会社の販売網、低手数料 ETF、薄い流動性で指数プロトコルは相応の利益を得られないかもしれない。市場全体の成長だけでは事業成立の十分条件にならない。
+
+## 3. 需要の分解：世界からの参加、時間帯取引、ポートフォリオ保有
+
+### 3.1 世界から参加する需要
+
+6 月報告は約 80% の初期活動が新興国、注文の 93% が一株未満、取引額中央値が約 18.81 ドルとした。[S7](https://www.binance.com/en/research/analysis/stock-market-that-never-sleeps) 10 月は違う期間・地域基準で新興・フロンティア市場が約 70% の取引量とする。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers) 直接の前年比較はできない。
+
+需要仮説は、ステーブルコイン主体のユーザーが米国株エクスポージャーをウォレット運用へ組み込みやすいことだ。ただし証券取得の可否、税務、実株への交換条件が最終利用を左右する。
+
+### 3.2 時間の柔軟性と価格発見
+
+10 月調査では約 56% が通常時間外で、平日の時間外が 49%、週末が 7% だった。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers) 時間を選べることに実行動の裏付けがあるが、週末は現在の大半ではない。
+
+7 月の限られた観察では週末価格が翌月曜のギャップをかなり反映した。ただし過去の相関であり、十分な約定可能な厚みや、再現可能な裁定利回りの証拠ではない。[S8](https://www.binance.com/en/research/analysis/stock-price-discovery-moves-on-chain)
+
+9 月の *Beyond the Closing Bell* は株式・RWA を参照する無期限先物で、同じ権利の現物証券ではない。先物量をトークン化現物株の取引高に足せず、上場前デリバティブも非上場企業の株式保有と解釈できない。[S6](https://www.binance.com/en/research/analysis/beyond-the-closing-bell)
+
+### 3.3 ユーザー層と投資期間
+
+10 月調査では Gen Z はユーザーの約 46% だが取引価値は約 8%、ミレニアルは約 37% で約 78% を生む。若い層は週末や短期保有を好み、ミレニアルの期間は比較的長い。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+
+取引所の活動ユーザーとファンドの価値あるユーザーは定義が違う。ファンドは D7/D30/D90 の保有継続、積立頻度、リバランス受容、リスク予算を試し、一取引の頻度だけを唯一の North Star とすべきではない。
+
+## 4. 発行と市場の三つの構成
+
+| 項目 | 国外発行の裏付け型証券証書 | DTC/Nasdaq の既存市場拡張 | SEC TSV のネイティブ市場 |
+|---|---|---|---|
+| 基本権利 | 発行・保管・条件で決まる経済的エクスポージャー | DTC 内で記録・移転できる証券権益 | 規則を満たす同権利のトークン化 NMS 株式 |
+| 取引場所 | 取引所と対応 DeFi 市場 | 主に従来の注文板 | 参加制御された AMM プール |
+| 価格発見 | オンチェーン／基盤の価格と原証券への連動 | 従来市場価格を継承 | 裁定・在庫の影響を受けるプール価格 |
+| 移転制限 | 発行者、資産、法域で決まる | DTC 登録参加者のウォレット | TSV の参加・資産要件 |
+| 障害 | 発行の信頼性、償還可能性、流動性 | 保管とシステム接続、公開の進み方 | 厚み、流動性在庫、規則の制限 |
+
+### 4.1 国外のトークン化株式証書
+
+bStocks は BNB Smart Chain で発行し、対応株式が裏付け、特定経路で株式へ戻せるとする。分割と配当再投資は Multiplier などで処理する。[S12](https://www.bstocks.finance/en/) 発行者の説明であり、目論見書、保管証明、実際の交換権と合わせて判断すべきだ。保有者が上場企業の株主名簿で直接議決権を持つとは自動的にいえない。
+
+Ondo と xStocks も主要提供者だが、法的約束、資格、チェーン、交換条件が同じとは限らない。同一ティッカーで複数発行者を集約する DeFi は、別々の資産識別を保たなければならない。
+
+### 4.2 DTC / Nasdaq：既存市場のオンチェーン受渡しインターフェース
+
+SEC は 2025 年 12 月、DTC の試行にスタッフのノーアクション措置を公表した。適格参加者の登録ウォレット間の移転を認め、正式な帳簿は DTC が保つ。Nasdaq は 2026 年 3 月に規則承認を得て、既存取引システムをトークン化受渡しへ開いた。[S9](https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072)[S10](https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development)
+
+強みは、既存の取引・価格発見を使い、新しいプールの必要を減らす点。制限は、どの DeFi ウォレットでも自由に保有・保管できるとは限らず、未検証のまま BSC の ERC-20 原資産に扱えない点だ。
+
+### 4.3 SEC TSV：参加制御されたオンチェーン取引の試行
+
+SEC は 2026 年 9 月 17 日に Release 34-106402 を出し、特定の参加要件を持つ Tokenized Securities Venue と流動性提供者へ、暫定・条件付き免除を与えた。対象株式は原普通株の相応の経済・統治権を持ち、発行企業の規則に沿う異議を認める。限定実験であり、DeFi 全体への自動免除ではない。[S11](https://www.sec.gov/rules-regulations/2026/09/4-927)
+
+2026 年 10 月 21 日のリストには TSV LLC、OKXICE TSV、Perpetuals.com の三通知があるが、掲載は条件充足や営業開始を意味しないと明示される。[S13](https://www.sec.gov/about/divisions-offices/division-trading-markets/innovation-exemption)
+
+ユーザー提供の CoinFound 報告は二経路を比較する。日次取引額、個別株の分布、場所の試験進捗、株式の異議に関する計算は 10 月 14 日時点であり、外部へ引用する前に政策原文と最新通知で再確認すべきだ。現在のリアルタイム情報としては扱えない。
+
+## 5. 資本利用率：PAR と CAR
+
+定義（Binance Research に基づく）：
+
+PAR = Qualifying On-chain Programmable Asset Value / Underlying Market Value。  
+CAR = Deduplicated Value Deployed in Verified On-chain Financial Applications / Circulating Qualifying Asset Value。
+
+PAR はオンチェーン化の浸透、CAR はその後の利用を測る。2026 年 9 月の株式 CAR は約 7.54% で、年初の 1.95% から上昇した。DeFi 用途はプール約 65.4%、貸付約 28.1% に集中する。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+測定上の落とし穴：
+
+- 同一資産を複数プロトコルで重ねて担保にすると、TVL の単純合計は実際の投入を過大にする。
+- 高 CAR は持続需要でなく、報酬と循環担保から生じうる。
+- ERC-20 の総発行は、移転・担保化できる自由流通量と同じではない。
+- 休場と移転制限はストレス時の清算価値を変える。
+
+人工的に CAR を上げるのでなく、明確な資産会計、測れる利用価値、透明なリスク価格を持つ応用を作ることに価値がある。
+
+## 6. 競争と価値連鎖
+
+### 6.1 五層の構造
+
+L1 証券権利と保管：発行者、SPV、信託／証券会社保管、コーポレートアクション処理。  
+L2 Tokenization & Registry：発行、コントラクト識別、証券権益の記述、許可リスト、更新。  
+L3 Distribution & Venue：中央集権型取引所、証券会社、DEX、RFQ、オンチェーン市場。  
+L4 Liquidity & Capital Use：ステーブルコイン、プール、貸付、担保、リスク管理。  
+L5 Portfolio & Investment Application：指数、バスケット取引、戦略、純資産価値、持ち分、Agent のインターフェース。
+
+五層すべてを作り直す必要はなく、どこで新しい価値を作るかを正確に選ぶべきだ。
+
+### 6.2 競争者の役割を混同しない
+
+bStocks：原証券の証書とプラットフォームの販売エコシステム。  
+Ondo / xStocks：独立した発行権利と販売力を持つ提供者。  
+DTC/Nasdaq：成熟市場の登録・決済と取引レイヤーの拡張。  
+TSV：条件を伴う新しいオンチェーン市場インフラ。  
+Index / Basket プロトコル：保管・執行可能な資産上にポートフォリオを作る。
+
+指数プロトコルの競合は DeFi だけでなく、既存証券会社の ETF、自動積立、端株、複製ポートフォリオも含む。単なる保有場所の移動でなく、ユーザーに新たな効用があると証明しなければならない。
+
+## 7. BFunds の戦略適合：次の金融商品としてのオンチェーン指数
+
+BFunds（bfunds.xyz）は、初期に BNB Smart Chain の公式出典で検証した bStocks を使い、Index Recipe、比例的な現物申込み・償還の Index Vault、ファンド持ち分を作る計画だ。以下は現在の計画に基づく戦略分析であり、市場で検証済みの事実でも、公開済みという意味でもない。
+
+### 7.1 四つの基本要素
+
+A. Verified Asset Identity：chainId、発行者、コントラクトの完全なアドレス、原株式、権利、出典証拠、状態。Ticker や Logo だけでは判定しない。  
+B. Index Recipe：目標比率、方法論の版、調整頻度、リスク範囲。戦略定義であって実際の保有ではない。  
+C. Index Vault & Share：準備資産、比例的申込み・償還、実際のオンチェーン持ち分。会計は元の Token 準備残高に基づく。  
+D. Pricing & Execution：参照 NAV、実行可能な買い・売り価格、コスト、価格鮮度、リスクパラメーターを厳密に分ける。
+
+### 7.2 従来の SPY / QQQ をそのまま複製しない理由
+
+S&P 500 の市場リターンだけなら、成熟 ETF や既存のトークン化 ETF 証書は通常、より単純で、厚く、安い。新しい複数資産 Vault はコントラクト、流動性、リバランス、運営の費用も加える。BFunds は、従来 ETF が未対応または組み合わせにくいものを優先すべきだ。株式と暗号資産の組合せ、テーマ・ファクター指数、プログラム可能なリスク予算、Agent が再確認できる調整戦略、ウォレットから直接使える指数持ち分などである。
+
+テーマの発行価値は話題性でなく、実際に購入できるか、スリッページ、容量、透明性、継続利用のテストで判断すべきだ。
+
+### 7.3 明確にすべき技術上の安全不変条件
+
+- 一意の識別はチェーン ID + 発行者 + 完全なコントラクトアドレス。Verified と Active は別々。
+- Registry 管理者が、制御されない一操作で未知資産を資金投入可能にしてはいけない。
+- 現物申込み・償還は raw balance と総持ち分に基づき、UI Multiplier を数量へ二重計上しない。
+- 新規入金、リバランス、現物退出に別の停止規則を設けられ、事故で全ユーザーを閉じ込めないようにする。
+- 複数資産の金庫を、そのまま単一資産の ERC-4626 準拠と主張しない。
+- USDT 一通貨での購入は、実際に検証済みの経路、価格、スリッページ制約がある場合だけ有効にする。なければ現物バスケットで申し込む。
+- 公式 Symbol とアドレスが同じという説明を正式な出典確認の代わりにしない。オンチェーン操作では allowlist を再確認する。
+
+### 7.4 BFunds の潜在的な事業モデルと制約
+
+主な収入候補は透明な AUM 管理料、実際の執行サービス料、許諾された B2B ポートフォリオ基盤の料金だ。多重の徴収を避け、保管、監査、価格データ、調整費用を含めて純収入を計算する。
+
+例：平均 AUM 1,000 万ドル × 年率 0.35% = 年間管理料の総収入 3.5 万ドルで、費用は何も控除していない。初期の小さい AUM と低い手数料だけでは、大きな安全・運営チームを維持できないことを示す。
+
+## 8. 主なリスク表
+
+| リスク | 発動の仕組み | 投資家・プロトコルへの影響 | 優先する対応 |
+|---|---|---|---|
+| 発行者と保管 | 交換不能、資産証明の失効、条件変更 | 価格と権益の乖離 | 公式出典、原文書、発行者の監視 |
+| 偽コントラクト | 同名 Token、悪意あるトークン、異常なプロキシ更新 | 偽株式購入、原資産損失 | Registry + コード検証 + コントラクト側 allowlist |
+| 取引の厚み | 休場、メーカーの取消、流動性枯渇 | 大きなスリッページ、償還不能 | 実行可能な価格、上限、リスク停止 |
+| NAV 乖離 | 価格遅延、Multiplier の誤対応 | 誤発行、NAV の誤報 | raw/UI 分離、時刻、単体テスト |
+| コーポレートアクション | 配当、分割、売買停止、ティッカー変更 | 保有表示・戦略比率の誤り | イベント監視、スナップショット、状態遷移 |
+| 貸付の連鎖 | 高すぎる LTV、同資産の重複担保 | 強制清算、担保売却 | 資産区分、担保率、隔離制限 |
+| 統治と権限 | Registry・Vault 管理権限の漏洩 | 悪意ある資産や資金のリスク | マルチシグ、Timelock、Guardian、監査 |
+| 法律と移転資格 | 発行・取引場所の制限 | 合法な保有・送金ができない | 発行者制約を実施し、回避策を作らない |
+
+## 9. 2027–2030：三つの反証可能なシナリオ
+
+以下は本報告の構造的なシナリオであり、Binance の予測でも、確実な経路でもない。
+
+保守的：発行は多いが実際の厚みは停滞する。補助のある大規模基盤が中心で、指数商品は費用、制限、信頼不足から持続 AUM を作れない。
+
+中立：少数の発行者が成熟した交換・マーケットメイク網を作る。現物、貸付、テーマバスケットに安定需要ができ、ポートフォリオのプロトコルが販売経路を通して小さく健全な資金を蓄積する。
+
+拡大：発行者間の識別標準、取引と受渡しの接続が成熟し、適格な流動性提供者が価格を出し続ける。一部の運用がプログラム可能な操作へ移り、指数・リスク管理層に規模の経済が生まれる。
+
+決めるのはニュース数でなく、純流入の継続、厚み、償還可能性、価格乖離、使える資本比率、監査後のリスク損失、実際の単位経済性の継続改善だ。
+
+## 10. 追跡ダッシュボード（今後は毎週／毎月更新）
+
+| 指標 | 出典候補 | 解釈 |
+|---|---|---|
+| Tokenized Stock Distributed Value | RWA.xyz | 残高全体で、純流入ではない |
+| Issuance / Redemption Net Flow | 発行者／RWA データ | 純資本形成 |
+| 30D Active Addresses / Holder Growth | RWA.xyz + オンチェーン | 利用とアドレス増、重複排除が必要 |
+| DEX vs Centralized Volume | 取引場所と DEX | 構造変化 |
+| Non-market-hours Volume | 取引基盤の開示 | 時間の柔軟性への需要 |
+| 1 万 / 10 万ドルの実行可能なスリッページ | DEX / RFQ の模擬約定 | 本当の投資容量 |
+| Reference vs Executable Price Deviation | 複数価格源 | 品質と裁定能力 |
+| DeFi CAR / TVL Components | DefiLlama など | 利用とリスク構成 |
+| Issuer Source/Contract Changes | 公式告知 + インデクサー | 資産の安全維持 |
+| Fund Net AUM, 30/90D Retention | 指数プロトコル自身 | ファンドの PMF |
+
+## 11. 起業家への最終判断
+
+名目市場価値が大きいだけでは勝者は生まれない。早期に発行者との直接競争へ賭ければ、保管、証券権利、強力な販売網と向き合う。独自取引所へ賭ければ、マーケットメイク資金、在庫、市場組成費用と向き合う。中核資源のないチームには、信頼できる資産識別、検証可能な取引の組合せ、明確な持ち分会計、拡張可能なリスク接続を作る方が、有効な技術的な入口になりうる。
+
+BFunds は bStocks + BNB Chain の実資産確認とテーマ別ポートフォリオツールから入り、その後に持ち分、執行、持続 AUM の経済価値を証明すべきだ。多発行者・マルチチェーンは設計上の境界であり、MVP が同時に実装すべき機能に早めてはならない。
+
+証券トークン化はプログラム可能な供給を作るが、実際の識別、流動性、資本管理が合わさって初めて、継続的なユーザー価値のある金融アプリ層になりうる。
+
+---
+
+## 12. 原資料、日付、相互検証
+
+[S1] RWA.xyz, *Tokenized Stocks*、動的データ、2026-10-22 照会。https://app.rwa-xyz.com/stocks  
+[S2] Binance Research, *bStocks By The Numbers*, 2026-10-20。https://www.binance.com/en/research/analysis/bstocks-by-the-numbers  
+[S3] Binance Research, *Rewriting the On-Chain Economy*, 2026-09-29。https://www.binance.com/en/research/analysis/rewriting-the-on-chain-economy  
+[S4] Binance Research, *The RWA Activation Era*, 2026-09-18。https://www.binance.com/en/research/analysis/the-rwa-activation-era  
+[S5] Binance Research, *When Stocks Become On-Chain Assets*, 2026-09-11。https://www.binance.com/en/research/analysis/when-stocks-become-on-chain-assets  
+[S6] Binance Research, *Beyond the Closing Bell*, 2026-09-22。https://www.binance.com/en/research/analysis/beyond-the-closing-bell  
+[S7] Binance Research, *Stock Market That Never Sleeps*, 2026-06-17。https://www.binance.com/en/research/analysis/stock-market-that-never-sleeps  
+[S8] Binance Research, *Stock Price Discovery Moves On-Chain*, 2026-07-29。https://www.binance.com/en/research/analysis/stock-price-discovery-moves-on-chain  
+[S9] SEC, Nasdaq Rule SR-NASDAQ-2025-072、2026-03-18。https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072  
+[S10] SEC, DTC Tokenization No-action の公式声明、2025-12-11。https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development  
+[S11] SEC, *Innovation Exemption*, Release 34-106402、2026-09-17。https://www.sec.gov/rules-regulations/2026/09/4-927  
+[S12] bStocks の公式サイト、2026-10-22 照会。https://www.bstocks.finance/en/  
+[S13] SEC, *Innovation Exemption — Notices*、2026-10-21 更新。https://www.sec.gov/about/divisions-offices/division-trading-markets/innovation-exemption  
+[S14] Binance Research, *Early Momentum in Tokenized Stock Adoption*, 2026-07-10。https://www.binance.com/en/research/analysis/early-momentum-in-tokenized-stock-adoption  
+[S15] The Block Research, *RWA Tokenization in 2026: Tokenized Stocks Drive the Next Phase*, 2026-10-05。https://www.theblock.co/research/tokenization/rwa-tokenization-2026-tokenized-stocks-drive-next-phase-417702  
+[S16] ユーザー提供の CoinFound「米国株オンチェーン化の二つの市場構成」の研究原稿、2026-10-14 時点。比較枠組みのために使い、政策の主要事実は上記 SEC 原典に従う。
+
+**利用上の制限**：調査日時点の公開資料に基づく。発行者の報告は独立監査ではなく、価格発見の結論は初期サンプルに依存し、シナリオは評価額の約束ではない。本稿は目論見書、投資助言、法的意見ではない。
+
+
+*資料整理について：同名のユーザー提供ファイルから「思考」に追加し、元稿の 2026-10-22 の調査日、出典、集計基準を保った。今回は Surf、外部翻訳サービス、独立したオンライン確認は行っていない。照会日、政策説明、市場データ、出典の相互検証は元資料の記録であり、今回の再照会・再検証を意味しない。*
+
+*CoinFound の原調査は今回の二ファイルには添付されておらず、この稿の転述としてのみ保っている。BFunds は製品計画と戦略分析であり、公開済み・市場検証済みではない。指標と更新頻度は元稿の提案であり、今回は自動更新、監視、記載された開発作業を実施していない。*

@@ -1,0 +1,294 @@
+---
+title: 'a16z “Perpetuals Are Just the Beginning”: A Market Supply Revolution and Risk Infrastructure'
+publishedAt: '2026-10-23'
+summary: 'Perpetuals, HIP-3, and event markets are lowering the barriers to supplying new markets, but risks must still be observable, priceable, settleable, and supported by capital on both sides. The real opportunities lie in oracles, liquidity, liquidation, distribution, and sustainable token value capture.'
+slug: 'a16z-perpetuals-market-supply-revolution-risk-infrastructure-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'a16z-perpetuals-market-supply-revolution-risk-infrastructure'
+sourceSlug: 'a16z-perpetuals-market-supply-revolution-risk-infrastructure'
+---
+
+## TL;DR
+
+a16z’s core thesis **broadly holds, but “any risk can become a tradable asset” requires four preconditions: observability, priceability, settleability, and sustained demand from capital on both sides**.
+
+What blockchain really changes is more than moving existing trades on-chain: it unbundles the process for supplying financial markets. **anyone can define a unit of risk, deploy a trading mechanism, access global liquidity, and settle through oracles and collateral**. Hyperliquid’s HIP-3 and HIP-4, along with RWA perpetuals and prediction markets, already provide early evidence of this logic.
+
+But “permissionless” market supply does not remove the need to build market quality. The most valuable components ahead may not be simple token issuance. They may lie in:
+
+- Oracles and settlement;
+- Initial liquidity and market making;
+- Margin, liquidation, and tail-risk management;
+- Market discovery and global distribution;
+- Compliance boundaries and data standardization.
+
+**My conclusion: a16z has identified the next major direction for financial markets, but a more precise formulation is that any risk that can be standardized, described by oracles, and supported by capital may eventually have its own market.**
+
+---
+
+## Core Thesis: Blockchain Changes the “Market Supply Function”
+
+The original a16z article breaks financial markets into two dimensions:
+
+1. **Units of risk**: corporate cash flows, oil, election outcomes, borrower credit, and GPU hours;
+2. **Risk-transfer instruments**: spot, futures, perpetuals, options, and event contracts.
+
+Historically, financial innovation usually changed only one dimension at a time. Spot grain markets came before grain futures; stocks came before stock options and ETFs. Interest rates, default risk, volatility, and event outcomes also took a long time to acquire standardized trading instruments.
+
+a16z’s key insight is that **the historical bottleneck in financial markets was often supply rather than demand**.
+
+Traditional market supply is constrained by three types of factors:
+
+| Traditional bottleneck | Corresponding blockchain improvement | Problem that remains unresolved |
+|---|---|---|
+| Listing committees and legal approvals | Open permissions and programmable issuance | Compliance and liability do not disappear |
+| Geographic and trading-hour restrictions | Global wallets and 7×24 trading | Liquidity may remain highly fragmented |
+| Centralized clearing and segregated margin | Unified margin and on-chain liquidation | Greater cross-market contagion and liquidation risk |
+| Lack of initial market making | AMMs, incentives, and shared order books | Whether real liquidity remains after incentives end |
+| Difficulty pricing private and nonstandard risks | Synthetic contracts and prediction markets | Oracle and settlement standards may be unreliable |
+
+Blockchain’s real product is therefore more than “faster trading”: it is a new **market production system**:
+
+> Risk definition → Oracle → Collateral → Initial liquidity → Risk controls and settlement → Global distribution
+
+If any link fails, a market may have only a token or contract without becoming a genuinely usable market.
+
+One translation mentioned in the attachment also warrants correction: a16z’s original article says **memory stocks**, meaning memory/storage-chip equities, rather than **meme stocks**. This distinction matters because it indicates that a16z was observing the marketization of semiconductor cycles and memory-chip risks, as well as assets driven by cultural attention. [Original a16z article](https://a16zcrypto.com/posts/article/blockchains-create-net-new-markets/)
+
+---
+
+## Empirical Evidence: Perpetuals Have Already Brought “Non-Crypto Risks” On-Chain
+
+### 1. RWA Perpetuals Have Moved from Concept to Scale
+
+CoinGecko’s *RWA Report 2026* reports:
+
+- **RWA perpetual trading volume of $524.79B in the first quarter of 2026**;
+- More than **$313.02B for the whole of 2025**;
+- Average daily RWA perpetual open interest of approximately **$4.82B** in the first quarter of 2026;
+- Hyperliquid HIP-3 accounted for approximately **28.6%** of monthly RWA perpetual trading volume in March 2026;
+- HIP-3 recorded approximately **$130.87B** in cumulative trading volume in the first quarter of 2026. [CoinGecko RWA Report 2026](https://www.coingecko.com/research/publications/rwa-report-2026)
+
+This goes beyond simply “tokenizing stocks.” More precisely, it is:
+
+> An existing risk exposure × A more open, continuous, and leveraged transfer instrument
+
+Stocks, indices, crude oil, gold, foreign exchange, and pre-IPO companies already have risk exposures, but investors’ ways of accessing them are constrained by trading hours, geography, account eligibility, settlement systems, and segregated margin. Perpetuals compress these constraints into:
+
+- An acceptable price source;
+- A set of margin and liquidation rules;
+- Enough long and short traders;
+- A deployer willing to assume responsibility for market operations.
+
+a16z’s statement that **“RWA perpetual trading volume reached a $1.4T annualized run rate in July, accounting for approximately half of Hyperliquid’s book”** is a run-rate measure. CoinGecko’s $524.79B is cumulative quarterly trading volume. The time windows and statistical scopes differ, so these figures cannot be added together or compared mechanically. The former is useful for illustrating the pace of growth; the latter is better suited to measuring actual scale.
+
+### 2. HIP-3 Shows That “Listing” Itself Can Be Productized
+
+Hyperliquid’s HIP-3 does more than allow anyone to list a token for free. It assigns responsibility for market deployment to builders:
+
+- A mainnet deployer must stake **500,000 HYPE**;
+- The staking requirement must be maintained for at least **183 days**;
+- The deployer is responsible for market definition, oracles, leverage parameters, and market operations;
+- Validators can impose penalties for malicious behavior or actions that undermine protocol security;
+- Each HIP-3 DEX has its own order book, margin, and deployer settings;
+- Cross-margin markets must also satisfy liquidity, oracle, and manipulation-resistance conditions. [Official Hyperliquid HIP-3 specification](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-3-builder-deployed-perpetuals)
+
+HIP-3’s real innovation goes beyond “permissionlessness”: it separates functions traditionally bundled inside an exchange:
+
+- The protocol provides matching, liquidation, margin, and settlement;
+- Builders define the underlying exposure, rules, and oracles;
+- Market makers provide initial depth;
+- Frontends handle user acquisition;
+- Data providers make markets visible.
+
+This is **the modularization of financial market infrastructure**.
+
+### 3. Pre-IPO Perpetuals Show That On-Chain Markets Can Participate in Price Discovery
+
+Talos’s research on Cerebras and SpaceX pre-IPO perpetuals provides more concrete examples:
+
+- Before Cerebras listed, its perpetual price at one point came **within 1.3% of the $350 Nasdaq opening price**;
+- These contracts do not represent actual shares, IPO allocations, ownership, or voting rights;
+- During the relevant period, SpaceX pre-IPO perpetuals had more than **$215M in open interest** and approximately **$2.2B in cumulative trading volume**;
+- After Cerebras listed, the gap between the market price and the external stock price narrowed further to a **median of approximately 0.07%**. [Talos / Coin Metrics](https://www.talos.com/insights/state-of-the-network-367)
+
+This shows that pre-IPO perpetuals can provide **continuous valuation signals**, but they cannot be equated directly with actual equity markets. Their prices may reflect:
+
+- Market expectations for the IPO price;
+- Private secondary-market valuations;
+- The degree of crowding among speculative capital;
+- Synthetic prices within the exchange.
+
+There is therefore empirical support for a16z’s “on-chain price discovery” thesis. For now, however, it looks more like **a supplementary source of price discovery for specific, highly watched assets**. It does not yet establish that on-chain markets have comprehensively replaced banks, underwriters, or main-board exchanges.
+
+---
+
+## Market Primitives Are Expanding from Perpetuals to Events, Probabilities, and New Units of Risk
+
+A strength of a16z’s article is that it does not reduce every opportunity to RWA. It describes two kinds of expansion:
+
+### A. New Ways to Transfer Existing Risks
+
+| Risk exposure | New instrument | Main value |
+|---|---|---|
+| Stocks and indices | 7×24 perpetuals | Cross-time-zone trading, unified margin, and price discovery outside regular trading hours |
+| Oil, gold, and metals | RWA perpetuals | Lower geographic and account barriers |
+| Private-company equity | Pre-IPO perpetuals | Continuous valuation before an IPO |
+| Foreign exchange and macro indicators | Perpetuals or event contracts | Longer tradable hours and leveraged expression |
+| Debt and credit | Peer-to-pool lending and credit markets | Turning nonstandard credit relationships into continuous prices |
+
+### B. New Units of Risk Acquire Financial Expression
+
+| New unit of risk | Corresponding market form | Main challenge |
+|---|---|---|
+| CPI, interest-rate decisions, and court rulings | Prediction markets and event contracts | Data sources, settlement timing, and definitions |
+| Sports and elections | Yes/No or multi-outcome markets | Outcome disputes, regulation, and liquidity |
+| GPU hours and compute | Compute futures and capacity contracts | Delivery standards, quality differences, and physical constraints |
+| Music and social trends | Attention or cultural assets | Easily manipulated metrics |
+| NFTs and memecoins | Markets for cultural relevance and attention | Information noise, short-term manipulation, and lifespan |
+| Individual credit | Peer-to-pool lending and credit shares | Identity, default, and legal recourse |
+
+Hyperliquid’s HIP-4 shows that perpetuals are not the endpoint. HIP-4 outcome markets are **fully collateralized contracts with bounded payouts and fixed terms**, supporting binary and multi-outcome markets without relying on leverage or the forced-liquidation mechanism of conventional perpetuals. The first market in the official documentation is a recurring binary-outcome contract based on the BTC price. [Official Hyperliquid HIP-4 specification](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-4-outcome-markets)
+
+These products are closer to “probability markets”:
+
+- The Yes price can be interpreted as an implied probability;
+- The No price corresponds to the opposite outcome;
+- Both directions share order-book liquidity;
+- Settlement follows the outcome once the event ends.
+
+Demand for prediction markets has also moved beyond a niche. In April 2026, Galaxy reported approximately **$24B** in monthly notional trading volume across Polymarket and Kalshi, with cumulative volume exceeding **$150B**. In a market-aggregation snapshot around October 22, 2026, the sum of daily trading volumes over the latest 30 days was approximately **$81.6B**, including approximately **$79.7B** for Kalshi and **$1.9B** for Polymarket. Because the platforms’ data-coverage days and notional-volume definitions do not fully align, these figures can only indicate activity and cannot be compared directly with RWA perpetual trading volume. [Galaxy Research: The Race to Trade Everything](https://www.galaxy.com/insights/research/hyperliquid-hip-4-prediction-markets-polymarket-kalshi-analysis)
+
+An important boundary remains: **the HIP-4 market primitive being live does not mean that arbitrary event markets are already fully open.** The official documentation emphasizes phased deployment; public reporting in July–September 2026 still mainly described testnets, templates, and subsequent upgrade paths. [The Block report on HIP-4 permissionless deployment](https://www.theblock.co/post/408875/hyperliquid-hip-4-permissionless-deployment) Permissionless supply for prediction markets is therefore still opening gradually and cannot be treated as identical to HIP-3’s builder-perp model.
+
+---
+
+## Where the Argument Holds, and Where It Overreaches
+
+### 1. “Two Traders + One Oracle” Is Not Enough
+
+a16z summarizes the listing requirements for a perpetual market as a robust oracle and two willing counterparties. This is elegant in theory, but actual markets also need:
+
+- Initial order-book depth;
+- Market makers’ inventory and capacity to absorb tail risks;
+- Reasonable leverage and margin rules;
+- Liquidation and bad-debt handling;
+- Protection against price manipulation;
+- Credible pause and settlement mechanisms;
+- User acquisition and reasons to keep trading.
+
+Otherwise, the market may exist “technically” while remaining unable to support large trades.
+
+### 2. Permissionlessness Removes Listing Filters—and Quality Filters
+
+a16z acknowledges that permissionless issuance creates considerable noise. The problem is that markets do not necessarily select quality through “natural selection”:
+
+- Early incentives can manufacture fake trading volume;
+- Thin markets can be manipulated by a small number of participants;
+- Market prices may merely reflect the oracle or an internal order book;
+- Winners may be the best-marketed markets rather than the most useful ones;
+- Cross-margining can transmit the risk of a low-quality market to other assets.
+
+HIP-3’s 500,000 HYPE stake, validator penalties, cross-margin eligibility restrictions, and on-chain backstop liquidator demonstrate that protocol operators recognize the same issue: **open issuance must be accompanied by economic collateral, governance constraints, and liquidation backstops**.
+
+### 3. 24×7 Trading Does Not Mean Global Access
+
+Global technical distribution and global legal access are different things.
+
+A stock or commodity perpetual may:
+
+- Offer no right to delivery of the actual underlying asset;
+- Provide no shareholder rights;
+- Have regional restrictions;
+- Fall under derivatives or securities regulation;
+- Depend on centralized data sources;
+- Involve multiple counterparty risks from the issuer, trading venue, and oracle.
+
+The advantage of on-chain synthetic assets is therefore **access to risk exposure**, without automatically conferring rights to the underlying asset.
+
+### 4. Trading Volume Does Not Measure Demand Quality
+
+Perpetual-market trading volume may come from:
+
+- High-frequency market making;
+- Funding-rate arbitrage;
+- Cross-venue basis trading;
+- Leverage loops;
+- Airdrop or fee incentives;
+- Short-lived events.
+
+More reliable validation metrics would include:
+
+| Metric | What to examine |
+|---|---|
+| Open interest | Whether sustained capital is absorbing risk beyond trading volume |
+| Trading volume / Open interest | Long-term allocation versus high-frequency turnover |
+| Trading volume after incentives end | Whether real user demand exists |
+| Bid–ask spreads and market impact | Whether large trades are executable |
+| Oracle price spreads | Whether price sources are stable and resistant to manipulation |
+| Event-settlement accuracy | Whether markets can conclude smoothly under their rules |
+| Number of market makers | Dependence on a single liquidity provider |
+| Cross-venue price spreads | Whether an arbitrageable consensus price has formed |
+
+The a16z examples establish that “new markets can be created quickly,” but longer data histories are needed to show that “new markets can survive after incentives end.”
+
+---
+
+## Value Capture and the Next 12–24 Months
+
+### Who Is Most Likely to Capture Value?
+
+The most significant investment implication of a16z’s argument is not identifying “which asset the next market must be,” but **who controls the market supply chain**.
+
+The rough order of priority is:
+
+1. **Market deployment**: defining contract specifications, oracles, trading hours, and settlement rules;
+2. **Trading and clearing venues**: order books, margin, liquidation, and cross-market portfolios;
+3. **Oracles and data**: providing verifiable, low-latency, manipulation-resistant data;
+4. **Liquidity bootstrapping**: initial market making, risk absorption, and incentive design;
+5. **Distribution and frontends**: bringing markets to global users, institutions, and trading bots;
+6. **Collateral and credit**: stablecoins, yield-bearing assets, lending, and portfolio margin.
+
+A common misconception needs to be addressed: **a protocol having trading volume does not guarantee value capture by its token.** What needs verification is whether that volume turns into:
+
+- Sustainable fees;
+- Deployer revenue;
+- Token-staking demand;
+- Buybacks or burns;
+- Liquidation and settlement revenue;
+- Structural demand for collateral.
+
+### Three Scenarios
+
+| Scenario | Development path | Key validation signals |
+|---|---|---|
+| Base case | RWA perpetuals and event markets continue to grow, but liquidity concentrates on a few large platforms | A small number of markets sustain high OI, with stable volume after incentives decline |
+| Bull case | On-chain platforms become the main price-discovery layer outside regular trading hours and for nonstandard assets | More institutional market making, cross-venue arbitrage, real hedging, and price linkage with main-board markets |
+| Bear case | Many markets depend on subsidies, and oracle or liquidation incidents cause a crisis of trust | Rapidly falling volume, unsustainable OI, wider spreads, and tighter regulatory restrictions |
+
+The most useful things to track ahead are not “how many more markets have launched,” but these five questions:
+
+1. **Can a new market remain liquid after 90 days?**
+2. **Is trading volume driven by real risk transfer rather than incentives and wash trading?**
+3. **Are oracles and settlement becoming new bottlenecks?**
+4. **Can RWA perpetuals attract hedgers beyond crypto speculators?**
+5. **Can protocols turn market growth into sustainable cash flow and token demand?**
+
+---
+
+## Conclusion
+
+a16z’s thesis is a deeper proposition than “blockchain will turn everything into tokens”:
+
+> Blockchain is transforming markets from products produced centrally by exchanges, regulators, and financial intermediaries into open infrastructure that developers, data providers, market makers, and protocols can produce together.
+
+Perpetuals matter because they reduce this proposition to its simplest form: a risk describable by an oracle, combined with margin, an order book, and traders on both sides, can have a global, continuous, composable market.
+
+But “any risk can be traded” must be restated as:
+
+> **Any risk that can be standardized, continuously observed, reliably settled, and supported by sufficient capital on both sides may acquire its own market.**
+
+**Final judgment.** For traders, the focus extends beyond new underlying assets to oracle quality, liquidity, liquidation, and settlement risks. For founders and investors, the real opportunity goes beyond simple token issuance and lies in “market-quality infrastructure.” Those who keep a new market credible, tradable, and sustainable after launch are more likely to capture value from this supply-side revolution.
+
+*Source and editorial note: This article was added to Thoughts based on research material supplied by the user. It retains the material’s observation windows in 2026 and market snapshot around 2026-10-22; 2026-10-23 is the publication date and does not mean the data has been refreshed. No Surf, external translation service, or independent online verification was used in this round. The original a16z article, protocol specifications, research reports, HIP-4 deployment status, and market figures are retained as cited in the supplied material and were not reverified in this round; the translation described as needing correction was not included in the material supplied for this task. Run rates, cumulative quarterly trading volume, and the notional-volume definitions of different platforms are retained separately and are not mechanically compared or added together. The 12–24-month scenarios and follow-up questions are research analysis; no automated monitoring was established and no investment operations were executed in this task.*

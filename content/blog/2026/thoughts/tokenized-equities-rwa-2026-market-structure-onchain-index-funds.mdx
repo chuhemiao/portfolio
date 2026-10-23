@@ -1,0 +1,275 @@
+---
+title: '全球链上股票与 RWA 市场深度研究报告 2026'
+publishedAt: '2026-10-22'
+summary: '从市场口径、全球需求、三套发行交易架构和 PAR/CAR 框架，分析链上股票的资产管理机会；BFunds 作为规划案例，重点讨论资产核验、申赎会计、交易执行与可持续 AUM。'
+slug: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds'
+category: 'thoughts'
+language: 'zh-CN'
+translationKey: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds'
+sourceSlug: 'tokenized-equities-rwa-2026-market-structure-onchain-index-funds'
+---
+
+副标题：Tokenized Equities、24/7 Trading、DeFi Capital Activation 与 Onchain Index Funds  
+研究日期：2026 年 10 月 22 日  
+报告类型：行业结构研究 / 产品机会分析  
+研究基础：Binance Research 八篇专题报告、CoinFound 用户提供的美国市场结构研究、RWA.xyz、bStocks 官方说明与 SEC 官方文件。
+
+## 0. 执行摘要
+
+本报告的中心结论是：代币化股票已验证资产供给、用户分销与全天候交易的初步需求，但尚未验证开放链上证券资产管理能够长期占据与传统券商同等规模的市场。正在竞争的不仅是发行量，而且是可交易流动性、资产权利结构、跨市场兑换以及资金进入其他金融用途的能力。
+
+关键观察：
+
+- RWA.xyz 于本次查询展示代币化股票 Distributed Value 约 35 亿美元，月度转移额约 104.9 亿美元，持有地址约 438 万。转移额不是成交额，持有地址不是唯一真实投资人。[S1](https://app.rwa-xyz.com/stocks)
+- bStocks 于 2026-10-20 研究报告披露 125 天达到 10 亿美元 AUM；约 68% 的 AUM 增量归于净资金流入；56% 的累计交易发生在美股常规时段之外；头部五大资产 AUM 占比从 97% 下降至不足 50%。这是发行与使用同时扩展的证据，而非稳态增长承诺。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+- Binance Research 9 月的 CAR 指标显示，股票链上金融利用率从约 1.95% 增至 7.54%，使用场景仍高度集中于流动性池与借贷。这表明更广泛的资管产品仍在初期。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+- 美国出现两条与境外证券凭证并行的市场路径：DTC/Nasdaq 将代币化权益嵌入既有证券交易与登记体系，SEC 9 月创新豁免则为满足条件的受准入链上交易场所提供有限试验空间。[S9](https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072)[S10](https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development)[S11](https://www.sec.gov/rules-regulations/2026/09/4-927)
+- 链上指数基金的首要产品风险不是合约能否发行 ERC-20，而是底层资产的合法身份、托管/转让可行性、申赎守恒、价格与流动性质量、跨发行方权利不可替代性。
+
+研究判断：未来价值捕获可能由单纯发行端逐步向发行、分销、交易执行、抵押和资管协议的组合转移。但投资组合类协议的市场空间尚缺乏直接证据，需要独立验证用户支付意愿与长期 AUM 留存。
+
+## 1. 研究方法、数据边界与术语
+
+### 1.1 信息层级
+
+A 级：SEC 法规文件、交易所和发行方公告、已公开的协议技术文件；用于确认制度及发行机制。  
+B 级：RWA.xyz、链上数据、Binance Research 的明确统计指标；用于观察行业规模和行为。  
+C 级：业内报道、情景预测与本报告推断；必须明确标记为预测或假设。  
+CoinFound 2026-10-14 市场结构研究由用户提供，作为待复核的分析参照，而非自动视为官方事实。
+
+### 1.2 不可混淆的统计口径
+
+| 指标 | 含义 | 常见误用 |
+|---|---|---|
+| Distributed Value | 已分发或流通的链上代币化资产价值，按平台定义 | 等同全部底层证券市值 |
+| AUM | 平台定义下资产管理或托管价值 | 等同净新增资金流入 |
+| Onchain Transfer Volume | 链上资产转移的价值总量 | 等同独立成交量或协议收入 |
+| Trading Volume | 成交名义价值，可能包括平台交易和 DEX | 等同真实净资本形成 |
+| Holder Addresses | 持有相关代币的链上地址数 | 等同去重用户数 |
+| TVL / CAR | 投入特定 DeFi 应用的资产价值/比例 | 等同没有重复计数的经济收益 |
+| Reference NAV | 参考价格下基金底层净资产 | 等同任何时刻可成交或可赎回价格 |
+
+币安 9 月《The RWA Activation Era》采用股票类资产约 44.3 亿美元的统计口径，而本次 RWA.xyz Tokenized Stocks 仪表盘显示 Distributed Value 约 35 亿美元。二者时间与纳入范围不同，不可直接得出短期市场下跌的结论。[S1](https://app.rwa-xyz.com/stocks)[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+## 2. 市场规模与阶段判断
+
+### 2.1 规模：小市场、快速扩张、统计口径需要严格限制
+
+RWA.xyz 截至查询时的代币化股票 Distributed Value 约 35 亿美元，持有地址约 438 万，月度转移额约 104.9 亿美元。[S1](https://app.rwa-xyz.com/stocks) 在同一数据面板上，bStocks 约 12 亿美元，Ondo 约 9.06 亿美元，xStocks 约 6.08 亿美元。发行规模头部化，但资产数、持有人结构与交易活跃度可能呈现不同排名。
+
+币安研究院 9 月报告曾将链上股票市值突破 30 亿美元与同期更广泛 RWA 资产约 380 亿美元比较；这里是报告发布时间的历史截面，不应与 10 月动态面板混成同一时点。[S3](https://www.binance.com/en/research/analysis/rewriting-the-on-chain-economy)
+
+### 2.2 AUM 增长分解
+
+AUM 的变化至少可以写成：
+
+AUM(t) - AUM(t-1) = Net Issuance/Redemption + Price P&L + Corporate-Action Adjustment + Other Measurement Changes。
+
+币安 10 月研究中的 bStocks 约 68% AUM 增量由净流入解释，支持扩张含有真实资金流动，而不仅是股票价格上涨。其早期 AUM 高波动及单周明显流出，也提醒不能把短期指数式增长直接外推成 2027 年预测。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+
+### 2.3 2030 年规模情景，必须与预测严格区分
+
+Binance Research 9 月报告引用了对 2030 年代币化股票规模的三档情景：约 610 亿、3490 亿和 9870 亿美元，对应其假设的可编程渗透率约 0.04%、0.23%、0.65%。这些是场景，不是可验证的确定预测，也不是特定新产品可获得的市场规模。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+我们的解释：即使代币化股票份额长期增长，指数协议仍可能因为强大的券商分销、低费率 ETF 和稀薄链上流动性而无法获取相应利润。总量市场增长不是商业模式成立的充分条件。
+
+## 3. 需求分解：全球进入、时间交易与组合持有
+
+### 3.1 全球进入的需求
+
+6 月币安报告展示约 80% 的早期 bStocks 活动来自新兴市场，93% 订单是少于一股的零碎交易，交易额中位数约 18.81 美元。[S7](https://www.binance.com/en/research/analysis/stock-market-that-never-sleeps) 10 月研究按不同时间与地区口径称新兴和前沿市场约贡献 70% 交易量。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers) 两个口径不应直接比较同比变化。
+
+需求假说：稳定币原生用户更容易将美股敞口作为钱包资产管理的一部分。但是是否能够获取证券、适用何种税务安排、兑换到真实股票的条件仍会影响最终使用。
+
+### 3.2 时间弹性与价格发现
+
+10 月研究显示 bStocks 约 56% 的交易量来自常规美股交易时段外：工作日非正时段 49%，周末 7%。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers) 这验证“时间可选择”具有实际行为基础，但周末并非目前的大多数交易需求来源。
+
+7 月币安研究在有限观察样本中发现 bStocks 周末价格反映了较多的周一开盘缺口；此为历史相关性，不证明有充分可交易的深度，也不构成可复制的套利收益率。[S8](https://www.binance.com/en/research/analysis/stock-price-discovery-moves-on-chain)
+
+9 月《Beyond the Closing Bell》聚焦以股票及 RWA 为参考的永续合约，而非同权现货证券。永续交易量不能直接合并至代币化现货股票交易额，预上市衍生品也不能被解读为持有未上市公司股权。[S6](https://www.binance.com/en/research/analysis/beyond-the-closing-bell)
+
+### 3.3 用户分层与投资期限
+
+币安 10 月研究指出 Gen Z 约占 bStocks 用户 46%，但只贡献约 8% 成交价值；千禧一代约占用户 37%，贡献约 78% 成交价值。此外，年轻用户更偏向周末、短持仓交易，千禧一代持仓期限相对更长。[S2](https://www.binance.com/en/research/analysis/bstocks-by-the-numbers)
+
+产品含义：交易所“活跃”的定义和基金产品“有价值用户”的定义不同。基金应用应重点测试 D7/D30/D90 持仓留存、定投频率、再平衡接受度及用户的风险预算，而不是以每笔交易的高频程度作为唯一 North Star。
+
+## 4. 发行与交易市场的三套架构
+
+| 维度 | 境外发行支持型证券凭证 | DTC/Nasdaq 现有市场延伸 | SEC TSV 原生链上场所 |
+|---|---|---|---|
+| 基础权利 | 由具体发行/托管与条款定义的经济敞口 | DTC 体系内可记录、可转移的证券权益 | 满足规则要求的同权代币化 NMS 股票 |
+| 交易场所 | 交易所与支持的 DeFi 市场 | 传统订单簿为主 | 有准入控制的 AMM 池 |
+| 价格发现 | 链上/平台报价与标的证券锚定 | 延续传统股票市场价格 | 链上资金池定价，受套利与库存影响 |
+| 转账限制 | 发行方、资产和法域决定 | DTC 登记的参与者钱包 | TSV 参与资格与资产要求 |
+| 关键瓶颈 | 发行可信度、可赎回性、流动性 | 存管和系统对接、上线节奏 | 深度、流动性库存、规则限制 |
+
+### 4.1 境外代币化股票凭证
+
+bStocks 官方表示，其产品在 BNB Smart Chain 发行、底层由相应股票支持，通过特定平台渠道提供换回股票的功能；股票拆分和股息再投资通过其 Multiplier 等机制处理。[S12](https://www.bstocks.finance/en/) 这属于产品发行声明，需要结合招股文件、托管证明和实际兑换权判断。不能自动认为代币持有人在上市公司股东登记册上拥有直接表决权。
+
+Ondo 和 xStocks 同属主要提供者，但不同发行商之间的法律承诺、持有人资格、链和兑换条件不可默认相同。任何以“同一股票代码”聚合多发行商的 DeFi 产品都必须保存独立资产身份。
+
+### 4.2 DTC / Nasdaq：已有市场的链上交付接口
+
+SEC 2025 年 12 月发布针对 DTC 代币化证券权益试点的工作人员无异议安排；允许适格参与者登记钱包间转移，DTC 保留正式账簿记录。Nasdaq 于 2026 年 3 月取得相关规则批准，代表存量证券交易系统对代币化交付方式开放接口。[S9](https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072)[S10](https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development)
+
+优势：使用既有交易和价格发现基础设施，减少新建流动性池的需求。限制：链上流动未必可由任何 DeFi 钱包自由持有或托管，因此不能未经核验就被当成 BSC 的 ERC-20 底层资产。
+
+### 4.3 SEC TSV：有准入控制的链上交易试验
+
+SEC 于 2026 年 9 月 17 日发布 Release 34-106402，为特定有准入要求的 Tokenized Securities Venue 及流动性提供者提供临时、附条件豁免。适用股票需满足与底层普通股相应的经济和治理权利要求，并允许相关发行公司按规则提出反对。此为受限试验而非整个 DeFi 自动豁免。[S11](https://www.sec.gov/rules-regulations/2026/09/4-927)
+
+2026 年 10 月 21 日 SEC 官方列表列出 TSV LLC、OKXICE TSV、Perpetuals.com 三家意向通知，但明确强调上榜不表示已经符合豁免条件或投入营业。[S13](https://www.sec.gov/about/divisions-offices/division-trading-markets/innovation-exemption)
+
+用户提供的 CoinFound 报告将 DTC/Nasdaq 与 SEC TSV 两条路线进行比较；其关于日成交额度、个股分布、场所测试进度和股票异议的计算属于 10 月 14 日截面，应以政策原文及最新通知复核后再向外引用，不能直接当作当前实时数据。
+
+## 5. 资本利用率：PAR 与 CAR 框架
+
+定义（取自 Binance Research）：
+
+PAR = Qualifying On-chain Programmable Asset Value / Underlying Market Value。  
+CAR = Deduplicated Value Deployed in Verified On-chain Financial Applications / Circulating Qualifying Asset Value。
+
+PAR 衡量上链渗透，CAR 衡量上链之后的使用。2026 年 9 月的股票类 CAR 约为 7.54%，从年初的 1.95% 上升；其 DeFi 使用集中在流动性池约 65.4%、借贷约 28.1%。[S4](https://www.binance.com/en/research/analysis/the-rwa-activation-era)
+
+重要的测量陷阱：
+
+- 如果相同资产在跨协议中重复质押，TVL 的简单求和可能夸大真实经济投入。
+- 高 CAR 可能来自激励与循环抵押，而非可持续的实用需求。
+- ERC-20 总发行量不等同实际可转让和可做抵押的自由流通量。
+- 证券休市与可转让性限制会改变抵押物在压力情景下的清算价值。
+
+对创新者而言，最有价值的机会不是人为推高 CAR，而是创造有明确资产会计、可衡量使用价值、风险定价透明的应用。
+
+## 6. 竞争与价值链分析
+
+### 6.1 五层市场结构
+
+L1 证券权利与托管：证券发行者、SPV、受托/券商托管、公司行动处理。  
+L2 Tokenization & Registry：代币发行、合同身份、证券权益描述、白名单与更新。  
+L3 Distribution & Venue：中心化交易所、券商、DEX、RFQ、链上交易场所。  
+L4 Liquidity & Capital Use：稳定币、流动性池、借贷、抵押、风险管理。  
+L5 Portfolio & Investment Application：指数、篮子交易、策略、资产净值、基金份额与 Agent 接口。
+
+新产品不必重做所有五层，应当准确选择自己在哪一层创造新增价值。
+
+### 6.2 竞争者的角色不能混淆
+
+bStocks：底层证券凭证及平台分销生态。  
+Ondo / xStocks：具有独立发行权利结构与分销能力的资产提供方。  
+DTC/Nasdaq：成熟证券市场的登记结算与交易层延伸。  
+TSV：受条件约束的新型链上市场基础设施。  
+Index / Basket 协议：在可被托管和执行的底层资产之上构建投资组合。
+
+对于指数协议，主要竞争者不仅是其他 DeFi 协议，也包括券商已有的 ETF、自动定投、碎股、复制组合功能。必须证明用户实际获得了新增效用，而非仅仅把持仓从一家平台移动到另一家平台。
+
+## 7. BFunds 战略适配：链上指数作为下一层金融产品
+
+BFunds（bfunds.xyz）规划首期使用 BNB Smart Chain 上经过官方来源核验的 bStocks 构建 Index Recipe、按比例实物申赎的 Index Vault 和基金份额。以下内容是基于现有产品规划的策略分析，不是市场已验证事实，也不代表当前已经上线。
+
+### 7.1 四项核心产品原语
+
+A. Verified Asset Identity：chainId、发行方、合约地址、底层股票、权利结构、来源证据与资产状态。不能以 Ticker 或 Logo 判真。  
+B. Index Recipe：目标权重、方法论版本、调仓频率和风险边界，是策略定义，不等于真实持仓。  
+C. Index Vault & Share：资产储备、按比例申赎和真实链上份额；金库会计以原始 Token 储备为准。  
+D. Pricing & Execution：参考净值、可执行买卖报价、交易成本、价格新鲜度及风险参数严格分离。
+
+### 7.2 为什么不直接复制传统 SPY / QQQ
+
+如果用户只需要标普 500 的市场收益，成熟 ETF 和已有的代币化 ETF 凭证通常更简单、更深、更便宜。新的多资产 Vault 还会引入合约、流动性、再平衡和运营成本。BFunds 必须优先寻找传统 ETF 暂未覆盖或不便组合的产品：跨股票与加密资产组合、主题因子指数、可编程风险预算、Agent 可复核调仓策略，以及在钱包层可直接使用的指数份额。
+
+每个主题是否值得发行，应通过是否真正可买入、滑点、容量、策略透明度和用户留存测试，而非叙事热度决定。
+
+### 7.3 需要明确的技术安全不变量
+
+- 资产唯一标识为链 ID + 发行方 + 完整合约地址；Verified 与 Active 独立。
+- Registry 管理员不能以一次不受控操作将未知资产直接升级为资金可进入状态。
+- 金库实物申赎基于 raw balance 和总份额供应，禁止把 UI Multiplier 重复计入资金数量。
+- 新增入金、资产调仓、实物退出可具有不同暂停规则，以免风险事件把用户全部锁死。
+- 不将多资产金库直接宣称实现 ERC-4626 单资产标准。
+- 单币种 USDT 买入只在有经过真实核验的成交路径、报价、滑点约束时启用；否则使用实物篮子申购。
+- 不以合约地址“与某个官方 Symbol 相同”代替正式来源核验；链上操作必须再次检查 allowlist。
+
+### 7.4 BFunds 潜在商业模型与限制
+
+主收入候选：透明的 AUM 管理费、实际交易执行服务费、经授权的 B2B 资产组合基础设施收费。收费模型要避免重复层级收费，并结合托管、审计、价格数据和再平衡费用计算净收入。
+
+示例：1,000 万美元平均 AUM × 0.35% 年费 = 3.5 万美元年度管理费毛收入，尚未扣除任何成本。这个算式说明新资管协议早期不能只靠低规模 AUM 维持较大的安全与运营团队。
+
+## 8. 核心风险矩阵
+
+| 风险 | 触发机制 | 对投资者与协议的影响 | 首要应对 |
+|---|---|---|---|
+| 发行方与托管 | 凭证无法兑换、资产证明失效、发行条款变更 | 资产价格与权益偏离 | 官方源校验、来源文件与发行方监控 |
+| 合约伪造 | 同名 Token、恶意代币或异常代理升级 | 买入假股票、损失底仓 | Registry + 代码核验 + 合约端 allowlist |
+| 交易深度 | 休市、做市商撤单、流动性枯竭 | 大额滑点、无法赎回 | 可执行报价、额度和风控停机 |
+| NAV 偏离 | 价格源延迟、Multiplier 错配 | 份额错误发行或净值误报 | raw/UI 分离、价格时间戳与单位测试 |
+| 公司行动 | 分红、拆股、停牌、代码变更 | 错误持仓显示与策略权重 | 事件监控、快照、状态转换 |
+| 借贷链式风险 | LTV 过高、同币重复质押 | 强平与抵押品抛售 | 资产分层、抵押率和隔离限制 |
+| 治理与权限 | Registry 或 Vault 管理权限泄露 | 恶意资产或用户资金风险 | 多签、Timelock、Guardian、审计 |
+| 法律与转移资格 | 发行或交易场所限制 | 无法合法持有或转账 | 执行发行方约束，不做绕过机制 |
+
+## 9. 2027–2030：三个可证伪情景
+
+以下是本报告的结构性研究情景，不是币安给出的预测，也不表示市场将确定按路径发展。
+
+保守情景：大量资产发行，但真实链上市场深度停滞；用户主要在有补贴的大平台交易；链上指数产品因费用、限制和持有人信任不足无法形成可持续 AUM。
+
+中性情景：少数发行商形成成熟兑换和做市网络；链上现货、借贷和主题篮子各自建立稳定细分需求；投资组合协议通过分销渠道积累小而稳健的资金规模。
+
+扩张情景：跨发行商资产身份标准化、交易与交收接口成熟、合格流动性提供者持续报价，部分资产管理流程迁移为可编程链上操作；指数与风险管理层产生明显规模经济。
+
+决定情景的不是新闻数量，而是以下变量的持续改善：净流入留存、深度、可赎回性、价格偏离、链上可使用资本比例、审计后风险损失和真实单位经济。
+
+## 10. 跟踪指标仪表盘（未来每周/月更新）
+
+| 指标 | 数据来源候选 | 解释 |
+|---|---|---|
+| Tokenized Stock Distributed Value | RWA.xyz | 总存量，不代表净流入 |
+| Issuance / Redemption Net Flow | 发行方/RWA 数据 | 资本净形成 |
+| 30D Active Addresses / Holder Growth | RWA.xyz + 链上 | 使用与地址增长，需去重 |
+| DEX vs Centralized Volume | 交易场所与链上 DEX | 市场结构变迁 |
+| Non-market-hours Volume | 交易平台披露 | 时间弹性需求 |
+| 1 万 / 10 万美元可执行滑点 | DEX / RFQ 模拟成交 | 真正投资容量 |
+| Reference vs Executable Price Deviation | 多价格源 | 市场质量与套利能力 |
+| DeFi CAR / TVL Components | DefiLlama 等 | 资本使用与风险构成 |
+| Issuer Source/Contract Changes | 官方公告 + 链上索引器 | 资产安全维护 |
+| Fund Net AUM, 30/90D Retention | 指数协议自身 | 基金类 PMF |
+
+## 11. 对创业者的最终判断
+
+链上股票不会因为名义市场价值巨大就自然诞生赢家。过早押注与发行商直接竞争，需要面对托管、证券权利与强大的分销网络；过早押注自建交易所，需要面对做市资本、库存和市场组织成本。对于没有证券发行或交易所核心资源的团队，构建可信的资产识别、可验证的交易组合、清晰的份额会计和可扩展的风险接口，可能是进入此市场更有效的工程切口。
+
+BFunds 应坚持从 bStocks + BNB Chain 的真实资产核验及主题组合工具切入，随后再证明基金份额、交易执行和可持续 AUM 的经济价值。多发行商和多链是一种设计边界，不应提前成为 MVP 必须同时交付的功能。
+
+研究结论可以浓缩为：证券代币化正在创造可编程资产供应，但只有当资产的真实身份、流动性与资本管理结合，才可能形成具有持续用户价值的新金融应用层。
+
+---
+
+## 12. 原始资料、日期与交叉验证
+
+[S1] RWA.xyz, *Tokenized Stocks*, 动态数据，2026-10-22 查询。https://app.rwa-xyz.com/stocks  
+[S2] Binance Research, *bStocks By The Numbers*, 2026-10-20。https://www.binance.com/en/research/analysis/bstocks-by-the-numbers  
+[S3] Binance Research, *Rewriting the On-Chain Economy*, 2026-09-29。https://www.binance.com/en/research/analysis/rewriting-the-on-chain-economy  
+[S4] Binance Research, *The RWA Activation Era*, 2026-09-18。https://www.binance.com/en/research/analysis/the-rwa-activation-era  
+[S5] Binance Research, *When Stocks Become On-Chain Assets*, 2026-09-11。https://www.binance.com/en/research/analysis/when-stocks-become-on-chain-assets  
+[S6] Binance Research, *Beyond the Closing Bell*, 2026-09-22。https://www.binance.com/en/research/analysis/beyond-the-closing-bell  
+[S7] Binance Research, *Stock Market That Never Sleeps*, 2026-06-17。https://www.binance.com/en/research/analysis/stock-market-that-never-sleeps  
+[S8] Binance Research, *Stock Price Discovery Moves On-Chain*, 2026-07-29。https://www.binance.com/en/research/analysis/stock-price-discovery-moves-on-chain  
+[S9] SEC, Nasdaq Rule SR-NASDAQ-2025-072，2026-03-18。https://www.sec.gov/rules-regulations/self-regulatory-organization-rulemaking/sr-nasdaq-2025-072  
+[S10] SEC, DTC Tokenization No-action 官方声明，2025-12-11。https://www.sec.gov/newsroom/speeches-statements/peirce-121125-tokenization-trending-statement-division-trading-markets-no-action-letter-related-dtcs-development  
+[S11] SEC, *Innovation Exemption*, Release 34-106402，2026-09-17。https://www.sec.gov/rules-regulations/2026/09/4-927  
+[S12] bStocks 官方网站，2026-10-22 查询。https://www.bstocks.finance/en/  
+[S13] SEC, *Innovation Exemption — Notices*, 2026-10-21 更新。https://www.sec.gov/about/divisions-offices/division-trading-markets/innovation-exemption  
+[S14] Binance Research, *Early Momentum in Tokenized Stock Adoption*, 2026-07-10。https://www.binance.com/en/research/analysis/early-momentum-in-tokenized-stock-adoption  
+[S15] The Block Research, *RWA Tokenization in 2026: Tokenized Stocks Drive the Next Phase*, 2026-10-05。https://www.theblock.co/research/tokenization/rwa-tokenization-2026-tokenized-stocks-drive-next-phase-417702  
+[S16] CoinFound 用户提供的《美国股票上链两套市场架构》研究原稿，数据截至 2026-10-14；用于提出比较框架，关键政策事实以上述 SEC 原始来源为准。
+
+**使用限制**：本报告基于截至研究日期的公开资料。发行方报告不等于独立审计，价格发现相关结论多依赖早期样本，预测情景不构成估值承诺。本文不是证券发行说明书、投资建议或法律意见。
+
+
+*资料整理说明：本文依据用户提供的同名文件新增为「思考」，保留原稿 2026-10-22 的研究日期、来源及统计口径。本轮未调用 Surf、外部翻译服务或独立联网核实；文中的查询日期、政策描述、市场数据与来源交叉验证均为原材料记录，不表示本轮已重新查询或验证。*
+
+*CoinFound 原始研究未随本次两份文件附上，相关内容仅按本稿的转述保留。BFunds 内容为产品规划与策略分析，不表示项目已上线或获得市场验证；跟踪指标及更新频率为原稿建议，本次未建立自动更新、监控或实施文中的产品开发任务。*
