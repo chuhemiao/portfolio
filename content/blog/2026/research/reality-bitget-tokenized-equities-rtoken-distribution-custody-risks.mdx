@@ -1,0 +1,127 @@
+---
+title: 'Reality：Bitget 美股代币化、分发与托管风险研究'
+publishedAt: '2026-10-24'
+summary: 'Reality 以 Bitget 分发和 rToken 保证金、借贷、股票转入构建美股代币化业务。本文对照资产覆盖与 AUM，分析经济受益权、托管与鉴证、发行资格、平台依赖及增长放缓，并保留材料中的未核实限制。'
+slug: 'reality-bitget-tokenized-equities-rtoken-distribution-custody-risks'
+category: 'research'
+language: 'zh-CN'
+translationKey: 'reality-bitget-tokenized-equities-rtoken-distribution-custody-risks'
+sourceSlug: 'reality-bitget-tokenized-equities-rtoken-distribution-custody-risks'
+---
+
+## TL;DR
+
+原材料将 Reality 描述为  **Bitget 旗下的美股代币化发行平台** ，2026 年 5 月下旬发布，6 月 2 日正式上线。它在链上发行 rToken（例如 rAAPL、rNVDA），每个 rToken 由 Alpaca Securities 托管的真实股票 1:1 支撑。它的特点是 **覆盖资产多、增长快** ：截至 2026-09-24，Reality 覆盖  **2,160 只股票和 ETF** ，数量排同类第一；AUM 约  **$1.62 亿** ，在代币化股票发行方里排第五，规模约为 Ondo 的五分之一。
+
+我的判断是：Reality 的核心竞争力是  **Bitget 的分发渠道** ，包括交易所用户、钱包、统一账户保证金和借贷，发行结构本身并没有明显领先。主要风险有三个：
+
+-  **合规定位有张力** ：官网自称"受监管"，但同时声明 rToken 属于 **未注册证券** ，只向许可地区的非美国人士提供。
+-  **母公司风险会传导** ：原材料称 Bitget 在 2026 年 9 月发生了约  **$3.88 亿** 的被盗事件；本轮未独立核实。
+-  **增长在放缓** ：7 月到 9 月 AUM 增速明显下降。
+
+另外，原材料未找到 Reality 自己的平台代币，所以这更适合当作"Bitget RWA 业务线"来研究，而不是一个可以直接投资的标的。
+
+---
+
+## 项目定位与产品机制
+
+Reality 是一个有交易所背景的股票代币化发行方，不是独立的 DeFi 协议。根据官方文档，Reality 通过持牌券商在 Nasdaq、NYSE 买入并托管底层股票，再在链上发行对应的 rToken。命名规则是"r + 股票代码"，例如 TSLA 对应 rTSLA。[Reality Docs](https://realityfinance.xyz/info/docs/rtokens/overview)
+
+主要设计如下：
+
+| 机制 | 设计 | 怎么看 |
+|---|---|---|
+| 代币标准 |  **ERC-8056** ：在 ERC-20 上加一个显示乘数，拆股、合股时只改乘数，不改余额 | 放在 AMM 池或借贷合约里的头寸不受拆股影响，对 DeFi 集成友好 |
+| 定价模型 | 代币价格只跟踪股价，分红用稳定币另行发放 | 不用总回报或 rebase 模型，1 rAAPL 始终对应 1 股 AAPL，定价最直观 |
+| 结算 | 支持实时结算和按日轧差两种模式；底层股票都是实时成交 | 轧差模式能提高资金效率，但两次链上结算之间存在敞口 |
+| 可组合性 | 链上 **没有转账限制和白名单**  | 方便接入 DeFi，但和"仅限非美国人士"的要求存在冲突（见风险部分） |
+| 支持的链 | 目前只有 EVM 链 | 暂不支持 Solana，这是和 xStocks 的一个差异 |
+
+持有者的权利以 Bitget FAQ 为准：rToken 只代表 **经济受益权** ，包括价格敞口、净分红（统一按  **30%**  预扣美国税后转成 USDT）和公司行动调整， **没有投票权，也没有直接登记为股东的权利** 。底层股票登记在一个 **破产隔离的 SPV**  名下，按 FAQ 的说法只有用户对它有追索权。[Bitget rToken FAQ](https://www.bitget.com/academy/bitget-rtoken-faq)
+
+## 合作方与 Bitget 生态整合
+
+Reality 的增长主要靠 Bitget 的流量和产品。官方列出的合作方是 Bitget 交易所、Bitget Wallet（首个官方钱包伙伴）、Alpaca Securities（托管，FINRA 注册、有 SIPC 保护）和 The Network Firm（独立储备鉴证）。[Reality Partners](https://realityfinance.xyz/info/docs/ecosystem/partners&integrations)
+
+rToken 在 Bitget 内部的用途已经比较完整（来自 [Bitget rToken FAQ](https://www.bitget.com/academy/bitget-rtoken-faq)）：
+
+| 功能 | 参数 | 意义 |
+|---|---|---|
+| 统一账户保证金 | 支持  **100+**  个 rToken，部分抵押率最高  **95%**  | 股票仓位可以直接作为加密衍生品的保证金 |
+| 杠杆交易 | 最高  **10x**  | 放大收益，也放大风险 |
+| 抵押借贷 | 初始 LTV  **78%** ，追加保证金线  **85%** ，清算线  **91%** ；单个 rToken 抵押上限  **120–200 万 USDT**  | 可以借出 USDT、USDC 和 100+ 种加密资产 |
+| 24/7 交易 | 约  **90**  只主要标的 | 周末和盘后也能交易，但开盘跳空会带来清算风险 |
+| 最小下单 |  **1 或 10 USDT** ，支持碎股 | 降低散户门槛 |
+
+产品节奏比较快：
+
+- 2026-10-13 上线  **rToken Transfer** ：用户可以把外部券商账户里的 3,000+ 只美股和 ETF 免费转入，转入的股票进入 Bitget 的 Alpaca 综合账户后，自动换成 rToken。[BeInCrypto](https://beincrypto.com/bitget-rtoken-transfer-3000-stocks-etfs-tokenization/)
+- 配套推出了价值  **$100 万** 的 rSPCX（SpaceX 代币）奖励活动。[ChainCatcher](https://www.chaincatcher.com/en/article/2295930)
+- 同时推出  **Super Match**  流动性框架，用来连接 Bitget 内部订单流、做市商和多个价格来源。
+- 还上线了以 rToken 为标的的固定票息票据（FCN）产品。[BeInCrypto](https://beincrypto.com/bitget-launches-fixed-coupon-notes-for-us-stock-rtokens/)
+
+## 增长数据与市场地位
+
+AUM 上线后增长很快，但 7 月以后明显放缓：
+
+| 时间 | 指标 | 来源 |
+|---|---|---|
+| 2026-06-02 | rToken 正式上线 | [Bitget FAQ](https://www.bitget.com/academy/bitget-rtoken-faq) |
+| 2026-06-19 | AUM 超过  **$5,000 万** （上线不到一个月） | [Bitget Blog](https://www.bitget.com/blog/articles/reality-surpasses-50m-tokenized-asset-aum) |
+| 2026-07-06 | AUM 约  **$1.14 亿**  | [BeInCrypto](https://beincrypto.com/bitget-rtoken-transfer-3000-stocks-etfs-tokenization/) |
+| 2026-07 | 交易量环比  **+121.95%** ，单日交易笔数最高  **127,691** ；累计交易超过  **200 万笔** （8 月 5 日公布） | [Bitget Blog](https://www.bitget.com/blog/articles/reality-rtoken-2-million-transactions-july-growth) |
+| 2026-09-24 | AUM 约  **$1.62 亿** ，覆盖  **2,160**  只资产 | [TechFlow / RWA.xyz](https://www.techflowpost.com/en-US/newsletter/137605) |
+
+从 6 月 19 日到 7 月 6 日，17 天里 AUM 从超过 $5,000 万增至约 $1.14 亿；若以 $5,000 万作为参考基数，增幅约  **+128%** 。实际起点仅知超过 $5,000 万，无法据此确认 AUM 是否翻倍。但从 7 月 6 日到 9 月 24 日，约 80 天只增长了  **+42%** 。原材料据此推断，上线初期的活动和存量迁移带来的红利已经基本消化；这不是由用户队列或净流入分解验证的结论。10 月推出的股票转入功能和 SpaceX 奖励，可以看作是提振 AUM 的第二轮动作。
+
+和同行相比，截至 2026-09-24 RWA.xyz 的数据：
+
+| 发行方 | AUM | 覆盖资产数 |
+|---|---:|---:|
+| Ondo |  **~$8.82 亿**  | — |
+| bStocks |  **~$7.54 亿**  | — |
+| xStocks |  **~$5.76 亿**  | 1,028 |
+| Securitize |  **~$4.24 亿**  | — |
+|  **Reality**  |  **~$1.62 亿**  |  **2,160（第一）**  |
+
+Reality 的 AUM 约占前五名合计（约 $27.98 亿）的  **5.8%** 。原材料记录的 RWA.xyz 页面查询显示，整个代币化股票赛道的分发价值约为  **$34.5 亿** ，30 天转账量约  **$103.7 亿** ，持有地址约  **440 万** 。[RWA.xyz](https://app.rwa.xyz/stocks) 需要注意，这个赛道总量和 Reality 的 $1.62 亿不是同一时间点的数据，所以只能粗略估算 Reality 的份额大约在  **4%–5%** 。
+
+从单只代币看，以 rSPCX 为例（截至 2026-10-24）：
+
+- 价格  **$147.13** ，市值约  **$1,528 万** ，24 小时成交额约  **$37 万** 。
+- 历史最高  **$229.25** （2026-06-16），历史最低  **$105.49** （2026-08-06）。
+
+单只热门标的的链上流动性比较有限，可见大部分成交可能仍在 Bitget 中心化撮合内完成。这是根据链上数据做的推断，Reality 没有公布交易所内外成交量的拆分。
+
+## 风险与合规
+
+ **1. "受监管"的定位和"未注册证券"的声明并存。**  原材料记录，访问 Reality 官网（包括中文页面）时只看到地区访问受限页，上面写明 rToken  **属于未注册证券，仅面向许可法域内的合格非美国人士** ，禁止向美国等受限地区分发。也就是说，"受监管"指的是 **托管和券商这一环** （Alpaca 在 FINRA 注册），代币本身并没有在 SEC 注册。发行主体在哪里注册、受哪国监管，在原材料查到的公开资料里没有写明；Bitget 的新闻稿署名地是塞舌尔维多利亚。
+
+ **2. 链上不设限，但分发上禁止美国用户。**  rToken 链上没有转账限制和白名单，美国人士的限制只能靠前端和交易所 KYC 来执行。如果二级市场（例如 DEX）上的代币流到受限地区用户手里，监管风险可能沿着发行方传导。
+
+ **3. 母公司风险高度集中。**  原材料称，2026 年 9 月 Bitget 因第三方供应链漏洞被盗约  **$3.88 亿** ，一度暂停提现，到 10 月初才逐步恢复；这一事件描述本轮未独立核实。[Cointelegraph](https://cointelegraph.com/news/bitget-388m-hack-third-party-security-vulnerability) rToken 的底层股票虽然放在 SPV 和 Alpaca，但交易、流动性、价格发现和赎回入口基本都依赖 Bitget。所以交易所层面的运营事故，即使不直接影响底层资产，也会影响用户能不能顺利退出。
+
+ **4. 结构上的风险。**  主要有以下几点：
+
+- 分红统一按  **30%**  预扣税，不区分用户所在地，对有税收协定国家的用户不利。
+- 没有投票权。
+- 24/7 交易遇到周一开盘跳空，可能引发连环清算。
+- 储备鉴证依赖单一机构（The Network Firm），原材料没有提供最新鉴证报告的具体数字，需要用户自己去官方 Proof of Asset 面板核实。
+
+| 风险 | 严重度 | 关注点 |
+|---|---|---|
+| 监管 / 未注册证券 | 高 | SEC 等对离岸股票代币的执法动态 |
+| Bitget 对手方与运营风险 | 高 | 安全事件之后的恢复情况和储备透明度 |
+| 增长放缓 | 中 | rToken Transfer 推出后 AUM 能否回到高增速 |
+| 流动性集中在中心化平台 | 中 | 链上 DEX 深度、Super Match 做市深度 |
+| 开盘跳空与清算 | 中 | 杠杆和抵押参数是否调整 |
+
+## 结论
+
+Reality 本质上是 Bitget 统一交易所（UEX）战略里的美股发行层。它的优势不在技术：ERC-8056 处理拆股、价格只跟踪股价等设计确实整洁，但壁垒不高。它真正的优势在 **分发和资金效率** ：覆盖资产数排第一，rToken 能直接当保证金和抵押品，还能从传统券商把股票转进来。这些让 Reality 在约 4 个月里做到了  **$1.62 亿** 的 AUM。
+
+不过，它的 AUM 仍只有 Ondo 的约  **18%** ，而且 7 月以后增速明显放缓。同时它把三层风险叠在一起：未注册证券的身份、依赖单一交易所，以及原材料所述、尚未经本轮独立核实的母公司大额被盗事件。
+
+ **结论：**  Reality 适合当作"Bitget RWA 业务线"来跟踪，目前没有可以直接投资的平台代币。如果是 rToken 用户，可以把它当作方便的美股敞口工具，但要清楚自己拿到的是离岸经济受益权，不是直接持股，而且对手方风险集中在 Bitget。后续重点看三件事：rToken Transfer 推出后的 AUM 变化（年底前能否站稳  **$2.5 亿** 以上）、储备鉴证报告的连续性，以及主要监管机构对离岸股票代币的态度。
+
+*资料整理说明：本文依据用户提供的研究材料新增，保留 2026-09-24 的发行方 AUM 对照及截至 2026-10-24 的 rSPCX 观察值；赛道总量与项目 AUM 不属于同一时点。本轮未调用 Surf、外部翻译服务或独立联网核实；平台归属、产品参数、ERC-8056 机制、发行/托管/SPV 权利、税率、鉴证、监管定位与安全事件均为原材料或其引用来源的陈述，未在本轮验证。原材料中的地区访问受限记录不代表本轮实际访问结果；所述 Bitget 被盗、停提与恢复情况尤其不应视为本轮已确认事实。Alpaca 的注册或 SIPC 保护描述，不等于 rToken 持有人自动获得相同保护，也不等于代币已完成证券注册。显示乘数与原始余额的拆股处理、以及「1 rAAPL 对应 1 股」的表述均按材料保留，实际数量单位与兑换权须以生效条款为准，不能据本稿推定原始 Token 单位永久等于一股。6 月 19 日 AUM 为「超过 $5,000 万」，所以 +128% 只是用 $5,000 万作参考基数的近似增幅，不能视为基于精确起始值的增长率。平台代币仅为材料未找到，并非证明永不存在；年底 $2.5 亿 AUM 是原稿观察门槛而非预测或承诺。本次未执行文内核验、监控或投资建议。*

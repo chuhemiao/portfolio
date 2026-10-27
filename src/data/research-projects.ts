@@ -12,6 +12,22 @@ export type ResearchProject = {
 
 export const PROJECTS = [
   {
+    name: 'Anthropic',
+    description: 'IPO research on operating economics, compute commitments and valuation; filing details and cash-flow assumptions need verification',
+    type: 'AI',
+    slug: 'anthropic-ipo-s1-ai-capital-structure-valuation-research',
+    color: '#D97757',
+    initial: 'AN',
+  },
+  {
+    name: 'Reality / Bitget rToken',
+    description: 'Tokenized equities distributed through Bitget; custody, redemption rights, reserve attestations and growth need validation',
+    type: 'RWA',
+    slug: 'reality-bitget-tokenized-equities-rtoken-distribution-custody-risks',
+    color: '#06B6D4',
+    initial: 'RY',
+  },
+  {
     name: 'APRO / AT',
     description: 'Multichain oracle expanding into AI and RWA; AT value capture, unlocks and concentrated holdings need validation',
     type: 'Oracle',
