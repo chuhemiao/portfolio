@@ -41,15 +41,36 @@ function groupPosts(posts) {
   return groups;
 }
 
+// Keywords match at a word start, so "perp" still catches "perpetuals" and
+// "token" catches "tokenized". Plain substring matching put 622 of 3,043 post
+// groups under ai-crypto, 610 of them on the bare "ai" in words like chain,
+// available, retail and airdrop; "chain" likewise pulled every blockchain post
+// into l1-l2, and "dai" pulled in anything saying daily.
+//
+// A few keywords are too short to be safe even as prefixes, so they match as
+// whole words only. Boundaries are ASCII-only in JS regexes, so they are
+// applied only where the keyword actually ends in an ASCII word character --
+// a CJK keyword like 链上美股 needs none and would never match with one.
+const WHOLE_WORD_ONLY = new Set(['ai', 'dai']);
+
+function keywordPattern(keyword) {
+  const lower = keyword.toLowerCase();
+  const escaped = lower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const lead = /^[a-z0-9]/.test(lower) ? '\\b' : '';
+  const trail = WHOLE_WORD_ONLY.has(lower) && /[a-z0-9]$/.test(lower) ? '\\b' : '';
+  return new RegExp(`${lead}${escaped}${trail}`);
+}
+
 export function buildTopicIndex(posts, topics) {
   const index = Object.fromEntries(topics.map((topic) => [topic.slug, []]));
+  const patterns = topics.map((topic) => topic.matchKeywords.map(keywordPattern));
   for (const members of groupPosts(posts).values()) {
     const text = members.map(matchText).join(' ');
-    for (const topic of topics) {
-      if (topic.matchKeywords.some((keyword) => text.includes(keyword.toLowerCase()))) {
+    topics.forEach((topic, i) => {
+      if (patterns[i].some((pattern) => pattern.test(text))) {
         index[topic.slug].push(...members.map((post) => post.slug));
       }
-    }
+    });
   }
   return index;
 }

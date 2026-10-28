@@ -1,7 +1,7 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import { getTranslator, localizeHref, formatLocaleDate, type Locale } from '@/lib/i18n';
 import BlurFade from '@/components/magicui/blur-fade';
-import { getPostsForTopic, getLocalizedPosts, getPostHref } from '@/data/blog';
+import { getPostsForTopic, getLocalizedPosts, getPostHref, getTopicPostCount } from '@/data/blog';
 import { getTopicBySlug, TOPICS, localizedTopic } from '@/data/topics';
 import { ArrowRightIcon, ArrowUpRightIcon, BookOpenIcon, SearchIcon } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -42,6 +42,7 @@ export async function renderPage(locale: Locale, slug: string) {
 
   // topic-index.json is precomputed by the content compiler.
   const relatedPosts = getLocalizedPosts(getPostsForTopic(topic.slug), locale).slice(0, 8);
+  const postCount = getTopicPostCount(topic.slug, locale);
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
@@ -83,9 +84,9 @@ export async function renderPage(locale: Locale, slug: string) {
                 <p className='mt-2 text-sm leading-7 text-foreground'>{topic.whyItMatters}</p>
               </div>
               <div className='flex flex-wrap gap-2'>
-                {topic.postCount > 0 && (
+                {postCount > 0 && (
                   <span className='rounded-sm border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground'>
-                    {topic.postCount}+ {t('posts', '篇文章', '記事')}
+                    {postCount} {t('posts', '篇文章', '記事')}
                   </span>
                 )}
                 {topic.projectCount > 0 && (

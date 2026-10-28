@@ -312,6 +312,13 @@ export function getLocalizedPosts(posts: PostListItem[], locale: Locale): PostLi
   return selectLocalizedPosts(posts, locale, getPostMeta);
 }
 
+// What the topic pages display. The topic index stores every language version,
+// so its raw length counts each article up to three times; this is the number a
+// reader in `locale` can actually open.
+export function getTopicPostCount(topicSlug: string, locale: Locale): number {
+  return getLocalizedPosts(getPostsForTopic(topicSlug), locale).length;
+}
+
 export function getPostHref(post: PostListItem | ParsedPost, locale: Locale): string {
   const targetSlug = post.metadata.translations[locale];
   return targetSlug ? articleHref(targetSlug, locale) : articleHref(post.slug, post.metadata.language);
