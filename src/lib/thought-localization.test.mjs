@@ -10,8 +10,11 @@ const originals = JSON.parse(fs.readFileSync(new URL('../../content/thoughts.jso
 const translations = JSON.parse(fs.readFileSync(new URL('../../content/thought-translations.json', import.meta.url)));
 const locales = ['zh-CN', 'en', 'ja'];
 
-test('all 123 source messages have source-bound full translations in each locale', () => {
-  assert.equal(originals.length, 123);
+// The count used to be asserted as a literal, so every Telegram sync broke this
+// test whether or not the new messages were translated. What matters is the
+// invariant: each message has a complete translation bound to its exact source.
+test('every source message has a source-bound full translation in each locale', () => {
+  assert.ok(originals.length > 0, 'no source messages loaded');
   for (const thought of originals) {
     assert.equal(translations[thought.id]?.source, thought.text, thought.id);
     for (const locale of locales) {

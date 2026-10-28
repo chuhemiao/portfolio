@@ -26,10 +26,24 @@ jobs:
           TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: node scripts/sync-telegram.js
 
+      # Syncing used to stop here, so new messages arrived untranslated and
+      # only got filled in when somebody noticed. Translating before the commit
+      # keeps every message trilingual the way the rest of the site is.
+      - name: Install Anthropic SDK
+        run: |
+          if ! node -e "require('@anthropic-ai/sdk')" 2>/dev/null; then
+            npm install --no-save @anthropic-ai/sdk
+          fi
+
+      - name: Translate new messages
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: node scripts/translate-thoughts.mjs
+
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content/thoughts.json
+          git add content/thoughts.json content/thought-translations.json
           git diff --quiet && git diff --staged --quiet || git commit -m "chore: sync telegram thoughts"
           git push

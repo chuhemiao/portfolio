@@ -70,5 +70,8 @@ jobs:
           pnpm content:prepare
           echo "Content prepare: $(( $(date +%s) - start ))s" >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Content tests
-        run: node --test scripts/content-rendering.test.mjs
+      # Was one file, so the other fifteen never ran in CI. Three layout
+      # assertions sat broken since the redesign and a Telegram sync left six
+      # messages untranslated, both unnoticed because nothing executed them.
+      - name: Tests
+        run: pnpm test
