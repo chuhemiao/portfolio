@@ -101,6 +101,12 @@ export const DATA = {
         icon: Icons.binance,
         navbar: true
       },
+      bybit: {
+        name: 'Bybit',
+        url: 'https://partner.bybit.com/b/140259',
+        icon: Icons.bybit,
+        navbar: true
+      },
       hyper: {
         name: 'HyperLiquid',
         url: 'https://app.hyperliquid.xyz/trade',

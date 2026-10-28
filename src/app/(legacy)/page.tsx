@@ -107,6 +107,12 @@ export async function renderPage(locale: Locale) {
       desc: t('Spot & futures · referral signup', '现货 / 合约 · 返佣开户', '現物・先物 · 紹介リンク'),
     },
     {
+      name: 'Bybit',
+      initial: 'BB',
+      url: DATA.contact.social.bybit.url,
+      desc: t('Derivatives & copy trading · referral signup', '衍生品 / 跟单 · 返佣开户', 'デリバティブ・コピートレード · 紹介リンク'),
+    },
+    {
       name: 'Hyperliquid',
       initial: 'HL',
       url: DATA.contact.social.hyper.url,

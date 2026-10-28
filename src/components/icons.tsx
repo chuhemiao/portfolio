@@ -63,6 +63,15 @@ export const Icons = {
       src='/binance.png'
     />
   ),
+  bybit: (props: IconProps) => (
+    <img
+      width={20}
+      height={20}
+      alt='bybit'
+      className='rounded-full mr-3'
+      src='/bybit.png'
+    />
+  ),
   hyper: (props: IconProps) => (
     <img
       width={20}

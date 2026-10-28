@@ -107,6 +107,14 @@ export default function SiteFooter() {
             Binance ↗
           </Link>
           <Link
+            href={DATA.contact.social.bybit.url}
+            target="_blank"
+            rel="sponsored noopener"
+            className="block py-1 text-[13.5px] text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Bybit ↗
+          </Link>
+          <Link
             href={DATA.contact.social.hyper.url}
             target="_blank"
             rel="sponsored noopener"
@@ -114,20 +122,13 @@ export default function SiteFooter() {
           >
             Hyperliquid ↗
           </Link>
-          <p className="mt-2 font-mono text-[10.5px] leading-[1.6] text-subtle">
-            {t(
-              "Referral links. Signing up through them supports this site.",
-              "以上为邀请链接，通过它们注册会给本站带来返佣。",
-              "これらは紹介リンクです。登録すると本サイトに報酬が入ります。"
-            )}
-          </p>
         </nav>
       </div>
 
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-4 px-4 py-4 font-mono text-[11px] tracking-[0.06em] text-subtle sm:px-8">
           <span>© {new Date().getFullYear()} KKDEMIAN.COM</span>
-          <span>{t("Not investment advice", "本站内容不构成投资建议", "投資助言ではありません")}</span>
+          <span>DYOR</span>
         </div>
       </div>
     </footer>
