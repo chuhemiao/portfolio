@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { useI18n } from '@/components/locale-provider';
 import {
   DIVIDEND_LABEL,
@@ -17,10 +17,11 @@ import {
   pick,
   type Grade,
   type IssuanceModel,
+  type Issuer,
 } from '@/data/tokenized-equities';
 
 const TH =
-  'border-b border-border-strong px-3 py-2.5 text-left font-mono text-[10.5px] font-normal uppercase tracking-[0.12em] text-subtle';
+  'border-b border-border-strong px-3.5 py-2.5 text-left font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-subtle';
 
 const GRADE_TONE: Record<Grade, string> = {
   A: 'border-positive text-positive',
@@ -38,9 +39,7 @@ const usd = (value?: number) => {
   return `$${value}`;
 };
 
-const CHIP = 'rounded-sm border px-2.5 py-1 font-mono text-[11px] transition-colors';
-const CHIP_ON = 'border-border-strong bg-surface-2 text-foreground';
-const CHIP_OFF = 'border-border text-subtle hover:border-border-strong hover:text-foreground';
+const CHAINS_SHOWN = 4;
 
 type View = 'issuer' | 'venue';
 type ModelFilter = IssuanceModel | 'all';
@@ -51,6 +50,8 @@ export default function StocksIssuers() {
 
   const [view, setView] = useState<View>('issuer');
   const [model, setModel] = useState<ModelFilter>('all');
+  const [open, setOpen] = useState<ReadonlySet<string>>(new Set());
+  const [expandAll, setExpandAll] = useState(false);
 
   const issuers = useMemo(
     () => (model === 'all' ? ISSUERS : ISSUERS.filter((issuer) => issuer.issuanceModel === model)),
@@ -59,12 +60,10 @@ export default function StocksIssuers() {
   const exchanges = useMemo(() => buildExchangeIndex(issuers), [issuers]);
 
   // Aave and Morpho take these tokens as collateral and are not somewhere to
-  // buy, so they are kept out of the venues list rather than listed beside
-  // Binance, which is how the previous single list misread.
+  // buy, so they get their own heading instead of sitting beside Binance.
   const buyVenues = exchanges.filter((entry) => entry.kind !== 'lending');
   const collateralVenues = exchanges.filter((entry) => entry.kind === 'lending');
 
-  // Only offer a filter that still matches something.
   const models: ModelFilter[] = [
     'all',
     ...(['exchange-self', 'exchange-onchain', 'broker-self', 'independent', 'unknown'] as const).filter((candidate) =>
@@ -72,39 +71,100 @@ export default function StocksIssuers() {
     ),
   ];
 
+  const toggle = (slug: string) =>
+    setOpen((previous) => {
+      const next = new Set(previous);
+      if (next.has(slug)) next.delete(slug);
+      else next.add(slug);
+      return next;
+    });
+
+  const isOpen = (slug: string) => expandAll || open.has(slug);
+
+  // The eight fields that used to be their own columns, now shown on expand.
+  const detailFields = (issuer: Issuer) => [
+    { key: t('Wrapper', '法律包装', 'ラッパー'), value: L(WRAPPER_LABEL[issuer.wrapper]), tone: 'text-muted-foreground' },
+    {
+      key: t('Voting', '投票权', '議決権'),
+      value: L(VOTING_LABEL[issuer.voting]),
+      tone: issuer.voting === 'full' ? 'text-positive' : issuer.voting === 'none' ? 'text-negative' : 'text-muted-foreground',
+    },
+    { key: t('Dividend', '股息', '配当'), value: L(DIVIDEND_LABEL[issuer.dividend]), tone: 'text-muted-foreground' },
+    {
+      key: t('Redemption', '赎回', '償還'),
+      value:
+        issuer.redemption.available === 'unknown'
+          ? t('unknown', '未知', '不明')
+          : issuer.redemption.available
+            ? `${t('yes', '支持', '可')}${issuer.redemption.refusable ? t(' · refusable', ' · 可被拒绝', ' · 拒否可能') : ''}`
+            : t('no', '不支持', '不可'),
+      tone: issuer.redemption.refusable ? 'text-negative' : 'text-muted-foreground',
+    },
+    {
+      key: t('PoR', '储备证明', '準備金証明'),
+      value: L(POR_LABEL[issuer.proofOfReserve.kind]),
+      tone: issuer.proofOfReserve.kind === 'chainlink-por' ? 'text-positive' : 'text-muted-foreground',
+    },
+    {
+      key: t('US access', '美国准入', '米国アクセス'),
+      value: L(US_LABEL[issuer.usPersons]),
+      tone: issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground',
+    },
+    { key: t('Jurisdiction', '司法管辖', '法域'), value: L(issuer.jurisdiction), tone: 'text-muted-foreground' },
+    {
+      key: t('Instruments', '标的数', '銘柄数'),
+      value: issuer.instrumentCount === undefined ? '—' : `${issuer.instrumentCount}+`,
+      tone: 'text-muted-foreground',
+    },
+  ];
+
   return (
     <section className='border-b border-border py-12'>
-      <div className='mb-5 flex flex-wrap items-baseline justify-between gap-3'>
-        <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Issuers', '发行方', '発行体')}</h2>
-        <div className='flex gap-1.5'>
-          {(['issuer', 'venue'] as const).map((option) => (
+      <h2 className='mb-5 text-xl font-semibold tracking-[-0.015em]'>{t('Issuers', '发行方', '発行体')}</h2>
+
+      <div className='mb-5 flex flex-wrap items-center gap-x-4 gap-y-3'>
+        <div className='flex overflow-hidden rounded-sm border border-border-strong'>
+          {(['issuer', 'venue'] as const).map((option, index) => (
             <button
               key={option}
               type='button'
               onClick={() => setView(option)}
               aria-pressed={view === option}
-              className={`${CHIP} ${view === option ? CHIP_ON : CHIP_OFF}`}
+              className={`px-4 py-2.5 font-mono text-[11.5px] transition-colors ${index > 0 ? 'border-l border-border-strong' : ''} ${
+                view === option ? 'bg-surface-2 text-foreground' : 'text-subtle hover:text-foreground'
+              }`}
             >
-              {option === 'issuer'
-                ? t('By issuer', '按发行方', '発行体別')
-                : t('By venue', '按交易所', '取引所別')}
+              {option === 'issuer' ? t('By issuer', '按发行方', '発行体別') : t('By venue', '按交易所', '取引所別')}
             </button>
           ))}
         </div>
-      </div>
 
-      <div className='mb-5 flex flex-wrap gap-1.5'>
-        {models.map((option) => (
-          <button
-            key={option}
-            type='button'
-            onClick={() => setModel(option)}
-            aria-pressed={model === option}
-            className={`${CHIP} ${model === option ? CHIP_ON : CHIP_OFF}`}
+        <label className='flex items-center gap-2 font-mono text-[11px] text-subtle'>
+          {t('Issuance', '发行模型', '発行モデル')}
+          <select
+            value={model}
+            onChange={(event) => setModel(event.target.value as ModelFilter)}
+            className='rounded-sm border border-border bg-surface px-2.5 py-2 font-mono text-[11px] text-foreground'
           >
-            {option === 'all' ? t('All', '全部', 'すべて') : L(ISSUANCE_LABEL[option])}
-          </button>
-        ))}
+            {models.map((option) => (
+              <option key={option} value={option}>
+                {option === 'all' ? t('All', '全部', 'すべて') : L(ISSUANCE_LABEL[option])}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        {view === 'issuer' && (
+          <label className='flex cursor-pointer items-center gap-2 font-mono text-[11px] text-subtle sm:ml-auto'>
+            <input
+              type='checkbox'
+              checked={expandAll}
+              onChange={(event) => setExpandAll(event.target.checked)}
+              className='size-3.5 accent-brand'
+            />
+            {t('Expand all', '全部展开', 'すべて展開')}
+          </label>
+        )}
       </div>
 
       {issuers.length === 0 ? (
@@ -113,79 +173,109 @@ export default function StocksIssuers() {
         </p>
       ) : view === 'issuer' ? (
         <>
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[960px] border-collapse border border-border text-[13px]'>
+          <div className='border border-border'>
+            <table className='w-full border-collapse text-[13px]'>
               <thead>
                 <tr>
-                  {[
-                    t('Issuer', '发行方', '発行体'),
-                    t('Issuance', '发行模型', '発行モデル'),
-                    t('Wrapper', '法律包装', 'ラッパー'),
-                    t('Voting', '投票权', '議決権'),
-                    t('Dividend', '股息', '配当'),
-                    t('Redemption', '赎回', '償還'),
-                    t('PoR', '储备证明', '準備金証明'),
-                    t('US', '美国', '米国'),
-                    t('On-chain', '链上规模', 'オンチェーン'),
-                    t('Grade', '评级', '評価'),
-                  ].map((heading) => (
-                    <th key={heading} className={TH}>
-                      {heading}
-                    </th>
-                  ))}
+                  <th className={TH}>{t('Issuer', '发行方', '発行体')}</th>
+                  <th className={`${TH} hidden sm:table-cell`}>{t('Issuance', '发行模型', '発行モデル')}</th>
+                  <th className={`${TH} text-right`}>{t('On-chain', '链上规模', 'オンチェーン')}</th>
+                  <th className={TH}>{t('Grade', '评级', '評価')}</th>
                 </tr>
               </thead>
               <tbody>
-                {issuers.map((issuer) => (
-                  <tr key={issuer.slug} className='border-b border-border align-top last:border-0'>
-                    <td className='px-3 py-3'>
-                      <div className='font-semibold'>{issuer.name}</div>
-                      <div className='mt-0.5 font-mono text-[10.5px] text-subtle'>{L(issuer.jurisdiction)}</div>
-                      {issuer.instrumentCount !== undefined && (
-                        <div className='tnum mt-0.5 font-mono text-[10.5px] text-subtle'>
-                          {issuer.instrumentCount}+ {t('instruments', '个标的', '銘柄')}
-                        </div>
+                {issuers.map((issuer) => {
+                  const expanded = isOpen(issuer.slug);
+                  return (
+                    <Fragment key={issuer.slug}>
+                      <tr className={expanded ? 'bg-surface-2' : ''}>
+                        <td className={`border-b border-border p-0 ${expanded ? 'border-l-2 border-l-brand' : ''}`}>
+                          <button
+                            type='button'
+                            onClick={() => toggle(issuer.slug)}
+                            aria-expanded={expanded}
+                            className='flex min-h-11 w-full items-center gap-2.5 px-3.5 py-2.5 text-left'
+                          >
+                            <span aria-hidden='true' className={`font-mono text-[11px] ${expanded ? 'text-brand' : 'text-subtle'}`}>
+                              {expanded ? '−' : '+'}
+                            </span>
+                            <span className='font-semibold'>{issuer.name}</span>
+                            <span className='ml-auto font-mono text-[10px] text-subtle sm:hidden'>
+                              {L(ISSUANCE_LABEL[issuer.issuanceModel])}
+                            </span>
+                          </button>
+                        </td>
+                        <td className='hidden border-b border-border px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground sm:table-cell'>
+                          {L(ISSUANCE_LABEL[issuer.issuanceModel])}
+                        </td>
+                        <td className='tnum border-b border-border px-3.5 py-2.5 text-right font-mono text-[12px]'>
+                          {usd(issuer.onchainValueUsd)}
+                        </td>
+                        <td className='border-b border-border px-3.5 py-2.5'>
+                          <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>
+                            {L(GRADE_LABEL[issuer.grade])}
+                          </span>
+                        </td>
+                      </tr>
+                      {expanded && (
+                        <tr className='bg-surface-2'>
+                          <td colSpan={4} className='border-b border-border-strong border-l-2 border-l-brand px-4 pb-5 pt-1'>
+                            <dl className='mb-3.5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
+                              {detailFields(issuer).map((field) => (
+                                <div key={field.key}>
+                                  <dt className='mono-label mb-1'>{field.key}</dt>
+                                  <dd className={`m-0 font-mono text-[11.5px] ${field.tone}`}>{field.value}</dd>
+                                </div>
+                              ))}
+                            </dl>
+
+                            <p className='mb-3 max-w-[860px] text-[12.5px] leading-[1.7] text-muted-foreground'>{L(issuer.note)}</p>
+
+                            <div className='flex flex-wrap items-center gap-1.5'>
+                              <span className='mono-label mr-1'>{t('Where to buy', '在哪买', '購入場所')}</span>
+                              {issuer.venues.length === 0 ? (
+                                <span className='font-mono text-[10.5px] text-subtle'>{t('not disclosed', '未披露', '未開示')}</span>
+                              ) : (
+                                issuer.venues.map((venue) => (
+                                  <span
+                                    key={venue.name}
+                                    title={L(VENUE_KIND_LABEL[venue.kind])}
+                                    className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${
+                                      venue.kind === 'lending'
+                                        ? 'border-dashed border-border text-subtle'
+                                        : venue.operatedByIssuer
+                                          ? 'border-brand text-brand'
+                                          : 'border-border-strong text-muted-foreground'
+                                    }`}
+                                  >
+                                    {venue.name}
+                                    {venue.kind === 'lending' && <span className='ml-1'>· {L(VENUE_KIND_LABEL.lending)}</span>}
+                                    {venue.operatedByIssuer && <span className='ml-1'>· {t('self-run', '自营', '自社')}</span>}
+                                  </span>
+                                ))
+                              )}
+                            </div>
+
+                            {issuer.chains.length > 0 && (
+                              <div className='mt-2 flex flex-wrap items-center gap-1.5'>
+                                <span className='mono-label mr-1'>{t('Chains', '链', 'チェーン')}</span>
+                                <span className='font-mono text-[10.5px] text-subtle'>
+                                  {issuer.chains.slice(0, CHAINS_SHOWN).join(' · ')}
+                                  {issuer.chains.length > CHAINS_SHOWN &&
+                                    t(
+                                      ` · ${issuer.chains.length - CHAINS_SHOWN} more`,
+                                      ` · 再 ${issuer.chains.length - CHAINS_SHOWN} 条`,
+                                      ` · ほか ${issuer.chains.length - CHAINS_SHOWN}`
+                                    )}
+                                </span>
+                              </div>
+                            )}
+                          </td>
+                        </tr>
                       )}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>
-                      {L(ISSUANCE_LABEL[issuer.issuanceModel])}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(WRAPPER_LABEL[issuer.wrapper])}</td>
-                    <td
-                      className={`px-3 py-3 font-mono text-[11px] ${issuer.voting === 'full' ? 'text-positive' : issuer.voting === 'none' ? 'text-negative' : 'text-muted-foreground'}`}
-                    >
-                      {L(VOTING_LABEL[issuer.voting])}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(DIVIDEND_LABEL[issuer.dividend])}</td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>
-                      {issuer.redemption.available === 'unknown'
-                        ? t('unknown', '未知', '不明')
-                        : issuer.redemption.available
-                          ? t('yes', '支持', '可')
-                          : t('no', '不支持', '不可')}
-                      {issuer.redemption.minimumUsd !== undefined && (
-                        <span className='tnum block text-subtle'>
-                          {t('min', '最低', '最低')} {usd(issuer.redemption.minimumUsd)}
-                        </span>
-                      )}
-                      {issuer.redemption.refusable && (
-                        <span className='block text-negative'>{t('refusable', '可被拒绝', '拒否可能')}</span>
-                      )}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(POR_LABEL[issuer.proofOfReserve.kind])}</td>
-                    <td
-                      className={`px-3 py-3 font-mono text-[11px] ${issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground'}`}
-                    >
-                      {L(US_LABEL[issuer.usPersons])}
-                    </td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(issuer.onchainValueUsd)}</td>
-                    <td className='px-3 py-3'>
-                      <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>
-                        {L(GRADE_LABEL[issuer.grade])}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -200,77 +290,43 @@ export default function StocksIssuers() {
               </div>
             ))}
           </dl>
-
-          <div className='mt-6 grid gap-px border border-border bg-border sm:grid-cols-2'>
-            {issuers.map((issuer) => (
-              <div key={issuer.slug} className='bg-background p-5'>
-                <div className='mb-1.5 text-[13.5px] font-semibold'>{issuer.name}</div>
-                <p className='text-[13px] leading-[1.7] text-muted-foreground'>{L(issuer.note)}</p>
-                <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
-                  <span className='rounded-sm border border-border-strong px-2 py-0.5 font-mono text-[10.5px] text-foreground'>
-                    {L(ISSUANCE_LABEL[issuer.issuanceModel])}
-                  </span>
-                  {issuer.venues.map((venue) => (
-                    <span
-                      key={venue.name}
-                      title={L(VENUE_KIND_LABEL[venue.kind])}
-                      className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${
-                        venue.kind === 'lending' ? 'border-dashed border-border text-subtle' : 'border-border text-subtle'
-                      }`}
-                    >
-                      {venue.name}
-                      {venue.kind === 'lending' && <span className='ml-1'>·{L(VENUE_KIND_LABEL.lending)}</span>}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
         </>
       ) : (
         <>
           <div className='overflow-x-auto'>
-            <table className='w-full min-w-[720px] border-collapse border border-border text-[13px]'>
+            <table className='w-full min-w-[640px] border-collapse border border-border text-[13px]'>
               <thead>
                 <tr>
-                  {[
-                    t('Venue', '交易场所', '取引場所'),
-                    t('Type', '类型', '種別'),
-                    t('Issuers available', '可买到的发行方', '購入可能な発行体'),
-                    t('Reachable size', '可达规模', '到達可能な規模'),
-                  ].map((heading) => (
-                    <th key={heading} className={TH}>
-                      {heading}
-                    </th>
-                  ))}
+                  <th className={TH}>{t('Venue', '交易场所', '取引場所')}</th>
+                  <th className={TH}>{t('Type', '类型', '種別')}</th>
+                  <th className={TH}>{t('Issuers available', '可买到的发行方', '購入可能な発行体')}</th>
+                  <th className={`${TH} text-right`}>{t('Reachable size', '可达规模', '到達可能な規模')}</th>
                 </tr>
               </thead>
               <tbody>
                 {buyVenues.map((entry) => (
                   <tr key={entry.venue} className='border-b border-border align-top last:border-0'>
-                    <td className='px-3 py-3'>
+                    <td className='px-3.5 py-2.5'>
                       <div className='font-semibold'>{entry.venue}</div>
                       {entry.operatedByIssuer && (
-                        <div className='mt-0.5 font-mono text-[10.5px] text-brand'>
-                          {t('runs its own issuance', '自营发行', '自社で発行')}
-                        </div>
+                        <div className='mt-0.5 font-mono text-[9.5px] text-brand'>{t('self-issued', '自营发行', '自社発行')}</div>
                       )}
                     </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(VENUE_KIND_LABEL[entry.kind])}</td>
-                    <td className='px-3 py-3'>
+                    <td className='px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground'>{L(VENUE_KIND_LABEL[entry.kind])}</td>
+                    <td className='px-3.5 py-2.5'>
                       <div className='flex flex-wrap gap-1.5'>
                         {entry.issuers.map((issuer) => (
                           <span
                             key={issuer.slug}
-                            className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${GRADE_TONE[issuer.grade]}`}
                             title={L(ISSUANCE_LABEL[issuer.issuanceModel])}
+                            className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${GRADE_TONE[issuer.grade]}`}
                           >
                             {issuer.name}
                           </span>
                         ))}
                       </div>
                     </td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(entry.reachableOnchainValueUsd)}</td>
+                    <td className='tnum px-3.5 py-2.5 text-right font-mono text-[12px]'>{usd(entry.reachableOnchainValueUsd)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -279,15 +335,17 @@ export default function StocksIssuers() {
 
           <p className='mt-2 font-mono text-[10.5px] leading-[1.6] text-subtle'>
             {t(
-              'Reachable size is the on-chain value an issuer brings to that venue. It is not additive — xStocks counts once under Kraken, Bybit and OKX alike.',
-              '可达规模是该发行方带到这个场所的链上规模，不可相加 —— xStocks 在 Kraken、Bybit、OKX 下各计一次。',
-              '到達可能な規模はその発行体がその場所にもたらすオンチェーン規模です。合計はできません —— xStocks は Kraken、Bybit、OKX のそれぞれで一度ずつ数えられます。'
+              'Reachable size is not additive — xStocks counts once under Kraken, Bybit and OKX alike.',
+              '可达规模不可相加 —— xStocks 在 Kraken、Bybit、OKX 下各计一次。',
+              '到達可能な規模は合計できません —— xStocks は Kraken、Bybit、OKX でそれぞれ一度ずつ数えられます。'
             )}
           </p>
 
           {collateralVenues.length > 0 && (
-            <div className='mt-6 rounded border border-dashed border-border p-5'>
-              <div className='mono-label mb-2'>{t('Collateral only — not a place to buy', '仅作抵押品 · 不是购买渠道', '担保のみ · 購入場所ではない')}</div>
+            <div className='mt-5 rounded border border-dashed border-border p-4'>
+              <div className='mono-label mb-2'>
+                {t('Collateral only — not a place to buy', '仅作抵押品 · 不是购买渠道', '担保のみ · 購入場所ではない')}
+              </div>
               <div className='flex flex-wrap gap-1.5'>
                 {collateralVenues.map((entry) => (
                   <span key={entry.venue} className='rounded-sm border border-border px-2 py-0.5 font-mono text-[10.5px] text-subtle'>
