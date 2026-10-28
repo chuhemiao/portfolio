@@ -2,6 +2,7 @@ import { localizedPageMetadata } from '@/lib/localized-metadata';
 import { getTranslator, localizeHref, formatLocaleDate, type Locale } from '@/lib/i18n';
 import BlurFade from '@/components/magicui/blur-fade';
 import { getPostsForTopic, getLocalizedPosts, getPostHref, getTopicPostCount } from '@/data/blog';
+import { countProjectsByType } from '@/data/research-projects';
 import { getTopicBySlug, TOPICS, localizedTopic } from '@/data/topics';
 import { ArrowRightIcon, ArrowUpRightIcon, BookOpenIcon, SearchIcon } from 'lucide-react';
 import type { Metadata } from 'next';
@@ -43,6 +44,7 @@ export async function renderPage(locale: Locale, slug: string) {
   // topic-index.json is precomputed by the content compiler.
   const relatedPosts = getLocalizedPosts(getPostsForTopic(topic.slug), locale).slice(0, 8);
   const postCount = getTopicPostCount(topic.slug, locale);
+  const projectCount = countProjectsByType(topic.relatedTypes);
 
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
@@ -89,9 +91,9 @@ export async function renderPage(locale: Locale, slug: string) {
                     {postCount} {t('posts', '篇文章', '記事')}
                   </span>
                 )}
-                {topic.projectCount > 0 && (
+                {projectCount > 0 && (
                   <span className='rounded-sm border border-border bg-surface px-3 py-1 text-xs font-medium text-muted-foreground'>
-                    {topic.projectCount} {t('projects', '个项目', 'プロジェクト')}
+                    {projectCount} {t('projects', '个项目', 'プロジェクト')}
                   </span>
                 )}
               </div>
@@ -161,8 +163,8 @@ export async function renderPage(locale: Locale, slug: string) {
               <div className='space-y-1'>
                 <div className='text-sm font-semibold text-foreground'>{t(`Explore ${topic.name} projects in the Research Map`, `在研究地图中探索${topic.name}项目`, `リサーチマップで${topic.name}のプロジェクトを探す`)}</div>
                 <p className='text-xs leading-5 text-muted-foreground'>
-                  {topic.projectCount > 0
-                    ? t(`${topic.projectCount} projects analyzed across this sector.`, `已研究该赛道的 ${topic.projectCount} 个项目。`, `この分野の ${topic.projectCount} プロジェクトを分析済み。`)
+                  {projectCount > 0
+                    ? t(`${projectCount} projects analyzed across this sector.`, `已研究该赛道的 ${projectCount} 个项目。`, `この分野の ${projectCount} プロジェクトを分析済み。`)
                     : t('Browse all researched projects.', '浏览全部研究项目。', 'すべての研究プロジェクトを見る。')}
                 </p>
               </div>

@@ -10,6 +10,18 @@ export type ResearchProject = {
 
 // Synced by `pnpm sync:research:logos` into `public/research-logos/`.
 
+// Powers the project count on the topic pages. Registry types are compound --
+// "AI/DePIN", "Yield/DeFi", "DeFi/Stablecoin" -- so each component is matched
+// separately, otherwise ai-crypto's ['AI', 'DePIN'] would only see the 6
+// projects typed exactly "AI" and miss the 75 under "AI/DePIN".
+export function countProjectsByType(types: readonly string[]): number {
+  if (types.length === 0) return 0;
+  const wanted = new Set(types.map((type) => type.trim().toLowerCase()));
+  return PROJECTS.filter((project) =>
+    project.type.split('/').some((part) => wanted.has(part.trim().toLowerCase()))
+  ).length;
+}
+
 export const PROJECTS = [
   {
     name: 'Anthropic',

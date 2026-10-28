@@ -7,7 +7,6 @@ export interface Topic {
   tagline: string;
   description: string;
   whyItMatters: string;
-  projectCount: number;
   accentColor: string;
   // Keywords used to filter blog posts by tag matching
   matchKeywords: string[];
@@ -25,7 +24,6 @@ export const TOPICS: Topic[] = [
       'Algorithmic, collateralized, and hybrid stablecoin designs. Depeg events, yield opportunities, and macro implications across DeFi liquidity layers.',
     whyItMatters:
       'Stablecoins are the reserve currency of DeFi. Their design determines where capital flows, how risk is priced, and whether the broader system is fragile or resilient.',
-    projectCount: 14,
     accentColor: '#10B981',
     matchKeywords: ['stablecoin', 'stable', 'usdt', 'usdc', 'dai', 'peg', 'depeg'],
     relatedTypes: ['Stablecoin'],
@@ -39,7 +37,6 @@ export const TOPICS: Topic[] = [
       'DEX perpetuals competing with CEX depth. Fee models, oracle design, liquidity pool mechanics, open interest dynamics, and the protocol economics behind on-chain derivatives.',
     whyItMatters:
       'Perpetual futures volume on-chain is growing faster than any other DeFi category. Understanding market structure here is essential for both traders and investors.',
-    projectCount: 12,
     accentColor: '#6366F1',
     matchKeywords: ['perp', 'perpetual', 'futures', 'hyperliquid', 'gmx', 'dydx', 'vertex', 'drift'],
     relatedTypes: ['Perp DEX'],
@@ -53,7 +50,6 @@ export const TOPICS: Topic[] = [
       'Centralized exchange strategy, listing signal patterns, fee wars, proof of reserves, regulatory positioning, and volume attribution across major venues.',
     whyItMatters:
       'CEXs set the price discovery layer for the entire market. Their listing decisions are the clearest leading signal for altcoin narrative rotation.',
-    projectCount: 18,
     accentColor: '#F59E0B',
     matchKeywords: ['cex', 'exchange', 'binance', 'coinbase', 'okx', 'bybit', 'listing', 'listings'],
     relatedTypes: ['CEX'],
@@ -67,7 +63,6 @@ export const TOPICS: Topic[] = [
       'Layer-1 consensus design and Layer-2 rollup scaling. Ecosystem development, DeFi TVL, bridging infrastructure, and modular vs monolithic tradeoffs.',
     whyItMatters:
       'Chain selection is a multi-billion dollar bet every cycle. The winner-take-most dynamics of L1 are different from L2, and both require different analytical frameworks.',
-    projectCount: 20,
     accentColor: '#8B5CF6',
     matchKeywords: ['l1', 'l2', 'solana', 'ethereum', 'arbitrum', 'base', 'optimism', 'rollup', 'chain', 'layer'],
     relatedTypes: ['L1', 'L2'],
@@ -81,7 +76,6 @@ export const TOPICS: Topic[] = [
       'AI agents, decentralized training and inference markets, verifiable compute, and the intersection of machine learning systems with blockchain infrastructure.',
     whyItMatters:
       'AI infrastructure is absorbing the next wave of capital. Crypto networks provide the decentralized rails for compute, data, and model verification that centralized platforms cannot.',
-    projectCount: 10,
     accentColor: '#0EA5E9',
     matchKeywords: ['ai', 'agent', 'llm', 'compute', 'inference', 'depin', 'bittensor', 'akash', 'render'],
     relatedTypes: ['AI', 'DePIN'],
@@ -95,7 +89,6 @@ export const TOPICS: Topic[] = [
       'Tokenized treasuries, private credit, real estate, and the regulatory rails enabling institutional capital flows through blockchain settlement layers.',
     whyItMatters:
       'RWA is the bridge between TradFi and DeFi. The first $1T on-chain will come from tokenized real-world assets, and the protocols building that infrastructure are early.',
-    projectCount: 8,
     accentColor: '#14B8A6',
     matchKeywords: ['rwa', 'real world', 'tokenized', 'treasury', 'credit', 'ondas', 'centrifuge', 'maple'],
     relatedTypes: ['RWA'],
@@ -109,7 +102,6 @@ export const TOPICS: Topic[] = [
       'Lending protocols, liquid staking, restaking, yield aggregators, and the protocol revenue mechanics that determine sustainable vs. mercenary capital.',
     whyItMatters:
       'Yield is the fundamental primitive of DeFi. Understanding where yield comes from, who bears the risk, and which protocols capture lasting value is the foundation of DeFi investing.',
-    projectCount: 11,
     accentColor: '#22C55E',
     // 'liquidity' is generic market vocabulary rather than a yield concept, and it
     // alone matched 91% of the blog. The remaining keywords cover the topic.
@@ -125,10 +117,12 @@ export const TOPICS: Topic[] = [
       'Humanoid robots, autonomous systems, and the convergence of physical AI with crypto incentive layers. From Boston Dynamics to on-chain robot coordination networks.',
     whyItMatters:
       'Physical AI is the next trillion-dollar compute layer. As robots become economically productive agents, crypto rails will govern their ownership, payments, and task coordination.',
-    projectCount: 3,
     accentColor: '#64748B',
     matchKeywords: ['robot', 'robotics', 'humanoid', 'physical ai', 'embodied', 'autonomous', 'depin robot'],
-    relatedTypes: ['Robotics', 'AI'],
+    // The registry's `type` has no such sector: these projects sit under
+    // AI/DePIN, so there is no honest count to derive. The page
+    // falls back to its generic Research Map copy instead.
+    relatedTypes: [],
   },
   {
     slug: 'quantum',
@@ -139,10 +133,12 @@ export const TOPICS: Topic[] = [
       'Quantum computing progress, the threat to current cryptographic standards (ECDSA, RSA), and the race to post-quantum cryptography across blockchain networks.',
     whyItMatters:
       "Quantum computers capable of breaking ECDSA would compromise every existing blockchain's key security model. Post-quantum migration is a long-lead infrastructure risk every serious crypto investor needs to understand.",
-    projectCount: 2,
     accentColor: '#A855F7',
     matchKeywords: ['quantum', 'post-quantum', 'cryptography', 'ecdsa', 'lattice', 'qkd', 'qubit'],
-    relatedTypes: ['Quantum', 'Security'],
+    // The registry's `type` has no such sector: these projects sit under
+    // L1, L2, Infra and Lending, so there is no honest count to derive. The page
+    // falls back to its generic Research Map copy instead.
+    relatedTypes: [],
   },
   {
     slug: 'market-structure',
@@ -153,7 +149,6 @@ export const TOPICS: Topic[] = [
       'Altcoin cycle timing, BTC dominance patterns, sector rotation signals, and the quantitative framework driving positioning decisions across market regimes.',
     whyItMatters:
       'Most traders lose money not because they pick wrong assets but because they misread the macro cycle. Market structure analysis is the operating system for everything else.',
-    projectCount: 0,
     accentColor: '#F97316',
     matchKeywords: ['market structure', 'oscillator', 'btc dominance', 'cycle', 'macro', 'breadth', 'rotation', 'regime'],
     relatedTypes: [],
@@ -167,10 +162,11 @@ export const TOPICS: Topic[] = [
       'Issuers, legal wrappers, custody and proof of reserve, redemption terms, trading hours against a closed underlying market, and the gap between headline volume and executable depth.',
     whyItMatters:
       'Most tokenized stocks are a claim on the issuer rather than the share. The same ticker can carry different collateral, redemption rights and bankruptcy recourse depending on who issued it, which makes identity — not price — the first thing to establish.',
-    projectCount: 0,
     accentColor: '#E0A449',
     matchKeywords: ['tokenized stock', 'tokenized equity', 'xstocks', 'ondo', 'bstocks', 'securitize', 'superstate', 'dinari', 'rwa stock', '代币化股票', '链上美股'],
-    relatedTypes: ['RWA'],
+    // RWA is the nearest registry sector but counts 105 projects against the
+    // ~28 that are tokenized equities, so no number is claimed here.
+    relatedTypes: [],
   },
 ];
 

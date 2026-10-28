@@ -3,6 +3,7 @@ import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import BlurFade from '@/components/magicui/blur-fade';
 import { TOPICS, localizedTopic } from '@/data/topics';
 import { getTopicPostCount } from '@/data/blog';
+import { countProjectsByType } from '@/data/research-projects';
 import { ArrowRightIcon, LayoutGridIcon } from 'lucide-react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -42,7 +43,7 @@ export function renderPage(locale: Locale) {
 
         {/* Topics grid */}
         <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-          {TOPICS.map(topic => ({ ...localizedTopic(topic, locale), postCount: getTopicPostCount(topic.slug, locale) })).map((topic, id) => (
+          {TOPICS.map(topic => ({ ...localizedTopic(topic, locale), postCount: getTopicPostCount(topic.slug, locale), projectCount: countProjectsByType(topic.relatedTypes) })).map((topic, id) => (
             <BlurFade key={topic.slug} delay={BLUR_FADE_DELAY * 2 + id * 0.04}>
               <Link
                 href={href(`/topics/${topic.slug}`)}
