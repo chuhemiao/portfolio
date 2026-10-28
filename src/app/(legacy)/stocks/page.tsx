@@ -1,32 +1,24 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
+import StocksIssuers from './stocks-client';
 import {
   AAPL_CASE_STUDY,
-  ISSUANCE_LABEL,
-  VENUE_KIND_LABEL,
   ACTIVITY_DIVERGENCE,
   CONCENTRATION_READING,
   DATA_AS_OF,
-  DIVIDEND_LABEL,
-  GRADE_LABEL,
-  GRADE_RUBRIC,
   ISSUERS,
   MARKET_SNAPSHOTS,
   METHOD_NOTE,
-  POR_LABEL,
   REGULATORY_NOTES,
   TOP_TOKENS,
   TURNOVER_READING,
   UNDERLYING_CONCENTRATION,
   UNKNOWN_LABEL,
-  US_LABEL,
-  VOTING_LABEL,
   WATCH_SIGNALS,
   WRAPPER_LABEL,
   WRAPPER_RUBRIC,
   pick,
-  type Grade,
 } from '@/data/tokenized-equities';
 import type { Metadata } from 'next';
 import Link from 'next/link';
@@ -43,14 +35,6 @@ const usd = (value?: number) => {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
   return `$${value}`;
-};
-
-const GRADE_TONE: Record<Grade, string> = {
-  A: 'border-positive text-positive',
-  B: 'border-brand text-brand',
-  C: 'border-border-strong text-muted-foreground',
-  D: 'border-negative text-negative',
-  unrated: 'border-border text-subtle',
 };
 
 const TH = 'border-b border-border-strong px-3 py-2.5 text-left font-mono text-[10.5px] font-normal uppercase tracking-[0.12em] text-subtle';
@@ -194,107 +178,9 @@ export async function renderPage(locale: Locale) {
         </section>
 
         {/* ── 发行方 ───────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-6 text-xl font-semibold tracking-[-0.015em]'>{t('Issuers', '发行方', '発行体')}</h2>
-
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[960px] border-collapse border border-border text-[13px]'>
-              <thead>
-                <tr>
-                  {[
-                    t('Issuer', '发行方', '発行体'),
-                    t('Wrapper', '法律包装', 'ラッパー'),
-                    t('Voting', '投票权', '議決権'),
-                    t('Dividend', '股息', '配当'),
-                    t('Redemption', '赎回', '償還'),
-                    t('PoR', '储备证明', '準備金証明'),
-                    t('US', '美国', '米国'),
-                    t('On-chain', '链上规模', 'オンチェーン'),
-                    t('Grade', '评级', '評価'),
-                  ].map((h) => <th key={h} className={TH}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {ISSUERS.map((issuer) => (
-                  <tr key={issuer.slug} className='border-b border-border align-top last:border-0'>
-                    <td className='px-3 py-3'>
-                      <div className='font-semibold'>{issuer.name}</div>
-                      <div className='mt-0.5 font-mono text-[10.5px] text-subtle'>{L(issuer.jurisdiction)}</div>
-                      {issuer.instrumentCount !== undefined && (
-                        <div className='tnum mt-0.5 font-mono text-[10.5px] text-subtle'>
-                          {issuer.instrumentCount}+ {t('instruments', '个标的', '銘柄')}
-                        </div>
-                      )}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(WRAPPER_LABEL[issuer.wrapper])}</td>
-                    <td className={`px-3 py-3 font-mono text-[11px] ${issuer.voting === 'full' ? 'text-positive' : issuer.voting === 'none' ? 'text-negative' : 'text-muted-foreground'}`}>
-                      {L(VOTING_LABEL[issuer.voting])}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(DIVIDEND_LABEL[issuer.dividend])}</td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>
-                      {issuer.redemption.available === 'unknown'
-                        ? t('unknown', '未知', '不明')
-                        : issuer.redemption.available
-                          ? t('yes', '支持', '可')
-                          : t('no', '不支持', '不可')}
-                      {issuer.redemption.minimumUsd !== undefined && (
-                        <span className='tnum block text-subtle'>
-                          {t('min', '最低', '最低')} {usd(issuer.redemption.minimumUsd)}
-                        </span>
-                      )}
-                      {issuer.redemption.refusable && (
-                        <span className='block text-negative'>{t('refusable', '可被拒绝', '拒否可能')}</span>
-                      )}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11px] text-muted-foreground'>{L(POR_LABEL[issuer.proofOfReserve.kind])}</td>
-                    <td className={`px-3 py-3 font-mono text-[11px] ${issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground'}`}>
-                      {L(US_LABEL[issuer.usPersons])}
-                    </td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(issuer.onchainValueUsd)}</td>
-                    <td className='px-3 py-3'>
-                      <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>{L(GRADE_LABEL[issuer.grade])}</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <dl className='mt-3 flex flex-wrap gap-x-5 gap-y-1.5'>
-            {GRADE_RUBRIC.map((row) => (
-              <div key={row.grade} className='flex items-baseline gap-2'>
-                <dt className={`shrink-0 rounded-sm border px-1.5 font-mono text-[10.5px] ${GRADE_TONE[row.grade]}`}>{L(GRADE_LABEL[row.grade])}</dt>
-                <dd className='m-0 text-[11.5px] text-subtle'>{L(row.short)}</dd>
-              </div>
-            ))}
-          </dl>
-
-          <div className='mt-6 grid gap-px border border-border bg-border sm:grid-cols-2'>
-            {ISSUERS.map((issuer) => (
-              <div key={issuer.slug} className='bg-background p-5'>
-                <div className='mb-1.5 text-[13.5px] font-semibold'>{issuer.name}</div>
-                <p className='text-[13px] leading-[1.7] text-muted-foreground'>{L(issuer.note)}</p>
-                <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
-                  <span className='rounded-sm border border-border-strong px-2 py-0.5 font-mono text-[10.5px] text-foreground'>
-                    {L(ISSUANCE_LABEL[issuer.issuanceModel])}
-                  </span>
-                  {issuer.venues.map((venue) => (
-                    <span
-                      key={venue.name}
-                      title={L(VENUE_KIND_LABEL[venue.kind])}
-                      className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${
-                        venue.kind === 'lending' ? 'border-dashed border-border text-subtle' : 'border-border text-subtle'
-                      }`}
-                    >
-                      {venue.name}
-                      {venue.kind === 'lending' && <span className='ml-1'>·{L(VENUE_KIND_LABEL.lending)}</span>}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
+        {/* Two views over one slot: by issuer, or inverted by venue. Switching
+            rather than stacking keeps the page from growing another section. */}
+        <StocksIssuers />
 
         {/* ── 代币排行 ─────────────────────────────────────────── */}
         <section className='border-b border-border py-12'>

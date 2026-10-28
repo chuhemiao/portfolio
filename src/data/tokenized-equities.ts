@@ -147,6 +147,61 @@ export type Issuer = {
   note: L10n;
 };
 
+export type ExchangeView = {
+  venue: string;
+  kind: VenueKind;
+  /** Run by the issuer whose tokens it sells -- true only where every issuer here self-operates. */
+  operatedByIssuer: boolean;
+  issuers: { slug: string; name: string; issuanceModel: IssuanceModel; grade: Grade; onchainValueUsd?: number }[];
+  /**
+   * On-chain value of the issuers reachable at this venue. NOT additive across
+   * venues: xStocks counts once under Kraken, Bybit and OKX alike, so summing
+   * this column returns more than the market holds.
+   */
+  reachableOnchainValueUsd: number;
+};
+
+// Inverts ISSUERS, which records where each issuer sells, into the view a
+// reader actually wants: what can I buy at this venue, and who issued it.
+// Derived rather than maintained by hand -- the hardcoded postCount and
+// projectCount both silently rotted, and this would too.
+export function buildExchangeIndex(issuers: readonly Issuer[]): ExchangeView[] {
+  const byVenue = new Map<string, ExchangeView>();
+
+  for (const issuer of issuers) {
+    for (const venue of issuer.venues) {
+      let view = byVenue.get(venue.name);
+      if (!view) {
+        view = {
+          venue: venue.name,
+          kind: venue.kind,
+          operatedByIssuer: true,
+          issuers: [],
+          reachableOnchainValueUsd: 0,
+        };
+        byVenue.set(venue.name, view);
+      }
+      view.issuers.push({
+        slug: issuer.slug,
+        name: issuer.name,
+        issuanceModel: issuer.issuanceModel,
+        grade: issuer.grade,
+        onchainValueUsd: issuer.onchainValueUsd,
+      });
+      view.reachableOnchainValueUsd += issuer.onchainValueUsd ?? 0;
+      if (!venue.operatedByIssuer) view.operatedByIssuer = false;
+    }
+  }
+
+  for (const view of byVenue.values()) {
+    view.issuers.sort((a, b) => (b.onchainValueUsd ?? 0) - (a.onchainValueUsd ?? 0));
+  }
+
+  return [...byVenue.values()].sort(
+    (a, b) => b.reachableOnchainValueUsd - a.reachableOnchainValueUsd || a.venue.localeCompare(b.venue)
+  );
+}
+
 export type TokenRow = { ticker: string; issuerSlug: string | null; marketCapUsd: number; volume24hUsd: number; change7dPct: number };
 
 export type MarketSnapshot = {

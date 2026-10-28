@@ -7,6 +7,7 @@ import {
   VENUE_KIND_LABEL,
   TOP_TOKENS,
   normalizeChain,
+  buildExchangeIndex,
 } from './tokenized-equities.ts';
 
 const VENUE_KINDS = new Set(['cex', 'dex', 'lending', 'aggregator', 'broker-app']);
@@ -100,4 +101,81 @@ test('an unknown issuance model claims no self-operated venue', () => {
       `${issuer.slug} has an unknown issuer but claims to run ${issuer.venues.find((v) => v.operatedByIssuer)?.name}`
     );
   }
+});
+
+// ── buildExchangeIndex ───────────────────────────────────────────────────────
+
+test('the exchange index covers exactly the venues the issuers name', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  const fromIssuers = new Set(ISSUERS.flatMap((issuer) => issuer.venues.map((venue) => venue.name)));
+  const fromIndex = new Set(index.map((view) => view.venue));
+  assert.deepEqual([...fromIndex].sort(), [...fromIssuers].sort());
+});
+
+test('every issuer that names a venue appears under it', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  for (const issuer of ISSUERS) {
+    for (const venue of issuer.venues) {
+      const view = index.find((candidate) => candidate.venue === venue.name);
+      assert.ok(view, `${venue.name} is missing from the index`);
+      assert.ok(
+        view.issuers.some((entry) => entry.slug === issuer.slug),
+        `${issuer.slug} is missing under ${venue.name}`
+      );
+    }
+  }
+});
+
+// The same issuer is reachable at several venues, so this column overlaps by
+// design. Asserting the overlap keeps anyone from "fixing" it into a total.
+test('reachable value is not additive across venues', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  const summed = index.reduce((total, view) => total + view.reachableOnchainValueUsd, 0);
+  const market = ISSUERS.reduce((total, issuer) => total + (issuer.onchainValueUsd ?? 0), 0);
+  assert.ok(summed > market, 'expected venue sums to double-count multi-venue issuers');
+
+  const xstocks = ISSUERS.find((issuer) => issuer.slug === 'xstocks');
+  const venuesCarryingIt = index.filter((view) => view.issuers.some((entry) => entry.slug === 'xstocks'));
+  assert.equal(venuesCarryingIt.length, xstocks.venues.length);
+  for (const view of venuesCarryingIt) {
+    assert.ok(view.reachableOnchainValueUsd >= xstocks.onchainValueUsd);
+  }
+});
+
+test('a venue counts as issuer-operated only when every issuer there self-operates', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  for (const view of index) {
+    const all = ISSUERS.every((issuer) =>
+      issuer.venues
+        .filter((venue) => venue.name === view.venue)
+        .every((venue) => venue.operatedByIssuer === true)
+    );
+    assert.equal(view.operatedByIssuer, all, view.venue);
+  }
+  assert.equal(index.find((view) => view.venue === 'Kraken').operatedByIssuer, true);
+  assert.equal(index.find((view) => view.venue === 'Bybit').operatedByIssuer, false);
+});
+
+test('venues and their issuers are both sorted by size, descending', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  for (let i = 1; i < index.length; i += 1) {
+    assert.ok(index[i - 1].reachableOnchainValueUsd >= index[i].reachableOnchainValueUsd);
+  }
+  for (const view of index) {
+    for (let i = 1; i < view.issuers.length; i += 1) {
+      assert.ok((view.issuers[i - 1].onchainValueUsd ?? 0) >= (view.issuers[i].onchainValueUsd ?? 0));
+    }
+  }
+});
+
+test('an issuer with no venues stays out of the index', () => {
+  const index = buildExchangeIndex(ISSUERS);
+  const placed = new Set(index.flatMap((view) => view.issuers.map((entry) => entry.slug)));
+  for (const issuer of ISSUERS) {
+    assert.equal(placed.has(issuer.slug), issuer.venues.length > 0, issuer.slug);
+  }
+});
+
+test('buildExchangeIndex handles an empty roster', () => {
+  assert.deepEqual(buildExchangeIndex([]), []);
 });
