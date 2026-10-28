@@ -13,6 +13,8 @@ import {
   VENUE_KIND_LABEL,
   VOTING_LABEL,
   WRAPPER_LABEL,
+  TOP_TOKENS,
+  TURNOVER_READING,
   buildExchangeIndex,
   pick,
   type Grade,
@@ -70,6 +72,21 @@ export default function StocksIssuers() {
       ISSUERS.some((issuer) => issuer.issuanceModel === candidate)
     ),
   ];
+
+  // The token ranking used to be its own section listing all eight rows with an
+  // issuer column. Folded in here instead: each token sits under the issuer that
+  // minted it, which is where a reader looks for it anyway.
+  const tokensByIssuer = useMemo(() => {
+    const grouped = new Map<string, typeof TOP_TOKENS[number][]>();
+    for (const token of TOP_TOKENS) {
+      if (!token.issuerSlug) continue;
+      const list = grouped.get(token.issuerSlug);
+      if (list) list.push(token);
+      else grouped.set(token.issuerSlug, [token]);
+    }
+    for (const list of grouped.values()) list.sort((a, b) => b.marketCapUsd - a.marketCapUsd);
+    return grouped;
+  }, []);
 
   const toggle = (slug: string) =>
     setOpen((previous) => {
@@ -256,8 +273,46 @@ export default function StocksIssuers() {
                               )}
                             </div>
 
+                            {(tokensByIssuer.get(issuer.slug) ?? []).length > 0 && (
+                              <div className='mt-3.5'>
+                                <div className='mono-label mb-1.5'>{t('Largest tokens', '主要代币', '主要トークン')}</div>
+                                <table className='w-full border-collapse border border-border text-[12px]'>
+                                  <thead>
+                                    <tr>
+                                      <th className={TH}>{t('Token', '代币', 'トークン')}</th>
+                                      <th className={`${TH} text-right`}>{t('Market cap', '市值', '時価総額')}</th>
+                                      <th className={`${TH} text-right`}>{t('24h volume', '24h 成交', '24h 出来高')}</th>
+                                      <th className={`${TH} text-right`}>{t('Turnover', '换手', '回転率')}</th>
+                                      <th className={`${TH} text-right`}>{t('7d', '7 天', '7日')}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {(tokensByIssuer.get(issuer.slug) ?? []).map((token) => {
+                                      const turnover = (token.volume24hUsd / token.marketCapUsd) * 100;
+                                      return (
+                                        <tr key={token.ticker} className='border-b border-border last:border-0'>
+                                          <td className='px-3.5 py-2 font-mono text-[12px] font-medium'>{token.ticker}</td>
+                                          <td className='tnum px-3.5 py-2 text-right font-mono text-[11.5px]'>{usd(token.marketCapUsd)}</td>
+                                          <td className='tnum px-3.5 py-2 text-right font-mono text-[11.5px] text-muted-foreground'>
+                                            {usd(token.volume24hUsd)}
+                                          </td>
+                                          <td className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${turnover > 50 ? 'text-brand' : 'text-subtle'}`}>
+                                            {turnover < 1 ? '<1%' : `${turnover.toFixed(0)}%`}
+                                          </td>
+                                          <td className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${token.change7dPct >= 0 ? 'text-positive' : 'text-negative'}`}>
+                                            {token.change7dPct > 0 ? '+' : ''}
+                                            {token.change7dPct}%
+                                          </td>
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
+                            )}
+
                             {issuer.chains.length > 0 && (
-                              <div className='mt-2 flex flex-wrap items-center gap-1.5'>
+                              <div className='mt-3 flex flex-wrap items-center gap-1.5'>
                                 <span className='mono-label mr-1'>{t('Chains', '链', 'チェーン')}</span>
                                 <span className='font-mono text-[10.5px] text-subtle'>
                                   {issuer.chains.slice(0, CHAINS_SHOWN).join(' · ')}
@@ -279,6 +334,8 @@ export default function StocksIssuers() {
               </tbody>
             </table>
           </div>
+
+          <p className='mt-3 max-w-[700px] text-[13px] leading-[1.7] text-muted-foreground'>{L(TURNOVER_READING)}</p>
 
           <dl className='mt-3 flex flex-wrap gap-x-5 gap-y-1.5'>
             {GRADE_RUBRIC.map((row) => (

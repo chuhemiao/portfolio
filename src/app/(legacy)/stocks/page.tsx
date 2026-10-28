@@ -1,5 +1,5 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
-import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
+import { articleHref, getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
 import StocksIssuers from './stocks-client';
 import {
@@ -7,14 +7,9 @@ import {
   ACTIVITY_DIVERGENCE,
   CONCENTRATION_READING,
   DATA_AS_OF,
-  ISSUERS,
   MARKET_SNAPSHOTS,
-  METHOD_NOTE,
   REGULATORY_NOTES,
-  TOP_TOKENS,
-  TURNOVER_READING,
   UNDERLYING_CONCENTRATION,
-  UNKNOWN_LABEL,
   WATCH_SIGNALS,
   WRAPPER_LABEL,
   WRAPPER_RUBRIC,
@@ -22,6 +17,7 @@ import {
 } from '@/data/tokenized-equities';
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { ArrowUpRightIcon } from 'lucide-react';
 
 export const metadata: Metadata = localizedPageMetadata('/stocks', 'en', {
   title: 'Tokenized Equities',
@@ -37,7 +33,12 @@ const usd = (value?: number) => {
   return `$${value}`;
 };
 
-const TH = 'border-b border-border-strong px-3 py-2.5 text-left font-mono text-[10.5px] font-normal uppercase tracking-[0.12em] text-subtle';
+// The case study lives as a research article now; its slug differs per locale.
+const CASE_STUDY_SLUG: Record<Locale, string> = {
+  'zh-CN': 'aapl-four-books-tokenized-equity-liquidity',
+  en: 'aapl-four-books-tokenized-equity-liquidity-en',
+  ja: 'aapl-four-books-tokenized-equity-liquidity-ja',
+};
 
 export default async function Page() { return renderPage('en'); }
 
@@ -45,7 +46,6 @@ export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
   const href = (url: string) => localizeHref(url, locale);
   const L = <T extends readonly [string, string, string]>(value: T) => pick(value, locale);
-  const issuerName = (slug: string | null) => (slug ? ISSUERS.find((i) => i.slug === slug)?.name ?? slug : null);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -182,51 +182,15 @@ export async function renderPage(locale: Locale) {
             rather than stacking keeps the page from growing another section. */}
         <StocksIssuers />
 
-        {/* ── 代币排行 ─────────────────────────────────────────── */}
+        {/* The token ranking moved into the issuer rows, where each token sits
+            under the issuer that minted it. What stays here is the concentration
+            read, which is about underlyings rather than issuers. */}
         <section className='border-b border-border py-12'>
           <div className='mb-2 flex flex-wrap items-baseline justify-between gap-3'>
-            <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Largest tokens', '代币排行', '主要トークン')}</h2>
+            <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Where the demand sits', '需求集中在哪', '需要の集中先')}</h2>
             <span className='tnum font-mono text-[11.5px] text-subtle'>2026-10-15 · CoinGecko / Castle Labs</span>
           </div>
-          <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>{L(TURNOVER_READING)}</p>
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[640px] border-collapse border border-border text-[13px]'>
-              <thead>
-                <tr>
-                  {[
-                    t('Token', '代币', 'トークン'),
-                    t('Issuer', '发行方', '発行体'),
-                    t('Market cap', '市值', '時価総額'),
-                    t('24h volume', '24h 成交', '24h 出来高'),
-                    t('Turnover', '换手', '回転率'),
-                    t('7d', '7 天', '7日'),
-                  ].map((h) => <th key={h} className={TH}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {TOP_TOKENS.map((row) => {
-                  const turnover = (row.volume24hUsd / row.marketCapUsd) * 100;
-                  return (
-                    <tr key={row.ticker} className='border-b border-border last:border-0'>
-                      <td className='px-3 py-3 font-mono text-[12.5px] font-medium'>{row.ticker}</td>
-                      <td className='px-3 py-3 text-[12.5px] text-muted-foreground'>{issuerName(row.issuerSlug)}</td>
-                      <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(row.marketCapUsd)}</td>
-                      <td className='tnum px-3 py-3 text-right font-mono text-[12px] text-muted-foreground'>{usd(row.volume24hUsd)}</td>
-                      <td className={`tnum px-3 py-3 text-right font-mono text-[12px] ${turnover > 50 ? 'text-brand' : 'text-subtle'}`}>
-                        {turnover < 1 ? '<1%' : `${turnover.toFixed(0)}%`}
-                      </td>
-                      <td className={`tnum px-3 py-3 text-right font-mono text-[12px] ${row.change7dPct >= 0 ? 'text-positive' : 'text-negative'}`}>
-                        {row.change7dPct > 0 ? '+' : ''}{row.change7dPct}%
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-
-          <h3 className='mb-3 mt-10 text-base font-semibold'>{t('Where the demand sits', '需求集中在哪', '需要の集中先')}</h3>
-          <div className='grid gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5'>
+          <div className='mt-4 grid gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5'>
             {UNDERLYING_CONCENTRATION.map((item) => (
               <div key={item.underlying} className='bg-background p-4'>
                 <div className='tnum font-mono text-[17px] font-medium'>{usd(item.valueUsd)}</div>
@@ -236,65 +200,23 @@ export async function renderPage(locale: Locale) {
             ))}
           </div>
           <p className='mt-3 font-mono text-[11px] leading-[1.7] text-subtle'>{L(CONCENTRATION_READING)}</p>
-        </section>
 
-        {/* ── 案例 ─────────────────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <div className='mb-2 flex flex-wrap items-baseline justify-between gap-3'>
-            <h2 className='text-xl font-semibold tracking-[-0.015em]'>
-              {t('Case study: one stock, four books', '案例：同一只股票，四本账', 'ケース：同じ株、四つの板')}
-            </h2>
-            <span className='tnum font-mono text-[11.5px] text-subtle'>{AAPL_CASE_STUDY.asOf}</span>
-          </div>
-          <p className='mb-6 max-w-[740px] text-[14px] leading-[1.7] text-muted-foreground'>{L(AAPL_CASE_STUDY.lede)}</p>
-          <div className='overflow-x-auto'>
-            <table className='w-full min-w-[860px] border-collapse border border-border text-[13px]'>
-              <thead>
-                <tr>
-                  {[
-                    t('Token', '代币', 'トークン'),
-                    t('Issuer', '发行方', '発行体'),
-                    t('Venue', '场所', '取引所'),
-                    t('24h volume', '24h 成交额', '24h 出来高'),
-                    t('Spread', '价差', 'スプレッド'),
-                    t('Bid depth', '买盘深度', '買い板'),
-                    t('Ask depth', '卖盘深度', '売り板'),
-                    t('vs close', '相对收盘', '終値比'),
-                  ].map((h) => <th key={h} className={TH}>{h}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {AAPL_CASE_STUDY.rows.map((row) => (
-                  <tr key={row.ticker} className='border-b border-border last:border-0'>
-                    <td className='px-3 py-3'>
-                      <div className='font-mono text-[12.5px] font-medium'>{row.ticker}</div>
-                      <div className='font-mono text-[10.5px] text-subtle'>{row.chain ?? L(UNKNOWN_LABEL)}</div>
-                    </td>
-                    <td className='px-3 py-3 text-[12.5px] text-muted-foreground'>
-                      {issuerName(row.issuerSlug) ?? <span className='text-negative'>{t('unresolved', '未能解析', '特定不可')}</span>}
-                    </td>
-                    <td className='px-3 py-3 font-mono text-[11.5px] text-muted-foreground'>{row.venue}</td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px]'>{usd(row.volume24hUsd)}</td>
-                    <td className={`tnum px-3 py-3 text-right font-mono text-[12px] ${row.spreadBps > 20 ? 'text-negative' : ''}`}>{row.spreadBps} bps</td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px] text-muted-foreground'>{usd(row.bidDepthUsd)}</td>
-                    <td className='tnum px-3 py-3 text-right font-mono text-[12px] text-muted-foreground'>{usd(row.askDepthUsd)}</td>
-                    <td className={`tnum px-3 py-3 text-right font-mono text-[12px] ${row.premiumPct >= 0 ? 'text-positive' : 'text-negative'}`}>
-                      {row.premiumPct > 0 ? '+' : ''}{row.premiumPct}%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className='mt-5 space-y-2'>
-            {AAPL_CASE_STUDY.rows.map((row) => (
-              <p key={row.ticker} className='text-[13px] leading-[1.7] text-muted-foreground'>
-                <span className='font-mono text-[12px] text-foreground'>{row.ticker}</span>
-                <span className='mx-2 text-subtle'>·</span>{L(row.note)}
-              </p>
-            ))}
-          </div>
-          <p className='mt-5 font-mono text-[11px] leading-[1.7] text-subtle'>{L(METHOD_NOTE)}</p>
+          {/* The AAPL case study is a single-instrument deep dive rather than an
+              overview, so it reads as research. One line out to it instead. */}
+          <Link
+            href={articleHref(CASE_STUDY_SLUG[locale], locale)}
+            className='mt-6 flex items-center justify-between gap-4 rounded border border-border bg-surface px-5 py-4 transition-colors hover:border-border-strong'
+          >
+            <span className='text-[13.5px] leading-[1.6]'>
+              {t(
+                'Case study: one stock, four books — taking apart the liquidity of tokenized AAPL',
+                '案例：同一只股票，四本账 —— AAPL 代币化版本的流动性拆解',
+                'ケース：同じ株、四つの板 —— トークン化 AAPL の流動性を分解する'
+              )}
+              <span className='ml-2 font-mono text-[11px] text-subtle'>{AAPL_CASE_STUDY.asOf}</span>
+            </span>
+            <ArrowUpRightIcon aria-hidden='true' className='size-4 shrink-0 text-subtle' />
+          </Link>
         </section>
 
         {/* ── 监管 + 观察信号 ──────────────────────────────────── */}

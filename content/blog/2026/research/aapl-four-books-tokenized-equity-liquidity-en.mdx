@@ -1,0 +1,117 @@
+---
+title: 'One stock, four books: taking apart the liquidity of tokenized AAPL'
+publishedAt: '2026-10-28'
+summary: '19 September 2026 was a Saturday. Apple last closed at $335.19, and all four of its tokenized versions kept trading. Laying the four books side by side gives a counter-intuitive result: the tightest spread sits on the most lopsided book, and the one with the second-highest volume has almost no depth at all. An off-hours quote is a market maker opinion, not a market price.'
+slug: 'aapl-four-books-tokenized-equity-liquidity-en'
+category: 'research'
+language: 'en'
+translationKey: 'aapl-four-books-tokenized-equity-liquidity'
+sourceSlug: 'aapl-four-books-tokenized-equity-liquidity'
+---
+
+## TL;DR
+
+**One stock, four issuers, four completely different books — and the tightest spread comes with the most lopsided one.**
+
+- **The timestamp is a Saturday.** The underlying last closed at `$335.19` and all four tokens kept trading. **An off-hours quote is a market maker's opinion, not a market price.**
+- **AAPLB (bStocks / Binance) has the tightest spread in the set at 0.3 bps** — and ask depth one sixth of bid depth. A narrow spread is not two-sided depth.
+- **AAPLX (xStocks / Bybit) is the mirror image**: $175K on the ask, $18K on the bid. Getting in and getting out are not symmetric.
+- **AAPLG (Gate) turned over $445K, more than four times AAPLON, on a 53.3 bps spread — 50 times the others, almost no depth, and its issuer could not even be resolved.** Volume alone must never qualify an instrument.
+- **The one thing to take away**: read the ratio of bid to ask depth before you read the spread. Reading the spread alone picks the worst book in the set.
+
+---
+
+## 1. Why a Saturday
+
+The 19 September 2026 timestamp is not arbitrary. **It is a Saturday — US equities closed, while four AAPL tokens kept trading on-chain.**
+
+That is one of the sharpest differences between a tokenized equity and its underlying. When Nasdaq is shut, no genuine price discovery is happening; a token's quote comes entirely from a market maker's view of where Monday opens, plus whatever premium it wants for carrying the inventory risk.
+
+**The underlying last closed at $335.19.** Every "vs close" figure below is measured against that.
+
+## 2. The four books
+
+| Token | Issuer | Chain | Venue | 24h volume | Spread | Bid depth | Ask depth | vs close |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| **AAPLB** | bStocks | BNB Chain | Binance | $822K | **0.3 bps** | $56.3K | $8.8K | −0.02% |
+| **AAPLX** | xStocks | Solana / EVM | Bybit | $158K | 2.68 bps | $18K | **$175K** | +0.32% |
+| **AAPLON** | Ondo | Ethereum / Solana | Gate | $94.7K | 5.65 bps | $16.2K | $12K | +0.21% |
+| **AAPLG** | **unresolved** | — | Gate | $445.5K | **53.3 bps** | $5.6K | $9.3K | −0.02% |
+
+Four rows, four entirely different market structures.
+
+## 3. The tightest spread, the most lopsided book
+
+**AAPLB quotes a 0.3 bps spread, the tightest in the set by nearly nine times.** On that number alone it is the obvious winner.
+
+Then look at the depth: $56.3K bid, $8.8K ask. **The ask is a sixth of the bid.**
+
+What that means in practice: buying runs into a thin book — past roughly $8.8K you are reaching for worse prices — while selling meets a comparatively thick bid. **This book is one-directional.**
+
+**A narrow spread describes the distance between the best bid and the best ask and says nothing whatsoever about the world past those two levels.** A market maker can quote extremely tight two-sided prices in very small size, which makes the spread look excellent while the genuinely executable size sits an order of magnitude lower.
+
+## 4. AAPLX: the same imbalance, mirrored
+
+AAPLX runs the same problem in reverse: **$175K on the ask against $18K on the bid, close to ten to one.**
+
+It has the thickest ask in the set, so buying is barely constrained. But if you hold AAPLX and want out, you face an $18K bid — that is the size ceiling before the price starts moving against you in earnest.
+
+**Getting in and getting out are not symmetric.** That matters especially for tokenized equities, because many people read them as "stocks on-chain" and assume liquidity runs both ways. **In this table, not one of the four books is genuinely two-sided.**
+
+AAPLX's spread is 2.68 bps and it sits at +0.32% against the close — the richest premium of the four. A thick ask plus a positive premium reads roughly as: the market maker will carry short exposure over the weekend, and wants paying for it.
+
+## 5. AAPLON: balanced, but small
+
+Ondo's AAPLON is the only book with two roughly matched sides: **$16.2K bid, $12K ask.**
+
+The cost is size. At $94.7K its 24h volume is the lowest of the four, and its 5.65 bps spread is nearly twenty times AAPLB's.
+
+**This book suits small limit orders and does not suit scaling a position without live RFQ.** The balance is a real virtue — it at least will not trap you structurally in one direction — but $12K to $16K of depth defines the range it works in.
+
+## 6. AAPLG: the most misleading volume in the set
+
+This row deserves its own section, because it demonstrates an easy trap.
+
+**AAPLG turned over $445.5K in 24 hours** — second of the four, more than four times AAPLON. A screen that filters on "enough volume" passes it straight through.
+
+Then read the other three columns:
+
+- **A 53.3 bps spread** — nearly ten times AAPLON and **178 times** AAPLB
+- **$5.6K bid, $9.3K ask** — the thinnest book of the four
+- **The issuer could not be resolved in the mapping** — we do not know who issued it
+
+**High volume against almost no depth means those trades happened over and over across a very thin book.** That is not liquidity; it is churn.
+
+And "issuer unresolved" should be a veto on its own. Without knowing the issuing entity, the legal wrapper or the redemption terms, any discussion of liquidity is secondary.
+
+**Volume alone must never qualify an instrument.**
+
+## 7. The method worth keeping
+
+Put the four books together and a few operational rules fall out:
+
+**First, read the depth ratio before the spread.** Divide bid depth by ask depth; the further from 1, the more one-directional the book. AAPLB is 6.4:1, AAPLX is 1:9.7 — the two extremes. AAPLON's 1.35:1 is the closest to balanced in the set.
+
+**Second, spread and depth have to be read together; either one alone misleads.** AAPLB has the tightest spread and the most skewed book; AAPLG has the widest spread and the thinnest depth. The second is consistently bad, the first is inconsistently good.
+
+**Third, discount every number taken while the underlying is closed.** A Saturday quote has no price discovery behind it; it reflects a market maker's inventory and risk appetite. **The same four books may look entirely different after Monday's open.**
+
+**Fourth, when the issuer cannot be resolved, the liquidity data is not worth analysing.** Settle who issued it before asking whether you can trade it.
+
+## 8. What this method cannot tell you
+
+This is a snapshot, not continuous monitoring. **One timestamp, one underlying, one weekend window** — it demonstrates a way of reading the data rather than a lasting verdict on these four tokens.
+
+The measurement basis needs stating too:
+
+*Volume is 24h base quantity × last price. Depth is the top 20 levels converted at mid, not full book depth. Contract addresses come from a mapping snapshot marked "observed" — never an issuer whitelist.*
+
+**Depth especially: this table cannot see past level 20.** A book that thickens abruptly at level 21 and one that stays thin to level 50 look identical here.
+
+---
+
+**Bottom line.** One Apple share, four tokenized versions, four structurally different books. **The tightest spread sits on the most lopsided book, and the second-highest volume sits on the thinnest depth with an issuer nobody can name.**
+
+Reading them as "Apple stock on-chain" is the mistake. They are four independent instruments with different liquidity structures, sharing one price reference and little else.
+
+*Data as of 19 September 2026, a Saturday; underlying close $335.19. Research, not investment advice. DYOR.*
