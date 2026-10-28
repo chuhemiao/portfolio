@@ -76,6 +76,52 @@ export const GRADE_LABEL: Record<Grade, L10n> = {
 
 export const UNKNOWN_LABEL: L10n = ['unknown', '未知', '不明'];
 
+// Who issues the token, as distinct from who sells it. The two come apart:
+// Backed issues xStocks and three different exchanges sell them, while Binance
+// issues bStocks and sells them itself. Self-issuance puts issuance, custody,
+// market making and listing inside one entity with no third party between them,
+// which is the main axis the issuer table is sorted on.
+export type IssuanceModel =
+  | 'exchange-self'
+  | 'exchange-onchain'
+  | 'broker-self'
+  | 'independent'
+  | 'unknown';
+
+export const ISSUANCE_LABEL: Record<IssuanceModel, L10n> = {
+  'exchange-self': ['exchange self-issued', '交易所自营发行', '取引所の自社発行'],
+  'exchange-onchain': ['exchange-issued, on-chain only', '交易所发行·仅链上流通', '取引所発行・オンチェーンのみ'],
+  'broker-self': ['broker self-issued', '券商自营发行', 'ブローカーの自社発行'],
+  independent: ['independent issuer', '独立发行方', '独立した発行体'],
+  unknown: UNKNOWN_LABEL,
+};
+
+// A venue is not always somewhere you can buy. Aave and Morpho accept these
+// tokens as collateral and nothing more, so they are typed separately rather
+// than sitting in the same list as Binance.
+export type VenueKind = 'cex' | 'dex' | 'lending' | 'aggregator' | 'broker-app';
+
+export const VENUE_KIND_LABEL: Record<VenueKind, L10n> = {
+  cex: ['CEX', '中心化交易所', '中央集権取引所'],
+  dex: ['DEX', '链上 DEX', 'オンチェーン DEX'],
+  lending: ['collateral only', '仅作抵押品', '担保のみ'],
+  aggregator: ['aggregator', '聚合器', 'アグリゲーター'],
+  'broker-app': ['broker app', '券商 App', 'ブローカーアプリ'],
+};
+
+export type Venue = {
+  name: string;
+  kind: VenueKind;
+  /** The venue is run by the issuer itself, so no third party sits between them. */
+  operatedByIssuer?: boolean;
+};
+
+// xStocks writes BSC where Ondo and bStocks write BNB Chain. Normalised on the
+// way in so grouping by chain does not split one chain into two.
+const CHAIN_ALIASES: Record<string, string> = { BSC: 'BNB Chain' };
+
+export const normalizeChain = (chain: string): string => CHAIN_ALIASES[chain] ?? chain;
+
 export type Issuer = {
   slug: string;
   name: string;
@@ -95,7 +141,8 @@ export type Issuer = {
   chains: string[];
   instrumentCount?: number;
   onchainValueUsd?: number;
-  distribution: string[];
+  issuanceModel: IssuanceModel;
+  venues: Venue[];
   grade: Grade;
   note: L10n;
 };
@@ -185,7 +232,8 @@ export const ISSUERS: Issuer[] = [
     chains: ['Ethereum', 'BNB Chain', 'Solana', 'HyperEVM'],
     instrumentCount: 100,
     onchainValueUsd: 984_000_000,
-    distribution: ['LI.FI', 'Jupiter'],
+    issuanceModel: 'independent',
+    venues: [{ name: 'LI.FI', kind: 'aggregator' }, { name: 'Jupiter', kind: 'dex' }],
     grade: 'B',
     note: [
       'Renamed from Ondo Global Markets in July 2026. Leads on multi-chain reach and DeFi integration. The company claims over 70% issuer share; on CoinGecko’s basis it is roughly a third — treat the 70% as marketing.',
@@ -207,7 +255,8 @@ export const ISSUERS: Issuer[] = [
     chains: ['BNB Chain'],
     instrumentCount: 80,
     onchainValueUsd: 914_000_000,
-    distribution: ['Binance'],
+    issuanceModel: 'exchange-self',
+    venues: [{ name: 'Binance', kind: 'cex', operatedByIssuer: true }],
     grade: 'B',
     note: [
       'Launched 2026-06-11 and already second by size. Highest turnover in the category — SPCXB trades roughly its own market cap in a day. Dividends take a 30% US withholding deduction before being reinvested through a multiplier. Single chain: BSC deposits only, so a wrong-network transfer loses the asset.',
@@ -226,10 +275,11 @@ export const ISSUERS: Issuer[] = [
     redemption: { available: true, kyc: true, minimumUsd: 5000 },
     proofOfReserve: { kind: 'chainlink-por' },
     usPersons: 'blocked',
-    chains: ['Solana', 'Ethereum', 'Arbitrum', 'BSC', 'TON', 'Tron', 'Mantle', 'Ink', 'Monad', 'Optimism', 'X Layer', 'Hyperliquid'],
+    chains: ['Solana', 'Ethereum', 'Arbitrum', 'BNB Chain', 'TON', 'Tron', 'Mantle', 'Ink', 'Monad', 'Optimism', 'X Layer', 'Hyperliquid'],
     instrumentCount: 100,
     onchainValueUsd: 847_000_000,
-    distribution: ['Kraken', 'Bybit', 'OKX'],
+    issuanceModel: 'independent',
+    venues: [{ name: 'Kraken', kind: 'cex', operatedByIssuer: true }, { name: 'Bybit', kind: 'cex' }, { name: 'OKX', kind: 'cex' }],
     grade: 'A',
     note: [
       'Widest chain coverage and the most complete public legal documentation. Acquired by Kraken in Dec 2025, putting issuance and trading on one balance sheet. Chainlink proof of reserve updates daily or on a 10% move. Dividends arrive as rebasing, not cash; primary redemption needs KYC and a $5,000 minimum.',
@@ -251,7 +301,8 @@ export const ISSUERS: Issuer[] = [
     chains: ['Robinhood Chain'],
     instrumentCount: 190,
     onchainValueUsd: 151_000_000,
-    distribution: ['Robinhood app'],
+    issuanceModel: 'broker-self',
+    venues: [{ name: 'Robinhood app', kind: 'broker-app', operatedByIssuer: true }],
     grade: 'B',
     note: [
       'Tokenized debt securities today, but the only major issuer publicly planning 1:1 redemption into real shares plus voting rights. If that ships it is the first large issuer to return shareholder rights. In the EU it also runs 2,000+ CFD-style products that cannot be withdrawn on-chain.',
@@ -271,7 +322,8 @@ export const ISSUERS: Issuer[] = [
     usPersons: 'unknown',
     chains: [],
     onchainValueUsd: 132_000_000,
-    distribution: [],
+    issuanceModel: 'unknown',
+    venues: [],
     grade: 'unrated',
     note: [
       'Fifth by size with almost no public structural disclosure. Unrated until the issuing entity, custody and redemption terms can be read from primary documents.',
@@ -291,7 +343,8 @@ export const ISSUERS: Issuer[] = [
     usPersons: 'accredited',
     chains: ['Ethereum', 'Arbitrum', 'Avalanche', 'Base'],
     instrumentCount: 724,
-    distribution: [],
+    issuanceModel: 'independent',
+    venues: [],
     grade: 'B',
     note: [
       'The only issuer here open to US persons at all, and then only to accredited investors. Underlying held with a qualified custodian. Widest instrument coverage in the category — the full S&P 500.',
@@ -311,7 +364,8 @@ export const ISSUERS: Issuer[] = [
     usPersons: 'unknown',
     chains: ['Solana'],
     onchainValueUsd: 30_980_000,
-    distribution: ['Backpack'],
+    issuanceModel: 'exchange-self',
+    venues: [{ name: 'Backpack', kind: 'cex', operatedByIssuer: true }],
     grade: 'unrated',
     note: [
       'Exchange issuing its own tokens — the pattern now common to Coinbase, Robinhood and Binance.',
@@ -332,7 +386,8 @@ export const ISSUERS: Issuer[] = [
     chains: ['Base'],
     instrumentCount: 10,
     onchainValueUsd: 7_500_000,
-    distribution: ['Uniswap', 'Aerodrome', 'Aave', 'Morpho'],
+    issuanceModel: 'exchange-onchain',
+    venues: [{ name: 'Uniswap', kind: 'dex' }, { name: 'Aerodrome', kind: 'dex' }, { name: 'Aave', kind: 'lending' }, { name: 'Morpho', kind: 'lending' }],
     grade: 'B',
     note: [
       'Launched 2026-08-24 with NVDAc, METAc, AAPLc and GOOGLc; shares held 1:1 by Alpaca. Thirteen contracts deployed, only four with supply. The most DeFi-native of the set: tradable on Uniswap and Aerodrome, usable as Aave collateral, borrowable against on Morpho.',
@@ -352,7 +407,8 @@ export const ISSUERS: Issuer[] = [
     usPersons: 'blocked',
     chains: ['Arbitrum', 'Morph'],
     instrumentCount: 36,
-    distribution: ['Bitget'],
+    issuanceModel: 'exchange-self',
+    venues: [{ name: 'Bitget', kind: 'cex', operatedByIssuer: true }],
     grade: 'C',
     note: [
       'Shares held through Alpaca Securities; holders do not own the stock directly. Replaced the Ondo tokens Bitget previously listed.',
@@ -372,7 +428,8 @@ export const ISSUERS: Issuer[] = [
     usPersons: 'unknown',
     chains: ['Base'],
     onchainValueUsd: 20_350_000,
-    distribution: [],
+    issuanceModel: 'unknown',
+    venues: [],
     grade: 'unrated',
     note: [
       'Small issuers; PreStocks accounts for the figure shown.',

@@ -3,6 +3,8 @@ import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
 import {
   AAPL_CASE_STUDY,
+  ISSUANCE_LABEL,
+  VENUE_KIND_LABEL,
   ACTIVITY_DIVERGENCE,
   CONCENTRATION_READING,
   DATA_AS_OF,
@@ -272,13 +274,23 @@ export async function renderPage(locale: Locale) {
               <div key={issuer.slug} className='bg-background p-5'>
                 <div className='mb-1.5 text-[13.5px] font-semibold'>{issuer.name}</div>
                 <p className='text-[13px] leading-[1.7] text-muted-foreground'>{L(issuer.note)}</p>
-                {issuer.distribution.length > 0 && (
-                  <div className='mt-2.5 flex flex-wrap gap-1.5'>
-                    {issuer.distribution.map((d) => (
-                      <span key={d} className='rounded-sm border border-border px-2 py-0.5 font-mono text-[10.5px] text-subtle'>{d}</span>
-                    ))}
-                  </div>
-                )}
+                <div className='mt-2.5 flex flex-wrap items-center gap-1.5'>
+                  <span className='rounded-sm border border-border-strong px-2 py-0.5 font-mono text-[10.5px] text-foreground'>
+                    {L(ISSUANCE_LABEL[issuer.issuanceModel])}
+                  </span>
+                  {issuer.venues.map((venue) => (
+                    <span
+                      key={venue.name}
+                      title={L(VENUE_KIND_LABEL[venue.kind])}
+                      className={`rounded-sm border px-2 py-0.5 font-mono text-[10.5px] ${
+                        venue.kind === 'lending' ? 'border-dashed border-border text-subtle' : 'border-border text-subtle'
+                      }`}
+                    >
+                      {venue.name}
+                      {venue.kind === 'lending' && <span className='ml-1'>·{L(VENUE_KIND_LABEL.lending)}</span>}
+                    </span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
