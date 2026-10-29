@@ -1,0 +1,135 @@
+---
+title: 'When answers get cheap, judgment becomes the scarce thing'
+publishedAt: '2026-10-29'
+summary: 'Society has long assumed knowledge is scarce, and built education, specialisation, consulting and investing on that assumption. AI is overturning it — but a falling cost of producing knowledge does not automatically raise the quality of human judgment. There is a worrying possibility instead: ever more powerful tools for processing information, alongside a fading ability to judge whether any of it is right. What is becoming scarce is epistemic judgment, not knowledge.'
+slug: 'judgment-scarce-when-answers-are-cheap-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'judgment-scarce-when-answers-are-cheap'
+sourceSlug: 'judgment-scarce-when-answers-are-cheap'
+---
+
+## TL;DR
+
+**A fluent explanation is not a true one. Once the cost of generating explanations approaches zero, the ability to check them becomes the bottleneck.**
+
+- **Internal consistency is not correctness.** You can hold a perfectly coherent logical system and still be wrong about the world — understanding the quality of a company and understanding its value at a given price are two different questions.
+- **A right outcome does not prove a right process.** You can call a crash correctly and still lose money through poor risk management, or make money on luck without ever forming a usable method.
+- **How far a belief should move depends on how discriminating the evidence is.** A 20% prior, updated on evidence three times as likely under success as under failure, gives roughly **42.9%** — not 60%, not 80%.
+- **AI may be the most powerful amplifier of cognitive bias ever built**: it argues downstream of whatever your question already presupposes, and the presupposition is usually the part that most needed challenging.
+- **What is worth building is epistemic infrastructure**: systems that separate facts, inferences, confidence, disconfirming evidence and feedback, and that calibrate their own past predictions.
+
+---
+
+## 1. The world we understand is not the world
+
+Eliezer Yudkowsky returns repeatedly in *The Sequences* to a basic point: **the model of the world in a human head is not the same thing as the world.** The facts, theories and explanations we believe are internal representations of reality, not reality.
+
+Someone can hold a highly self-consistent logical system and still judge reality wrongly.
+
+Concretely: an investor believes a company has long-term growth potential because the market is large, the team is experienced and the technology is innovative. **All three can be true and still fail to establish that this is a good investment** — the outcome also depends on the purchase price, the competitive landscape, capital allocation, market expectations and future cash flows.
+
+**Understanding the quality of a company and understanding its investment value at a particular price are two different questions.** A great deal of analysis conflates them, and conflates them without noticing.
+
+Likewise, a model producing a logically complete analysis does not mean it has grasped every variable that determines the real outcome. **A fluent explanation is not a true explanation.**
+
+Which is exactly why epistemology matters more, not less, in an age of abundant information.
+
+## 2. Rationality is not proving yourself right; it is correcting yourself continuously
+
+Rationality splits into two linked dimensions. **Epistemic rationality** concerns forming beliefs that match reality. **Instrumental rationality** concerns using those beliefs to achieve your goals.
+
+**They are not equivalent.** A person can predict a market decline accurately and still lose money through poor risk management; another can earn a high return on luck without ever forming a sound method.
+
+**So a correct outcome does not always vindicate the decision process.** What matters is whether the method holds up across many repeated decisions — a single result carries far less information than people assume.
+
+Bayes gives a useful frame: every judgment should have a prior, and should update on new evidence.
+
+Say a startup's prior probability of success is 20%. New evidence arrives which, under reasonable modelling assumptions, is three times as likely to appear for a successful project as for a failed one. Then:
+
+```text
+prior odds     = 0.20 / 0.80 = 0.25
+updated odds   = 0.25 × 3    = 0.75
+posterior      = 0.75 / 1.75 ≈ 42.9%
+```
+
+**Not 60%, and not 80%.** The numbers here illustrate the mechanism; they are not a real model of startup success rates.
+
+The principle they show: **evidence moves a judgment, but how far it moves depends on the evidence's reliability, its discriminating power, and the base rate you started from.** A great many bad decisions come from skipping this — we reach a conclusion first and then look for information supporting it, and when new evidence conflicts with an existing belief we are far more inclined to doubt the evidence than to revise the belief.
+
+**AI does not remove that bias automatically. It can make the bias harder to spot.**
+
+## 3. AI may be the strongest bias amplifier yet built
+
+A language model generates an answer that fits the context of your question. **But the question itself may already carry unexamined premises.**
+
+Suppose a founder asks:
+
+> "Why will my AI agent product become the leader of a billion-dollar market within three years?"
+
+**The question has already assumed the product succeeds.** The model will likely assemble a tight-looking argument from market growth, technology trends, capital inflows and competitive advantages.
+
+The problem is not necessarily that the model invented anything. It is that **nothing in the analysis challenged the premise that mattered most.**
+
+The questions actually worth asking:
+
+- Is there **verifiable** willingness to pay in this market yet?
+- Which companies are earning durable revenue from it today?
+- Why can customers not solve this with existing software or a general model?
+- **What evidence would falsify this business hypothesis?**
+
+The last one matters most and gets asked least. This is the analytical tradition visible in Scott Alexander's work at Slate Star Codex and Astral Codex Ten: on a complex question, compare competing explanations, examine the quality of the evidence, and state your uncertainty.
+
+**The value of AI should not only be helping people prove themselves right more efficiently. It should be helping them find where they are wrong.**
+
+## 4. From knowledge management to epistemic infrastructure
+
+Most AI products today are still built around retrieving information and generating content. Search, summarisation, document generation and question answering are becoming baseline capabilities.
+
+A different class of system may follow: **epistemic infrastructure**. Not answering questions, but managing how a judgment is formed, verified and revised.
+
+A good research agent should distinguish five layers:
+
+| Layer | What it answers |
+|---|---|
+| **Fact** | Which information comes from a traceable primary source? |
+| **Inference** | Which conclusions derive from those facts, on what assumptions? |
+| **Confidence** | How strong a claim does the current evidence actually support? |
+| **Disconfirmation** | What observation would invalidate this conclusion? |
+| **Feedback** | When the outcome arrives, does the system revisit its past judgment? |
+
+A financial research agent, for instance, should not merely output "this asset has long-term investment value". It should record the date of the judgment, the key data sources, the valuation assumptions, the forecast horizon, the risk conditions — and **what actually happened afterwards**.
+
+**If a system makes 100 predictions and only 40% of the events it marked at 70% come true, it has a calibration problem.** That defect should be measurable, not papered over with more fluent prose.
+
+Brier scores, calibration curves, prediction logs and post-hoc attribution can all serve as infrastructure for this.
+
+**One boundary is worth stating: good calibration does not make a decision correct.** The system may still be optimising the wrong objective, or ignoring a rare but severe risk. Calibration answers "when it says 70%, is it really 70%" — not "is this the thing to care about".
+
+## 5. From holding knowledge to holding a correction mechanism
+
+A counter-intuitive effect may define this era: **the easier knowledge is to obtain, the more people overestimate how well they understand.**
+
+The *feeling* of understanding can now be supplied directly by a tool. Genuine understanding still requires independent verification, contact with reality and, often, practice.
+
+We used to test whether someone had acquired knowledge. We may increasingly need to watch whether they can pose the right question, identify a hidden assumption, construct a way to verify it, and revise their model once they are proven wrong.
+
+**None of this makes memory, expertise or long study less valuable — the opposite.** Someone without domain knowledge is far less able to spot the reasoning in an AI's output that looks sound and is not. **Expertise remains the foundation of judgment.** What has changed is only that holding more information is no longer a durable advantage by itself.
+
+What we need is the capacity to resist self-deception, to go looking for disconfirming evidence, and to keep submitting beliefs to reality.
+
+## 6. The ability that matters most is knowing when you are wrong
+
+Civilisation advanced not only because we found more right answers. **It advanced because we gradually invented methods for systematically eliminating wrong ones.**
+
+Controlled experiments, peer review, statistical inference, legal procedure, market feedback — each is a form of error-correction machinery.
+
+AI will substantially expand our capacity to generate hypotheses and explanations. **But if verification, institutional constraint and feedback do not grow alongside it, greater intelligence can simply mean producing, spreading and acting on errors more efficiently.**
+
+So what deserves building in this era is not only smarter models, but systems that let humans and models face reality together, admit uncertainty, and keep correcting.
+
+**When answers get cheap, the real advantage is not how many questions you can answer. It is recognising which questions are worth answering, which answers are worth believing, and what evidence would be enough to change your mind.**
+
+---
+
+*First in a four-part series on the problems of the AI era, on cognition. The others: [coordination](/en/blog/moloch-machine-coordination-failure-ai-en), [power](/en/blog/who-decides-how-much-power-ai-agents-get-en), [institutions and distribution](/en/blog/ai-wont-build-utopia-superintelligence-institutions-en).*

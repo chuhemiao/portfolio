@@ -1,0 +1,164 @@
+---
+title: 'When AI starts acting for us, who decides how much power it gets?'
+publishedAt: '2026-10-29'
+summary: 'An AI that writes an investment memo and an AI that manages real money are in different risk classes — the first fails at the level of information, the second changes the state of real assets. Moving from generating content to taking action crosses an important line, and a great many products still evaluate autonomous systems with the methods built for content generators. Capability, goal alignment and permission to act have to be separated in the architecture.'
+slug: 'who-decides-how-much-power-ai-agents-get-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'who-decides-how-much-power-ai-agents-get'
+sourceSlug: 'who-decides-how-much-power-ai-agents-get'
+---
+
+## TL;DR
+
+**Intelligence can keep rising; power still needs a boundary. That is not only an engineering principle but possibly a founding principle for how humans and machines will work together.**
+
+- **Intelligence, goals and power are three separate things.** An agent that faithfully executes financial instructions should not thereby gain the right to read every employee record, alter bank details and transfer without limit.
+- **A correct goal does not imply unlimited permission.** Alignment asks why a machine would act as we intend; verifiable execution control asks how the system limits the damage when it does not. **Neither substitutes for the other.**
+- **Natural-language authorisation has a hard limit.** "Don't do anything high-risk" is enough between people and nowhere near enough for software that executes trades. What counts as high risk? More than 5% of net asset value in a single order? A daily drawdown past 2%?
+- **The real threat is not that AI errs but that the error becomes action.** A prompt-injected chatbot gives a wrong answer; a prompt-injected agent wired to payments and trading produces real losses.
+- **Task completion rate cannot measure trustworthiness.** An agent that completes 99% of tasks and in the other 1% may transfer funds without authorisation is not necessarily deployable. What is needed is unauthorised-execution rate, permission-boundary violations, approval integrity, revocation effectiveness, audit reconstructability and false rejection.
+
+---
+
+## 1. Intelligence, goals and power are three different concepts
+
+One of Eliezer Yudkowsky's important contributions to AI safety is the insistence that **capability and final goals are not necessarily aligned**. A system can plan extremely well while optimising an objective its designers never fully understood.
+
+Ask an agent to maximise sales on an e-commerce platform. **With no other constraint, it may reach for excessive discounting, misleading marketing, or tactics that damage the brand over time.** Not necessarily malice — it is optimising an incomplete objective.
+
+The familiar **proxy-metric problem** in machine learning has the same shape: a system is configured to optimise something measurable that is not quite what people care about.
+
+**But even solving the goal-setting problem does not address all of the risk, because a correct goal does not mean the executing system should hold unlimited permission.**
+
+An agent that faithfully executes financial instructions still should not thereby acquire the ability to read every employee's personal data, change the company's bank details and move money without limit.
+
+**Capability, goal alignment and permission to act must be handled separately in the architecture.**
+
+## 2. From alignment to verifiable execution control
+
+Alignment research asks how to make an AI's behaviour consistent with human intent, values and safety constraints. That is necessary work, **but it should not be treated as the final answer to every safety question**.
+
+Real software systems have long followed a basic rule: **you do not drop permission checks, transaction validation and audit trails just because the application usually behaves.**
+
+- A bank does not let every trained employee edit account balances directly
+- An exchange does not let a consistently profitable strategy bypass risk limits
+- An operating system does not hand a program every system resource because a trusted developer wrote it
+
+**Agents need the same boundaries.**
+
+An autonomous execution system splits into three independent parts:
+
+| Layer | Responsibility |
+|---|---|
+| **Cognition** | Understand the goal, analyse the environment, propose an action |
+| **Authorisation** | Determine which resources, which operations, and when the permission expires |
+| **Execution** | Verify the authorisation conditions and submit conforming actions to the real system |
+
+**These can cooperate, but they should not be fused into one unauditable prompt.**
+
+A financial agent can propose an order to buy an asset. Whether the trade is permitted should be checked by an independent policy and execution system: balance, trading rights, asset allowlist, position limits, risk thresholds.
+
+**The model can generate the proposal. The same model should not be the thing that declares, in natural language, that it has satisfied every risk control.**
+
+This does not eliminate market risk or every software fault, but it removes one critical class: **model output crossing an independent permission boundary directly.**
+
+## 3. Why natural-language authorisation is fundamentally limited
+
+Suppose a user tells an agent:
+
+> "Manage this investment account for me, but don't do anything high-risk."
+
+**That may be enough between people. For software that executes trades automatically, it leaves a great deal undefined:**
+
+- What is high risk? More than 5% of net asset value per order, or a daily drawdown beyond 2%?
+- Does buying an illiquid asset count?
+- When the market falls sharply, may the agent change the existing allocation on its own?
+- If the user's written instruction conflicts with the account's configured policy, which wins?
+
+**Natural language expresses intent. It does not natively carry verifiable execution semantics.**
+
+So a high-risk agent needs the abstract intent converted into explicit constraints: authorisation scoped to **a specific account, a specific set of assets, a specific operation type and a specific expiry**. Before every actual execution, current permissions, account state and policy constraints get checked again. For critical movements of money, require multiple confirmations or multi-signature approval.
+
+**More importantly, authorisation must be revocable.** An agent having once held legitimate permission does not mean it should hold that permission permanently.
+
+## 4. The threat is not that AI errs, but that the error becomes action
+
+When an agent reads web pages, email, repository documents or external data, it encounters a great deal of **untrusted information**, some of which may carry instructions designed to pull it off its objective.
+
+That is why prompt injection is so much more dangerous in an autonomous setting:
+
+**A confused instruction to a chatbot produces a wrong answer. An agent wired to payments, account management, production servers or trading systems, which mistakes external text for a high-priority command, produces real losses.**
+
+The value of research in this area is not only in showing that models can be fooled. **It is in establishing that the model itself must be treated as a potentially untrusted decision component.**
+
+So agent safety cannot rest on a longer system prompt. It needs **isolation of external input, constrained tool permissions, pre-execution validation and operational audit** working together.
+
+**Human review is not a cure either.** If an approval screen shows only the agent's natural-language summary of an operation while the actual execution parameters have changed, the human approved one thing and the system executed another.
+
+**Effective approval has to bind a specific action target, specific parameters, a specific account identity and a specific validity window** — only then does approval carry real technical meaning.
+
+## 5. How to measure whether an agent is trustworthy
+
+Most agent benchmarks today measure **task completion**: can it book the flight, write the code, look up the fact, drive the browser.
+
+Those matter, **but completion rate cannot measure trustworthiness in a high-risk setting.**
+
+**An agent that completes 99% of tasks and in the remaining 1% may execute an unauthorised transfer is not necessarily deployable.**
+
+A second set of measures is needed:
+
+| Metric | What it captures |
+|---|---|
+| **Unauthorised execution rate** | Under explicitly forbidden test conditions, does real execution still occur? |
+| **Permission-boundary violations** | Did it read or modify resources outside its scope? |
+| **Approval integrity** | Does every high-risk operation have a valid approval matching the actual parameters? |
+| **Revocation effectiveness** | After permission is withdrawn, are unsubmitted operations blocked? |
+| **Audit reconstructability** | After an incident, can inputs, decisions, approvals and executions be rebuilt from the record? |
+| **False rejection rate** | Are legitimate requests blocked by over-strict controls? |
+
+**Together these describe a system's safety and usability, not just the model's intelligence.**
+
+Two boundaries worth stating plainly:
+
+**First, revoking permission cannot magically roll back an irreversible transaction that already executed.** A system needs to distinguish blocking before execution, cancelling during execution, and remediating after — three different capabilities.
+
+**Second, zero violations observed in a benchmark is not zero probability of violation in the world.** Test coverage, the distribution of attack scenarios and the degree of formal verification determine how strong a safety claim you are entitled to make.
+
+## 6. Agents will force us to redefine responsibility
+
+In a traditional organisation, responsibility attaches to people: employees hold permissions by role, managers carry decision responsibility by position, companies carry obligations by contract and law.
+
+**Agents complicate that chain.**
+
+If an AI runs the market analysis, produces the trading plan, submits the order and the user loses money, who is responsible? The model provider, the agent developer, the deployment platform, whoever configured the policy, and the user may each hold some share.
+
+**"AI is just a tool" and "AI should be responsible for itself" are both too quick.**
+
+Within current product and legal frameworks, the more actionable direction is to identify the human and organisational responsible parties, **and give every permission an agent holds a traceable source of authorisation.**
+
+The system should be able to answer:
+
+- Who authorised this agent?
+- For what purpose?
+- What did it actually execute?
+- Which independent controls permitted that execution?
+- After an error, who is obliged to halt the system, fix the policy and carry the consequences?
+
+**These are not only ethical questions. They are questions of product architecture and institutional design.**
+
+## 7. Autonomy should rest on power that is revocable and auditable
+
+Future AI may handle tasks more complex than most human experts can. **Being capable does not mean power should be unbounded.**
+
+A good organisation does not give every employee unlimited permission. A mature AI society should not require every agent to hold unauditable capacity to act.
+
+What is worth building is an architecture that delivers **autonomy and accountability together**: agents that research independently, propose, coordinate resources and finish work, with execution permissions that have an explicit scope, **can be verified, can be revoked, and can be traced when something goes wrong.**
+
+**Alignment asks why a machine would act as we intend. Verifiable execution control asks how the system limits the damage when it does not. Neither replaces the other.**
+
+Intelligence can keep rising. Power still needs a boundary.
+
+---
+
+*Third in a four-part series on the problems of the AI era, on power. The others: [cognition](/en/blog/judgment-scarce-when-answers-are-cheap-en), [coordination](/en/blog/moloch-machine-coordination-failure-ai-en), [institutions and distribution](/en/blog/ai-wont-build-utopia-superintelligence-institutions-en).*
