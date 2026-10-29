@@ -1,0 +1,203 @@
+
+> porfolio@0.1.2 prebuild /Users/chuhemiao/indie/portfolio
+> pnpm content:prepare
+
+
+> porfolio@0.1.2 content:prepare /Users/chuhemiao/indie/portfolio
+> pnpm content:build && pnpm assets:build
+
+
+> porfolio@0.1.2 content:build /Users/chuhemiao/indie/portfolio
+> node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/build-content.mjs
+
+Content files discovered: 7317
+Published posts: 7317
+Trilingual article groups: 2133/3045
+Article groups missing translations: 912
+Drafts skipped: 0
+Cache hits: 7315
+Compiled: 2
+Artifacts removed: 0
+Content compile: 1.36s
+
+> porfolio@0.1.2 assets:build /Users/chuhemiao/indie/portfolio
+> node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/generate-static-assets.mjs
+
+Generated static assets for 7317 posts (3 sitemap files) in 0.07s.
+
+> porfolio@0.1.2 build /Users/chuhemiao/indie/portfolio
+> next build && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/prune-segment-cache.mjs && node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/emit-legacy-blog-redirects.mjs
+
+▲ Next.js 16.1.1 (Turbopack)
+- Experiments (use with caution):
+  · staticGenerationMaxConcurrency: 4
+  · staticGenerationMinPagesPerWorker: 50
+
+  Creating an optimized production build ...
+Turbopack build encountered 4 warnings:
+./src/data/blog.ts:20:10
+The file pattern '/ROOT/.generated' matches 14639 files in [project]/
+[0m [90m 18 |[39m   }
+ [90m 19 |[39m
+[31m[1m>[22m[39m[90m 20 |[39m   [36mreturn[39m path[33m.[39mjoin(process[33m.[39mcwd()[33m,[39m [32m'.generated'[39m)[33m;[39m
+ [90m    |[39m          [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 21 |[39m }
+ [90m 22 |[39m
+ [90m 23 |[39m [36mconst[39m [33mGENERATED_DIR[39m [33m=[39m resolveGeneratedDir()[33m;[39m[0m
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import trace:
+  Server Component:
+    ./src/data/blog.ts
+    ./src/app/(legacy)/topics/[slug]/page.tsx
+
+
+./src/data/blog.ts:13:12
+The file pattern ('/ROOT/' <dynamic> | '/ROOT' <dynamic>) matches 65056 files in [project]/
+[0m [90m 11 |[39m [36mfunction[39m resolveGeneratedDir()[33m:[39m string {
+ [90m 12 |[39m   [36mif[39m (process[33m.[39menv[33m.[39m[33mCONTENT_CACHE_DIR[39m) {
+[31m[1m>[22m[39m[90m 13 |[39m     [36mreturn[39m path[33m.[39mresolve(process[33m.[39mcwd()[33m,[39m process[33m.[39menv[33m.[39m[33mCONTENT_CACHE_DIR[39m)[33m;[39m
+ [90m    |[39m            [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 14 |[39m   }
+ [90m 15 |[39m
+ [90m 16 |[39m   [36mif[39m (process[33m.[39menv[33m.[39m[33mVERCEL[39m) {[0m
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import trace:
+  Server Component:
+    ./src/data/blog.ts
+    ./src/app/(legacy)/topics/[slug]/page.tsx
+
+
+./src/data/blog.ts:223:56
+The file pattern ('/ROOT/' <dynamic> | '/ROOT' <dynamic>) matches 65056 files in [project]/
+[0m [90m 221 |[39m   )[33m.[39mhref[33m;[39m
+ [90m 222 |[39m   [36mconst[39m compiler [33m=[39m [36mawait[39m [36mimport[39m([90m/* webpackIgnore: true */[39m [90m/* turbopackIgnore: true */[39m compilerUrl)[33m;[39m
+[31m[1m>[22m[39m[90m 223 |[39m   [36mconst[39m { html[33m,[39m toc } [33m=[39m [36mawait[39m compiler[33m.[39mcompilePostFile(path[33m.[39mjoin(process[33m.[39mcwd()[33m,[39m entry[33m.[39msourcePath))[33m;[39m
+ [90m     |[39m                                                        [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 224 |[39m
+ [90m 225 |[39m   [36mreturn[39m { source[33m:[39m html[33m,[39m metadata[33m:[39m toMetadata(entry)[33m,[39m slug[33m:[39m entry[33m.[39mslug[33m,[39m toc }[33m;[39m
+ [90m 226 |[39m }[0m
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import trace:
+  Server Component:
+    ./src/data/blog.ts
+    ./src/app/(legacy)/topics/[slug]/page.tsx
+
+
+./src/data/blog.ts:28:19
+The file pattern (<dynamic> '/posts' | '/ROOT/.generated/posts' | <dynamic> 'posts' | '/ROOT/.generatedposts') matches 14634 files in [project]/
+[0m [90m 26 |[39m [36mconst[39m [33mTOPIC_INDEX_FILE[39m [33m=[39m path[33m.[39mjoin([33mGENERATED_DIR[39m[33m,[39m [32m'topic-index.json'[39m)[33m;[39m
+ [90m 27 |[39m [36mconst[39m [33mCATEGORY_INDEX_FILE[39m [33m=[39m path[33m.[39mjoin([33mGENERATED_DIR[39m[33m,[39m [32m'category-index.json'[39m)[33m;[39m
+[31m[1m>[22m[39m[90m 28 |[39m [36mconst[39m [33mPOSTS_DIR[39m [33m=[39m path[33m.[39mjoin([33mGENERATED_DIR[39m[33m,[39m [32m'posts'[39m)[33m;[39m
+ [90m    |[39m                   [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 29 |[39m
+ [90m 30 |[39m [36mconst[39m isDevelopment [33m=[39m process[33m.[39menv[33m.[39m[33mNODE_ENV[39m [33m===[39m [32m'development'[39m[33m;[39m
+ [90m 31 |[39m[0m
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import trace:
+  Server Component:
+    ./src/data/blog.ts
+    ./src/app/(legacy)/topics/[slug]/page.tsx
+
+
+✓ Compiled successfully in 4.3s
+  Running TypeScript ...
+  Collecting page data using 17 workers ...
+  Generating static pages using 17 workers (0/7412) ...
+  Generating static pages using 17 workers (1853/7412) 
+  Generating static pages using 17 workers (3706/7412) 
+  Generating static pages using 17 workers (5559/7412) 
+✓ Generating static pages using 17 workers (7412/7412) in 21.0s
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ● /[locale]
+│ ├ /zh-CN
+│ ├ /en
+│ └ /ja
+├ ● /[locale]/blog
+│ ├ /zh-CN/blog
+│ ├ /en/blog
+│ └ /ja/blog
+├ ● /[locale]/blog/[slug]
+│ ├ /en/blog/aapl-four-books-tokenized-equity-liquidity-en
+│ ├ /ja/blog/aapl-four-books-tokenized-equity-liquidity-ja
+│ ├ /zh-CN/blog/aapl-four-books-tokenized-equity-liquidity
+│ └ [+7314 more paths]
+├ ● /[locale]/fear
+│ ├ /zh-CN/fear
+│ ├ /en/fear
+│ └ /ja/fear
+├ ● /[locale]/fund
+│ ├ /zh-CN/fund
+│ ├ /en/fund
+│ └ /ja/fund
+├ ● /[locale]/oscillator
+│ ├ /zh-CN/oscillator
+│ ├ /en/oscillator
+│ └ /ja/oscillator
+├ ● /[locale]/pulse
+│ ├ /zh-CN/pulse
+│ ├ /en/pulse
+│ └ /ja/pulse
+├ ● /[locale]/research
+│ ├ /zh-CN/research
+│ ├ /en/research
+│ └ /ja/research
+├ ● /[locale]/stack
+│ ├ /zh-CN/stack
+│ ├ /en/stack
+│ └ /ja/stack
+├ ● /[locale]/stocks
+│ ├ /zh-CN/stocks
+│ ├ /en/stocks
+│ └ /ja/stocks
+├ ● /[locale]/thoughts
+│ ├ /zh-CN/thoughts
+│ ├ /en/thoughts
+│ └ /ja/thoughts
+├ ● /[locale]/topics
+│ ├ /zh-CN/topics
+│ ├ /en/topics
+│ └ /ja/topics
+├ ● /[locale]/topics/[slug]
+│ ├ /zh-CN/topics/stablecoin
+│ ├ /zh-CN/topics/perp-dex
+│ ├ /zh-CN/topics/cex
+│ └ [+30 more paths]
+├ ● /[locale]/watch
+│ ├ /zh-CN/watch
+│ ├ /en/watch
+│ └ /ja/watch
+├ ○ /blog
+├ ○ /fear
+├ ○ /fund
+├ ○ /oscillator
+├ ○ /pulse
+├ ○ /research
+├ ○ /stack
+├ ○ /stocks
+├ ○ /thoughts
+├ ○ /topics
+├ ● /topics/[slug]
+│ ├ /topics/stablecoin
+│ ├ /topics/perp-dex
+│ ├ /topics/cex
+│ └ [+8 more paths]
+└ ○ /watch
+
+
+○  (Static)  prerendered as static content
+●  (SSG)     prerendered as static HTML (uses generateStaticParams)
+
+prune-segment-cache: removed 66,612 segment files (1.16 GB) in 2.49s.
+emit-legacy-blog-redirects: wrote 7,317 redirect stubs (5.3 MB) in 0.28s.
