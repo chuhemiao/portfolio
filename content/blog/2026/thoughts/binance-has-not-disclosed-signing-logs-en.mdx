@@ -1,0 +1,121 @@
+---
+title: 'Binance has not released the signing logs — a disclosure audit'
+publishedAt: '2026-10-30'
+summary: 'Six public statements, zero technical details. Binance has still not officially confirmed that the attack vector was EIP-7702, has published no signing request records, no HSM/MPC audit trail, no policy engine decision log and no third-party forensic report, and has issued no formal incident notice to users. The sharper problem is definitional: independent accounting puts outflows at $5.643B against $2.62B frozen, leaving about $3B — while the figure CZ accepted was around $1B. A threefold gap, because "loss" was never defined.'
+slug: 'binance-has-not-disclosed-signing-logs-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'binance-has-not-disclosed-signing-logs'
+sourceSlug: 'binance-has-not-disclosed-signing-logs'
+---
+
+> This piece audits public information only; it contains no non-public material. Data as of **00:30 UTC, 30 October 2026**.
+
+## TL;DR
+
+**No.** As of the early hours of 30 October, Binance has released no log evidence from its signing infrastructure — no signing request records, no HSM/MPC audit trail, no policy engine decision log, no third-party forensic report.
+
+- **Binance has still not officially confirmed that the attack vector was EIP-7702.** Every technical detail about the delegation, the 50 authorisations and the malicious contract comes from on-chain analysts and third-party security firms — **not from Binance's disclosure.**
+- **What is publicly visible is six statements**, all centred on "funds are safe", "withdrawals paused", "security checks under way". CZ said it "does look like a hack", while also stating plainly that he no longer manages Binance.com — **that is a shareholder's remark, not a company finding.**
+- **The accounting was never defined, and it does not reconcile**: independent accounting puts outflows at **$5.643B** against **$2.62B** frozen, leaving about **$3B** — yet when CZ responded to an estimate of "about $1B", he said only "possibly a bit higher". **A threefold gap.**
+- **There is no formal incident notice to users.** The announcements page still leads with listings and margin parameter changes.
+- "Funds are safe" is a **solvency statement, not a security conclusion** — it answers "will users lose money", not "how was the system breached".
+
+---
+
+## 1. What was disclosed: six statements, no technical detail
+
+Lay the official accounts' and executives' public remarks out in order and the information content is close to zero:
+
+| UTC (29 Oct) | Source | Substance | What it does not say |
+|---|---|---|---|
+| 21:15 | [CZ](https://x.com/cz_binance/status/2115915423174853077) | "User funds are safe; it does look like Binance was hacked"; thanks Tether for freezing about $971M and Circle about $823M; as a shareholder expects full coverage | Intrusion path, signing method, scale of loss |
+| 21:16 | [Binance](https://x.com/binance/status/2115915708504900039) | Aware of a "potential security issue", investigating, "impact on user funds not yet confirmed" | Any technical detail |
+| 21:17 | [He Yi](https://x.com/heyi/status/2115915841195942020) | Reviewing all relevant information, will update through official channels | Any technical detail |
+| 21:29 | [Binance](https://x.com/binance/status/2115918888429133902) | Wording changes to "user funds are completely safe" | What this rests on, how it was verified |
+| 22:23 | [CZ](https://x.com/cz_binance/status/2115932500006756686) | Responding to an estimate of "about $1B lost after freezes": "possibly a bit higher, but it will be covered" | What "loss" means, where coverage comes from |
+| 22:33 | [Binance](https://x.com/binance/status/2115935002139742437) | Security checks under way; withdrawals resume once fully resolved; funds safe | When, and what the problem is |
+
+**Three shifts in wording are worth noting**: at 21:16 it was "impact not yet confirmed", at 21:29 "completely safe", and at 22:33 back to "security checks under way".
+
+**That is a crisis communications cadence, not disclosure of investigative progress.** Thirteen minutes from "not yet confirmed" to "completely safe", with nothing verifiable in between — and if an impact assessment really was completed inside thirteen minutes, that assessment is precisely the document that should have been published.
+
+## 2. The numbers do not reconcile: $3B vs $1B
+
+This is the hardest contradiction in the public record, and it can be computed directly:
+
+```text
+Independent on-chain accounting, outflows   $5.643B   (21:31)
+Frozen by four issuers                      $2.620B   (Tether 1.567 + Circle 0.823 + Ripple 0.2 + USD1 0.027)
+                                            ─────────
+Difference                                  $3.023B
+
+The magnitude CZ accepted at 22:23          about $1B ("possibly a bit higher")
+```
+
+**A factor of three.**
+
+The gap is not in itself an accusation — both figures may be correct and simply counting different things. At least three explanations are available: Binance itself executed partial recoveries or defensive transfers; the "outflow" figure includes consolidation between Binance's own addresses; or CZ meant net exposure after insurance and own-asset coverage.
+
+**None of them has been stated officially.** And as long as "loss" is undefined, the promise to "cover it fully" has no verifiable object — **covering $1B and covering $3B are entirely different commitments.**
+
+**This is the thing most worth pressing on, and the thing most easily buried under the price action.**
+
+## 3. The missing logs
+
+To decide between "private key leaked" and "signing system abused", the following evidence is decisive. All of it is absent:
+
+| Evidence | What it would settle | Status |
+|---|---|---|
+| **Signing request records** | Which service, which service account, from which environment issued the 50 authorisations; the gap between request and inclusion (20:20:59) | Not disclosed |
+| **HSM/MPC audit trail** | Which key, which policy slot, whether multi-party approval was required, who approved | Not disclosed |
+| **Policy engine decision log** | Why a Type-4 authorisation cleared the limit, allowlist and transaction-type checks | Not disclosed |
+| **Monitoring and alert timeline** | When internal systems saw the anomaly; whether the first alert was an outflow or a code change | Not disclosed |
+| **Key rotation records** | Whether `Binance 14`'s key has been replaced, when, whether the old address is retired | Not disclosed |
+| **Third-party forensic report** | Independent root-cause analysis | Not disclosed |
+
+**These are not materials that can be "assembled later". They are system logs that already existed within the first hours of the incident.**
+
+Checking the announcements page: as of 30 October the latest entries are still the 28–29 October listing and contract notices, with one margin parameter adjustment on the 30th and **no security incident page**. That does not rule out a sync delay, but it does mean there is no formal incident notice to users — **which, in an event that suspended withdrawals, is itself anomalous.**
+
+## 4. What this means for judgement
+
+Without logs, public analysis can only infer from on-chain behaviour, and on-chain evidence is mute — it records what happened, not why it was permitted:
+
+- **50 consecutive nonces, descending, exactly one effective** — more consistent with batch pre-signing than with holding a key and operating against a node transaction by transaction;
+- **12 automated sweeps afterwards, several of them 23,100-gas empty polls** — the attacker held a repeatably triggerable channel, not a one-off transfer;
+- **If the full private key had leaked, Binance signing a revocation would simply invite re-delegation**, yet no such tug of war has been observed — which leans weakly towards an abused signing channel rather than a key held long-term.
+
+**But these are inferences, not evidence.**
+
+What would settle it is exactly the signing log that has not been published: show "which service account requested 50 authorisations pointing at `0x63e842…` around 20:20" and the root cause is characterised within minutes.
+
+**Which is why the non-disclosure is itself information**: until an investigation concludes, "key leaked" and "signing system abused" remain parallel hypotheses in the official record, not eliminated ones.
+
+For users and counterparties, two consequences:
+
+1. **"Funds are safe" currently rests on Binance's own statement and CZ's shareholder backing**, with no proof of reserves or third-party audit behind it.
+2. **If the root cause is signing infrastructure rather than a single key, more than `Binance 14` may be affected** — exactly the risk that logs would rule out, and Binance has offered no basis for ruling it out.
+
+## 5. Conclusion
+
+**As of the early hours of 30 October 2026, Binance has disclosed no log evidence from its signing infrastructure, and has published no root-cause report or third-party forensic conclusion.**
+
+The public record is six statements plus an attack chain assembled by on-chain analysts — the latter can prove *what happened*, but not *why the signature was permitted*.
+
+**Bottom line.** Until Binance publishes signing request records and a key management audit, every conclusion about "leaked key versus abused signing system" is a hypothesis; and "user funds are safe" is a solvency promise, not a security finding.
+
+The next signal worth watching is not the price but three things: **a formal incident notice, a proof-of-reserves update, and whether a revocation pointing at `address(0)` appears for `Binance 14`.** Until at least one of them lands, this is not technically over.
+
+## Sources
+
+- [CZ, 21:15](https://x.com/cz_binance/status/2115915423174853077)
+- [Binance, 21:16](https://x.com/binance/status/2115915708504900039)
+- [He Yi, 21:17](https://x.com/heyi/status/2115915841195942020)
+- [Binance, 21:29](https://x.com/binance/status/2115918888429133902)
+- [CZ on the loss estimate, 22:23](https://x.com/cz_binance/status/2115932500006756686)
+- [Binance, 22:33](https://x.com/binance/status/2115935002139742437)
+
+---
+
+*Companion pieces: [a Binance hot wallet falls — one valid signature, eight minutes, $5.6B](/en/blog/binance-suspected-hack-outflows-custody-risk-en) and [anatomy of the EIP-7702 attack: 18 hours of prep, one signature, one bot](/en/blog/eip-7702-delegation-one-signature-drains-everything-en). This piece audits public information only. Data as of 00:30 UTC, 30 October 2026; the event is ongoing. Not investment advice. DYOR.*

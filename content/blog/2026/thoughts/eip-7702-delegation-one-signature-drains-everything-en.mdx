@@ -1,0 +1,252 @@
+---
+title: 'Anatomy of the EIP-7702 attack: 18 hours of prep, one signature, one bot'
+publishedAt: '2026-10-30'
+summary: 'On-chain records show a targeted operation prepared over nearly 18 hours and rehearsed three times: a test contract at 02:28, delegations and sweeps practised on the attacker own wallets at 13:51 and 16:20, the final contract at 15:59, and only then the real authorisation at 20:20. EIP-7702 created no vulnerability. It enlarged the consequence of one signature from moving some money to taking over everything an address can do, permanently — and a bot kept harvesting for another three and a half hours.'
+slug: 'eip-7702-delegation-one-signature-drains-everything-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'eip-7702-delegation-one-signature-drains-everything'
+sourceSlug: 'eip-7702-delegation-one-signature-drains-everything'
+---
+
+> Based on public on-chain data and third-party analysis. Binance has published no post-mortem and the root cause is unconfirmed. Data as of **00:30 UTC, 30 October 2026**.
+
+## TL;DR
+
+**Signing is deploying, deploying is permanent, executing is identity. But the real sophistication here was not in the contract — it was in the packaging.**
+
+- **Not improvised.** Nearly **18 hours** of preparation: test contract at 02:28, delegations and sweeps rehearsed on **three of the attacker's own wallets** at 13:51 and 16:20, final contract at 15:59, **attack at 20:20**. Three and a half hours of waiting in between.
+- **Not one transaction.** The authorisation (Type-4, 20:20:59) and the drain (an ordinary transaction, 20:24:23) were **17 blocks and 3 minutes 24 seconds apart** — and **Type-4 transactions are publicly visible in the mempool**. That was a window in which this could have been caught.
+- **The 50 authorisations were in descending nonce order, and exactly one took effect.** Descending is deliberate: ascending would have let every higher nonce fire after the hit, advancing the account nonce fifteen times.
+- **Not "63 tokens".** The calldata decodes to 65 array elements: one `address(0)` ETH placeholder plus **64** ERC-20 contracts.
+- **Persistence has direct evidence**: the operator made **12 more** `sweep` calls afterwards, four of them 23,100-gas **empty polls** with zero token transfers — a bot checking whether anything new had arrived.
+- **The cost is absurd**: the main sweep cost **0.000414 ETH ≈ $0.91** to move roughly $2.5B — a ratio of about **1 : 2.7 billion**.
+
+---
+
+## 1. Preparation: 18 hours, three test wallets, one rehearsal
+
+Lay the operator address's transactions out in order and the rhythm is unmistakable:
+
+| UTC (29 Oct) | Action | Detail |
+|---|---|---|
+| 02:28:59 | **Test contract deployed** | First contract creation, 324,710 gas |
+| 13:51:35 / 13:51:59 | 7702 delegations on two test EOAs | `0x837810E3…`, `0x9C29BA2D…` |
+| 14:19:59 / 14:24:11 | **Test sweeps** against those addresses | 112,046 / 77,846 gas |
+| **15:59:11** | **Final malicious contract deployed** `0x63e842…` | 415,057 gas |
+| 16:20:47 / 16:25:59 | Third test EOA delegated to the final contract | Two authorisations, likely testing nonce handling |
+| 16:30:11 / 16:47:23 | **Rehearsal sweeps** on the third EOA | Verifying the contract logic |
+| **20:20:59** | **Real authorisation against `Binance 14`** | 50 authorisations, one effective |
+| 20:24:23 | Main sweep | Roughly $2.5B |
+
+**This changes the read on the attacker.** This was not "obtained a key, moved the money". They **ran the entire path end to end on accounts they controlled before touching the target.**
+
+The malicious contract was deployed at 15:59 and the rehearsal finished at 16:47, but the attack came at 20:20 — **three and a half hours later**. They were waiting for the right moment: possibly peak hot wallet balance, possibly a particular signing window.
+
+## 2. On-chain: authorisation and execution were separate transactions
+
+| | Authorisation | Drain |
+|---|---|---|
+| Time (UTC) | **20:20:59** | **20:24:23** |
+| Block | 26,300,753 | 26,300,770 |
+| Type | **Type 0x4** (SetCode) | Type 0x2 (ordinary EIP-1559) |
+| From | `0x7c8601d4…` (operator) | Same operator |
+| To | `Binance 14` (`0x28c6…1d60`) | Same address |
+| Input | **`0x` (empty)** | `0x8a179be4…` (sweep) |
+| Gas used | 1,258,562 | 2,455,349 |
+| Fee | 0.006545 ETH (≈$14.5) | **0.0004138 ETH (≈$0.91)** |
+| Effect | Writes the EOA's code to `0xef0100‖0x63e842…` | Executes batch transfers as the EOA |
+
+**Two details deserve attention.**
+
+**First, the authorisation transaction's `input` is empty.** The substance lives in `authorization_list`, a field unique to Type-4 transactions — **conventional "inspect the calldata" monitoring cannot see it at all.**
+
+**Second, the drain is an utterly ordinary EOA call.** Any address could have sent it. It succeeded only because the target's code had already been replaced with the attacker's implementation, which hardcodes "only the operator may call".
+
+**Three minutes and twenty-four seconds separated them, and Type-4 transactions are publicly visible in the mempool.** An alert on "an exchange address is sending a SetCode transaction" would have left enough time to suspend that wallet's signing authority.
+
+**That it was not caught says the industry still monitors balance outflows rather than code being rewritten.**
+
+## 3. Descending nonces: why exactly one of fifty took effect
+
+The most elegant part of the chain, and the on-chain data verifies it cleanly:
+
+- The 50 authorisations run from nonce **18,914,824 down to 18,914,775**, all with `Binance 14` as authority, pointing at the same contract, `chain_id = 1`
+- Only **18,914,809** took effect; the other **49** returned `invalid_nonce`
+- The hit advanced the account nonce to 18,914,810, invalidating the 34 below it
+
+**Descending order is the key.**
+
+The rule is that a tuple's nonce must equal the account's current nonce to take effect, and is skipped rather than reverted otherwise. So:
+
+1. Processing 824 → 810, **15 tuples**, the on-chain nonce was only 809 — all "too high", all skipped
+2. At **809 it hits**, the code is written, the nonce becomes 810
+3. The remaining 808 → 775, **34 tuples**, are now "too low" and all skip
+
+**Submitted in ascending order, 810 through 824 would each have fired after the hit, advancing the nonce fifteen times** — which would have thrown the hot wallet's own transaction queue out of sync. Descending guarantees at most one takes effect.
+
+Gas came to **1,258,562**, and that number reconciles exactly:
+
+```text
+50 × 25,000  = 1,250,000   PER_EMPTY_ACCOUNT_COST charged up front per tuple
+− 12,500                   the one valid tuple hit an existing account, refunding the difference
++ 21,000                   intrinsic transaction gas
++ 62                       calldata and so on
+= 1,258,562
+```
+
+**Not a unit off.** The specification charges `PER_EMPTY_ACCOUNT_COST` (25,000) per tuple in intrinsic gas and refunds 12,500 only for a valid tuple whose `authority` is non-empty. **So the 49 decoys were not free — each burned a full 25,000 gas, and the sender paid for the real and the fake alike.**
+
+### The fifty cover the gap between signing and inclusion
+
+The top of the window sits **15 transactions** above the actual nonce. For a busy hot wallet that is tens of seconds to a minute or so of drift.
+
+**And that is a clue about root cause**: an attacker holding the private key with a node connection to read the nonce needs **one** authorisation. Needing fifty generally means **the signing side cannot see live chain state** — either batch pre-signing, or authorisations obtained through an interface that signs without reading.
+
+**That points at compromised signing infrastructure rather than a copied private key.**
+
+### The signed payload is not EIP-712, so hardware wallets cannot render it
+
+A 7702 authorisation signs:
+
+```text
+keccak256(0x05 ‖ rlp([chain_id, address, nonce]))
+```
+
+**This is not EIP-712 structured data.** Hardware wallets and most signing interfaces therefore cannot render "you are delegating this account's code to 0x63e8…" into anything readable — **the user most likely sees a hash.**
+
+**That semantic invisibility is a blind-signing risk built into 7702's design**, not an oversight by any particular wallet vendor.
+
+## 4. Execution: one call sweeping 65 addresses
+
+The contract's source is unverified, but the calldata recovers the interface: `sweep(address recipient, address[] tokens)`, selector `0x8a179be4`.
+
+- `arg0` = the main receiving address (currently holding about $2.17B on Ethereum)
+- `arg1` = **65 unique addresses**, the first `0x0000…0000`, the other **64** ERC-20 contracts
+
+**So the accurate statement is one ETH placeholder plus 64 tokens, not "63 tokens".** The "63" in public analysis is more likely **the number of transfers that succeeded** — the gap coming from zero balances, rejected transfers or duplicates.
+
+Three design details:
+
+1. **Hardcoded caller check** — only the operator can trigger it
+2. **`address(0)` as an ETH placeholder** — one array handles the native asset and tokens together
+3. **Per-item fault tolerance** — one token failing does not revert the transaction, which is what lets it pack so many assets into one call
+
+**Why no approval is needed**: the delegated code runs in `Binance 14`'s context, so to each token contract `msg.sender` is the hot wallet and `balanceOf(address(this))` reads the hot wallet's balance.
+
+**It is not calling someone else's money. It is the holder.** That is the fundamental difference from a conventional drainer, which has to trick a user into an ERC-20 approve.
+
+## 5. Direct evidence of persistence: 12 sweeps and empty polls
+
+After the authorisation, the operator made **12 more** `sweep` calls over **three and a half hours**:
+
+| Time (UTC) | Gas used | Reading |
+|---|---:|---|
+| 20:24:23 | 2,455,349 | Main sweep, 65 addresses |
+| 20:41:23 | 100,738 | Small follow-up |
+| 20:59:47 | 83,626 | Small follow-up |
+| 21:04:23 | 806,166 | Medium batch |
+| 21:44:11 | 732,036 | Medium batch |
+| **22:39:35** | **4,578,329** | **Large new inflow swept** |
+| 23:36:47 / 23:37:23 / 23:37:47 / 23:38:23 | 23,100 ×4 | **Empty polls, zero token transfers** |
+| 23:54:59 | 23,100 | Empty poll |
+| 23:56:47 | 31,900 | Small sweep, then stops |
+
+**The 23,100-gas calls are verified as zero token transfers** — 21,000 base transaction cost plus 2,100 of overhead.
+
+**That is a bot calling `sweep` every few tens of seconds to minutes: take anything that arrived, otherwise burn 2,100 gas for nothing.**
+
+**It is the most direct on-chain evidence that a persistent delegation becomes an automated collection point, and it settles the "temporary execution" misreading.**
+
+One telling detail: `Binance 14` still holds about **$47.9M**. The likely reason is that the attacker's token list was **a fixed offline enumeration** of 65 addresses rather than a live chain scan — long-tail tokens and later arrivals fell outside it. That also explains the 4.58M-gas sweep at 22:39: **something new had entered the list's range.**
+
+## 6. An overlooked boundary: chain_id = 1
+
+All 50 authorisations carried `chain_id` **1**.
+
+Under EIP-7702, only **`chain_id = 0`** replays across every chain supporting the EIP. **That was not used here.** Therefore:
+
+- This authorisation can only affect `Binance 14` **on Ethereum mainnet**
+- **Bitcoin, Tron and Solana have no EIP-7702 at all** — outflows there cannot come from the same authorisation
+- The "at least nine chains, $5.6–6.2B" framing **necessarily mixes different kinds of event**: independent compromises of other hot wallets, Binance's own sweeps or defensive transfers, panicked user withdrawals, or analyst mislabelling
+
+**This does not mean multi-chain losses are fictional. It means attribution has to be done separately.** The $2.5B on Ethereum has a complete authorisation-to-execution chain; the figures elsewhere are balance movements without causal evidence of the same grade.
+
+**Filing it all under "one 7702 attack" overstates the technical reach and misdirects the defensive response.**
+
+## 7. Is the back door closed?
+
+As of the last verifiable point, **the delegation is still there**:
+
+- An inbound transaction at **00:10:35 UTC on 30 Oct** still shows `Binance 14` with `proxy_type: eip7702` and the implementation address
+- The last 50 outbound transactions from `Binance 14` contain **no Type-4 revocation** (revoking requires signing an authorisation pointing at `address(0)`)
+- The attacker's last sweep was at 23:56:47, after which the operator held about $2,591
+
+**Two possibilities**: Binance has invalidated the delegation by other means — rotating signing keys, migrating addresses — with no revocation visible publicly; or **the delegation is still live and the attacker has simply paused.**
+
+Either way the conclusion is the same: **revoking a 7702 delegation is not "shutting down" or "changing a password". It requires another signed on-chain authorisation.** And if the key is already leaked, revocation is temporary — the attacker can delegate again.
+
+**One inverse clue is worth noting**: if the attacker held the full private key, Binance signing a revocation would simply invite re-delegation, producing a visible tug of war. **None has been observed** — which leans toward the attacker having obtained signing capability through a channel that has since been closed, rather than holding the key outright.
+
+The root-cause matrix updates accordingly:
+
+| Hypothesis | Evidence | Assessment |
+|---|---|---|
+| Private key directly leaked | 50 valid signatures; operator funded via Tornado | Still possible, but **does not explain needing 50 nonces**, nor the absence of re-delegation |
+| Signing infrastructure compromised | Clear batch pre-signing signature; test wallet rehearsals; precise use of the Hot Wallet 34 ownership relationship | **Strongest current explanation**, still needs HSM/MPC logs to confirm |
+| Insider / supply chain | 18 hours of prep, a bespoke 64-token list, knowledge of the wallet permission topology | Cannot be excluded, and **is compatible with** the signing-interface theory |
+
+## 8. How this differs from a contract vulnerability
+
+| Dimension | Contract vulnerability | 7702 delegation abuse |
+|---|---|---|
+| What failed | Contract logic | **Signing keys and the signing process** |
+| Trigger | Calling a flawed function | One **validly signed** authorisation tuple |
+| Approval needed | Usually an existing allowance | **None** — the address is its own holder |
+| Blast radius | One protocol's funds | **Everything** the address holds |
+| Remediation | Pause, patch, governance | **Requires another signed on-chain authorisation** to revoke |
+| Reversibility | Protocol can be paused | **Native assets already moved are irreversible** |
+
+**7702 converts account security from a question about each transaction's authorisation boundary into a question about the code custody of one signature.**
+
+And a hot wallet **must** keep online signing to support high-frequency withdrawals — which collides head-on with 7702's worst case.
+
+## 9. Defences
+
+For exchanges and custodians, in priority order:
+
+1. **Refuse at the policy layer** — hot wallet addresses must not send Type-4 transactions unless the delegate is allowlisted and multi-signature approved. **This is the only measure that eliminates the path outright.**
+2. **Legible signing** — hardware wallets and MPC flows must display "delegate code to 0x…". Because the payload is not EIP-712, **this requires deliberate implementation by wallet vendors; it does not come for free.**
+3. **Change what you monitor** — from "large outflows" to "`0xef0100` code changes, Type-4 transactions in the mempool, and anomalous nonce jumps". What you read is the **23 stored bytes** of `0xef0100‖address` — by specification `EXTCODESIZE` returns **23**, and external code-reading operations such as `EXTCODEHASH` **do not follow the delegation** but operate on the designator itself, so the delegate address can be recovered directly.
+4. **Reduce single-point exposure** — keep only operating float in hot wallets; prefer a capped allowance plus a sweeping contract over an EOA holding assets directly.
+5. **Separate permissions** — do not reuse a hot wallet EOA as the owner of a smart wallet. This attack moved a further $780–823M of USDC precisely by calling from `Binance 14` into a smart wallet it owned.
+6. **Incident response** — signing a tuple pointing at `address(0)` clears the delegation, **but an attacker with the leaked key can delegate again**. Rotate keys and migrate addresses at the same time. **Clearing buys time; it is not a fix.**
+
+For protocol builders: stop using `extcodesize` and `tx.origin == msg.sender` to identify callers. **After 7702 those assumptions no longer hold.**
+
+## 10. Conclusion
+
+The real structure of this attack was **18 hours of preparation, one signature, and one bot**: the preparation validated the contract and the nonce strategy, the signature turned a hot wallet into an account the attacker could program, and the bot harvested for three and a half hours afterwards.
+
+**EIP-7702 did not create a vulnerability.** It enlarged the consequence of one signature from "moves some money" to "takes over everything an address can do, and keeps it".
+
+The on-chain evidence also corrects two common misreadings: **the delegation is not "temporary"** — it persists until explicitly cleared; and **what was swept was not "63 tokens"** but 64 tokens plus native ETH, in a 65-element array.
+
+The lesson for the industry is not at the contract layer but the **signing semantics layer**: as long as a signing system cannot distinguish "transfer" from "delegate code", cannot show an approver the target of an `0xef0100`, and cannot alert on a Type-4 transaction in the mempool, **every hot wallet signing online is a potential `Binance 14`.**
+
+**Bottom line.** Judge whether a platform has actually fixed this not by how many statements it issues but by three things: **whether a revocation pointing at `address(0)` appears on-chain, whether the hot wallet address has changed, and whether the signing policy now refuses Type-4.** Miss any one and the back door is merely unattended.
+
+## Sources
+
+- [EIP-7702 specification](https://eips.ethereum.org/EIPS/eip-7702)
+- [The authorisation transaction (Type-4)](https://eth.blockscout.com/tx/0xad99264d5532ae0dd04b2004eebda05f25657e70dacb764f7ac8d4ccd051298b)
+- [The drain transaction](https://eth.blockscout.com/tx/0x53bd38b816c23e74134786c29a8c18d792777998a3b9326047b583100e88e2f3)
+- [The malicious contract deployment](https://eth.blockscout.com/tx/0x97408e7562eb2b28efcd24ba01609607b5749bc89448d007fa8b50ecf290329c)
+- [Zealynx: EIP-7702 wallet security](https://www.zealynx.io/research/smart-contracts/eip-7702-wallet-security)
+- [Halborn: EIP-7702 security considerations](https://www.halborn.com/blog/post/eip-7702-security-considerations)
+- [Threat Landscape: Binance hot wallet and 7702 delegation](https://threatlandscape.io/blog/binance-hot-wallet-compromise-eip-7702-delegation)
+- [Ondology Labs: EIP-7702 attack analysis](https://ondologylabs.com/blog/binance-hot-wallet-hack-eip-7702)
+
+---
+
+*Companion pieces: [a Binance hot wallet falls — one valid signature, eight minutes, $5.6B](/en/blog/binance-suspected-hack-outflows-custody-risk-en), [the EIP-7702 signing flow](/en/blog/eip-7702-signing-flow-from-hash-to-code-en), and [Binance has not released the signing logs](/en/blog/binance-has-not-disclosed-signing-logs-en). Gas costs converted at ETH ≈ $2,209. Based on public on-chain data and third-party analysis; Binance has published no post-mortem and the root cause is unconfirmed. DYOR.*

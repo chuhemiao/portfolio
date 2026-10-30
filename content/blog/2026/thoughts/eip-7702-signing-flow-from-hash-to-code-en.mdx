@@ -1,0 +1,180 @@
+---
+title: 'The EIP-7702 signing flow: from one hash to rewritten account code'
+publishedAt: '2026-10-30'
+summary: 'A 7702 signature is not a transaction. It is a grant of code control that anyone can submit. The signer is responsible for exactly three fields — chain_id, the delegate address and the account nonce — and what gets signed is keccak256(0x05 ‖ rlp([chain_id, address, nonce])): no EIP-712 structure, no expiry. The nonce is the only invalidation mechanism, which is precisely why pre-signing 50 authorisations at different nonces makes cancellation meaningless.'
+slug: 'eip-7702-signing-flow-from-hash-to-code-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'eip-7702-signing-flow-from-hash-to-code'
+sourceSlug: 'eip-7702-signing-flow-from-hash-to-code'
+---
+
+> A mechanism explainer, not incident reporting. Specification references are to the final [EIP-7702](https://eips.ethereum.org/EIPS/eip-7702).
+
+## TL;DR
+
+**A 7702 signature is a grant of code control that anyone can submit. It is not a transaction.**
+
+- The signer is responsible for three fields only: `chain_id`, the delegate `address`, and the account `nonce`. What is signed is `keccak256(0x05 ‖ rlp([chain_id, address, nonce]))`.
+- **It is not EIP-712.** No `domainSeparator`, no `primaryType`, no field names — unless firmware specifically implements `0x05` parsing, what the user sees is a 32-byte hash.
+- **There is no expiry.** The `nonce` is the only thing that can invalidate an already-signed authorisation.
+- **So the real purpose of a nonce spray is not to improve the hit rate but to make cancellation meaningless** — burning one nonce voids one tuple and leaves the rest valid.
+- **The delegation does not roll back if the outer transaction fails.** A Type-4 transaction that looks "failed" may already have installed the code.
+- Any account holding ETH can submit it on the signer's behalf and pay the gas. Signing and inclusion are two separate things.
+
+---
+
+## 1. What is signed: three fields and a magic byte
+
+An authorisation tuple holds six values, but only the first three are actually signed:
+
+| Field | Length | Meaning |
+|---|---|---|
+| `chain_id` | 32 bytes | The chain the authorisation is valid on; `0` means all chains |
+| `address` | 20 bytes | The delegate contract; `0x0` clears the delegation |
+| `nonce` | 8 bytes | Must equal the signing account's nonce at the time |
+| `y_parity` | 1 byte | secp256k1 recovery id (0/1) |
+| `r` | 32 bytes | ECDSA signature |
+| `s` | 32 bytes | ECDSA signature, and must be ≤ `secp256k1n/2` (the EIP-2 low-s requirement) |
+
+The signing hash is defined very directly:
+
+```text
+msg = keccak256(0x05 ‖ rlp([chain_id, address, nonce]))
+```
+
+`0x05` is 7702's dedicated magic byte, distinguishing it from ordinary transaction signatures (`0x00`/`0x01`/`0x02`/`0x03`).
+
+**It is not an EIP-712 `domainSeparator` structure, and it has no `primaryType`, no field names and no wallet-renderable semantics.** The result: hardware wallets and signing interfaces receive a 32-byte hash, and unless the firmware specifically implements `0x05` parsing, the user is **blind-signing an authorisation they cannot read.**
+
+**This is the most fundamental difference from a conventional transaction signature.** An ordinary transaction signature at least binds `to`, `value`, `data` and `gas`. A 7702 authorisation binds only "whose code this account now points at".
+
+**It promises nothing about what the delegate will do, and nothing about the code staying the same** — if the target is an upgradeable proxy, a benign implementation at signing time can become a sweep contract after an upgrade.
+
+Two boundaries worth remembering: the `authority` must be recoverable via `ecrecover`, so **a contract account cannot be an authoriser**; and an authorisation signature cannot be broadcast on its own — it must be carried by a Type-4 transaction, **but the carrier can be anyone.**
+
+## 2. On-chain processing: two layers of signature, nine steps
+
+A Type-4 transaction actually contains **two layers of signature**:
+
+1. **The sender's signature** — over the whole transaction's RLP payload including `authorization_list`, determining who pays gas and whose nonce is consumed;
+2. **The authoriser's signature** — over each tuple individually, determining whose account code gets rewritten.
+
+**The two can be entirely unrelated.** That is exactly the design intent of sponsorship: a dApp pays gas for a user who only signs the authorisation. **It is also why, in the Binance case, the operator could submit an authorisation on behalf of `Binance 14`.**
+
+The processing order is: **increment the sender's nonce, then process the authorisation list, then execute the calldata.** For each tuple, nine steps run in order:
+
+```text
+1. chain_id == 0 or == the current chain ID
+2. nonce < 2^64 - 1
+3. authority = ecrecover(msg, y_parity, r, s), with s <= secp256k1n/2
+4. add authority to accessed_addresses (warm it)
+5. authority's code is empty, or already a 0xef0100-prefixed delegation
+6. authority's current nonce == the tuple's nonce
+7. if authority is non-empty, add 12,500 gas to the global refund counter
+8. write code = 0xef0100 ‖ address; if address is 0, clear the code
+9. authority.nonce += 1
+```
+
+**If any step fails, only that tuple is skipped — the transaction does not revert** and processing continues with the next one. Where one `authority` has several valid tuples, **the last valid one wins.**
+
+### The gas structure explains that 1,258,562
+
+The specification defines two constants: `PER_EMPTY_ACCOUNT_COST` = **25,000** and `PER_AUTH_BASE_COST` = **12,500**.
+
+**Charged by count, refunded by validity**: intrinsic cost includes `25,000 × authorisation list length`, and 12,500 is added to the global refund counter only for a tuple whose `authority` is non-empty.
+
+So the Binance authorisation transaction's bill reconstructs exactly:
+
+```text
+50 × 25,000  = 1,250,000   charged up front for 50 tuples
+− 12,500                   the one valid tuple hit an existing account
++ 21,000                   intrinsic transaction gas
++ 62                       calldata and so on
+= 1,258,562
+```
+
+**Not a unit off.** The arithmetic also makes one thing plain: **the 49 decoys were not free. Each burned a full 25,000 gas, and the sender paid for the real and the fake alike.**
+
+## 3. The nonce: the only "validity period"
+
+**7702 has no expiry. The `nonce` is the only thing that can invalidate an already-signed authorisation.** Grasping that is what makes the whole attack-and-defence game legible.
+
+**First, the authorisation nonce and the ordinary transaction nonce are the same counter.** Signing and landing an authorisation advances the account nonce by 1, permanently invalidating a pending ordinary transaction at that nonce. Conversely, if the account sends an ordinary transaction first, a previously signed authorisation at that nonce becomes invalid.
+
+**Second, tuples are validated in order and the nonce rises as they are processed.** Taking the Binance window (18,914,775–18,914,824, actual nonce 809):
+
+| Order | Outcome | Nonce movement |
+|---|---|---|
+| Ascending 775→824 | 775–808 skip as too low, **809 hits, then 810…824 each take effect** | Advances **16** times (the hit plus the 15 after it) |
+| Descending 824→775 | 824–810 skip as too high, 809 hits, 808–775 skip as too low | Advances **once** |
+
+**The attacker chose descending precisely so that only one would take effect** — avoiding throwing the hot wallet's own transaction queue out of sync.
+
+**Third, the nonce is also a defence, but a spray defeats it.** If you suspect a malicious authorisation sitting in the mempool, the account can immediately send a zero-value self-transfer to consume the current nonce and void that authorisation.
+
+**But once an attacker has pre-signed 50 authorisations at 50 different nonces, burning one nonce voids exactly one of them and leaves 49 valid.**
+
+**That is the real purpose of a nonce spray: not a better hit rate, but making cancellation meaningless.**
+
+**Fourth, `chain_id = 0` is the cross-chain replay switch.** Set to 0, the same signature is valid on every EVM chain, provided the nonce happens to match there. All 50 of the Binance tuples carried `chain_id = 1`, **so that authorisation cannot be replayed on BNB Chain, Polygon or anywhere else — the multi-chain outflows need another explanation.**
+
+## 4. The execution context: what the account becomes after signing
+
+Once the delegation takes effect, the account's `code` field becomes the 23 bytes `0xef0100 ‖ address`. From then on:
+
+- Any `CALL`, `DELEGATECALL` or `STATICCALL` to it loads the delegate's code but **executes it in the EOA's own context**: `address(this)` is the EOA, `msg.sender` is the caller, and storage reads and writes land in the EOA's storage;
+- To downstream token contracts, `msg.sender` is the wallet itself, so **no ERC-20 approve is needed at all**;
+- **Code reading becomes asymmetric**: `EXTCODESIZE` returns **23** (the length of the delegation indicator), while `CODESIZE` inside delegated execution returns the delegate's code length. The specification states that external retrieval operations such as `EXTCODEHASH` do not automatically follow delegations but operate on the designator itself — so conventional "EOA detection" (`EXTCODESIZE == 0`) breaks, but **the delegate address can be read straight off the chain**;
+- The delegation chain follows **only the first hop**: if the delegate is itself a delegated account, clients do not recurse;
+- **The delegation does not roll back when the outer transaction reverts.** The specification's wording is that processed delegation indicators are *not rolled back*. A Type-4 transaction that looks "failed" may still have installed the code — **a trap for simulation and monitoring alike.**
+
+**There is exactly one way to clear a delegation**: sign another authorisation at the current nonce with `address = 0x0`, resetting the code to empty. No admin, no timelock, no on-chain switch.
+
+**Until it is cleared, every newly arriving asset is automatically exposed to the delegate's logic.**
+
+## 5. Applied to the Binance case: where the signing flow failed
+
+Map the mechanism back onto the 29 October event and the sequence recovers step by step:
+
+1. The attacker built 50 tuples with `chain_id = 1`, `address = 0x63e842…`, and nonces descending from 18,914,824 to 18,914,775;
+2. The signing side signed all 50 hashes one by one — that is 50 ECDSA operations, **essentially impossible as normal manual work, and usually a sign of an automated signing service or batch pre-signing**;
+3. The operator packed the 50 signatures into one Type-4 transaction and paid 0.006545 ETH (about $14.5) as sender;
+4. On inclusion the account nonce was 18,914,809, so only that tuple hit; the code was written and the nonce became 18,914,810;
+5. **Three minutes and twenty-four seconds later**, the operator sent an ordinary transaction calling `sweep(address,address[])`; the code executed in the hot wallet's context and moved 167,464 ETH, $1.615B of USDT and 64 tokens;
+6. Over the next three and a half hours it was called 12 more times, several of them 23,100-gas empty polls.
+
+**The failure was not on-chain. It was at step 2: the signing side treated a request to rewrite account code as an ordinary message signature.**
+
+Had the signing policy been able to parse the `0x05` payload, it would have seen three things — the target is an unverified contract, the nonce window spans 50 values, and `chain_id` is mainnet. **Any one of them is enough to block. But what it saw was probably just a hex hash.**
+
+## 6. Conclusion
+
+The EIP-7702 signing flow compresses to one sentence: **sign a hash over "chain ID + target address + nonce" with a private key, let anyone wrap it in a Type-4 transaction, and the account's code is permanently rewritten.**
+
+There is no expiry, no revoke button and no execution rollback. **The only invalidation mechanism is consuming the nonce** — and that one has already been specifically defeated by nonce spraying.
+
+A safe signing flow therefore has to put its weight **before the signature**, not on on-chain monitoring:
+
+1. Parse the `0x05` payload and display the target address and `chain_id`
+2. Allowlist delegate targets by code hash, **rejecting unverified or upgradeable contracts**
+3. Split "code delegation" and "asset transfer" into two key sets and two approval paths
+4. **Disable Type-4 outright for hot wallets**
+5. After signing, watch the mempool for someone submitting on your behalf
+
+**Bottom line.** 7702 promotes "signing" from authorising one specific operation to handing over custody of account control.
+
+Whether a wallet or an exchange has genuinely understood that comes down to one thing: **can its signing interface show the user, in plain words and before they press confirm, the address inside `0xef0100‖address`? If it cannot, no amount of process makes it anything other than blind signing.**
+
+## Sources
+
+- [EIP-7702 specification](https://eips.ethereum.org/EIPS/eip-7702)
+- [EIP-2: the low-s requirement](https://eips.ethereum.org/EIPS/eip-2)
+- [The authorisation transaction (Type-4)](https://eth.blockscout.com/tx/0xad99264d5532ae0dd04b2004eebda05f25657e70dacb764f7ac8d4ccd051298b)
+- [The drain transaction](https://eth.blockscout.com/tx/0x53bd38b816c23e74134786c29a8c18d792777998a3b9326047b583100e88e2f3)
+- [Zealynx: EIP-7702 wallet security](https://www.zealynx.io/research/smart-contracts/eip-7702-wallet-security)
+- [Halborn: EIP-7702 security considerations](https://www.halborn.com/blog/post/eip-7702-security-considerations)
+
+---
+
+*Companion pieces: [anatomy of the EIP-7702 attack: 18 hours of prep, one signature, one bot](/en/blog/eip-7702-delegation-one-signature-drains-everything-en) and [a Binance hot wallet falls](/en/blog/binance-suspected-hack-outflows-custody-risk-en). A mechanism explainer; specification references are to the final EIP-7702. DYOR.*

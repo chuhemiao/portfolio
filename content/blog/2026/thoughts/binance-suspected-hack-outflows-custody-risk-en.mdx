@@ -1,0 +1,212 @@
+---
+title: 'A Binance hot wallet falls: one valid signature, eight minutes, $5.6B'
+publishedAt: '2026-10-30'
+summary: 'The attacker deployed the malicious delegate contract at 15:59, drained the wallet at 20:24 using an EIP-7702 authorisation signed by the hot wallet own key, was first noticed publicly at 20:32, and issuers began freezing at 21:01. The window in which the money left was minutes; the only tool that recovered anything — stablecoin blacklists — covers about 45%, and native BTC and ETH remain with the attacker. No contract was exploited. What failed was who gets to make a wallet execute code.'
+slug: 'binance-suspected-hack-outflows-custody-risk-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'binance-suspected-hack-outflows-custody-risk'
+sourceSlug: 'binance-suspected-hack-outflows-custody-risk'
+---
+
+> **This is a snapshot of an unfolding incident, not a conclusion.** All on-chain figures, prices and freeze amounts are as of **00:30 UTC on 30 October 2026** and may have moved since. Binance has suspended withdrawals and Binance Alpha, with **no timetable, no net loss figure and no reserve update**. The $5.6–5.8B here is a measure of affected funds, **not a realised loss**.
+
+## TL;DR
+
+- **The window was tiny**: drained at 20:24, first public warning at **20:32** (eight minutes), first freeze at **21:01** (37 minutes). **Half an hour separated the money leaving from any means of stopping it.**
+- **Scale**: independent on-chain accounting puts it at **$5.643B** after removing change and internal transfers; Arkham's `binance-hacker-1029` cluster of 55 addresses holds about **$5.84B**.
+- **About $2.617B frozen** (Tether $1.567B, Circle $823M, Ripple $200M, USD1 $27M); Binance verified **$2.54B** — a difference of timestamp and address overlap.
+- **That 45% is not risk management. It is an accident of composition.** Stablecoins can be frozen; **native BTC and ETH cannot** — and the attacker is converting into ETH.
+- **No contract was exploited.** What failed was who gets to make a wallet execute code. The mechanics are in [the companion piece on EIP-7702](/en/blog/eip-7702-delegation-one-signature-drains-everything-en).
+- **BNB −10.0%, roughly twice BTC's fall**, and still sliding after the official statement — the market is not absorbing the news once, it is repricing "when do withdrawals resume" continuously.
+
+---
+
+## 1. Timeline
+
+This is the part worth checking line by line.
+
+| UTC (29 Oct) | Event |
+|---|---|
+| **15:59** | The attacker's relayer **deploys the malicious delegate contract** `0x63e842b0…73e9c6fAe` |
+| ~20:20 | An **EIP-7702 authorisation** signed with the `Binance 14` key is submitted on-chain |
+| **20:24** | `Binance 14` sends **167,464 ETH + $1.615B USDT + dozens of tokens** in one transfer |
+| 20:24:24 | `Binance 16` sends roughly **28,005 ETH** to the same new address |
+| **20:32** | Analyst Spreek gives the first public warning: an entire Binance wallet drained to a new EOA, the contract call funded through Tornado Cash |
+| 20:56 | Market wires: $2.77B out across five chains, attack unconfirmed |
+| **21:01 on** | **Tether blacklists first**, Circle follows |
+| 21:09 | First asset inventory: roughly $2.5B and **63 tokens** swept in one transaction |
+| 21:15 | **CZ: "it does look like a hack on Binance"**, thanking Tether and Circle |
+| 21:17 | He Yi: aware, investigating urgently, "User Funds SAFU" |
+| 21:31 | Independent accounting: **$5.643B** out, $2.316B frozen |
+| 21:54 | Tether's freeze **revised up to $1.567B** |
+| 22:08 | Ripple freezes about **$200M** of RLUSD |
+| 22:15 | World Liberty freezes **$27M** of USD1 |
+| **22:33** | Binance: security review under way, **withdrawals resume once fully resolved** |
+| 22:44 | **Aave freezes all V3/V4 DAO markets** (contracts unaffected, positions still overcollateralised) |
+| 22:48 | Lookonchain: the attacker **starts selling PEPE, UNI and LINK for ETH** |
+| 22:54 | Bybit says it is unaffected; Binance.US had already stated it operates independently |
+
+**Two intervals worth remembering: eight minutes from the money leaving to anyone noticing publicly, 37 minutes to the first freeze.** For an atomic transaction both are already too late — they determine how much is recoverable, not whether it could be stopped.
+
+**A communications detail**: Binance's first wording was that the impact on user funds was "not yet confirmed", subsequently edited to state that user funds are completely safe. The change was screenshotted by outlets and on-chain analysts, **and is one reason the market has stayed cautious about the official account.**
+
+## 2. On-chain evidence: how one transaction moved $2.5B
+
+The inventory of the first drain is specific, and it is the core evidence that this was loss of wallet control rather than a contract exploit:
+
+| Asset | Amount | Note |
+|---|---:|---|
+| USDT | **$1.615B** | Later frozen by Tether |
+| ETH | **167,464** | About 15% of the transaction's value |
+| RLUSD | 62.6M | Ripple later froze about $200M |
+| wBETH | 29,934 | Liquid staking token |
+| XAUt | 11,372 | Gold token |
+| ENA | 198.4M | Later sold |
+| PEPE | 7.175T | Later sold |
+| UNI / LINK / AAVE | 6.19M / 2.26M / 127.9K | Later sold |
+
+**The calldata carries 65 addresses**: one `address(0)` as the ETH placeholder plus **64 ERC-20 contracts**, totalling roughly $2.5B. The "63 tokens" in public analysis is more likely the count of transfers that actually succeeded.
+
+The on-chain fingerprint is unambiguous: `Binance 14`'s code was written as **`0xef0100 + 63e842b0…`** — the EIP-7702 delegation indicator — after which the operator address `0x7c8601d4…`, funded via Tornado Cash, called `sweep(address,address[])` (selector `0x8a179be4`).
+
+**The caller was not the account owner, but the execution was identical to the owner acting personally** — which is precisely the semantics of a 7702 delegation.
+
+**This was not improvised.** On-chain records show nearly **18 hours** of preparation: a test contract deployed at 02:28, delegations and sweeps rehearsed on **three of the attacker's own wallets** at 13:51 and 16:20, the final contract deployed at 15:59, and the real move at **20:20**. Three and a half hours sat between the last rehearsal and the attack — waiting for the right moment.
+
+The authorisation transaction carried **50 EIP-7702 authorisations** with nonces in **descending** order, of which **exactly one took effect** (the other 49 returned `invalid_nonce`). Descending is deliberate: ascending order would have let every higher nonce take effect after the hit, advancing the account nonce fifteen times over.
+
+**And authorisation and drain were two separate transactions, 17 blocks and 3 minutes 24 seconds apart** — Type-4 transactions are publicly visible in the mempool, so that was a window in which this could have been caught. The transaction-level breakdown is in [the companion forensic piece](/en/blog/eip-7702-delegation-one-signature-drains-everything-en).
+
+The attack also spread along ownership: calling from Binance 14 into **Hot Wallet 34** — a smart wallet owned by Binance 14 — moved a further **$780–823M of USDC**.
+
+## 3. Scale: two measures
+
+| Measure | Amount | Note |
+|---|---:|---|
+| Independent on-chain accounting | **$5.643B** | ETH $3.528B + BTC $1.449B (18,270 BTC) + Tron $628M + Arbitrum/Optimism/Base $38M. **Change and internal transfers removed** |
+| Arkham `binance-hacker-1029` | **$5.84B** | 55 addresses: USDT $1.77B, BTC $1.44B, ETH $922M, USDC $823M, TRX $247M, SOL $94.6M |
+
+**Two things to be clear about.**
+
+**First, holdings value is not realised loss.** Arkham's number includes assets not yet sold and partly frozen. Binance has published no net loss.
+
+**Second, this total cannot all be attributed to that one 7702 attack.** All 50 authorisations carried `chain_id` **1** — and under EIP-7702 only `chain_id = 0` replays across chains. **Bitcoin, Tron and Solana do not have EIP-7702 at all.**
+
+So the $2.5B on Ethereum has a complete authorisation-to-execution causal chain, while **the figures on other chains are balance movements** that may mix independent compromises of other hot wallets, Binance's own sweeps or defensive transfers, panicked user withdrawals, or analyst mislabelling.
+
+**Multi-chain losses may well be real; attribution has to be done separately.** Filing all $5.6B under "one 7702 attack" overstates the technical reach of this attack and misdirects the defensive response.
+
+Against the historical record, every reading sets a new high:
+
+| Event | Date | Scale |
+|---|---|---:|
+| Binance API/2FA breach (7,000 BTC) | 2019-05 | ~$40M |
+| BNB Bridge exploit | 2022-10 | ~$570M |
+| Bitget hot/warm wallet incident | 2026-09 | ~$387M |
+| Bybit cold wallet theft (previous largest) | 2025-02 | ~$1.5B |
+| **Binance, this incident** | **2026-10-29** | **$5.6–5.8B** |
+
+## 4. Freezes: the only thing that actually worked
+
+| Issuer | Asset | Amount |
+|---|---|---:|
+| Tether | USDT | **$1.567B** |
+| Circle | USDC | $823M |
+| Ripple | RLUSD | $200M |
+| World Liberty / BitGo | USD1 | $27M |
+| **Total** | | **$2.617B** |
+
+Binance's verified figure is **$2.54B**, broadly consistent with the issuers' $2.617B — **a difference of timestamp and address overlap, not a contradiction.**
+
+**The structural gap is clear: stablecoins can be frozen, native assets cannot.**
+
+**And that 45% is itself informative**: nearly half of what moved was centralised stablecoin an issuer can freeze unilaterally. A hot wallet weighted more toward native assets would have produced **a completely different recoverable share from the same attack**.
+
+**So 45% does not reflect risk-management capability; it reflects composition.** The share is also being eroded: the attacker is selling PEPE, UNI and LINK for ETH — **actively converting freezable assets into unfreezable ones.**
+
+## 5. The ecosystem responded faster than the exchange
+
+- **Issuers**: Tether went from $971M to $1.567B; four issuers total about $2.617B.
+- **DeFi**: Aave froze all DAO markets (V3/V4), halting new deposits and borrows **while keeping withdrawals and repayments open** — cutting off the attacker's route to borrow against collateral rather than freezing user assets. Restrained, and its own contracts were unaffected with positions still overcollateralised.
+- **Peers**: Bybit and Binance.US both stated within hours that they were unaffected, **heading off an industry-wide run.**
+- **Market makers**: Wintermute's Evgeny Gaevoy said publicly that Binance can absorb three to four times the current loss — **while advising against depositing to Binance until the cause is known.**
+
+## 6. Market: pricing platform risk
+
+| Metric | Value (30 Oct, 00:27 UTC) | 24h |
+|---|---:|---:|
+| **$BNB** | **$684.02** | **−10.0%** |
+| $ETH | $2,209.03 | −6.3% |
+| $BTC | $77,000 | −5.2% |
+| BNB 24h range | $678.13 – $760.96 | New low after the event |
+| BTC 24h low | $76,861.5 | Below $77k |
+| BTC 24h liquidations | $369.5M (85% long) | $181M on Binance |
+| BNB 24h liquidations | $19.7M (88% long) | — |
+| Fear & Greed | **50 (neutral)** | 29 Oct, 00:20 reading |
+
+The tape deserves attention: BNB wicked from $745 to $678 within the 20:00 UTC hourly candle on more than ten times normal volume; **it was back at $698 by 23:58, then lost another 2% to $684 over the following half hour.**
+
+**The market is not absorbing the news once. It is continuously repricing "when do withdrawals resume".**
+
+BTC and ETH falling reflects a broader risk-off move — Nasdaq futures were weak that evening on tech earnings — so **the Binance incident was an accelerant rather than the sole cause**.
+
+Sentiment has not turned to panic: Fear & Greed sits at a neutral 50 and no stablecoin has depegged systemically. **The market is treating this as a single platform's custody failure, not an industry credit event.**
+
+## 7. Disputed and unverified
+
+Several claims in the public record need correcting or flagging, and they bear directly on the judgment:
+
+| Claim | Status | Note |
+|---|---|---|
+| An EIP-7702 authorisation "temporarily" executes contract logic | **Needs correction** | The delegation is **persistent** until replaced or cleared to `address(0)`. That is exactly why later inflows get swept again |
+| $2.54B frozen | **Broadly credible** | Consistent with the issuers' $2.617B; the gap is timestamp |
+| The attacker has converted tokens into ETH | **Credible** | Lookonchain recorded the PEPE/UNI/LINK sales |
+| Binance used its own keys to counter-attack and recover USDC | **Unverified** | Only social media retelling; no official or on-chain confirmation |
+| Covers "at least nine chains" | **Partly confirmed** | Specific amounts exist for ETH, BTC, Tron, Arbitrum, Optimism and Base |
+| Total "over $6.2B" | **Upper bound** | Arkham's $5.84B plus later inflows approaches it, but includes unrealised and frozen assets |
+| Attacker identity / insider involvement | **Unknown** | "Leaked key" and "compromised signing process" both circulate; nothing official |
+| Whether the back door is closed | **Unconfirmed** | An inbound transaction at 00:10 on 30 Oct still shows `Binance 14` with `proxy_type: eip7702`, and its last 50 outbound transactions contain **no revocation pointing at `address(0)`** |
+| Multi-chain losses are one attack | **Does not hold** | The authorisation carried `chain_id = 1`, Ethereum mainnet only; BTC, Tron and Solana have no such mechanism |
+
+**One more misconception to clear: this was not a smart contract hack.** No contract had a flaw. What was broken is who gets to make a wallet execute code.
+
+**That is also why the blast radius is so cleanly bounded** — only addresses Binance itself controls were affected, while Aave, Bybit and the protocol layer were untouched.
+
+## 8. Conclusion
+
+Laid out in sequence, the shape is far clearer than the first reports suggested: the malicious delegate contract was deployed at **15:59**, the drain executed at **20:24** on an authorisation signed by the hot wallet's own key, it was noticed publicly at **20:32**, and issuers began freezing at **21:01**.
+
+**The window in which the money was taken was minutes, and the only tool that recovered anything covers about 45%.**
+
+Three horizons:
+
+**Short term**, watch the withdrawal-resumption announcement and the frozen total — they decide whether BNB's discount widens.
+
+**Medium term**, watch whether Binance publishes a net loss, proof of reserves and a root cause — they decide whether this is a contained operational incident or the start of a repricing of custody.
+
+**Long term**, watch whether this 7702 path forces the industry to rebuild hot wallet signing. **If Binance is not the only venue holding assets in an online EOA, the same risk is industry-wide.**
+
+**Bottom line.** Until withdrawals resume and the loss figure lands, do not read BNB's fall as mispricing: **what fell is a platform-specific risk premium, and that premium is repaired by disclosure, not by the passage of time.**
+
+For users, the practical moves remain diversifying custody, favouring self-custody, and pausing three seconds before any "batch approval" or "account upgrade" signature request — **this incident began with a signature that looked entirely legitimate.**
+
+## Sources
+
+- [The Block: Binance investigating suspicious outflows](https://www.theblock.co/news/markets/2026-10-29-binance-investigating-hack-suspicious-outflows-5-billion-432171)
+- [TechCrunch: Binance pauses withdrawals](https://techcrunch.com/2026/10/29/binance-pauses-withdrawals-as-hackers-suspected-of-stealing-billions-in-crypto/)
+- [CoinDesk live coverage](https://www.coindesk.com/business/2026/10/29/live-updates-bitcoin-clings-to-usd80000-as-strategy-s-cushion-thins-before-earnings)
+- [Ondology Labs: EIP-7702 attack analysis](https://ondologylabs.com/blog/binance-hot-wallet-hack-eip-7702)
+- [Threat Landscape: hot wallet and 7702 delegation](https://threatlandscape.io/blog/binance-hot-wallet-compromise-eip-7702-delegation)
+- [FinanceFeeds citing Arkham: issuers freeze over $2.5B](https://financefeeds.com/binance-hack-update-tether-circle-and-ripple-freeze-over-2-5-billion/)
+- [Binance statement](https://x.com/binance/status/2115960292115124558)
+- [CZ's statement](https://x.com/cz_binance/status/2115915423174853077)
+- [Spreek's first warning](https://x.com/spreekaway/status/2115904721856651382)
+- [0xQuit on the asset inventory and contract deployment](https://x.com/0xQuit/status/2115913970075009439)
+- [BWEnews independent accounting](https://x.com/bwenews/status/2115919593718136855)
+- [Lookonchain on the attacker's sales](https://x.com/lookonchain/status/2115938836757037428)
+- [Aave's statement](https://x.com/aave/status/2115937863162339637)
+
+---
+
+*Companion pieces: [anatomy of the EIP-7702 attack: 18 hours of prep, one signature, one bot](/en/blog/eip-7702-delegation-one-signature-drains-everything-en), [the EIP-7702 signing flow](/en/blog/eip-7702-signing-flow-from-hash-to-code-en), and [Binance has not released the signing logs](/en/blog/binance-has-not-disclosed-signing-logs-en). Data as of 00:30 UTC, 30 October 2026; the incident is ongoing. Figures come from reporting and on-chain monitoring, not audited numbers; Binance has published no net loss and the root cause is not officially confirmed. Not investment advice. DYOR.*
