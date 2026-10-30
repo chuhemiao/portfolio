@@ -1,0 +1,111 @@
+{
+  "bin": "/opt/homebrew/bin/ffmpeg",
+  "args": [
+    "-hide_banner",
+    "-nostdin",
+    "-y",
+    "-i",
+    "/Users/chuhemiao/indie/portfolio/docs/binance-7702-video.mp4",
+    "-framerate",
+    "30",
+    "-start_number",
+    "0",
+    "-i",
+    "/var/folders/1p/r4w4zv6d63d0gcvd2_0cq2mm0000gn/T/binance-7702-edit-ex8zSd/strips/%05d.png",
+    "-filter_complex",
+    "[0:v]setpts=PTS-STARTPTS[base];[1:v]setpts=PTS-STARTPTS[strip];[base][strip]overlay=x=0:y=0:shortest=1:eof_action=endall,setpts=PTS*5/6,fps=30:round=near,tpad=stop_mode=clone:stop=2,trim=end_frame=7250,setpts=N/(30*TB)[v];[0:a]atempo=1.2,aresample=48000,apad=whole_len=11600000,atrim=end_sample=11600000,asetpts=PTS-STARTPTS[a]",
+    "-map",
+    "[v]",
+    "-map",
+    "[a]",
+    "-c:v",
+    "libx264",
+    "-preset",
+    "slow",
+    "-crf",
+    "18",
+    "-pix_fmt",
+    "yuv420p",
+    "-c:a",
+    "aac",
+    "-b:a",
+    "256k",
+    "-ar",
+    "48000",
+    "-ac",
+    "2",
+    "-fps_mode:v",
+    "passthrough",
+    "-frames:v",
+    "7250",
+    "-video_track_timescale",
+    "90000",
+    "-movflags",
+    "+faststart",
+    "/Users/chuhemiao/indie/portfolio/docs/.binance-7702-edit-a46bff7c-91bf-41ca-b845-cfd5e1dbe406.mp4"
+  ]
+}
+
+Input #0, mov,mp4,m4a,3gp,3g2,mj2, from '/Users/chuhemiao/indie/portfolio/docs/binance-7702-video.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+  Duration: 00:04:50.00, start: 0.000000, bitrate: 801 kb/s
+  Stream #0:0[0x1](und): Video: h264 (High) (avc1 / 0x31637661), yuv420p(progressive), 1920x1080, 551 kb/s, 30 fps, 30 tbr, 90k tbn (default)
+    Metadata:
+      handler_name    : VideoHandler
+      encoder         : Lavc63.1.102 libx264
+  Stream #0:1[0x2](und): Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 241 kb/s (default)
+    Metadata:
+      handler_name    : SoundHandler
+Input #1, image2, from '/var/folders/1p/r4w4zv6d63d0gcvd2_0cq2mm0000gn/T/binance-7702-edit-ex8zSd/strips/%05d.png':
+  Duration: 00:04:50.00, start: 0.000000, bitrate: N/A
+  Stream #1:0: Video: png, rgb24(pc, gbr/unknown/unknown), 1920x112, 30 fps, 30 tbr, 30 tbn
+Stream mapping:
+  Stream #0:0 (h264) -> setpts:default
+  Stream #0:1 (aac) -> atempo:default
+  Stream #1:0 (png) -> setpts:default
+  setpts:default -> Stream #0:0 (libx264)
+  asetpts:default -> Stream #0:1 (aac)
+[libx264 @ 0x7c68c51880] using cpu capabilities: ARMv8 NEON DotProd I8MM
+[libx264 @ 0x7c68c51880] profile High, level 5.0, 4:2:0, 8-bit
+[libx264 @ 0x7c68c51880] 264 - core 165 r3222 b35605a - H.264/MPEG-4 AVC codec - Copyleft 2003-2025 - http://www.videolan.org/x264.html - options: cabac=1 ref=5 deblock=1:0:0 analyse=0x3:0x113 me=hex subme=8 psy=1 psy_rd=1.00:0.00 mixed_ref=1 me_range=16 chroma_me=1 trellis=2 8x8dct=1 cqm=0 deadzone=21,11 fast_pskip=1 chroma_qp_offset=-2 threads=27 lookahead_threads=4 sliced_threads=0 nr=0 decimate=1 interlaced=0 bluray_compat=0 constrained_intra=0 bframes=3 b_pyramid=2 b_adapt=1 b_bias=0 direct=3 weightb=1 open_gop=0 weightp=2 keyint=250 keyint_min=25 scenecut=40 intra_refresh=0 rc_lookahead=50 rc=crf mbtree=1 crf=18.0 qcomp=0.60 qpmin=0 qpmax=69 qpstep=4 ip_ratio=1.40 aq=1:1.00
+Output #0, mp4, to '/Users/chuhemiao/indie/portfolio/docs/.binance-7702-edit-a46bff7c-91bf-41ca-b845-cfd5e1dbe406.mp4':
+  Metadata:
+    major_brand     : isom
+    minor_version   : 512
+    compatible_brands: isomiso2avc1mp41
+    encoder         : Lavf63.1.102
+  Stream #0:0: Video: h264 (avc1 / 0x31637661), yuv420p(tv, progressive), 1920x1080, q=2-31, 30 fps, 90k tbn
+    Metadata:
+      encoder         : Lavc63.1.102 libx264
+    Side data:
+      CPB properties: bitrate max/min/avg: 0/0/0 buffer size: 0 vbv_delay: N/A
+  Stream #0:1: Audio: aac (LC) (mp4a / 0x6134706D), 48000 Hz, stereo, fltp, 256 kb/s
+    Metadata:
+      encoder         : Lavc63.1.102 aac
+frame=  204 fps=0.0 q=24.0 size=     768KiB time=00:00:09.49 bitrate= 662.8kbits/s speed=18.8x elapsed=0:00:00.50    frame=  416 fps=412 q=24.0 size=    1792KiB time=00:00:16.61 bitrate= 883.4kbits/s speed=16.5x elapsed=0:00:01.00    frame=  622 fps=412 q=24.0 size=    2560KiB time=00:00:23.48 bitrate= 892.9kbits/s speed=15.5x elapsed=0:00:01.51    frame=  942 fps=467 q=24.0 size=    3584KiB time=00:00:34.13 bitrate= 860.2kbits/s speed=16.9x elapsed=0:00:02.01    frame= 1212 fps=481 q=24.0 size=    4608KiB time=00:00:43.07 bitrate= 876.4kbits/s speed=17.1x elapsed=0:00:02.52    frame= 1521 fps=503 q=24.0 size=    5376KiB time=00:00:53.44 bitrate= 824.1kbits/s speed=17.7x elapsed=0:00:03.02    frame= 1819 fps=516 q=24.0 size=    6144KiB time=00:01:03.38 bitrate= 794.1kbits/s speed=  18x elapsed=0:00:03.52    frame= 2090 fps=518 q=24.0 size=    6912KiB time=00:01:12.38 bitrate= 782.3kbits/s speed=17.9x elapsed=0:00:04.03    frame= 2334 fps=514 q=24.0 size=    7936KiB time=00:01:20.51 bitrate= 807.5kbits/s speed=17.7x elapsed=0:00:04.53    frame= 2575 fps=511 q=24.0 size=    8704KiB time=00:01:28.57 bitrate= 805.0kbits/s speed=17.6x elapsed=0:00:05.04    frame= 2798 fps=504 q=24.0 size=    9472KiB time=00:01:36.02 bitrate= 808.1kbits/s speed=17.3x elapsed=0:00:05.54    frame= 3040 fps=502 q=24.0 size=   10240KiB time=00:01:44.06 bitrate= 806.1kbits/s speed=17.2x elapsed=0:00:06.05    frame= 3272 fps=499 q=24.0 size=   11008KiB time=00:01:51.72 bitrate= 807.2kbits/s speed=  17x elapsed=0:00:06.55    frame= 3607 fps=511 q=24.0 size=   12032KiB time=00:02:02.98 bitrate= 801.4kbits/s speed=17.4x elapsed=0:00:07.06    frame= 3957 fps=523 q=24.0 size=   12800KiB time=00:02:14.63 bitrate= 778.8kbits/s speed=17.8x elapsed=0:00:07.56    frame= 4250 fps=527 q=24.0 size=   13568KiB time=00:02:24.40 bitrate= 769.7kbits/s speed=17.9x elapsed=0:00:08.06    frame= 4500 fps=525 q=24.0 size=   14592KiB time=00:02:32.74 bitrate= 782.6kbits/s speed=17.8x elapsed=0:00:08.56    frame= 4751 fps=524 q=24.0 size=   15360KiB time=00:02:41.08 bitrate= 781.1kbits/s speed=17.8x elapsed=0:00:09.07    frame= 4986 fps=520 q=24.0 size=   16384KiB time=00:02:48.93 bitrate= 794.5kbits/s speed=17.6x elapsed=0:00:09.57    frame= 5220 fps=518 q=24.0 size=   17152KiB time=00:02:56.74 bitrate= 795.0kbits/s speed=17.5x elapsed=0:00:10.08    frame= 5512 fps=521 q=24.0 size=   17920KiB time=00:03:06.45 bitrate= 787.3kbits/s speed=17.6x elapsed=0:00:10.58    frame= 5800 fps=523 q=24.0 size=   18944KiB time=00:03:16.07 bitrate= 791.5kbits/s speed=17.7x elapsed=0:00:11.09    frame= 6036 fps=520 q=24.0 size=   19968KiB time=00:03:23.94 bitrate= 802.1kbits/s speed=17.6x elapsed=0:00:11.59    frame= 6250 fps=516 q=24.0 size=   20992KiB time=00:03:31.07 bitrate= 814.7kbits/s speed=17.4x elapsed=0:00:12.10    frame= 6483 fps=514 q=24.0 size=   22272KiB time=00:03:38.83 bitrate= 833.7kbits/s speed=17.4x elapsed=0:00:12.60    frame= 6681 fps=509 q=24.0 size=   23296KiB time=00:03:45.45 bitrate= 846.5kbits/s speed=17.2x elapsed=0:00:13.11    frame= 6926 fps=509 q=24.0 size=   24320KiB time=00:03:53.60 bitrate= 852.9kbits/s speed=17.2x elapsed=0:00:13.61    frame= 7142 fps=506 q=24.0 size=   25344KiB time=00:04:00.78 bitrate= 862.2kbits/s speed=17.1x elapsed=0:00:14.12    [mp4 @ 0x7c68c2f980] Starting second pass: moving the moov atom to the beginning of the file
+[out#0/mp4 @ 0x7c69024780] video:18881KiB audio:7116KiB subtitle:0KiB other streams:0KiB global headers:0KiB muxing overhead: 1.003182%
+frame= 7250 fps=506 q=-1.0 Lsize=   26258KiB time=00:04:01.66 bitrate= 890.1kbits/s speed=16.9x elapsed=0:00:14.32    
+[libx264 @ 0x7c68c51880] frame I:31    Avg QP: 5.75  size:153235
+[libx264 @ 0x7c68c51880] frame P:1921  Avg QP:11.20  size:  6307
+[libx264 @ 0x7c68c51880] frame B:5298  Avg QP:10.10  size:   466
+[libx264 @ 0x7c68c51880] consecutive B-frames:  2.0%  1.3%  1.5% 95.2%
+[libx264 @ 0x7c68c51880] mb I  I16..4: 53.3% 27.9% 18.8%
+[libx264 @ 0x7c68c51880] mb P  I16..4:  0.3%  0.3%  0.1%  P16..4:  8.7%  2.0%  2.2%  0.0%  0.0%    skip:86.3%
+[libx264 @ 0x7c68c51880] mb B  I16..4:  0.0%  0.0%  0.0%  B16..8:  5.8%  0.0%  0.0%  direct: 0.0%  skip:94.1%  L0:41.3% L1:58.4% BI: 0.3%
+[libx264 @ 0x7c68c51880] 8x8 transform intra:31.4% inter:24.0%
+[libx264 @ 0x7c68c51880] direct mvs  spatial:99.7% temporal:0.3%
+[libx264 @ 0x7c68c51880] coded y,uvDC,uvAC intra: 39.6% 51.8% 47.4% inter: 0.8% 1.0% 0.3%
+[libx264 @ 0x7c68c51880] i16 v,h,dc,p: 80% 15%  4%  1%
+[libx264 @ 0x7c68c51880] i8 v,h,dc,ddl,ddr,vr,hd,vl,hu: 22% 15% 32%  6%  4%  4%  5%  5%  8%
+[libx264 @ 0x7c68c51880] i4 v,h,dc,ddl,ddr,vr,hd,vl,hu: 20% 17% 17%  9%  8%  6%  7%  6%  9%
+[libx264 @ 0x7c68c51880] i8c dc,h,v,p: 70% 16% 11%  3%
+[libx264 @ 0x7c68c51880] Weighted P-Frames: Y:0.2% UV:0.0%
+[libx264 @ 0x7c68c51880] ref P L0: 86.1%  1.6%  7.7%  2.9%  1.7%  0.0%
+[libx264 @ 0x7c68c51880] ref B L0: 76.8% 20.9%  1.7%  0.6%
+[libx264 @ 0x7c68c51880] ref B L1: 96.5%  3.5%
+[libx264 @ 0x7c68c51880] kb/s:640.01
+[aac @ 0x7c68c51f80] Qavg: 64301.344
