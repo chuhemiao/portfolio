@@ -15,9 +15,62 @@ export interface Topic {
   // ("ai", "agent", "compute"), this is what keeps the topic about the
   // intersection rather than about everything named after one half of it.
   requireAnyOf?: string[];
+  // The mirror of requireAnyOf: a matchKeywords hit is dropped when one of these
+  // hits. It carves out the half of a shared vocabulary that another topic owns.
+  excludeIfAnyOf?: string[];
   // Related research project types in research-client
   relatedTypes: string[];
 }
+
+// ai-crypto requires one of these alongside its own keywords; the general ai
+// topic is ruled out by one. 114 of the 129 post groups that name AI are token
+// research reports, so without this split an "AI" topic would be ai-crypto under
+// a second name, and neither page would be about anything in particular.
+const CRYPTO_SIGNALS = [
+  'crypto',
+  'blockchain',
+  'on-chain',
+  'onchain',
+  'token',
+  'defi',
+  'web3',
+  'dao',
+  'stablecoin',
+  'rwa',
+  'tvl',
+  'protocol',
+  'decentralized',
+  'decentralised',
+  'depin',
+  'bittensor',
+  'akash',
+  'worldcoin',
+  'wld',
+  'polymarket',
+  'solana',
+  'ethereum',
+  'bitcoin',
+  'btc',
+  'wallet',
+  'staking',
+  'validator',
+  'nft',
+  'airdrop',
+  'testnet',
+  'mainnet',
+  '链上',
+  '加密',
+  '代币',
+  '区块链',
+  '钱包',
+  'オンチェーン',
+  '暗号',
+  'トークン',
+];
+
+// Venues belong in the exclusion list but not in requireAnyOf: an exchange
+// teardown whose summary says "ai" once is a crypto post, not an AI x Crypto one.
+const CRYPTO_VENUES = ['binance', '币安', 'coinbase', 'okx', 'bybit', 'hyperliquid', 'perp', '永续'];
 
 export const TOPICS: Topic[] = [
   {
@@ -73,6 +126,23 @@ export const TOPICS: Topic[] = [
     relatedTypes: ['L1', 'L2'],
   },
   {
+    slug: 'ai',
+    name: 'AI',
+    emoji: '🧠',
+    tagline: 'The AI industry, its tooling, and what it does to work',
+    description:
+      'AI capital structure and the compute supply chain, agent harnesses and coding tooling, and the questions about labour and judgment that follow once answers get cheap. The crypto intersection has a topic of its own.',
+    whyItMatters:
+      'AI is repricing equities and jobs faster than crypto is repricing anything. Reading the industry on its own terms — who funds the compute, who keeps the margin, what is left for people to do — comes before judging the on-chain version of it.',
+    accentColor: '#EC4899',
+    matchKeywords: ['ai', 'llm', 'agentic', 'anthropic', 'openai', 'artificial intelligence', '人工智能', '大模型', '智能体'],
+    excludeIfAnyOf: [...CRYPTO_SIGNALS, ...CRYPTO_VENUES],
+    // The registry holds crypto projects only, which is precisely what this
+    // topic excludes, so there is no sector to count. The page falls back to its
+    // generic Research Map copy instead.
+    relatedTypes: [],
+  },
+  {
     slug: 'ai-crypto',
     name: 'AI × Crypto',
     emoji: '🤖',
@@ -83,47 +153,7 @@ export const TOPICS: Topic[] = [
       'AI infrastructure is absorbing the next wave of capital. Crypto networks provide the decentralized rails for compute, data, and model verification that centralized platforms cannot.',
     accentColor: '#0EA5E9',
     matchKeywords: ['ai', 'agent', 'llm', 'compute', 'inference', 'depin', 'bittensor', 'akash', 'render network'],
-    requireAnyOf: [
-      'crypto',
-      'blockchain',
-      'on-chain',
-      'onchain',
-      'token',
-      'defi',
-      'web3',
-      'dao',
-      'stablecoin',
-      'rwa',
-      'tvl',
-      'protocol',
-      'decentralized',
-      'decentralised',
-      'depin',
-      'bittensor',
-      'akash',
-      'worldcoin',
-      'wld',
-      'polymarket',
-      'solana',
-      'ethereum',
-      'bitcoin',
-      'btc',
-      'wallet',
-      'staking',
-      'validator',
-      'nft',
-      'airdrop',
-      'testnet',
-      'mainnet',
-      '链上',
-      '加密',
-      '代币',
-      '区块链',
-      '钱包',
-      'オンチェーン',
-      '暗号',
-      'トークン',
-    ],
+    requireAnyOf: CRYPTO_SIGNALS,
     relatedTypes: ['AI', 'DePIN'],
   },
   {
@@ -244,6 +274,12 @@ const TOPIC_TRANSLATIONS: Record<string, { name: [string, string]; tagline: [str
     tagline: ['公链竞争与扩容架构', 'チェーン間競争とスケーリング設計'],
     description: ['研究 Layer 1 共识与 Layer 2 Rollup 扩容，涵盖生态发展、DeFi TVL、跨链基础设施和模块化与单体架构取舍。', 'Layer 1 のコンセンサスと Layer 2 の Rollup を研究。エコシステム、DeFi TVL、ブリッジ、モジュラー型と一体型の設計を扱います。'],
     whyItMatters: ['每个周期的选链决策都涉及大量资本。L1 与 L2 的竞争格局不同，需要分别分析。', 'チェーン選択には各サイクルで多額の資本が関わります。L1 と L2 の競争は異なり、それぞれの分析が必要です。'],
+  },
+  ai: {
+    name: ['AI', 'AI'],
+    tagline: ['AI 产业、工具链，以及它对工作的改造', 'AI 産業、ツールチェーン、そして仕事への影響'],
+    description: ['研究 AI 的资本结构与算力供应链、Agent harness 与编码工具链，以及答案变得廉价之后随之而来的劳动与判断力问题。与加密的交集另有专门主题。', 'AI の資本構造と計算資源のサプライチェーン、エージェントのハーネスとコーディングツール、そして答えが安くなった後に残る労働と判断の問題を扱います。暗号資産との交点は別のトピックにあります。'],
+    whyItMatters: ['AI 对股票和岗位的重新定价，比加密对任何东西的定价都更快。先按产业自身的逻辑读懂它——谁出钱买算力、谁拿走利润、还剩什么留给人做——再去判断它的链上版本。', 'AI は株式と雇用を、暗号資産が何かを再評価する速度より速く書き換えています。誰が計算資源に資金を出し、誰が利益を取り、人には何が残るのか——産業自体の論理で読むことが、そのオンチェーン版を判断する前提になります。'],
   },
   'ai-crypto': {
     name: ['AI × Crypto', 'AI × Crypto'],

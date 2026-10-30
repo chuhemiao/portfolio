@@ -172,6 +172,31 @@ test('the real ai-crypto topic stays about the intersection rather than about AI
   assert.deepEqual(buildTopicIndex(posts, topics)['ai-crypto'], ['network', 'agents']);
 });
 
+test('excludeIfAnyOf drops a keyword hit that belongs to the neighbouring topic', () => {
+  const posts = buildTranslationGroups([
+    post('essay', 'en', { title: 'How will we live after AI?' }),
+    post('report', 'en', { title: 'AI Analysis Token: on-chain value capture' })
+  ]);
+  const topics = [{ slug: 'ai', matchKeywords: ['ai'], excludeIfAnyOf: ['on-chain', 'token'] }];
+  assert.deepEqual(buildTopicIndex(posts, topics).ai, ['essay']);
+});
+
+test('the real ai and ai-crypto topics split the AI corpus instead of overlapping', async () => {
+  const topics = (await loadTopics()).filter((topic) => topic.slug === 'ai' || topic.slug === 'ai-crypto');
+  assert.equal(topics.length, 2);
+  const posts = buildTranslationGroups([
+    post('essay', 'en', { title: 'When humans are no longer needed: how will we live after AI?' }),
+    post('equity', 'en', { title: 'Astera Labs: AI rack-scale connectivity, growth quality and valuation' }),
+    post('harness', 'en', { title: 'Self-Harness: when an agentic system edits its own operating system' }),
+    post('network', 'en', { title: 'Gensyn: a decentralized compute network for machine learning' }),
+    post('venue', 'en', { title: 'Binance product teardown', summary: 'deep research with ai report' })
+  ]);
+  const index = buildTopicIndex(posts, topics);
+  assert.deepEqual(index.ai, ['essay', 'equity', 'harness']);
+  assert.deepEqual(index['ai-crypto'], ['network']);
+  assert.deepEqual(index.ai.filter((slug) => index['ai-crypto'].includes(slug)), []);
+});
+
 test('runtime list and href helpers prefer translations and preserve actual fallback language', async () => {
   const directory = await fs.mkdtemp(path.join(os.tmpdir(), 'portfolio-i18n-'));
   const previousCache = process.env.CONTENT_CACHE_DIR;
