@@ -1,0 +1,183 @@
+---
+title: 'Renaiss: 18,439 cards, 762 addresses, and inventory bought at 48% APY'
+publishedAt: '2026-10-30'
+summary: 'The contract behind this collectibles RWA platform records just 18,439 cards across 762 addresses, against the 260,000+ registered users the project claims. On the most conservative reading, at least 82% of the cards ever pulled were never minted as tokens: buyers do not want the card, they want the cash left after the 10% buyback spread. Meanwhile the platform borrows its inventory from users at 48% to 60% staking APY, and that 10% spread is the only gross margin it has — the 60-day tier consumes 79% of it and the 90-day tier 148%. Its own index is still falling, and borrowed inventory settles at the valuation on the day it was staked.'
+slug: 'renaiss-sells-pack-opening-not-collecting-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'renaiss-sells-pack-opening-not-collecting'
+sourceSlug: 'renaiss-sells-pack-opening-not-collecting'
+---
+
+## TL;DR
+
+- **There are only 18,439 cards in the contract.** I called `totalSupply()` on the NFT contract against a public BSC node today: it returns `0x4807` = 18,439, and `name()` returns `Renaiss`. That is every card token minted since launch.
+- **At least 82% of the cards ever pulled were never minted as tokens.** Combining the lower of the two revenue figures the project has published with the most expensive pack still only accounts for about 100,000 packs. On a more likely mix the share is 96%–98%. Buyers do not want the card.
+- **762 holding addresses against 260,000+ registered users is 0.29%.** And 18,439 ÷ 762 = 24.2 cards per address. The holders are not a crowd of collectors with one card each; they are a handful of addresses accumulating.
+- **Turnover is collapsing in all three baskets at once.** Pokémon went from $736K a day in early October to $312K (−58% over four weeks), One Piece from $153K to $43.5K (−72%), and the sports basket is down to 33 sales a day. These are summed day by day from the public API the platform runs itself.
+- **The 48%–60% APY is not a subsidy, it is the cost of procuring inventory.** The 10% buyback spread is the entire gross margin on a staked card, and 60 days at 48% consumes 79% of it while 90 days at 60% consumes 148% — that tier breaks even on day 60.8 and locks for 90.
+- **The platform is also short this market.** Stakers settle at "the FMV on the day you staked it," so the downside stays with the platform, and the platform's own index puts Pokémon 20.4% below where it started on 2023-07-01.
+- **EV is a point, the guarantee is a band.** The fairness page gives PANDORA 248 a target EV of $255 with a tolerance of $237–$273 — a $36 band, 14.5% of the price, with the floor below the price.
+- **The contract that records all of this can be upgraded.** The ERC-1967 implementation slot points at `0x9d32…abe0`, the admin slot is empty (the UUPS shape), and `owner()` is a 7,411-byte contract that answers neither `getThreshold()` nor `owner()` — the chain cannot tell you whether it is a multisig.
+
+> How this was checked, and the limits. The timestamp is 2026-10-30 14:04 UTC (BSC block 130,677,908). The contract data I read myself, with `eth_call` and `eth_getStorageAt` against a public BSC node. The turnover and index data come from the public endpoint the platform documents at `api.renaissos.com/v1/indices/{game}/series` (the docs say the public read routes need no key and are rate-limited per IP), summed day by day. Pack and Earn terms come from the live pages today. **Two numbers I could not verify myself** — the 762 holding addresses and the 6,897 contract transactions: BscScan returns a Cloudflare bot challenge to me and I did not work around it, so those two follow the source material while everything else is mine. I also did not register an account, connect a wallet, buy a pack, or enter Earn. This piece follows on from the [deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en), where the EV, terms, custody and verifiable-draw detail lives; I do not repeat it here.
+
+## Its audience is not collectors
+
+The previous piece read Renaiss as a collectibles RWA platform: graded physical cards go into third-party vaults, an NFT is issued against them, pack expected value is set equal to the price, and the 90% instant buyback leaves a 10% house edge. That reading holds, but it took one thing for granted that nobody had checked — **that buyers want the card**.
+
+The chain says they do not.
+
+## 1. 18,439 against 762: almost nobody wants the card
+
+Straight from the chain:
+
+```text
+eth_call  totalSupply()  -> 0x0000…4807   = 18,439
+eth_call  name()         -> "Renaiss"
+eth_call  symbol()       -> "RENAISS"
+block 130,677,908 / 2026-10-30 14:04 UTC
+```
+
+18,439 is every card token minted since launch. The source material records 762 holding addresses and 6,897 contract transactions.
+
+Put that next to the operating figures the project publishes itself. Two cumulative revenue definitions are in circulation — the "more than $25M in platform revenue" that appears in press coverage, and the $42M that comes from the project's own channels (the source material dates it to a 2026-10-24 announcement; as the previous piece found, there is no independent source). Packs run from $28 to $248. Take the **most conservative** combination (revenue of only $25M, every dollar spent on the most expensive $248 pack, one card per pack) and you get 100,806 packs:
+
+| Assumption | Packs | 18,439 as a share of cards pulled | Never minted |
+| --- | --- | --- | --- |
+| $25M revenue / $248 pack | 100,806 | 18.3% | **81.7%** |
+| $25M revenue / $48 pack | 520,833 | 3.5% | 96.5% |
+| $42M revenue / $248 pack | 169,355 | 10.9% | 89.1% |
+| $42M revenue / $48 pack | 875,000 | 2.1% | **97.9%** |
+
+Every assumption above is chosen to push the minted share *up*, and the answer is still that **at least 82% of cards were never minted as tokens, and on a more likely mix 96%–98%.** The one correction in the other direction is that redemption burns the NFT, so cumulative mints may exceed 18,439 — but moving this ratio back to anything normal would take redemptions several times the outstanding supply, and redemption puts shipping, withdrawal fees, duties and insurance on the user.
+
+The other direction says the same thing: 762 addresses against 260,000+ registered users is **0.29%**, and 18,439 ÷ 762 is **24.2 cards per address**. The holding side is not a crowd of collectors with one or two cards each. It is a small number of accumulating addresses.
+
+So the real shape of this business is not a card market. It is a **cash game**: you pay to open, you look at the result, you take 90% back in cash. The card is the scoreboard.
+
+## 2. A 24-hour window explains the gap (but the public pages do not mention it)
+
+The gap between 18,439 and several hundred thousand pulls needs a mechanism, and the source material supplies one: **a pulled card does not leave the machine immediately. The user has a 24-hour window in which to choose to hold, and only then is the card minted into the wallet. Decline, and it becomes cash at the buyback price.**
+
+That would explain all of the data — the default outcome is cash, minting takes a deliberate act, and deliberate acts are always a minority.
+
+But let me be precise: **neither the pack page nor the Earn page states this window.** I went through both today. What the pages say is "Instant buyback" and 90%, with no time limit anywhere and nothing about holding to a wallet. The window appears only in the signed-in product flow, so I record it from the source material and flag plainly that I did not verify it.
+
+The distinction matters. If the window is real, then the 90.7% expected cash recovery the previous piece calculated does not describe an open-ended option. It describes an option that **must be exercised within 24 hours** — and in a category whose intraday moves are considerably larger than 10%, that deadline is itself part of the product.
+
+## 3. Turnover is collapsing, and in all three baskets together
+
+The platform runs a price index with a public API. Summing the daily `volUsdCents` and `n` (sale count) from the `series` endpoint by week:
+
+| Week | Pokémon $/day | sales/day | One Piece $/day | sales/day | Sports $/day | sales/day |
+| --- | --- | --- | --- | --- | --- | --- |
+| 10-03 – 10-09 | 736,227 | 10,450 | 153,164 | 1,720 | 20,510 | 180 |
+| 10-10 – 10-16 | 535,639 | 10,226 | 70,144 | 1,511 | 8,955 | 38 |
+| 10-17 – 10-23 | 427,855 | 8,227 | 60,514 | 1,063 | 12,488 | 46 |
+| 10-24 – 10-30 | 312,007 | 6,335 | 43,503 | 911 | 8,692 | 33 |
+| four-week change | **−58%** | −39% | **−72%** | −47% | −58% | −82% |
+
+Three baskets, monotonically down, not one week of recovery. Three things deserve naming:
+
+**The Pokémon ticket is shrinking at the same time.** $70.45 → $49.25, down 30%. Count down 39% and ticket down 30% together is not "the whales left and the retail stayed" — it is the whole thing cooling.
+
+**The sports basket is too thin to call a market.** 33 sales a day spread across a 50-card basket is a little over one sale per card every two days. Its ticket size went the other way, $114 → $267 (+134%), which is not strength: it is a handful of expensive cards still trading occasionally while the cheap end has no bids at all. A "fair market value" computed on that depth cannot support anything that needs to be tradable.
+
+**One Piece is the only basket above its starting level, and it is handing it back fast.** It peaked at 14,978.50 on 10-08 and sits at 11,799.34 today: **−21.2% in 22 days, and down on 21 of those 22 days.** The previous piece reported it at −8.42% over 30 days — that is because the end-September starting point was low; it spiked and then fell, and a monthly change hides the shape of the curve entirely.
+
+## 4. The 48%–60% APY is the cost of procuring inventory, not a subsidy
+
+Three pools are live on the Earn page today:
+
+| Pool | Eligible | Lock | APY | Capacity |
+| --- | --- | --- | --- | --- |
+| $10–25 | Pokémon only | 90 days | 60% | 24 spaces |
+| $25–500 | any collectible | 60 days | 48% | 6 spaces left |
+| $500–1,500 | any collectible | 90 days | 60% | full |
+
+The load-bearing term is how it settles. In the words on the page: if the card sells you receive "90% of the collectible's FMV **on the day you staked it**, plus what it earned until the sale," paid in USDT; earning stops on the sale day; unsold collectibles return to your wallet at the end of the lock; and there is no early withdrawal.
+
+Read from the platform ledger, that APY becomes something else. The platform puts the card in a pack; the pack price ≈ EV ≈ the sum of the FMVs in the pool, so selling that card returns roughly FMV. It pays the staker 90% of FMV plus interest. **So the 10% buyback spread is the entire gross margin on that card, and the APY comes straight out of it.**
+
+```text
+48% APY / 60-day lock:  full-period interest = 48% × 60/365 = 7.89%
+                        share of the 10% margin:  79%
+                        breakeven:                76.0 days
+
+60% APY / 90-day lock:  full-period interest = 60% × 90/365 = 14.79%
+                        share of the 10% margin: 148%
+                        breakeven:                60.8 days  <- the lock is 90 days
+```
+
+The 48% tier locks for 60 days, which sits just under its 76-day breakeven: that looks calculated. **The two 60% tiers do not.** They break even on day 60.8 and lock for 90. A card that sells after day 61 has already cost more in interest than the 10% spread earns, and a card that **does not sell at all** is starker still: the interest runs the full 90 days (14.79%), the card goes back as it was, and the platform sold nothing.
+
+So this is not a platform subsidising depositors out of revenue. It is a platform **renting inventory at a rate above its own 10% gross margin.** That works in exactly two cases: inventory turns far faster than 60 days, or the APY is really a customer-acquisition expense rather than a cost of funds. The page does not say which.
+
+One observable aside: of the three pools, one is full and another has 6 spaces left. Capacity that tight does not fit the subsidy story — a subsidy does not usually cap itself at a few dozen slots.
+
+## 5. The platform is also short this market
+
+Put sections 3 and 4 together and a risk appears that the previous piece did not see.
+
+The staker settlement price is anchored to the FMV **on the day of staking**. Whatever the card does afterwards is not the staker's problem; they still receive 90% plus interest. **The price risk stays entirely with the platform.**
+
+And the index the platform publishes itself says: Pokémon is 20.4% below where it started on 2023-07-01, sports 39.0% below, and One Piece is down 21.2% in 22 days. A card that falls 15% during a 60-day lock returns only about 85% of its stake-date FMV through the pack, while the platform owes 90% plus interest.
+
+That is not a hypothetical tail case; it is the ordinary condition its own index describes. Put plainly, **the inventory financing structure leaves Renaiss net short the market it tracks** — while being both the price setter and the publisher of the index that tracks it.
+
+## 6. EV is a point, the guarantee is a band
+
+The previous piece said four of the five packs carry an EV exactly equal to the price. That is the number on the product page. The fairness page carries a different one, and the difference is the point:
+
+| Source | PANDORA 248 EV | EV / price | Expected cash after the 90% buyback |
+| --- | --- | --- | --- |
+| product page | $250 | 100.8% | 90.7% |
+| fairness page target | $255 | 102.8% | 92.5% |
+| tolerance floor | $237 | 95.6% | **86.0%** |
+| tolerance ceiling | $273 | 110.1% | 99.1% |
+
+The $250 and the $255 do not contradict each other; they are two quantities on two pages, one a displayed figure for buyers and one a stated construction target. **The rows that matter are the third and the fourth** — a ±7% tolerance means the enforced promise is not "EV equals price" but "EV lands somewhere between $237 and $273." That is a $36 band, 14.5% of the price, and **the floor is below the price.**
+
+So the expected cash recovery is not a clean 90.7%. It is a band from 86% to 99%, centred around 90%–92%. Single-pack variance dwarfs that band, so for one pull it is irrelevant; for someone opening a few hundred packs, landing on the floor rather than the ceiling is 13 percentage points of long-run take.
+
+## 7. The contract that records all of this can be upgraded
+
+Since the NFT is the whole of this receipt system, it is worth looking at what it actually is:
+
+```text
+ERC-1967 implementation slot -> 0x9d3223d937ca4b2def08a368be248f4d5625abe0  (21,607 bytes of code)
+ERC-1967 admin slot          -> 0x0  (empty -> the UUPS shape; upgrade authority sits in the implementation)
+owner()                      -> 0xb4cc2a69b5e461dbc76fef668891d0e1e3b5c80a  (7,411 bytes: a contract, not an EOA)
+  ├ getThreshold()  -> revert   (not a Gnosis Safe)
+  └ owner()         -> revert   (not standard Ownable)
+paused()                     -> false  (a pause switch exists)
+```
+
+Three things follow:
+
+1. **It is an upgradeable proxy.** The implementation slot is populated, so the logic defining what the NFT represents can be swapped. The empty admin slot means the UUPS shape, with upgrade authority written inside the implementation.
+2. **The holder of that authority cannot be identified from the chain.** `owner()` points at a 7,411-byte contract, which is good news in that it is not a single private key. But it answers neither `getThreshold()` nor `owner()`, so **the chain cannot tell you whether it is a multisig or a custom single-operator controller.** Settling that requires reading the implementation source, and BscScan serves me a bot challenge today, which I did not work around.
+3. **The terms themselves say the contracts may be unaudited.** The source material records that wording in the terms of service, and the previous piece found the public ECVRF repository makes no audit claim anywhere in it.
+
+For something described as a receipt, those three together mean the receipt gets its meaning from an unidentified contract at runtime, and that code has no public audit.
+
+## 8. What to watch
+
+- **Whether the mint ratio rises.** That `totalSupply()` is publicly readable; anyone can check it daily. If the product really is moving toward collecting, the slope of that curve changes. If it stays at a few dozen a day, the cash game is the whole business.
+- **How much further turnover can fall.** Pokémon is −58% in four weeks. Two more months at that rate and the index "fair market value" will not have the trades to support it. The endpoint is public, so this needs no disclosure from the project.
+- **Whether Earn capacity expands.** If the 48% and 60% really are the price of inventory, capacity should track inventory need. Pools that stay full without expanding look more like a cap on total spend.
+- **Whether the definitions get published.** There is $17M between the $25M and the $42M, and neither figure states what the denominator is — turnover, gross revenue, or protocol take. The previous piece made this point and nothing has changed today.
+- **Whether the owner contract gets verified.** It is the only thing that can answer who is able to upgrade this receipt.
+
+The reference point in the same sector is still Collector Crypt, whose buyback-to-sales ratio ran 88.6%–92.3% across six quarters, with the Renaiss 90% mid-band. That teardown is [here](/en/blog/physical-tcg-collector-crypt-courtyard-revenue-token-value-capture-en), and it shows that the 10% is not a Renaiss quirk but the standard take in this business. What today adds is the other half: **between two houses with the same take rate, the one paying more for its inventory is the one with less time.**
+
+## Sources checked
+
+- Contract `0xF8646A3Ca093e97Bb404c3b25e675C0394DD5b30` (BSC). Any public node reproduces `totalSupply()` and `name()` via `eth_call`; `eth_getStorageAt` reads the ERC-1967 implementation slot `0x360894a13ba1a3210667c828492db98dca3e2076cc3735a920a3ca505d382bbc` and admin slot `0xb53127684a568b3173ae13b9f8a6016e243e63b6e8ee1178d6a717850b5d6103`
+- Daily index series with per-day turnover and sale counts: `https://api.renaissos.com/v1/indices/pokemon/series`, swapping `pokemon` for `one-piece`, `sports` or `riftbound`
+- API documentation: [index.renaissos.com/api-docs](https://index.renaissos.com/api-docs)
+- Index and methodology: [index.renaissos.com](https://index.renaissos.com/), [methodology](https://index.renaissos.com/methodology)
+- Pack and Earn terms: [www.renaiss.xyz](https://www.renaiss.xyz/), [Earn](https://www.renaiss.xyz/earn)
+- Fairness page and the tolerance band: [fair.renaiss.xyz](https://fair.renaiss.xyz/)
+- Terms, custody and verifiable-draw detail from the previous piece: [Renaiss deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en)
