@@ -1,0 +1,213 @@
+---
+title: 'Renaiss: EV equals price, custody is not delivery, and its own index is falling'
+publishedAt: '2026-10-30'
+summary: 'A collectibles RWA platform that vaults graded cards and mints NFTs against them. Four of the five packs on sale today carry a stated expected value exactly equal to the price, so the 90 percent instant buyback is the entire house edge. Meanwhile the platform own price index puts Pokemon down 20.41 percent over a year and sports cards 39 percent below where the index started in July 2023. The terms place the cards with third-party vaults, disclaim any role as bailee, custodian or insurer, and make redemption a permanent NFT burn at the user expense.'
+slug: 'renaiss-ev-equals-price-custody-not-delivery-en'
+category: 'research'
+language: 'en'
+translationKey: 'renaiss-ev-equals-price-custody-not-delivery'
+sourceSlug: 'renaiss-ev-equals-price-custody-not-delivery'
+---
+
+## TL;DR
+
+- **Expected value is not a selling point here, it is a design parameter.** Of the five packs on sale today, four carry a stated EV exactly equal to the price and the fifth is 0.8% above it. The fairness page explains why: pool construction targets an EV within ±7% of the pool mean. So EV confers no edge, and **the only certain quantity is the 10% left behind by the 90% instant buyback**.
+- **That 10% is not a Renaiss quirk, it is the sector take rate.** Collector Crypt buyback-to-sales ratio has run 88.6%–92.3% across six quarters. The Renaiss 90% sits mid-band.
+- **The platform own index is falling, and it is falling in its flagship category.** The Pokémon index is 7,964.59, down 20.41% over a year and 20.4% below the 10,000 base set on 2023-07-01. Sports sits at 6,101.39, still 39.0% below base. Only One Piece is above base (+18.0%), and it is down 8.42% over 30 days.
+- **The same hand sets the price and the fee.** The 2% secondary fee in §5.7 is calculated on "the Platform Valuation or the sale amount" — and the platform publishes that valuation.
+- **An NFT is not an enforceable claim to delivery.** §6.1 puts the cards with third-party vault providers; Renaiss states it is "not a bailee, custodian, or insurer"; §6.4 does not guarantee insurance will respond to a loss; §5.4 may require a permanent NFT burn to redeem; §6.5(b) puts shipping, withdrawal fees, taxes, duties and insurance on the user.
+- **In the verifiable-draw stack, the verifier is real and the production binding is not.** The public repository is an RFC 9381 ECVRF checked byte-for-byte against the official test vectors, but it never mentions a Merkle root, never mentions smart contracts, makes no audit claim, and falls back to committed demo fixtures without an API configuration.
+- **The most widely circulated revenue figure, $42M, has no source I could find.** The most recent figure in press coverage is "more than $25M in platform revenue," and a four-month milestone reported "platform volume over $7M" — three numbers, three labels, and no published definition for any of them.
+
+> How this was checked, and the limits. On 2026-10-30 I went page by page through the Renaiss home page, the index and methodology pages at `index.renaissos.com`, the fairness page at `fair.renaiss.xyz`, the terms of service, and the `Renaiss-Protocol/renaiss-fair` repository on GitHub, and cross-checked the funding and operating figures against press coverage. **I did not register an account, connect a wallet, pay for a pack, enter Earn, or request a physical redemption**, so what follows keeps "observable on a public page" strictly apart from "only verifiable by actual performance." Index values are intraday; the site says the day locks in at 00:00 UTC, so the numbers will differ slightly by the time you read this.
+
+## What it sells
+
+Renaiss takes physical cards graded by PSA, BGS or CGC into third-party vaults, mints an NFT on-chain to represent ownership and redemption rights, then uses gacha as the primary distribution channel, a marketplace as the secondary venue, and `Renaiss Index` as the price-discovery layer. The operator is Renaiss Network Limited, incorporated in the British Virgin Islands, and BVI law governs (terms §15.1).
+
+The public timeline: beta launched November 2025; on 2026-06-18 it closed a $1.5M first round led by YZi Labs, with Gate Ventures, Hash Global, XIN Family, Redline Labs and angels from Mask Network, Far East Group, Logoman, Hoopi and Legit App; the company stated more than 260,000 registered users and more than $20M in revenue at that point.
+
+This is a company with real transaction volume, not a proof of concept. What is worth studying is not the pull animation but **which risks move when an illiquid, non-standard physical object becomes a tradeable asset, and who ends up holding them**.
+
+## 1. EV is set equal to price, so what you are betting on is the 10%
+
+The packs on sale today:
+
+| Pack | Price | Stated EV | Min card value | Expected cash at 90% buyback | Expected delta | Expected recovery |
+|---|---:|---:|---:|---:|---:|---:|
+| Hollow Pack | $100 | $101 | — | $90.90 | −$9.10 | 90.9% |
+| PANDORA 28 | $28 | $28 | $13 | $25.20 | −$2.80 | 90.0% |
+| PANDORA 48 | $48 | $48 | $22 | $43.20 | −$4.80 | 90.0% |
+| PANDORA 88 | $88 | $88 | $45 | $79.20 | −$8.80 | 90.0% |
+| PANDORA 248 | $248 | $250 | $135 | $225.00 | −$23.00 | 90.7% |
+
+*Price, EV, minimum card value and the 90% instant buyback are taken from the site on 2026-10-30. The three right-hand columns are my arithmetic on EV × 90%, not official figures. Hollow Pack shows `Cards left 0 / 666` and is sold out; its six HOLLOW TIER cards each carry a fixed $666 buyback.*
+
+Note what this table actually shows: **EV is not a quantity you can use to compare packs, because it is set equal to the price.** The fairness page states the design goal outright — a pool targets an EV within ±7% of the pool mean. Four of five packs run at EV/price = 100%, the fifth at 100.8%.
+
+So the whole economic relationship collapses to a constant:
+
+```text
+expected cash recovery = (EV / price) x buyback rate
+                       ~ 1.00 x 0.90
+                       = 90%
+```
+
+**This is not "you might lose 10%," it is "you expect to lose 10%,"** independent of which card you pull. Variance decides whether a given pull wins or loses; it does not move the constant.
+
+The reference frame matters too. In [Physical TCG: a deep dive into Collector Crypt and Courtyard](/en/blog/physical-tcg-collector-crypt-courtyard-revenue-token-value-capture-en) I worked the DefiLlama quarterly data and the Collector Crypt buyback-to-sales ratio walked 88.6% → 92.3% → 91.5% → 91.9% → 92.0% → 90.1% from Q3 2025 to Q4 2026. **The Renaiss 90% is inside that band, so the 10% spread is the standard take rate for this sector, neither a mispricing nor a charity.** That piece carries an accounting reminder that applies here as well: what gets reported as "revenue" in this sector is pack sales minus buyback spend, **with the cost of acquiring the physical cards not deducted**, which makes it closer to net retained GMV than to profit.
+
+## 2. Its own index says the flagship category is falling
+
+The `Renaiss Index` methodology page states the base: **10,000 on 2023-07-01**. Today the index home shows:
+
+| Index | Current | 7d | 30d | 1y | vs 10,000 base | implied a year ago |
+|---|---:|---:|---:|---:|---:|---:|
+| Pokémon | 7,964.59 | −1.20% | +0.40% | **−20.41%** | **−20.4%** | ≈ 10,007 |
+| One Piece | 11,800.82 | −5.28% | −8.42% | +36.70% | +18.0% | ≈ 8,632 |
+| Sports | 6,101.39 | −1.68% | **−16.67%** | +31.55% | **−39.0%** | ≈ 4,638 |
+
+*Current values and period changes are from the index home on 2026-10-30; the base comes from the methodology page. The last two columns are my arithmetic.*
+
+Reading those two columns side by side produces things the source material did not have:
+
+- **Pokémon sat almost exactly at base a year ago (≈10,007), then lost 20.41%.** It is the flagship category and the main constituent of the gacha pools.
+- **Sports fell from base to ≈4,638 a year ago (−53.6%), rebounded 31.55%, and is still 39.0% below base.** Down another 16.67% over 30 days, it is the weakest leg of the three.
+- **Only One Piece stands above base**, and it is the fastest current drawdown at −5.28% over 7 days and −8.42% over 30.
+
+Multiply this by section 1 for the full picture: **expected cash recovery on a pull is 90%, and the asset that 90% is priced against has been declining over the past year according to the platform own index.** Choosing to hold rather than sell back does not avoid the 10%; it swaps it for index risk.
+
+## 3. The same hand sets the price and the fee
+
+The pricing rules on the methodology page are serious work, and considerably better than the usual floor-price approach:
+
+- single-card prices use a **rolling 7-day** window of completed sales, refreshed daily, with the day locking at 00:00 UTC;
+- median, average and VWAP are all published. **One point deserves attention: this VWAP is not a trade-level volume-weighted price** but "each source median multiplied by that source sale count, summed, divided by total sales" — a source-volume-weighted blend of medians, carrying the VWAP label with a different construction;
+- the basket takes the 50 most-traded priceable cards, weighted by dollar volume, with a 10% per-card cap and **any excess redistributed across the rest of the basket**, monthly rebalancing with banding (current members stay until they fall well out of rank, newcomers must rank clearly inside to enter), and a divisor that re-solves when membership or weights change.
+
+It also publishes confidence tiers, by completed sales in the trailing 7 days:
+
+| Tier | Trailing 7-day sales |
+|---|---|
+| PRIME | 30 or more |
+| HIGH | 16 or more |
+| MED | 8 or more |
+| LOW | fewer than 8 |
+
+This addresses the real problem in collectibles: a $100 mark derived from 3 sales and one derived from 300 are not the same order of reliability. The public price API supports lookups by card number, grading certificate and set, plus historical sales and index queries, with a keyless rate-limited tier and partner API keys — this is the part of the product most likely to become a durable moat, because inventory and operations can be outcompeted with capital while an externally adopted data standard cannot.
+
+**But building a pricing layer is exactly what makes the conflict of interest concrete.** Terms §5.7 sets a 2% secondary transaction fee calculated on "the Platform Valuation **or** the sale amount." So: the platform publishes the reference valuation, the platform shows the premium or discount to that valuation on the listing, the platform prices its buyback off that valuation, and the platform fee **may** be charged on that valuation rather than on the actual sale.
+
+Any one of these is reasonable alone. Four of them sharing a single platform-produced number needs clearer disclosure than exists today: which case uses Valuation and which uses the sale amount, and whether LOW-tier cards (fewer than 8 sales) are discounted or have their valuation frozen for buyback and fee purposes. For an ordinary marketplace this is a UX question; the moment that valuation drives staking eligibility or collateral pricing, it becomes a question of who loses money.
+
+## 4. An NFT is not an enforceable claim to delivery
+
+This is the section to read slowly. The terms draw the boundary clearly, and they draw it differently from how most people read "I own this card":
+
+- **§6.1**: the physical assets are held by third parties — `Assets are stored by third-party Vault providers.`
+- **Role**: `We do not provide custody or security services for Assets and are not a bailee, custodian, or insurer.`
+- **§6.4**: `We do not guarantee that any insurance will respond to a loss.`
+- **§5.4**: redeeming may require **burning** the NFT, and `Burning is permanent` and generally cannot be reversed.
+- **§5.3**: `If you transfer or lose control of the NFT, you may lose the ability to redeem the Asset.`
+- **§6.5(b)**: the user pays all shipping, handling, withdrawal fees, taxes, duties and insurance charges.
+- **§6.8 / §5.1**: redemption may be blocked or delayed on reasonable suspicion of fraud, theft or sanctions exposure, and NFT functionality including redemption may be restricted for fraud, security or legal-compliance reasons.
+
+Read together: **"the user holds the NFT" and "the user has a direct, enforceable claim on the vault for delivery of the card" are two different things.** The vault contracts with Renaiss, not with each NFT holder; Renaiss disclaims being the custodian; insurance is not guaranteed to respond. Under normal operation the chain holds. The questions that matter are the abnormal ones:
+
+- In the vault agreements, who is the named beneficiary of the policy?
+- Where is the inventory-count frequency and its disclosure?
+- If the platform stops operating, what mechanism lets NFT holders retrieve the physical cards independently?
+- In insolvency, are the vaulted cards segregated from the operating entity assets?
+
+Public material answers none of these today. They are not boilerplate risk language — they are the line between a collectibles custody product and an unsecured claim.
+
+## 5. Verifiable draws: the verifier is real, the production binding is not
+
+The fairness page is specific enough to check line by line:
+
+- the moment a pool is accepted, **the sealed lineup is hashed into a Merkle root and recorded on-chain**; the construction rules, including the ±7% EV target, are published in advance;
+- the seed comes from on-chain data that does not exist until after the drawer pays, with a published formula:
+
+```text
+alpha = keccak256(tag ‖ blockHash ‖ packId ‖ checkoutId)
+index = keccak256(beta) mod remaining cards
+```
+
+- the lineup is ordered by unique token ID, and the drawer can recompute and check that nothing was touched.
+
+`Renaiss-Protocol/renaiss-fair` on GitHub also holds up. `packages/ecvrf` is an RFC 9381 ECVRF implementation (ECVRF-EDWARDS25519-SHA512-ELL2), and the README says it is validated byte-for-byte against the official Appendix B.4 test vectors; `packages/replay-fair-set` contains the seed derivation that commits a build to public inputs. That is more substance than most projects claiming verifiability.
+
+**But three different things need separating, and the public material does not complete them equally.**
+
+First, **cryptographic verifiability**: the ECVRF in the repository can be tested independently. That one holds.
+
+Second, **the production binding**: the fairness page uses both `blockHash` and VRF language — the formula selects with `keccak256(beta)`, where beta is a VRF output, yet the page does not say whose key produces that VRF, where the proof is published, or how it binds to the on-chain Merkle root. On the repository side, **a Merkle root is never mentioned at all**, and neither are smart contracts. Also, without the `NEXT_PUBLIC_RENAISS_API_URL` setting, the app runs on committed demo fixtures. So I will not read "there is verifiable code in the public repository" as "the production commitment, verifier, timing and on-chain enforcement are all settled."
+
+Third, **asset and performance proof**: a fair draw does not prove the matching physical card exists, was graded correctly, remains in the vault, and can be delivered. That is section 4, and cryptography does not reach it.
+
+One routine point still has to be said: `blockHash` is produced by a block producer. When a single pull carries a large enough prize, "on-chain data that does not exist until after the drawer pays" is not entirely beyond a producer influence. Using a VRF is precisely the fix for this, but only if the VRF key, proof and publication timing are spelled out — which is the piece currently missing.
+
+One more line from the repository is worth keeping: the whitepaper is `a working draft` whose wording and figures may change.
+
+## 6. Earn: APY is not a period return
+
+Renaiss launched Earn in mid-October 2026, letting NFTs backed by qualifying physical cards enter yield pools. **The circulating parameters — 48% APY, a 60-day lock, four pools holding 1,593 cards, declared value above $200K, a PSA per-card cap raised to $500 — I could not source on the site today or in indexed press coverage**; they come from the project social accounts. So the arithmetic below is conditional, not a statement about actual Renaiss returns.
+
+If 48% APY with a 60-day lock holds:
+
+```text
+nominal return over the lock = 48% x 60 / 365      ~ 7.89%
+drift of the underlying      = (1 - 20.41%)^(60/365) - 1
+                             ~ -3.68%   # from the Pokemon index 1y change
+```
+
+**48% is not what you collect in 60 days; 7.89% is** — and that 7.89% has to absorb roughly 3.7% of drift in the underlying over the same window first. Backing out from the declared value, the average card in the pools is above $125 ($200K / 1,593) against a $500 per-card cap, so the pools hold the low-to-mid price band.
+
+Only one question actually needs answering: **where the yield comes from.** Budget subsidy, protocol revenue sharing, a lending spread, or some other asset operation? If it is mainly subsidy, this is a time-limited acquisition program rather than collectible-finance cash flow. The two mean entirely different things to a user, and only the first disappears when the budget does.
+
+## 7. Three versions of the revenue number, no published definition for any of them
+
+In chronological order, the public figures are:
+
+| Point in time | Figure | Label | Source type |
+|---|---|---|---|
+| ~4 months post-beta (≈2026-03) | over $7M | platform **volume** | press flash |
+| around 2026-06-18 | over $20M | **revenue**; 260K+ registered users | funding release |
+| ~8 months post-beta (≈2026-07) | over $25M | platform **revenue** | press coverage |
+| circulating 2026-10 | over $42M | **gross revenue** | project social accounts; no independent source found |
+
+Two problems.
+
+**First, the top two rows cannot be reconciled.** $7M of volume in March, $20M of revenue in June — revenue cannot exceed turnover, so either the two labels mean entirely different things (volume counting only marketplace secondary sales, revenue counting gross pack sales, for instance) or one of them was restated. No definition is published for either, so **from outside there is no way to tell which**.
+
+**Second, gross revenue is not retained revenue.** On the sector accounting from section 1, roughly 90% of pack sales flows back to users through instant buyback, and what remains still has to cover card acquisition, logistics, grading, settlement and acquisition cost. Collector Crypt did $433.2M in pack sales in Q3 2026 against $34.75M of DefiLlama-basis protocol revenue (~8.0%). If the Renaiss $42M is the same "gross sales" measure, its comparable revenue is $3.4M–$4.2M at an 8%–10% retention rate; if it is the net measure, the implied pack sales exceed $420M, which does not hold up against 260K registered users (over $1,600 each).
+
+**Both readings have a consequence, and the announcement does not say which it is.**
+
+On the figures I can source, revenue per registered user is roughly $77 ($20M / 260K) or $96 ($25M / 260K). That is cumulative, not a repeat-purchase rate and not contribution profit.
+
+## 8. What to watch
+
+The real problem with this product is not usability, it is **the priority order of its information**. EV sits in the most prominent place and equals the price by design, while the quantities that actually decide outcomes — buyback rate, net proceeds, valuation confidence tier, total redemption cost — are spread across separate pages and clauses.
+
+So in judging it from here I would track four numbers and treat the rest as noise:
+
+1. **The share of organic volume.** Whether third-party marketplace turnover grows in windows without pack rewards or subsidies. That is the line between "it created trading value" and "it sold a lot of packs."
+2. **Physical redemption completion rate and average fulfilment time**, plus a full state-chain disclosure: review, inventory confirmation, fee quote, NFT burn, outbound, shipping, receipt, dispute. The burn is irreversible, so every cost and condition has to be visible before the user signs.
+3. **Where the valuation gets used.** Whether the 2% fee lands on Valuation or the sale amount, whether LOW-tier cards are discounted, how outlier sales are filtered, whether any independent price source cross-checks it.
+4. **External adoption of Renaiss Index.** Whether third-party applications actually build on the API. It is the one place a durable moat can form — capital can catch up to inventory and logistics, but not to a data standard other people cite.
+
+As for AI agents identifying collectibles, comparing prices and valuing portfolios: that still presupposes reliable valuation, clear asset rights and real liquidity, not the other way round.
+
+**In one line:** a platform that has proven collectible consumption can be commercialised on-chain, whose strongest asset is its price-data layer, whose least-tested claim is the enforceability of its custody network, and whose flagship category is declining according to its own index.
+
+## Sources checked
+
+- [Renaiss main site](https://www.renaiss.xyz/) (packs, prices, EV, buyback rate)
+- [Renaiss Index home](https://index.renaissos.com/)
+- [Index and pricing methodology](https://index.renaissos.com/methodology) (10,000 base at 2023-07-01, confidence tiers, basket rules)
+- [Price data API docs](https://index.renaissos.com/api-docs)
+- [Fairness page](https://fair.renaiss.xyz/) (Merkle commitment, seed formula, ±7% EV target)
+- [Public verification code, `Renaiss-Protocol/renaiss-fair`](https://github.com/Renaiss-Protocol/renaiss-fair) (RFC 9381 ECVRF)
+- [Terms of service](https://www.renaiss.xyz/terms) (BVI entity, third-party vaults, 2% fee basis, redemption and burn)
+- Sector comparison: [Physical TCG: a deep dive into Collector Crypt and Courtyard](/en/blog/physical-tcg-collector-crypt-courtyard-revenue-token-value-capture-en), [Collector Crypt ($CARDS): tokenomics, buybacks, and supply pressure](/en/blog/collector-crypt-cards-tokenomics-buybacks-unlocks-value-capture-en)
