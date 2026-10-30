@@ -10,6 +10,11 @@ export interface Topic {
   accentColor: string;
   // Keywords used to filter blog posts by tag matching
   matchKeywords: string[];
+  // Optional co-signal: a matchKeywords hit only counts when one of these also
+  // hits. For an intersection topic whose own keywords are generic on their own
+  // ("ai", "agent", "compute"), this is what keeps the topic about the
+  // intersection rather than about everything named after one half of it.
+  requireAnyOf?: string[];
   // Related research project types in research-client
   relatedTypes: string[];
 }
@@ -77,7 +82,48 @@ export const TOPICS: Topic[] = [
     whyItMatters:
       'AI infrastructure is absorbing the next wave of capital. Crypto networks provide the decentralized rails for compute, data, and model verification that centralized platforms cannot.',
     accentColor: '#0EA5E9',
-    matchKeywords: ['ai', 'agent', 'llm', 'compute', 'inference', 'depin', 'bittensor', 'akash', 'render'],
+    matchKeywords: ['ai', 'agent', 'llm', 'compute', 'inference', 'depin', 'bittensor', 'akash', 'render network'],
+    requireAnyOf: [
+      'crypto',
+      'blockchain',
+      'on-chain',
+      'onchain',
+      'token',
+      'defi',
+      'web3',
+      'dao',
+      'stablecoin',
+      'rwa',
+      'tvl',
+      'protocol',
+      'decentralized',
+      'decentralised',
+      'depin',
+      'bittensor',
+      'akash',
+      'worldcoin',
+      'wld',
+      'polymarket',
+      'solana',
+      'ethereum',
+      'bitcoin',
+      'btc',
+      'wallet',
+      'staking',
+      'validator',
+      'nft',
+      'airdrop',
+      'testnet',
+      'mainnet',
+      '链上',
+      '加密',
+      '代币',
+      '区块链',
+      '钱包',
+      'オンチェーン',
+      '暗号',
+      'トークン',
+    ],
     relatedTypes: ['AI', 'DePIN'],
   },
   {

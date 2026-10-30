@@ -6,7 +6,7 @@ import { registerHooks } from 'node:module';
 import test from 'node:test';
 
 import { buildTranslationGroups, hashSource, toIndexMetadata, validateTranslationProvenance } from '../discovery.mjs';
-import { buildRelations, buildTopicIndex } from '../indexes.mjs';
+import { buildRelations, buildTopicIndex, loadTopics } from '../indexes.mjs';
 import { extractToc, markdownToHTML } from '../markdown.mjs';
 import { selectResearchPosts } from '../../../sync-research-registry.mjs';
 
@@ -147,6 +147,29 @@ test('topic membership is shared across translations; related posts exclude thei
   const relations = buildRelations(posts, topics);
   assert.deepEqual(relations['a-ja'].posts, ['b-ja', 'c']);
   assert.deepEqual(relations['a-ja'].topics, ['btc']);
+});
+
+test('an intersection topic needs both halves, and its generic half alone is not enough', () => {
+  const posts = buildTranslationGroups([
+    post('both', 'en', { title: 'AI agents settling on-chain' }),
+    post('generic', 'en', { title: 'How will we live after AI?' }),
+    post('other', 'en', { title: 'On-chain settlement latency' })
+  ]);
+  const topics = [{ slug: 'ai-crypto', matchKeywords: ['ai', 'agent'], requireAnyOf: ['on-chain', 'token'] }];
+  assert.deepEqual(buildTopicIndex(posts, topics)['ai-crypto'], ['both']);
+});
+
+test('the real ai-crypto topic stays about the intersection rather than about AI', async () => {
+  const topics = (await loadTopics()).filter((topic) => topic.slug === 'ai-crypto');
+  assert.equal(topics.length, 1);
+  const posts = buildTranslationGroups([
+    post('essay', 'en', { title: 'When humans are no longer needed: how will we live after AI?' }),
+    post('notes', 'en', { title: 'Markdown Syntax Study Notes', summary: 'the rendered result' }),
+    post('equity', 'en', { title: 'Astera Labs: AI rack-scale connectivity, growth quality and valuation' }),
+    post('network', 'en', { title: 'Gensyn: a decentralized compute network for machine learning' }),
+    post('agents', 'en', { title: 'AI agents holding a wallet' })
+  ]);
+  assert.deepEqual(buildTopicIndex(posts, topics)['ai-crypto'], ['network', 'agents']);
 });
 
 test('runtime list and href helpers prefer translations and preserve actual fallback language', async () => {

@@ -53,6 +53,12 @@ function groupPosts(posts) {
 // a CJK keyword like 链上美股 needs none and would never match with one.
 const WHOLE_WORD_ONLY = new Set(['ai', 'dai']);
 
+// Word boundaries still leave an intersection topic matching on half of itself:
+// ai-crypto owns the bare "ai", so any title with AI in it landed there, crypto
+// or not -- 21 of its 157 groups were things like a Markdown syntax note, an
+// Astera Labs equity memo and an essay on post-AI society. Such a topic also
+// declares requireAnyOf, and a keyword hit only counts alongside one of those.
+
 function keywordPattern(keyword) {
   const lower = keyword.toLowerCase();
   const escaped = lower.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -64,12 +70,13 @@ function keywordPattern(keyword) {
 export function buildTopicIndex(posts, topics) {
   const index = Object.fromEntries(topics.map((topic) => [topic.slug, []]));
   const patterns = topics.map((topic) => topic.matchKeywords.map(keywordPattern));
+  const required = topics.map((topic) => topic.requireAnyOf?.map(keywordPattern));
   for (const members of groupPosts(posts).values()) {
     const text = members.map(matchText).join(' ');
     topics.forEach((topic, i) => {
-      if (patterns[i].some((pattern) => pattern.test(text))) {
-        index[topic.slug].push(...members.map((post) => post.slug));
-      }
+      if (!patterns[i].some((pattern) => pattern.test(text))) return;
+      if (required[i] && !required[i].some((pattern) => pattern.test(text))) return;
+      index[topic.slug].push(...members.map((post) => post.slug));
     });
   }
   return index;
