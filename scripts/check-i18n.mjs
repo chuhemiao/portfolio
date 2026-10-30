@@ -7,9 +7,12 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { LOCALES, articleHref } from '../src/lib/i18n.ts';
 import { assets } from '../src/data/fund.ts';
+// Not .generated/ directly: on Vercel the index lives under .next/cache/content
+// so it survives between builds (see resolveGeneratedDir).
+import { BLOG_INDEX_FILE } from './lib/content/paths.mjs';
 
 const root = process.cwd();
-const index = JSON.parse(fs.readFileSync(path.join(root, '.generated/blog-index.json'), 'utf8'));
+const index = JSON.parse(fs.readFileSync(BLOG_INDEX_FILE, 'utf8'));
 const { TOPICS } = await import('../src/data/topics.ts');
 const pages = ['', 'blog', 'research', 'topics', 'thoughts', 'watch', 'pulse', 'fear', 'fund', 'oscillator', 'stack', ...TOPICS.map((topic) => `topics/${topic.slug}`)];
 const site = 'https://kkdemian.com';
