@@ -1,3 +1,7 @@
+// Runs as the last step of `pnpm build`, once the export, the segment-cache
+// prune and the legacy redirect stubs are all in place. It lives there rather
+// than in ci.yml because it reads out/, and that workflow deliberately skips
+// `next build`; being unrunnable there is why nobody noticed it was failing.
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
@@ -49,12 +53,21 @@ for (const locale of LOCALES) {
 for (const post of index.posts) {
   const route = articleHref(post.slug, post.language);
   const canonical = site + route;
-  for (const html of [readRoute(route), readRoute(`/blog/${encodeURIComponent(post.slug)}`)]) {
-    checkDocument(html, post.language, canonical);
-    assert.ok(html.includes(`<article lang="${post.language}"`), `wrong body language: ${post.slug}`);
-    const alternates = [...html.matchAll(/<link rel="alternate" hrefLang="([^"]+)" href="([^"]+)"/g)].map(([, locale, url]) => [locale, url]);
-    assert.deepEqual(alternates.filter(([locale]) => LOCALES.includes(locale)).sort(), Object.entries(post.translations).map(([locale, slug]) => [locale, site + articleHref(slug, locale)]).sort(), `wrong article alternates: ${post.slug}`);
-  }
+  const html = readRoute(route);
+  checkDocument(html, post.language, canonical);
+  assert.ok(html.includes(`<article lang="${post.language}"`), `wrong body language: ${post.slug}`);
+  const alternates = [...html.matchAll(/<link rel="alternate" hrefLang="([^"]+)" href="([^"]+)"/g)].map(([, locale, url]) => [locale, url]);
+  assert.deepEqual(alternates.filter(([locale]) => LOCALES.includes(locale)).sort(), Object.entries(post.translations).map(([locale, slug]) => [locale, site + articleHref(slug, locale)]).sort(), `wrong article alternates: ${post.slug}`);
+
+  // Since the duplicate /blog/[slug] route was dropped, the legacy URL holds a
+  // redirect stub rather than a second copy of the article (see
+  // emit-legacy-blog-redirects.mjs). It owes the locale URL a canonical, a meta
+  // refresh and the script redirect -- asking it for an <article> or alternates
+  // failed on the very first post, which is how this check sat red unnoticed.
+  const legacy = readRoute(`/blog/${encodeURIComponent(post.slug)}`);
+  checkDocument(legacy, post.language, canonical);
+  assert.ok(legacy.includes(`<meta http-equiv="refresh" content="0; url=${route}">`), `legacy stub does not refresh to ${route}`);
+  assert.ok(legacy.includes(`location.replace(${JSON.stringify(route)}+location.search+location.hash)`), `legacy stub does not redirect to ${route}`);
 }
 
 console.log(`i18n export check passed: ${LOCALES.length * pages.length} localized pages, ${index.posts.length} articles + legacy aliases, three language feeds.`);
