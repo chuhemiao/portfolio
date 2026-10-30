@@ -1,0 +1,568 @@
+<title>一条签名的代价</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+SC:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one fixed 16:9 stage scaled to the viewport, scenes cross-faded on a 290s clock.
+   Deliberately single-theme (dark): this page exists to be screen-recorded, so it must
+   look identical for every viewer rather than follow the host theme. */
+:root {
+  --bg: hsl(220 23% 5%);
+  --surface: hsl(222 24% 11%);
+  --sunk: hsl(218 21% 8%);
+  --line: hsl(222 20% 17%);
+  --line-hi: hsl(219 18% 22%);
+  --fg: hsl(220 22% 92%);
+  --muted: hsl(218 12% 64%);
+  --faint: hsl(218 10% 53%);
+  --amber: hsl(36 71% 58%);
+  --green: hsl(151 50% 53%);
+  --red: hsl(0 72% 62%);
+  --sans: "IBM Plex Sans SC", "PingFang SC", "Hiragino Sans GB", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.1rem;
+  padding-block: 1rem;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow: hidden;
+}
+
+/* ---- stage ---------------------------------------------------------- */
+.stage {
+  position: relative;
+  width: min(100%, calc((100dvh - 7rem) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  container-type: size;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  overflow: hidden;
+  flex: none;
+}
+.s {
+  position: absolute;
+  inset: 0;
+  padding: 6cqh 7cqw;
+  display: flex;
+  flex-direction: column;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity .45s ease;
+}
+.s[data-active] { opacity: 1; visibility: visible; }
+.stage.paused *, .stage.paused *::before, .stage.paused *::after { animation-play-state: paused !important; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(1.6cqh); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes pop { 0% { opacity: 0; transform: scale(.82); } 60% { transform: scale(1.03); } 100% { opacity: 1; transform: scale(1); } }
+@keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes sweep { from { width: 0; } to { width: 100%; } }
+@keyframes blink { 0%, 55% { opacity: 1; } 56%, 100% { opacity: .25; } }
+
+.s[data-active] .rv { animation: rise .65s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+.s[data-active] .fv { animation: fade .6s linear both; animation-delay: var(--d, 0s); }
+.s[data-active] .pv { animation: pop .55s cubic-bezier(.2,.8,.2,1) both; animation-delay: var(--d, 0s); }
+@media (prefers-reduced-motion: reduce) {
+  .s[data-active] .rv, .s[data-active] .fv, .s[data-active] .pv { animation-duration: .01s; }
+}
+
+/* ---- shared type ---------------------------------------------------- */
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 1.5cqh;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--amber);
+}
+h2 { margin: 0; font-size: 4.4cqh; font-weight: 600; letter-spacing: -.02em; line-height: 1.15; text-wrap: balance; }
+.sub { margin: 0; color: var(--muted); font-size: 2.1cqh; line-height: 1.5; max-width: 54ch; }
+.num { font-family: var(--mono); font-variant-numeric: tabular-nums; font-feature-settings: "zero" 1; }
+.head { display: flex; align-items: baseline; justify-content: space-between; gap: 2cqw; flex: none; }
+.body { flex: 1; display: flex; flex-direction: column; justify-content: center; min-height: 0; }
+.foot { flex: none; font-family: var(--mono); font-size: 1.45cqh; color: var(--faint); border-top: 1px solid var(--line); padding-top: 1.6cqh; }
+
+/* ---- S1 cold open --------------------------------------------------- */
+.hero { display: flex; flex-direction: column; gap: 1.2cqh; }
+.hero-n { font-family: var(--mono); font-size: 11cqh; font-weight: 600; line-height: .96; letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
+.hero-n small { font-size: .34em; font-weight: 400; color: var(--muted); letter-spacing: 0; margin-left: .5em; }
+.hero-row { display: flex; align-items: baseline; gap: 1.4cqw; }
+.hero-tag { font-family: var(--mono); font-size: 1.7cqh; color: var(--faint); letter-spacing: .1em; text-transform: uppercase; }
+
+/* ---- S2 timeline ---------------------------------------------------- */
+.tl { position: relative; padding-top: 7cqh; }
+.tl-rail { position: absolute; left: 0; right: 0; top: 7cqh; height: 1px; background: var(--line-hi); transform-origin: left; animation: grow 1.4s cubic-bezier(.3,.7,.3,1) both .15s; }
+.tl-nodes { position: relative; display: grid; grid-template-columns: repeat(8, 1fr); }
+.tl-n { position: relative; display: flex; flex-direction: column; align-items: center; gap: .9cqh; padding-top: 2.4cqh; }
+.tl-n::before {
+  content: ""; position: absolute; top: -.45cqh; width: .9cqh; height: .9cqh; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--faint);
+}
+.tl-n.hot::before { background: var(--amber); border-color: var(--amber); box-shadow: 0 0 0 .5cqh hsl(36 71% 58% / .16); }
+.tl-t { font-family: var(--mono); font-size: 2cqh; color: var(--muted); font-variant-numeric: tabular-nums; }
+.tl-n.hot .tl-t { color: var(--amber); font-weight: 600; }
+.tl-l { font-size: 1.5cqh; color: var(--faint); text-align: center; line-height: 1.35; max-width: 11cqw; }
+.tl-n.hot .tl-l { color: var(--fg); }
+.wait {
+  margin: 4.5cqh auto 0; width: fit-content; display: flex; align-items: center; gap: 1cqw;
+  border: 1px dashed var(--line-hi); padding: 1.2cqh 2cqw; background: var(--sunk);
+}
+.wait b { font-family: var(--mono); font-size: 2.6cqh; color: var(--amber); font-weight: 600; }
+.wait span { font-size: 1.7cqh; color: var(--muted); }
+
+/* ---- S3 compare ----------------------------------------------------- */
+.cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 3cqw; }
+.pane { border: 1px solid var(--line); background: var(--sunk); padding: 2.4cqh 2cqw; display: flex; flex-direction: column; gap: 1.4cqh; }
+.pane.on { border-color: hsl(36 71% 58% / .5); background: hsl(36 71% 58% / .05); }
+.pane-h { font-family: var(--mono); font-size: 1.5cqh; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.pane.on .pane-h { color: var(--amber); }
+.field { font-family: var(--mono); font-size: 2.3cqh; display: flex; gap: .7cqw; align-items: baseline; }
+.field i { color: var(--faint); font-style: normal; font-size: .75em; }
+.formula { margin-top: 2.6cqh; border: 1px solid var(--line-hi); background: var(--surface); padding: 1.8cqh 2cqw; font-family: var(--mono); font-size: 2.3cqh; text-align: center; letter-spacing: .01em; }
+.hexline { margin-top: 1.4cqh; font-family: var(--mono); font-size: 1.8cqh; color: var(--faint); text-align: center; word-break: break-all; }
+.hexline b { color: var(--red); font-weight: 400; }
+
+/* ---- S4 two transactions -------------------------------------------- */
+.tx2 { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2cqw; align-items: stretch; }
+.tx { border: 1px solid var(--line); background: var(--sunk); padding: 2.2cqh 1.8cqw; display: flex; flex-direction: column; gap: 1.1cqh; }
+.tx-k { font-family: var(--mono); font-size: 1.45cqh; letter-spacing: .14em; text-transform: uppercase; color: var(--faint); }
+.tx-time { font-family: var(--mono); font-size: 3.4cqh; font-weight: 600; font-variant-numeric: tabular-nums; }
+.tx.a .tx-time { color: var(--amber); }
+.tx.b .tx-time { color: var(--red); }
+.tx-row { font-family: var(--mono); font-size: 1.7cqh; color: var(--muted); display: flex; justify-content: space-between; gap: 1cqw; border-top: 1px solid var(--line); padding-top: .9cqh; }
+.tx-row b { color: var(--fg); font-weight: 500; }
+.gapcol { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.2cqh; min-width: 15cqw; }
+.gap-blocks { font-family: var(--mono); font-size: 1.5cqh; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); }
+.gap-timer { font-family: var(--mono); font-size: 6cqh; font-weight: 600; color: var(--fg); font-variant-numeric: tabular-nums; line-height: 1; }
+.gap-arrow { width: 100%; height: 1px; background: linear-gradient(90deg, var(--amber), var(--red)); transform-origin: left; animation: grow 1s ease both .3s; }
+.strike { margin-top: 3.4cqh; text-align: center; font-size: 2.3cqh; color: var(--red); font-weight: 500; border-top: 1px solid hsl(0 72% 62% / .35); border-bottom: 1px solid hsl(0 72% 62% / .35); padding: 1.3cqh 0; }
+
+/* ---- S5 nonce ruler -------------------------------------------------- */
+.ruler { position: relative; margin-top: 2cqh; }
+.ticks { display: flex; gap: .35cqw; align-items: flex-end; height: 16cqh; }
+.tick { flex: 1; background: var(--line-hi); border-radius: 1px; }
+.tick.high { height: 40%; }
+.tick.hit { height: 100%; background: var(--green); box-shadow: 0 0 2cqh hsl(151 50% 53% / .5); }
+.tick.low { height: 22%; background: var(--line); }
+.scanbar { position: absolute; inset: 0 auto 0 0; border-right: 2px solid var(--amber); animation: sweep 2.6s linear both .4s; pointer-events: none; }
+.rlabels { display: flex; justify-content: space-between; margin-top: 1.2cqh; font-family: var(--mono); font-size: 1.5cqh; color: var(--faint); font-variant-numeric: tabular-nums; }
+.tally { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; margin-top: 3.4cqh; }
+.tal { border: 1px solid var(--line); background: var(--sunk); padding: 1.8cqh 1.4cqw; text-align: center; }
+.tal b { display: block; font-family: var(--mono); font-size: 5cqh; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.tal span { display: block; margin-top: .9cqh; font-size: 1.55cqh; color: var(--faint); }
+.tal.g b { color: var(--green); }
+.tal.g { border-color: hsl(151 50% 53% / .45); }
+
+/* ---- S6 gas ---------------------------------------------------------- */
+.calc { font-family: var(--mono); font-size: 2.7cqh; line-height: 1.85; font-variant-numeric: tabular-nums; }
+.calc div { display: flex; gap: 1cqw; }
+.calc .op { width: 2ch; color: var(--faint); text-align: right; }
+.calc .v { width: 12ch; text-align: right; }
+.calc .nb { color: var(--faint); font-size: .72em; align-self: center; }
+.calc .tot { border-top: 1px solid var(--line-hi); margin-top: .6cqh; padding-top: .6cqh; }
+.calc .tot .v { color: var(--green); font-weight: 600; }
+.ratio { display: flex; flex-direction: column; justify-content: center; gap: 1.4cqh; border-left: 1px solid var(--line); padding-left: 3cqw; }
+.ratio-n { font-family: var(--mono); font-size: 10cqh; font-weight: 600; color: var(--amber); line-height: .95; letter-spacing: -.03em; }
+.ratio-c { font-size: 1.9cqh; color: var(--muted); line-height: 1.5; }
+.split2 { display: grid; grid-template-columns: 1.15fr .85fr; gap: 3cqw; }
+
+/* ---- S7 frozen bar --------------------------------------------------- */
+.bar { display: flex; height: 11cqh; border: 1px solid var(--line-hi); overflow: hidden; transform-origin: left; animation: grow 1.1s cubic-bezier(.3,.7,.3,1) both .2s; }
+.seg { display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 1.6cqh; border-right: 1px solid var(--bg); }
+.seg.f { background: hsl(151 50% 53% / .22); color: var(--green); }
+.seg.u { background: repeating-linear-gradient(135deg, var(--sunk) 0 .8cqh, transparent .8cqh 1.6cqh); color: var(--red); border-right: 0; animation: blink 1.6s steps(1) infinite 2.4s; }
+.barlabs { display: flex; justify-content: space-between; margin-top: 1.4cqh; font-family: var(--mono); font-size: 1.6cqh; }
+.barlabs .l { color: var(--green); }
+.barlabs .r { color: var(--red); }
+.pct { display: flex; align-items: baseline; gap: 1cqw; margin-top: 3.4cqh; }
+.pct b { font-family: var(--mono); font-size: 7cqh; font-weight: 600; line-height: 1; color: var(--green); }
+.pct span { font-size: 2cqh; color: var(--muted); max-width: 40ch; line-height: 1.5; }
+
+/* ---- S8 checklist ---------------------------------------------------- */
+.checks { display: flex; flex-direction: column; gap: 2.2cqh; margin-top: 1cqh; }
+.chk { display: flex; align-items: center; gap: 1.6cqw; font-size: 3.2cqh; }
+.chk i { width: 3.2cqh; height: 3.2cqh; border: 1.5px solid var(--faint); flex: none; }
+.chk span { color: var(--fg); }
+.chk em { font-family: var(--mono); font-style: normal; font-size: .62em; color: var(--faint); margin-left: auto; letter-spacing: .1em; text-transform: uppercase; }
+.closing { margin-top: 4cqh; font-size: 2.5cqh; color: var(--amber); line-height: 1.5; max-width: 50ch; }
+
+/* ---- chrome --------------------------------------------------------- */
+.chrome { width: min(100%, calc((100dvh - 7rem) * 16 / 9)); display: flex; flex-direction: column; gap: .7rem; flex: none; }
+.chrome[hidden] { display: none !important; }
+.track { height: 3px; background: var(--line); position: relative; }
+.track .fill { position: absolute; inset: 0 auto 0 0; background: var(--amber); width: 0; }
+.marks { position: absolute; inset: 0; display: flex; }
+.marks i { border-right: 1px solid var(--bg); }
+.marks i:last-child { border-right: 0; }
+.bar2 { display: flex; align-items: center; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: .72rem; color: var(--faint); letter-spacing: .06em; }
+.bar2 b { color: var(--fg); font-weight: 500; }
+.keys { display: flex; gap: .75rem; flex-wrap: wrap; }
+.keys kbd { font-family: var(--mono); font-size: .68rem; border: 1px solid var(--line-hi); padding: .1rem .35rem; color: var(--muted); background: var(--sunk); }
+button.ctl { font-family: var(--mono); font-size: .72rem; background: var(--sunk); color: var(--fg); border: 1px solid var(--line-hi); padding: .3rem .7rem; cursor: pointer; }
+button.ctl:focus-visible { outline: 2px solid var(--amber); outline-offset: 2px; }
+@media (max-width: 700px) { .keys { display: none; } }
+</style>
+
+<div class="stage" id="stage">
+
+  <!-- S1 -->
+  <section class="s" data-dur="28">
+    <div class="body">
+      <div class="hero">
+        <div class="hero-row rv" style="--d:.2s">
+          <div class="hero-n">56.43<small>亿美元</small></div>
+        </div>
+        <div class="hero-row rv" style="--d:7s">
+          <div class="hero-n" style="color:var(--amber)">8<small>分钟</small></div>
+          <div class="hero-tag">才被公开察觉</div>
+        </div>
+        <div class="hero-row rv" style="--d:14s">
+          <div class="hero-n" style="font-size:7cqh">一条签名</div>
+        </div>
+      </div>
+      <p class="sub fv" style="--d:20s;margin-top:3.5cqh">不是合约漏洞。合约没有漏洞 —— 被攻破的是「谁有权让钱包执行代码」。</p>
+    </div>
+    <div class="foot fv" style="--d:22s">币安热钱包 · 2026-10-29 · 数据截至 10-30 00:30 UTC · 外流口径，非已实现损失</div>
+  </section>
+
+  <!-- S2 -->
+  <section class="s" data-dur="50">
+    <div class="head">
+      <h2 class="rv">这不是临时起意</h2>
+      <span class="eyebrow fv" style="--d:.4s">18 小时准备期</span>
+    </div>
+    <div class="body">
+      <div class="tl">
+        <div class="tl-rail"></div>
+        <div class="tl-nodes">
+          <div class="tl-n rv" style="--d:.5s"><span class="tl-t">02:28</span><span class="tl-l">部署测试合约</span></div>
+          <div class="tl-n rv" style="--d:1.1s"><span class="tl-t">13:51</span><span class="tl-l">自有钱包 ①② 委托</span></div>
+          <div class="tl-n rv" style="--d:1.7s"><span class="tl-t">14:19</span><span class="tl-l">测试扫荡</span></div>
+          <div class="tl-n hot rv" style="--d:2.3s"><span class="tl-t">15:59</span><span class="tl-l">部署最终合约</span></div>
+          <div class="tl-n rv" style="--d:2.9s"><span class="tl-t">16:20</span><span class="tl-l">钱包 ③ 彩排</span></div>
+          <div class="tl-n rv" style="--d:3.5s"><span class="tl-t">16:47</span><span class="tl-l">彩排完成</span></div>
+          <div class="tl-n hot rv" style="--d:5.5s"><span class="tl-t">20:20</span><span class="tl-l">对币安动手</span></div>
+          <div class="tl-n hot rv" style="--d:6.1s"><span class="tl-t">20:24</span><span class="tl-l">清空</span></div>
+        </div>
+        <div class="wait pv" style="--d:7.2s"><b>3 小时 27 分</b><span>彩排完成之后的等待 —— 在等合适的执行时机</span></div>
+      </div>
+    </div>
+    <div class="foot fv" style="--d:9s">他不是「拿到钥匙就搬钱」，而是在碰目标之前，把整条路径在自己控制的三个账户上跑通了</div>
+  </section>
+
+  <!-- S3 -->
+  <section class="s" data-dur="52">
+    <div class="head">
+      <h2 class="rv">这条签名到底签了什么</h2>
+      <span class="eyebrow fv" style="--d:.4s">EIP-7702 授权</span>
+    </div>
+    <div class="body">
+      <div class="cmp">
+        <div class="pane rv" style="--d:.6s">
+          <div class="pane-h">普通转账签名</div>
+          <div class="field">to <i>收款地址</i></div>
+          <div class="field">value <i>金额</i></div>
+          <div class="field">data <i>调用数据</i></div>
+          <div class="field">gas <i>上限</i></div>
+        </div>
+        <div class="pane on rv" style="--d:1.6s">
+          <div class="pane-h">7702 授权签名</div>
+          <div class="field">chain_id <i>链</i></div>
+          <div class="field">address <i>把代码指向谁</i></div>
+          <div class="field">nonce <i>必须等于当前值</i></div>
+          <div class="field" style="color:var(--faint)">—</div>
+        </div>
+      </div>
+      <div class="formula rv" style="--d:3.2s">keccak256( 0x05 ‖ rlp([chain_id, address, nonce]) )</div>
+      <div class="hexline fv" style="--d:5s">不是 EIP-712 结构化数据 —— 所以用户实际看到的是 <b>0x7f8a…3c91</b></div>
+    </div>
+    <div class="foot fv" style="--d:7s">它不承诺目标合约会做什么，也不承诺那段代码以后不会变</div>
+  </section>
+
+  <!-- S4 -->
+  <section class="s" data-dur="42">
+    <div class="head">
+      <h2 class="rv">被错过的 3 分 24 秒</h2>
+      <span class="eyebrow fv" style="--d:.4s">授权与清空是两笔交易</span>
+    </div>
+    <div class="body">
+      <div class="tx2">
+        <div class="tx a rv" style="--d:.5s">
+          <div class="tx-k">授权 · Type-4 SetCode</div>
+          <div class="tx-time">20:20:59</div>
+          <div class="tx-row"><span>区块</span><b class="num">26,300,753</b></div>
+          <div class="tx-row"><span>input</span><b class="num">0x（空）</b></div>
+          <div class="tx-row"><span>手续费</span><b class="num">$14.5</b></div>
+        </div>
+        <div class="gapcol">
+          <div class="gap-blocks fv" style="--d:1.4s">17 个区块</div>
+          <div class="gap-timer num" id="gapTimer">0:00</div>
+          <div class="gap-arrow"></div>
+        </div>
+        <div class="tx b rv" style="--d:2.4s">
+          <div class="tx-k">清空 · 普通交易</div>
+          <div class="tx-time">20:24:23</div>
+          <div class="tx-row"><span>区块</span><b class="num">26,300,770</b></div>
+          <div class="tx-row"><span>调用</span><b class="num">sweep()</b></div>
+          <div class="tx-row"><span>手续费</span><b class="num">$0.91</b></div>
+        </div>
+      </div>
+      <div class="strike pv" style="--d:9s">Type-4 交易在 mempool 里是公开可见的 —— 这本来是一个可以拦截的窗口</div>
+    </div>
+    <div class="foot fv" style="--d:12s">它没有被拦住。这说明行业现在盯的还是余额流出，不是代码被改写</div>
+  </section>
+
+  <!-- S5 -->
+  <section class="s" data-dur="40">
+    <div class="head">
+      <h2 class="rv">50 条授权，只有 1 条生效</h2>
+      <span class="eyebrow fv" style="--d:.4s">nonce 降序排列</span>
+    </div>
+    <div class="body">
+      <div class="ruler fv" style="--d:.4s">
+        <div class="ticks" id="ticks"></div>
+        <div class="scanbar"></div>
+        <div class="rlabels">
+          <span>18,914,824 ←起</span>
+          <span style="color:var(--green)">18,914,809 命中</span>
+          <span>止→ 18,914,775</span>
+        </div>
+      </div>
+      <div class="tally">
+        <div class="tal pv" style="--d:3.2s"><b>15</b><span>过高 · 跳过</span></div>
+        <div class="tal g pv" style="--d:3.6s"><b>1</b><span>命中 · 代码写入</span></div>
+        <div class="tal pv" style="--d:4s"><b>34</b><span>过低 · 失效</span></div>
+      </div>
+      <p class="sub fv" style="--d:6.5s;margin-top:3cqh">预签 50 个不同 nonce 之后，你烧掉一个只废掉一张 —— <b style="color:var(--amber);font-weight:600">nonce spray 的目的不是提高命中率，是让「取消」失去意义</b>。</p>
+    </div>
+    <div class="foot fv" style="--d:9s">升序提交会让命中后的 810–824 依次生效，把账户 nonce 连推 16 次 —— 热钱包自己的交易队列会当场错乱</div>
+  </section>
+
+  <!-- S6 -->
+  <section class="s" data-dur="28">
+    <div class="head">
+      <h2 class="rv">0.91 美元</h2>
+      <span class="eyebrow fv" style="--d:.4s">gas 账与链上完全一致</span>
+    </div>
+    <div class="body">
+      <div class="split2">
+        <div class="calc">
+          <div class="rv" style="--d:.5s"><span class="op"></span><span class="v">50 × 25,000</span><span class="nb">每条元组预收</span></div>
+          <div class="rv" style="--d:1.3s"><span class="op">−</span><span class="v">12,500</span><span class="nb">唯一有效元组退款</span></div>
+          <div class="rv" style="--d:2.1s"><span class="op">+</span><span class="v">21,000</span><span class="nb">交易内在 gas</span></div>
+          <div class="rv" style="--d:2.9s"><span class="op">+</span><span class="v">62</span><span class="nb">calldata 等</span></div>
+          <div class="tot rv" style="--d:3.9s"><span class="op">=</span><span class="v">1,258,562</span><span class="nb" style="color:var(--green)">✓ 与链上一分不差</span></div>
+        </div>
+        <div class="ratio">
+          <div class="ratio-n pv" style="--d:5.5s">$0.91</div>
+          <div class="ratio-c fv" style="--d:6.3s">搬走约 <b class="num">25 亿</b> 美元的手续费<br>比率约 <b class="num">1 : 27 亿</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="foot fv" style="--d:8s">那 49 条诱饵不是免费的 —— 每条实打实烧掉 25,000 gas，发送者为真假元组一并付费</div>
+  </section>
+
+  <!-- S7 -->
+  <section class="s" data-dur="30">
+    <div class="head">
+      <h2 class="rv">能冻的，和冻不了的</h2>
+      <span class="eyebrow fv" style="--d:.4s">唯一起作用的止损</span>
+    </div>
+    <div class="body">
+      <div class="bar">
+        <div class="seg f" style="flex:15.67">15.67</div>
+        <div class="seg f" style="flex:8.23">8.23</div>
+        <div class="seg f" style="flex:2">2</div>
+        <div class="seg f" style="flex:.27"></div>
+        <div class="seg u" style="flex:30.23">30.23 亿 · 原生资产，冻不了</div>
+      </div>
+      <div class="barlabs">
+        <span class="l">Tether · Circle · Ripple · USD1 合计 26.2 亿</span>
+        <span class="r">BTC / ETH 仍在攻击者手中</span>
+      </div>
+      <div class="pct">
+        <b class="pv" style="--d:3s">45%</b>
+        <span class="fv" style="--d:3.8s">这不是风控能力，是<b style="color:var(--fg)">资产构成的偶然</b>。稳定币可以被单方面冻结，原生资产不能。</span>
+      </div>
+    </div>
+    <div class="foot fv" style="--d:6s">而这个比例还在被侵蚀 —— 攻击者正在抛售 PEPE、UNI、LINK 换成 ETH，主动把可冻结资产换成冻不了的</div>
+  </section>
+
+  <!-- S8 -->
+  <section class="s" data-dur="20">
+    <div class="head">
+      <h2 class="rv">还没结束</h2>
+      <span class="eyebrow fv" style="--d:.4s">该盯的三个信号</span>
+    </div>
+    <div class="body">
+      <div class="checks">
+        <div class="chk rv" style="--d:.6s"><i></i><span>官方事件公告</span><em>未出现</em></div>
+        <div class="chk rv" style="--d:1.2s"><i></i><span>储备证明更新</span><em>未出现</em></div>
+        <div class="chk rv" style="--d:1.8s"><i></i><span>指向 <span class="num">address(0)</span> 的撤销授权</span><em>未出现</em></div>
+      </div>
+      <p class="closing fv" style="--d:3.4s">三个里一个都还没出现。在技术上，这个后门可能只是暂时没人用。</p>
+    </div>
+    <div class="foot fv" style="--d:5s">币安未公布签名基础设施日志，根因未经官方确认 · 不构成投资建议 · DYOR · kkdemian.com</div>
+  </section>
+</div>
+
+<div class="chrome" id="chrome">
+  <div class="track" id="track">
+    <div class="fill" id="fill"></div>
+    <div class="marks" id="marks"></div>
+  </div>
+  <div class="bar2">
+    <div style="display:flex;align-items:center;gap:.8rem">
+      <button class="ctl" id="play">暂停</button>
+      <span><b id="clock">0:00</b> / 4:50</span>
+      <span>场景 <b id="sceneNo">1</b>/8</span>
+    </div>
+    <div class="keys">
+      <kbd>空格</kbd> 暂停 <kbd>←</kbd><kbd>→</kbd> 切场景 <kbd>R</kbd> 重播 <kbd>H</kbd> 隐藏控件
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var stage = document.getElementById('stage');
+  var scenes = [].slice.call(stage.querySelectorAll('.s'));
+  var durs = scenes.map(function (s) { return parseFloat(s.dataset.dur); });
+  var total = durs.reduce(function (a, b) { return a + b; }, 0);
+  var starts = [];
+  durs.reduce(function (acc, d, i) { starts[i] = acc; return acc + d; }, 0);
+
+  var fill = document.getElementById('fill');
+  var clock = document.getElementById('clock');
+  var sceneNo = document.getElementById('sceneNo');
+  var playBtn = document.getElementById('play');
+  var chrome = document.getElementById('chrome');
+  var gapTimer = document.getElementById('gapTimer');
+
+  // scene marks on the progress track, proportional to duration
+  var marks = document.getElementById('marks');
+  durs.forEach(function (d) {
+    var i = document.createElement('i');
+    i.style.flex = String(d);
+    marks.appendChild(i);
+  });
+
+  // 50 nonce ticks: 15 above the account nonce, the hit, 34 below
+  var ticks = document.getElementById('ticks');
+  for (var n = 0; n < 50; n++) {
+    var t = document.createElement('div');
+    t.className = 'tick ' + (n < 15 ? 'high' : n === 15 ? 'hit' : 'low');
+    ticks.appendChild(t);
+  }
+
+  var t = 0, last = null, paused = false, cur = -1;
+
+  function fmt(sec) {
+    var m = Math.floor(sec / 60), s = Math.floor(sec % 60);
+    return m + ':' + (s < 10 ? '0' : '') + s;
+  }
+
+  function show(i) {
+    if (i === cur) return;
+    cur = i;
+    scenes.forEach(function (s, j) {
+      if (j === i) s.setAttribute('data-active', '');
+      else s.removeAttribute('data-active');
+    });
+    sceneNo.textContent = String(i + 1);
+  }
+
+  function seek(i) {
+    t = starts[i];
+    // restart the scene's CSS animations by re-mounting it
+    cur = -1;
+    show(i);
+    var s = scenes[i];
+    var clone = s.cloneNode(true);
+    s.parentNode.replaceChild(clone, s);
+    scenes[i] = clone;
+    clone.setAttribute('data-active', '');
+    if (i === 4) {
+      var tk = clone.querySelector('.ticks');
+      if (tk && !tk.children.length) {
+        for (var n = 0; n < 50; n++) {
+          var d = document.createElement('div');
+          d.className = 'tick ' + (n < 15 ? 'high' : n === 15 ? 'hit' : 'low');
+          tk.appendChild(d);
+        }
+      }
+    }
+    tick(0);
+  }
+
+  function tick(dt) {
+    t = Math.min(total, t + dt);
+    var i = 0;
+    while (i < durs.length - 1 && t >= starts[i + 1]) i++;
+    show(i);
+    fill.style.width = (t / total * 100) + '%';
+    clock.textContent = fmt(t);
+
+    // S4's gap counter runs off the master clock, 0:00 -> 3:24 over 8s
+    var gt = scenes[3].querySelector('#gapTimer') || gapTimer;
+    if (gt) {
+      var local = t - starts[3];
+      var p = Math.max(0, Math.min(1, (local - 1.4) / 8));
+      var secs = Math.round(p * 204);
+      gt.textContent = Math.floor(secs / 60) + ':' + (secs % 60 < 10 ? '0' : '') + (secs % 60);
+    }
+
+    if (t >= total) setPaused(true);
+  }
+
+  function setPaused(p) {
+    paused = p;
+    stage.classList.toggle('paused', p);
+    playBtn.textContent = p ? '播放' : '暂停';
+  }
+
+  function frame(now) {
+    if (last == null) last = now;
+    var dt = (now - last) / 1000;
+    last = now;
+    if (!paused) tick(Math.min(dt, 0.25));
+    requestAnimationFrame(frame);
+  }
+
+  playBtn.addEventListener('click', function () {
+    if (t >= total) { seek(0); setPaused(false); return; }
+    setPaused(!paused);
+  });
+
+  document.getElementById('track').addEventListener('click', function (e) {
+    var r = this.getBoundingClientRect();
+    var target = (e.clientX - r.left) / r.width * total;
+    var i = 0;
+    while (i < durs.length - 1 && target >= starts[i + 1]) i++;
+    seek(i);
+  });
+
+  document.addEventListener('keydown', function (e) {
+    var k = e.key;
+    if (k === ' ') { e.preventDefault(); playBtn.click(); }
+    else if (k === 'ArrowRight') { e.preventDefault(); seek(Math.min(scenes.length - 1, cur + 1)); }
+    else if (k === 'ArrowLeft') { e.preventDefault(); seek(Math.max(0, cur - 1)); }
+    else if (k === 'r' || k === 'R') { seek(0); setPaused(false); }
+    else if (k === 'h' || k === 'H') { chrome.hidden = !chrome.hidden; }
+  });
+
+  show(0);
+  tick(0);
+  requestAnimationFrame(frame);
+})();
+</script>
