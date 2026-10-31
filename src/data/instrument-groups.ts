@@ -59,6 +59,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'SNDKB 市值 7,698 万、日成交 9,780 万，换手 1.27×；同一主题的 ETF（DRAMB）只有 0.19×。单票的流动性大约是篮子的 7 倍。',
       'SNDKBは時価総額7,698万ドルに対し日次出来高9,780万ドル、回転率1.27倍。同じテーマのETFであるDRAMBは0.19倍にとどまり、個別銘柄の流動性はバスケットの約7倍。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-memory-supercycle',
+      en: 'bstocks-memory-supercycle-en',
+      ja: 'bstocks-memory-supercycle-ja',
+    },
   },
   {
     slug: 'semiconductor-design-and-fabs',
@@ -72,6 +77,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '同一赛道内的注意力分布：NVDAB 换手 0.89×、ARMB 0.77×、TSMB 0.32×。五个里有两个的标的是 ADR，这改变了代币到底对应什么。',
       '同じセクターでも関心は大きく異なる。NVDAB 0.89倍、ARMB 0.77倍、TSMB 0.32倍。5銘柄のうち2つは原資産がADRで、トークンが何に対する請求権なのかが変わる。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-semiconductor-design-and-fabs',
+      en: 'bstocks-semiconductor-design-and-fabs-en',
+      ja: 'bstocks-semiconductor-design-and-fabs-ja',
+    },
   },
   {
     slug: 'directional-3x-and-volatility',
@@ -85,6 +95,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '同一指数的多空 3X 同时上架。30 日内 SOXLB −51.9%，SOXSB +70.8%。这是带损耗的方向性工具，不是可以持有的标的。',
       '同一指数の強気3Xと弱気3Xが同時に上場。30日間でSOXLBは51.9%下落、SOXSBは70.8%上昇した。保有するための銘柄ではなく、減価を伴う方向性の道具である。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-directional-3x-and-volatility',
+      en: 'bstocks-directional-3x-and-volatility-en',
+      ja: 'bstocks-directional-3x-and-volatility-ja',
+    },
   },
   {
     slug: 'crypto-treasury-equities',
@@ -98,6 +113,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '交易所自营发行「持币公司」的股票代币，其中 BNCB 是 BNB 财库公司，2026-09-14 上线即已是这里的第 10 大标的。利益冲突必须写明。',
       '主要資産が暗号資産である企業のトークンを、取引所自身が発行している。うちBNCBはBNBトレジャリー企業で、2026-09-14の上場で既に第10位の規模。利益相反は明記が必要。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-crypto-treasury-equities',
+      en: 'bstocks-crypto-treasury-equities-en',
+      ja: 'bstocks-crypto-treasury-equities-ja',
+    },
   },
   {
     slug: 'mag7-cold-half',
@@ -111,6 +131,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'TSLAB 市值 2,368 万，比 AAPLB（545 万）+ MSFTB（437 万）+ AMZNB（373 万）+ METAB（746 万）加起来还多 12.7%。这个渠道的偏好和公开市场完全不同。',
       'TSLABの時価総額2,368万ドルは、AAPLB（545万）、MSFTB（437万）、AMZNB（373万）、METAB（746万）の合計を12.7%上回る。このチャネルの選好は公開市場とまったく違う。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-mag7-cold-half',
+      en: 'bstocks-mag7-cold-half-en',
+      ja: 'bstocks-mag7-cold-half-ja',
+    },
   },
   {
     slug: 'asia-exposure',
@@ -124,6 +149,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '韩国这条线在全盘被重复下注四次：SKHYB 现货、SKUUB 2x、KORUB 3X、EWYB 宽基。KORUB 30 日 −49.7%。',
       '韓国への賭けは4重になっている。個別のSKHYB、2倍のSKUUB、3XのKORUB、そして広範指数のEWYB。KORUBは30日で49.7%下落。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-asia-exposure',
+      en: 'bstocks-asia-exposure-en',
+      ja: 'bstocks-asia-exposure-ja',
+    },
   },
   {
     slug: 'optics-and-interconnect',
@@ -137,6 +167,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '光模块与互联是算力建设的第二层受益者。注意力分化明显：AAOIB 换手 0.59×、CRDOB 2.92×，而 COHRB 只有 0.14×。',
       '光モジュールと相互接続は、アクセラレータ投資の一段下流にある。関心の差は大きく、AAOIBは0.59倍、CRDOBは2.92倍、一方COHRBは0.14倍。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-optics-and-interconnect',
+      en: 'bstocks-optics-and-interconnect-en',
+      ja: 'bstocks-optics-and-interconnect-ja',
+    },
   },
   {
     slug: 'neoclouds-and-datacenters',
@@ -150,6 +185,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'NBISB 市值 1,282 万，但这份数据里它的 FDV 是 0，因为 totalSupply 为 0 —— 取错字段这个标的就消失了。这一组既讲算力，也讲数字本身能不能信。',
       'NBISBの時価総額は1,282万ドルだが、総供給量が0のためFDVは0と報告される。誤ったフィールドを読めば銘柄そのものが消える。計算能力の話と、数字を信じられるかの話。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-neoclouds-and-datacenters',
+      en: 'bstocks-neoclouds-and-datacenters-en',
+      ja: 'bstocks-neoclouds-and-datacenters-ja',
+    },
   },
   {
     slug: 'ai-physical-bottleneck',
@@ -163,6 +203,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'AI 的物理约束：发电、储能、稀土。VSTB 换手 0.21×，是 100 个标的里第六低，GEVB 0.31× 紧挨其上。这个渠道对基础设施股没兴趣。',
       'AIの物理的制約、すなわち発電・蓄電・レアアース。VSTBの回転率は0.21倍で100銘柄中6番目に低く、GEVBは0.31倍でそのすぐ上。このチャネルはインフラ株を買っていない。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-ai-physical-bottleneck',
+      en: 'bstocks-ai-physical-bottleneck-en',
+      ja: 'bstocks-ai-physical-bottleneck-ja',
+    },
   },
   {
     slug: 'no-public-anchor',
@@ -176,6 +221,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '这五个都没有可对照的公开上市标的，其中 SECZB 和 BOTB 在 CMC 上连标的名都没有，只能从代币名反推。没有锚，价格是什么？',
       'この5銘柄にはいずれも価格を照合できる公開上場がなく、SECZBとBOTBについてはCMCに原資産名すら存在せず、トークン名から読み取るしかなかった。アンカーがないなら、価格とは何なのか。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-no-public-anchor',
+      en: 'bstocks-no-public-anchor-en',
+      ja: 'bstocks-no-public-anchor-ja',
+    },
   },
   {
     slug: 'retail-narrative-stocks',
@@ -189,6 +239,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '靠故事而非业绩交易的那批。DJTB 30 日 −38.1%、90 日 −51.5%；GMEB 换手 0.16×，接近全盘末段。',
       '業績ではなく物語で動く銘柄群。DJTBは30日で38.1%、90日で51.5%下落。GMEBの回転率は0.16倍で全体の下位に近い。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-retail-narrative-stocks',
+      en: 'bstocks-retail-narrative-stocks-en',
+      ja: 'bstocks-retail-narrative-stocks-ja',
+    },
   },
   {
     slug: 'legacy-tech-in-transition',
@@ -202,6 +257,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'INTCB 换手 1.75×，是前 10 大市值里最高的（第二是 SNDKB 1.27×），同时 24h −8.1%、30 日 −47.6%。这里的高换手是离场，不是关注。',
       'INTCBの回転率は1.75倍で、上位10銘柄中最高（2位はSNDKBの1.27倍）。同時に24時間で8.1%、30日で47.6%下落している。ここでの高回転は関心ではなく退出である。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-legacy-tech-in-transition',
+      en: 'bstocks-legacy-tech-in-transition-en',
+      ja: 'bstocks-legacy-tech-in-transition-ja',
+    },
   },
   {
     slug: 'broad-market-and-equipment',
@@ -215,6 +275,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       '换手从 0.13×（AMATB）到 1.09×（ASMLB），中位数是所有组里最低的。宽基和设备股在这里是被持有，不是被交易。',
       '回転率は0.13倍（AMATB）から1.09倍（ASMLB）で、中位値は全グループ中最低。広範指数と装置メーカーは、ここでは取引されず保有されている。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-broad-market-and-equipment',
+      en: 'bstocks-broad-market-and-equipment-en',
+      ja: 'bstocks-broad-market-and-equipment-ja',
+    },
   },
   {
     slug: 'software-and-saas',
@@ -228,6 +293,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'CRMB 一天成交 9.18 万美元，市值 50.2 万。企业软件在公开市场是最大的板块，在这里接近最小。',
       'CRMBの日次出来高は9.18万ドル、時価総額は50.2万ドル。公開市場で最大のカテゴリーであるエンタープライズソフトが、ここではほぼ最小である。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-software-and-saas',
+      en: 'bstocks-software-and-saas-en',
+      ja: 'bstocks-software-and-saas-ja',
+    },
   },
   {
     slug: 'financials-and-payments',
@@ -241,6 +311,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'COINB 与 HOODB 的标的是这家发行方的竞争对手，而它们是本组最大的两个 —— COINB 1,817 万，而 JPMB 只有 50.0 万。银行股在这里是陪衬。',
       'COINBとHOODBの原資産は、この発行体の競合2社である。そしてこの2つがグループ最大で、COINBは1,817万ドル、JPMBは50.0万ドル。銀行株はついでに置かれている。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-financials-and-payments',
+      en: 'bstocks-financials-and-payments-en',
+      ja: 'bstocks-financials-and-payments-ja',
+    },
   },
   {
     slug: 'storage-hardware-and-systems',
@@ -254,6 +329,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'ALABB 换手 5.11×，同组其余在 1.21×–2.71× 之间。一个市值 67.4 万的标的一天成交 344 万，和邻居不是一类东西。',
       'ALABBの回転率は5.11倍で、同グループの他は1.21〜2.71倍。時価総額67.4万ドルで日次344万ドルを取引する銘柄は、隣の銘柄とは別物である。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-storage-hardware-and-systems',
+      en: 'bstocks-storage-hardware-and-systems-en',
+      ja: 'bstocks-storage-hardware-and-systems-ja',
+    },
   },
   {
     slug: 'space-and-materials',
@@ -267,6 +347,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'RKLBB 本组最大，市值 915 万、换手 0.40×；RDDTB 最小，46 万、换手 3.70×。但中间并不单调 —— AXTIB 市值 301 万却是 1.58×，比它小的 ASTSB 只有 0.97× —— 所以单靠规模解释不了。',
       'ここで最大のRKLBBは915万ドルで0.40倍、最小のRDDTBは46万ドルで3.70倍。ただし間は単調でなく、AXTIBは301万ドルで1.58倍、より小さいASTSBは0.97倍にとどまる。規模だけでは説明できない。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-space-and-materials',
+      en: 'bstocks-space-and-materials-en',
+      ja: 'bstocks-space-and-materials-ja',
+    },
   },
   {
     slug: 'pharma-and-consumer',
@@ -280,6 +365,11 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
       'MRNAB 换手 10.31×，是全盘第二高（仅次于 INTWB），市值 230 万、7 日 +9.96%。同组的 BRKBB 换手 0.22×。这个落差的原因还没查清。',
       'MRNABの回転率は10.31倍で、全体ではINTWBに次ぐ2位。時価総額230万ドル、7日で9.96%上昇している。同グループのBRKBBは0.22倍。この差の理由は未解明。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-pharma-and-consumer',
+      en: 'bstocks-pharma-and-consumer-en',
+      ja: 'bstocks-pharma-and-consumer-ja',
+    },
   },
 ];
 
