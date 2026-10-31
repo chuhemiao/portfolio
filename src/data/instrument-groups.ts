@@ -32,13 +32,18 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     slug: 'single-stock-2x-etfs',
     index: 2,
     issuerSlug: 'bstocks',
-    tickers: ['INTWB', 'SNXXB', 'MVLLB', 'MUUB', 'SKUUB'],
-    title: ['Where the volume actually went', '单票 2x 杠杆 ETF', 'ボリュームが集まった先'],
+    tickers: ['MUUB', 'SNXXB', 'INTWB', 'MVLLB', 'SKUUB'],
+    title: ['The denominator trap', '分母陷阱', '分母の罠'],
     thesis: [
-      'Turnover of 38.46x, 4.17x, 2.60x, 0.58x and 0.96x against 30-day moves of −78%, −61% and −52%. The issuer listed spot and 2x versions of the same underlyings; the trading is in the leveraged ones.',
-      '换手 38.46× / 4.17× / 2.60× / 0.58× / 0.96×，30 日 −78% / −61% / −52%。发行方给同一批标的同时上了现货和 2x 版本，成交量全在杠杆版。',
-      '回転率は38.46倍・4.17倍・2.60倍・0.58倍・0.96倍、30日騰落率は−78%・−61%・−52%。同じ原資産の現物版と2倍版を同時上場させたが、出来高はレバレッジ版に集中している。',
+      'Turnover of 0.58x, 4.17x, 38.46x, 2.60x and 0.96x — and INTWB, the highest on the book, still did less volume than its own spot token INTCB ($55.54M against $67.90M). All five 2x tokens trade below their spot counterparts; they hold 11.3% of those tokens market cap and do 44.6% of their volume. The turnover is the denominator, not the trading.',
+      '换手 0.58× / 4.17× / 38.46× / 2.60× / 0.96×，而全盘第一的 INTWB 成交额仍低于自己的现货版 INTCB（$5,554 万 对 $6,790 万）。5 个 2x 的成交额全部低于各自的现货版本；它们只占现货 5 个市值的 11.3%，却做了成交额的 44.6%。高换手来自分母，不是来自成交。',
+      '回転率は0.58倍・4.17倍・38.46倍・2.60倍・0.96倍。全体首位の INTWB でさえ出来高は自らの現物版 INTCB を下回る（5,554万ドル 対 6,790万ドル）。5つの2倍トークンはすべて現物版より出来高が小さく、現物5銘柄の時価総額の11.3%しか持たないのに出来高では44.6%を占める。高い回転率は分母が作ったもので、取引量ではない。',
     ],
+    articleSlugs: {
+      'zh-CN': 'bstocks-single-stock-2x-etfs',
+      en: 'bstocks-single-stock-2x-etfs-en',
+      ja: 'bstocks-single-stock-2x-etfs-ja',
+    },
   },
   {
     slug: 'memory-supercycle',

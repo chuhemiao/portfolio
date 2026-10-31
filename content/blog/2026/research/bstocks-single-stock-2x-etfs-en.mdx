@@ -1,0 +1,187 @@
+---
+title: 'Turnover of 38x on less volume than spot: the denominator trap in single-stock 2x tokens'
+publishedAt: '2026-10-31'
+summary: 'bStocks lists five single-stock 2x leveraged tokens. INTWB turns over 38.46x, the highest of all 100 instruments, against 10.31x for the runner-up. Put it next to the Intel spot token from the same issuer on the same chain and the reading reverses: INTWB did $55.54M on the day, INTCB did $67.90M — the spot token traded more. All five pairs point the same way, with the 2x version below its spot counterpart every time. The 38x is not made of volume, it is made of the denominator.'
+slug: 'bstocks-single-stock-2x-etfs-en'
+category: 'research'
+language: 'en'
+translationKey: 'bstocks-single-stock-2x-etfs'
+sourceSlug: 'bstocks-single-stock-2x-etfs'
+---
+
+## TL;DR
+
+**The turnover on these five 2x tokens looks spectacular, but that is because almost nobody holds them, not because they trade a lot.**
+
+- **INTWB turns over `38.46x`, first among all 100 instruments on the book, against `10.31x` for the runner-up MRNAB.** Its market cap is `$1.44M` and it did `$55.54M` on the day.
+- **But INTCB, the Intel spot token from the same issuer on the same chain, did `$67.90M` — more than the 2x version.** Its market cap is `$38.78M`, `26.9 times` INTWB's, so its turnover is only `1.751x`. **The two tokens trade in the same order of magnitude and their turnover differs 22-fold; the whole difference is in the denominator.**
+- **All five pairs point the same way**: 2x volume divided by spot volume = `0.82` / `0.63` / `0.33` / `0.29` / `0.02`. **Together these five 2x tokens hold 11.3% of the five spot tokens' market cap and do 44.6% of their volume** — the churn is real, "the volume went to the leveraged versions" is not.
+- **Remove two instruments and the group has no story left.** Group turnover is `3.9193x`; drop INTWB and it is `1.7356x`; drop SNXXB too and it is `0.7001x`, against `0.6625x` for the whole book. **MUUB's `0.576x` was already below the book average, ranking 63rd.**
+- **The multiplier does not set the range.** Among the ten instruments listed the same day, TQQQB — a 3x product — has a range width of `1.512x`, narrower than two plain common stocks (AXTIB `2.658x`, CRWVB `2.274x`). **The underlying's own volatility explains the range better than the leverage factor does.**
+- **Three of four 30-day declines fall short of "double"**: `1.64x` / `1.73x` / `1.89x` / `2.05x`. A daily-reset 2x product has no fixed relationship to twice the period return over a 30-day window; the direction depends on the path — and this round it leaned toward falling less.
+
+---
+
+## 1. What these five are
+
+bStocks is Binance's in-house tokenized-equity issuer (BTech Holdings Limited, ADGM / FSRA listed certificates, BNB Chain only, traded on Binance only). CoinMarketCap reports 105 instruments; the snapshot behind this piece holds 100 of them, timestamped `2026-10-31T06:06:52Z`.
+
+Twelve of those 100 carry leverage or inversion: **six 2x long, four 3x long (KORUB / SOXLB / TMFB / TQQQB) and two −3x inverse (SOXSB / SQQQB)**. One of the six 2x products (UVXYB) tracks VIX futures rather than a single stock. **The remaining five are this piece's subject: 2x daily-reset leveraged ETFs over a single name.**
+
+| Token | Underlying ETF | Listed | Age | Price | Market cap | 24h volume | Turnover | 7d | 30d |
+|---|---|---|---|---:|---:|---:|---:|---:|---:|
+| [**MUUB**](/en/stocks/bstocks/MUUB) | Direxion Daily MU Bull 2X | 2026-07-20 | 103 days | $24.88 | **$14.69M** | $8.46M | **0.576x** | +2.58% | −33.44% |
+| [**SNXXB**](/en/stocks/bstocks/SNXXB) | Tradr 2X Long SNDK | 2026-07-20 | 103 days | $6.84 | $6.82M | $28.42M | 4.169x | −16.33% | −61.18% |
+| [**INTWB**](/en/stocks/bstocks/INTWB) | GraniteShares 2x Long INTC | 2026-07-20 | 103 days | $7.29 | $1.44M | **$55.54M** | **38.460x** | −53.79% | **−78.03%** |
+| [**MVLLB**](/en/stocks/bstocks/MVLLB) | GraniteShares 2x Long MRVL | 2026-07-20 | 103 days | $18.32 | $898.8K | $2.34M | 2.601x | −28.57% | −51.66% |
+| [**SKUUB**](/en/stocks/bstocks/SKUUB) | GraniteShares 2x Long SK Hynix | 2026-10-26 | **5 days** | $17.49 | $434.0K | $416.9K | 0.961x | −9.85% | −9.85% |
+
+Four listed on the same day (2026-07-20); SKUUB came more than three months later. **The group holds $24.28M, 1.84% of the book, and did $95.18M, 10.9% of its volume.**
+
+One data caveat up front: **none of these five carries an underlying symbol field in the snapshot** (the five missing a symbol among the twelve leveraged and inverse instruments are exactly these), so the "underlying ETF" column above is read out of each token's own name rather than from a structured CMC field.
+
+## 2. The volume is actually on the spot side
+
+Each of these five underlyings also has a spot version listed under the same issuer. Laid out as pairs:
+
+| Underlying | 2x token | 2x volume | Spot token | Spot volume | **2x / spot** | 2x market cap | Spot market cap |
+|---|---|---:|---|---:|---:|---:|---:|
+| INTC | INTWB | $55.54M | [INTCB](/en/stocks/bstocks/INTCB) | **$67.90M** | **0.82** | $1.44M | $38.78M |
+| MRVL | MVLLB | $2.34M | [MRVLB](/en/stocks/bstocks/MRVLB) | $3.73M | 0.63 | $898.8K | $7.54M |
+| MU | MUUB | $8.46M | [MUB](/en/stocks/bstocks/MUB) | $26.01M | 0.33 | $14.69M | $62.62M |
+| SNDK | SNXXB | $28.42M | [SNDKB](/en/stocks/bstocks/SNDKB) | **$97.80M** | 0.29 | $6.82M | $76.98M |
+| SK Hynix | SKUUB | $416.9K | [SKHYB](/en/stocks/bstocks/SKHYB) | $17.73M | **0.02** | $434.0K | $29.12M |
+
+**Five pairs, five times the same direction: the spot version has the higher absolute volume.** The closest is the Intel pair (0.82); the widest gap is SK Hynix (0.02, though SKUUB has only been listed five days — see section 7).
+
+Taken together: **these five 2x tokens hold $24.28M against $215.04M for the five spot tokens, or 11.3%; they did $95.18M against $213.17M, or 44.6%.**
+
+That 11.3% against 44.6% is what actually characterises this group: **relative to the size being held, they are traded very frequently; measured in absolute volume, spot is still the main venue.** Both halves have to be stated — drop either one and the reading tilts.
+
+## 3. The 38x turnover is made of the denominator
+
+Put INTWB and INTCB side by side and it becomes obvious:
+
+| | INTWB (2x) | INTCB (spot) | Ratio |
+|---|---:|---:|---:|
+| 24h volume | $55.54M | $67.90M | spot 22% higher |
+| Market cap | $1.44M | $38.78M | **spot 26.9x** |
+| Circulating supply | 198,069 | 598,103 | spot 3.0x |
+| **Turnover** | **38.460x** | **1.751x** | **2x is 22.0x** |
+
+**The volumes are in the same order of magnitude, the market caps differ 26.9-fold, and so the turnover differs 22.0-fold.** Turnover is 24h volume divided by market cap; the numerators are nearly the same, so the entire gap in the ratio comes from the denominator.
+
+This is not to say 38.46x was computed wrongly — it is correct, and its meaning is clear: **the token's entire outstanding stock changes hands 38 times in a day.** But it describes how few holders there are, not how large the trading is. Anyone screening for liquidity by "high turnover" would pick the thinnest instrument in this group: INTWB's $1.44M market cap ranks 59th of the 100 on the book, below the $2.39M median.
+
+**The book's five highest turnovers make the same point**: INTWB `38.460x` (market cap $1.44M), MRNAB `10.307x` ($2.30M), ALABB `5.109x` ($673.6K), SNXXB `4.169x` ($6.82M), UVXYB `3.732x` ($463.1K). **Four of the five are under $2.5M, and the largest, SNXXB, is only $6.82M.** The five highest absolute volumes, meanwhile, are SNDKB `$97.80M`, SPCXB `$79.66M`, INTCB `$67.90M`, INTWB `$55.54M` and CRCLB `$47.99M` — **INTWB is the only name on both lists.**
+
+## 4. Remove two instruments and the group has no story
+
+Group turnover is `3.9193x`, **6.52 times** the `0.6014x` of the other 95 instruments. It is a striking number, and it does not describe these five instruments.
+
+Peeling them off one at a time:
+
+| Basis | Market cap | 24h volume | Turnover |
+|---|---:|---:|---:|
+| All five | $24.28M | $95.18M | **3.9193x** |
+| Without INTWB | $22.84M | $39.64M | 1.7356x |
+| Without SNXXB too | $16.02M | $11.22M | **0.7001x** |
+| Whole book (100) | — | — | 0.6625x |
+
+**The remaining three (MUUB / MVLLB / SKUUB) turn over at 0.7001x together, which is essentially the book's 0.6625x.**
+
+Their individual turnover ranks on the book make it clearer: **INTWB 1st, SNXXB 4th, MVLLB 13th, SKUUB 45th, MUUB 63rd.** And **MUUB's `0.576x` is below the book average of `0.6625x`** — it is the largest of the five by market cap ($14.69M) and the only one up over 24 hours (`+0.12%`) and over 7 days (`+2.58%`).
+
+**So "2x leveraged tokens have high turnover" holds for exactly two instruments in this group.** Collapsing the five into one average spreads the character of two outliers across the other three.
+
+## 5. The counter-example: 3x TQQQB is narrower than any of the 2x
+
+Range width is the highest price since listing divided by the lowest. Intuition says a higher multiplier means a wider range. **The ten instruments listed the same day refute that intuition.**
+
+Ten listed on 2026-07-20, ordered by width:
+
+| Token | Type | Multiplier | Range width | 30d | Turnover |
+|---|---|---|---:|---:|---:|
+| **INTWB** | leveraged ETF | 2x | **5.583x** | −78.03% | 38.460x |
+| **SNXXB** | leveraged ETF | 2x | 3.243x | −61.18% | 4.169x |
+| **MVLLB** | leveraged ETF | 2x | 3.075x | −51.66% | 2.601x |
+| KORUB | leveraged ETF | 3x | 2.669x | −49.66% | 1.207x |
+| AXTIB | common stock | — | **2.658x** | −31.51% | 1.577x |
+| CRWVB | common stock | — | 2.274x | −38.18% | 0.954x |
+| QNTB | unclassified | — | 2.249x | −30.51% | 2.675x |
+| **MUUB** | leveraged ETF | 2x | 2.223x | −33.44% | 0.576x |
+| TQQQB | leveraged ETF | **3x** | **1.512x** | −22.36% | 0.981x |
+| ORCLB | common stock | — | 1.470x | −6.52% | 0.460x |
+
+Two counter-examples:
+
+**One: TQQQB, at `1.512x`, is the narrowest leveraged instrument in the cohort — narrower than two plain common stocks (AXTIB `2.658x`, CRWVB `2.274x`).** Its underlying is 3x long on QQQ, a broad index. **The index's own volatility is low, and tripled it is still narrower than a single semiconductor name doubled.**
+
+**Two: AXTIB, a plain common stock at `2.658x`, beats MUUB, a 2x product, at `2.223x`.** Same listing day, same 103-day window, and the unleveraged stock covered more ground than the 2x product.
+
+This is the other face of [the previous piece](/en/blog/bstocks-flagship-pricing-anchors-en): there, the looser the pricing anchor the wider the range; here, **the underlying's own volatility explains the range better than the leverage factor**. Leverage is a multiplier — it amplifies the underlying's volatility but does not create it, and a placid underlying tripled is still more placid than a violent one doubled.
+
+The book-wide medians by type do side with leverage, though. Among the 46 instruments listed 100 days or more, **leveraged ETFs have a median width of `2.892x` (n=7), common stocks `1.768x` (n=28) and ETFs `1.350x` (n=4).** So "leverage is wider" is right as a **general tendency** and unreliable as a **per-instrument prediction** — which is exactly where the two counter-examples sit.
+
+## 6. 30-day declines: three of four fall short of "double"
+
+The story most often told about 2x products is that holding them is inevitably eaten by decay. This snapshot can test it directly, because **the same issuer lists both the 2x and the spot version on the same chain, so the 30-day window is the same calendar window.**
+
+| Pair | 2x over 30d | Spot over 30d | Actual ratio | "spot ×2" would be | Difference |
+|---|---:|---:|---:|---:|---:|
+| INTWB / INTCB | −78.03% | −47.60% | **1.64x** | −95.21% | **17.2pp less** |
+| SNXXB / SNDKB | −61.18% | −35.29% | 1.73x | −70.57% | 9.4pp less |
+| MVLLB / MRVLB | −51.66% | −27.26% | 1.89x | −54.53% | 2.9pp less |
+| MUUB / MUB | −33.44% | −16.31% | **2.05x** | −32.61% | 0.8pp more |
+
+**Three of the four fell less than twice their spot counterpart's decline; only MUUB slightly exceeded it.**
+
+This should not be read as the 2x products doing better than expected here. **A daily-reset 2x product has no fixed relationship to twice the period return over any multi-day window** — it resets exposure back to 2x every day, so the outcome depends on the path of those 30 days: compounding works for the holder in a one-way trend and against them in a choppy one. These four underlyings all fell in one direction this round (spot 30-day moves of −16% to −48%), so the result leaned toward falling less.
+
+**A choppier month could give the same four pairs the opposite difference.** This table is one observation, not a rule — the only claim it falsifies is that a 2x always falls more than double in every window.
+
+One easily missed fact alongside it: **INTWB is `−80.3%` off its highest price since listing and sits `2.2%` of the way up its own range, while its spot version INTCB is `−54.4%` off its high and sits at `2.0%` of its range.** Both are pinned to the floor of their own ranges — **the spot version was beaten down as well; the 2x was not singled out.**
+
+## 7. SKUUB needs a triple discount
+
+SKUUB is the only one of the five outside the 2026-07-20 cohort: it **listed on 2026-10-26 and was five days old at the snapshot**. Three things follow:
+
+- **Its "30 days" is its entire history.** The snapshot's `−9.85%` is identical to its 7-day figure because it did not exist before that. **Keep it out of any 30-day comparison.**
+- **Its `1.309x` range width carries no information.** Five days cannot reach an extreme. The narrowest width on the book, BRKBB at `1.031x`, has likewise only been listed 12 days — a narrow range on a recent listing is an artefact of the window.
+- **Its underlying is not a US stock.** SK Hynix is listed in Korea, and so is its spot version SKHYB. **A section called tokenized US equities contains two Korean names** — a classification issue rather than a data error, but readers need to know.
+
+Its `$416.9K` of volume ranks 94th on the book, and it is the only one of the five not worth analysing on its own.
+
+## 8. This snapshot was taken on a Saturday
+
+The timestamp `2026-10-31T06:06:52Z` is a Saturday morning in UTC. The US cash market closed on Friday at 20:00 UTC and does not open again until Monday — **for the two-plus days after this snapshot, these token prices are the only prices these names have.**
+
+For this piece that caveat carries an extra layer: **for a daily-reset 2x product, the "day" is the underlying ETF's trading day.** While the underlying ETF is closed the token side keeps quoting, but no reset happens in that time. So **over a weekend, the relationship between a token's price and the product definition of twice the daily return is looser than it is intraday.**
+
+This has already been quantified once on the same issuer: [one stock, four books](/en/blog/aapl-four-books-tokenized-equity-liquidity-en) laid AAPL's four tokenized versions side by side on a Saturday and concluded that **an off-hours quote is a market maker's opinion, not a market price**.
+
+The 24-hour moves used here (INTWB `−22.62%`, SNXXB `−21.74%`) cover the window from Friday 06:06 UTC to Saturday 06:06 UTC, which **does contain a full US session on Friday**, so they are not purely off-hours prints.
+
+## 9. What this method cannot compute
+
+**First, no premium or discount.** The snapshot holds only the token's own price and **no reference price for the underlying ETF**. More decisively, bStocks reinvests dividends through a multiplier after a 30% US withholding deduction — **without knowing the current multiplier, a token's unit price is not comparable to the underlying's net asset value at all**. No premium figure appears in this piece.
+
+**Second, no shares-per-token ratio.** The snapshot carries no conversion ratio. INTWB's 198,069 circulating tokens cannot be converted into any claim size without it.
+
+**Third, no decay attribution.** The table in section 6 can only compare two tokens' period returns; **it cannot split the difference into daily-reset decay, management fees and tracking error**. That needs a daily net-asset-value series, which the snapshot does not have.
+
+**Fourth, range windows are not equal.** These five run 103/103/103/103/5 days and their spot pairs 132/142/110/142/114 days. Book-wide comparisons here use only the 46 instruments listed 100 days or more, and even within those the windows differ by over a month.
+
+**Fifth, market cap is CMC's definition** (price times circulating supply), and the book total of $1,318.38M is the sum of these 100 rows; the bStocks row on [this site's /stocks page](/en/stocks) shows an on-chain size of $914M — **two figures from a different source and a different moment, which will not tie out.** This piece uses the former throughout.
+
+**Sixth, 100 of 105.** CMC reports 105 instruments; the snapshot holds 100. The missing five appear in no figure here.
+
+**Seventh, the underlying is identified from a name string.** None of these five carries a symbol field in the snapshot, so the judgement that one is "the 2x on INTC" comes from the token's name. **The pairings are built here, not published by the issuer.**
+
+---
+
+**Conclusion.** Of the five single-stock 2x leveraged tokens, only two are genuinely traded frequently; the group's `3.9193x` turnover collapses to `0.7001x` once INTWB and SNXXB are removed, which is indistinguishable from the book's `0.6625x`. And even the busiest of them, INTWB, did `$55.54M` against `$67.90M` for its own spot version INTCB — **the 38.46x turnover is not made of volume, it is made of a $1.44M market cap in the denominator.**
+
+Two readings travel from this. **First, turnover must always be read next to market cap**: turnover answers how many times the float changed hands, absolute volume answers how big the pool is, and screening liquidity with the former picks the thinnest instrument. **Second, the leverage factor is not a predictor of volatility** — 3x TQQQB is narrower than two plain common stocks, while unleveraged AXTIB is wider than 2x MUUB. Look at what the underlying is first, and at the multiplier second.
+
+*Source CoinMarketCap, timestamped 2026-10-31T06:06:52Z, covering 100 of the 105 instruments bStocks reports. Instrument detail and quotes at [/stocks/bstocks](/en/stocks/bstocks). Research notes, not investment advice. DYOR.*
