@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/components/locale-provider';
-import { getInstruments, getQuote } from '@/data/instruments';
-import { UNDERLYING_KIND_LABEL, pick, type UnderlyingKind } from '@/data/tokenized-equities';
+import { getAllInstruments, getInstruments, getQuote, issuerSlugsWithInstruments } from '@/data/instruments';
+import { ISSUERS, UNDERLYING_KIND_LABEL, pick, type UnderlyingKind } from '@/data/tokenized-equities';
 import { localizeHref } from '@/lib/i18n';
 import {
   MISSING,
@@ -35,12 +35,30 @@ const KIND_ORDER: UnderlyingKind[] = [
   'unknown',
 ];
 
-export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) {
+const issuerName = (slug: string) => ISSUERS.find((issuer) => issuer.slug === slug)?.name ?? slug;
+
+/**
+ * Omit `issuerSlug` for the cross-issuer index on /stocks; pass one for an
+ * issuer page. The issuer column and filter appear only once a second issuer
+ * has an ingested list — with one, they would be 100 identical cells.
+ *
+ * Data comes from the module rather than props on purpose: 300 instrument pages
+ * carrying this list in their RSC payload is megabytes of duplicated JSON.
+ */
+export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string }) {
   const { locale, t } = useI18n();
   const [sort, setSort] = useState<Sort>('marketCap');
   const [kind, setKind] = useState<UnderlyingKind | 'all'>('all');
+  const [issuer, setIssuer] = useState<string>('all');
 
-  const instruments = getInstruments(issuerSlug);
+  const scoped = issuerSlug !== undefined;
+  const issuerSlugs = useMemo(() => (scoped ? [issuerSlug] : issuerSlugsWithInstruments()), [scoped, issuerSlug]);
+  const showIssuer = issuerSlugs.length > 1;
+
+  const instruments = useMemo(
+    () => (scoped ? getInstruments(issuerSlug) : getAllInstruments()),
+    [scoped, issuerSlug]
+  );
 
   const kinds = useMemo(() => {
     const present = new Set(instruments.map((instrument) => instrument.underlying.kind));
@@ -49,7 +67,9 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) 
 
   const rows = useMemo(() => {
     const picked = instruments.filter(
-      (instrument) => kind === 'all' || instrument.underlying.kind === kind
+      (instrument) =>
+        (kind === 'all' || instrument.underlying.kind === kind) &&
+        (issuer === 'all' || instrument.issuerSlug === issuer)
     );
     const value = (ticker: string, key: 'marketCapUsd' | 'volume24hUsd' | 'turnover') =>
       getQuote(ticker)?.[key];
@@ -67,7 +87,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) 
       if (bv === undefined) return -1;
       return bv - av || a.ticker.localeCompare(b.ticker);
     });
-  }, [instruments, kind, sort]);
+  }, [instruments, issuer, kind, sort]);
 
   const chip = (active: boolean) =>
     `min-h-11 rounded-full border px-3.5 py-2 font-mono text-[11.5px] transition-colors ${
@@ -125,18 +145,52 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) 
             ))}
           </div>
         </div>
+
+        {showIssuer && (
+          <div>
+            <div className='mono-label mb-2'>{t('Issuer', '发行方', '発行体')}</div>
+            <div className='flex flex-wrap gap-1.5'>
+              <button
+                type='button'
+                onClick={() => setIssuer('all')}
+                aria-pressed={issuer === 'all'}
+                className={chip(issuer === 'all')}
+              >
+                {t('All', '全部', 'すべて')}
+              </button>
+              {issuerSlugs.map((slug) => (
+                <button
+                  key={slug}
+                  type='button'
+                  onClick={() => setIssuer(slug)}
+                  aria-pressed={issuer === slug}
+                  className={chip(issuer === slug)}
+                >
+                  {issuerName(slug)}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       <div className='overflow-x-auto border border-border'>
-        <table className='w-full min-w-[820px] border-collapse text-[12.5px]'>
+        <table className={`w-full border-collapse text-[12.5px] ${showIssuer ? 'min-w-[960px]' : 'min-w-[820px]'}`}>
           <caption className='sr-only'>
-            {t('Instruments issued by this issuer', '该发行方已发行的标的', 'この発行体が発行した銘柄')}
+            {scoped
+              ? t('Instruments issued by this issuer', '该发行方已发行的标的', 'この発行体が発行した銘柄')
+              : t('Every tokenized equity with an ingested quote', '已摄入行情的全部链上美股标的', '価格を取り込んだオンチェーン米国株の全銘柄')}
           </caption>
           <thead>
             <tr>
               <th scope='col' className={TH}>
                 {t('Token', '代币', 'トークン')}
               </th>
+              {showIssuer && (
+                <th scope='col' className={TH}>
+                  {t('Issuer', '发行方', '発行体')}
+                </th>
+              )}
               <th scope='col' className={TH}>
                 {t('Underlying', '标的', '原資産')}
               </th>
@@ -168,12 +222,19 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) 
               const quote = getQuote(instrument.ticker);
               const leverage = instrument.underlying.leverage;
               return (
-                <tr key={instrument.ticker} className='border-b border-border last:border-0'>
+                <tr key={`${instrument.issuerSlug}/${instrument.ticker}`} className='border-b border-border last:border-0'>
                   <td className='px-3.5 py-2.5 font-mono text-[12px] font-medium'>
-                    <Link href={localizeHref(`/stocks/${issuerSlug}/${instrument.ticker}`, locale)}>
+                    <Link href={localizeHref(`/stocks/${instrument.issuerSlug}/${instrument.ticker}`, locale)}>
                       {instrument.ticker}
                     </Link>
                   </td>
+                  {showIssuer && (
+                    <td className='px-3.5 py-2.5 text-[12px] text-muted-foreground'>
+                      <Link href={localizeHref(`/stocks/${instrument.issuerSlug}`, locale)}>
+                        {issuerName(instrument.issuerSlug)}
+                      </Link>
+                    </td>
+                  )}
                   <td className='px-3.5 py-2.5'>
                     {instrument.underlying.name}
                     {instrument.underlying.symbol && (
@@ -213,7 +274,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug: string }) 
             })}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={9} className='px-3.5 py-5 font-mono text-[11.5px] text-subtle'>
+                <td colSpan={showIssuer ? 10 : 9} className='px-3.5 py-5 font-mono text-[11.5px] text-subtle'>
                   {t('No instruments of this type', '没有这个类型的标的', 'この種類の銘柄はありません')}{' '}
                   {MISSING}
                 </td>

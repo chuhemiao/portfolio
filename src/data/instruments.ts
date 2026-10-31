@@ -86,6 +86,44 @@ export function getIssuerTotals(issuerSlug: string): IssuerTotals | undefined {
   };
 }
 
+/** Every instrument we hold a list for, across issuers, newest listing first. */
+export const getAllInstruments = (): Instrument[] =>
+  issuerSlugsWithInstruments().flatMap((slug) => getInstruments(slug));
+
+/**
+ * The same arithmetic as getIssuerTotals over every issuer at once. /stocks
+ * leads with this, so it is the figure the page is measured against — the
+ * hand-maintained onchainValueUsd on an issuer row comes from another source
+ * at another date and will not tie out.
+ */
+export function getBookTotals(): IssuerTotals & { issuerCount: number } {
+  const instruments = getAllInstruments();
+  let marketCapUsd = 0;
+  let volume24hUsd = 0;
+  let quotedCount = 0;
+
+  for (const instrument of instruments) {
+    const quote = getQuote(instrument.ticker);
+    if (!quote) continue;
+    marketCapUsd += quote.marketCapUsd;
+    volume24hUsd += quote.volume24hUsd;
+    quotedCount += 1;
+  }
+
+  const listings = instruments.map((instrument) => instrument.listedAt).sort();
+
+  return {
+    issuerCount: issuerSlugsWithInstruments().length,
+    instrumentCount: instruments.length,
+    quotedCount,
+    marketCapUsd,
+    volume24hUsd,
+    turnover: marketCapUsd === 0 ? 0 : volume24hUsd / marketCapUsd,
+    firstListedAt: listings[0],
+    lastListedAt: listings[listings.length - 1],
+  };
+}
+
 export type InstrumentCount = { value: number; counted: boolean };
 
 /**

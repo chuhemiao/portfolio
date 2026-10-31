@@ -7,6 +7,7 @@ import {
   DIVIDEND_LABEL,
   GRADE_LABEL,
   GRADE_RUBRIC,
+  DATA_AS_OF,
   ISSUANCE_LABEL,
   ISSUERS,
   POR_LABEL,
@@ -22,7 +23,7 @@ import {
   type IssuanceModel,
   type Issuer,
 } from '@/data/tokenized-equities';
-import { instrumentCountFor } from '@/data/instruments';
+import { getInstrumentCount, instrumentCountFor } from '@/data/instruments';
 import { localizeHref } from '@/lib/i18n';
 import {
   TURNOVER_TONE_CLASS,
@@ -298,9 +299,31 @@ export default function StocksIssuers() {
                               )}
                             </div>
 
+                            {/* An ingested issuer gets a labelled way in. The count in
+                                the row above is also a link, but a bare numeral is not
+                                something a reader can see is clickable. */}
+                            {instrumentCountFor(issuer)?.counted && (
+                              <Link
+                                href={localizeHref(`/stocks/${issuer.slug}`, locale)}
+                                className='mt-3.5 flex items-center gap-2 font-mono text-[11.5px] text-brand'
+                              >
+                                {t(
+                                  `All ${getInstrumentCount(issuer.slug)} instruments, with quotes`,
+                                  `全部 ${getInstrumentCount(issuer.slug)} 个标的及行情`,
+                                  `全 ${getInstrumentCount(issuer.slug)} 銘柄と価格`
+                                )}
+                                <span aria-hidden='true'>→</span>
+                              </Link>
+                            )}
+
                             {(tokensByIssuer.get(issuer.slug) ?? []).length > 0 && (
                               <div className='mt-3.5'>
-                                <div className='mono-label mb-1.5'>{t('Largest tokens', '主要代币', '主要トークン')}</div>
+                                <div className='mono-label mb-1.5'>
+                                  {t('Largest tokens', '主要代币', '主要トークン')}
+                                  <span className='ml-1.5 text-subtle'>
+                                    {t(`hand-collected · ${DATA_AS_OF}`, `人工整理 · ${DATA_AS_OF}`, `手集計 · ${DATA_AS_OF}`)}
+                                  </span>
+                                </div>
                                 <table className='w-full border-collapse border border-border text-[12px]'>
                                   <thead>
                                     <tr>

@@ -1,13 +1,22 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
-import { formatUsd as usd } from '@/lib/instrument-format';
+import { formatTurnover, formatUsd as usd } from '@/lib/instrument-format';
 import { articleHref, getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
 import StocksIssuers from './stocks-client';
+import InstrumentTable from '@/components/stocks/instrument-table';
+import {
+  QUOTES_AS_OF,
+  QUOTES_REPORTED_TOTAL,
+  QUOTES_SOURCE,
+  getBookTotals,
+  issuerSlugsWithInstruments,
+} from '@/data/instruments';
 import {
   AAPL_CASE_STUDY,
   ACTIVITY_DIVERGENCE,
   CONCENTRATION_READING,
   DATA_AS_OF,
+  ISSUERS,
   MARKET_SNAPSHOTS,
   REGULATORY_NOTES,
   UNDERLYING_CONCENTRATION,
@@ -40,6 +49,13 @@ export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
   const href = (url: string) => localizeHref(url, locale);
   const L = <T extends readonly [string, string, string]>(value: T) => pick(value, locale);
+
+  const book = getBookTotals();
+  // With one ingested issuer the table hides its issuer column, so the
+  // attribution has to be stated here instead of implied by the rows.
+  const ingestedNames = issuerSlugsWithInstruments()
+    .map((slug) => ISSUERS.find((issuer) => issuer.slug === slug)?.name ?? slug)
+    .join(' / ');
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -90,6 +106,64 @@ export async function renderPage(locale: Locale) {
       </section>
 
       <div className='mx-auto max-w-[1240px] px-4 sm:px-8'>
+
+        {/* ── 标的索引 ─────────────────────────────────────────── */}
+        {/* This page used to open with the wrapper explainer and reach the
+            instruments through one unstyled numeral in the issuer table. The
+            quotes move every second and the legal wrapper moves once a year, so
+            the table leads and the issuer attributes sit on the issuer page. */}
+        <section className='border-b border-border py-12'>
+          <div className='mb-5 flex flex-wrap items-baseline justify-between gap-3'>
+            <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Instruments', '标的', '銘柄')}</h2>
+            <span className='tnum font-mono text-[11.5px] text-subtle'>
+              {QUOTES_SOURCE} · {QUOTES_AS_OF}
+            </span>
+          </div>
+
+          <div className='mb-6 grid grid-cols-2 gap-px border border-border bg-border sm:grid-cols-5'>
+            {[
+              { label: t('Issuers', '发行方', '発行体'), value: String(book.issuerCount) },
+              { label: t('Instruments', '标的', '銘柄'), value: String(book.instrumentCount) },
+              { label: t('Combined market cap', '合计市值', '時価総額合計'), value: usd(book.marketCapUsd) },
+              { label: t('24h volume', '24h 成交', '24h 出来高'), value: usd(book.volume24hUsd) },
+              { label: t('Turnover', '换手', '回転率'), value: formatTurnover(book.turnover) },
+            ].map((metric) => (
+              <div key={metric.label} className='bg-background p-4'>
+                <div className='tnum font-mono text-[17px] font-medium'>{metric.value}</div>
+                <div className='mono-label mt-1'>{metric.label}</div>
+              </div>
+            ))}
+          </div>
+
+          <InstrumentTable />
+
+          <p className='mt-4 max-w-[760px] font-mono text-[11px] leading-[1.8] text-subtle'>
+            {/* reportedTotal belongs to the one issuer the snapshot was pulled
+                for, so the coverage clause only holds while that is the only
+                ingested issuer. It drops out rather than going quietly wrong. */}
+            {book.issuerCount === 1
+              ? t(
+                  `Covers ${ingestedNames} only — ${book.instrumentCount} of the ${QUOTES_REPORTED_TOTAL} instruments that issuer reports. `,
+                  `目前只覆盖 ${ingestedNames}，是该发行方已报告 ${QUOTES_REPORTED_TOTAL} 个标的中的 ${book.instrumentCount} 个。`,
+                  `現在は ${ingestedNames} のみ、同発行体が報告する ${QUOTES_REPORTED_TOTAL} 銘柄のうち ${book.instrumentCount} 銘柄です。`
+                )
+              : t(
+                  `Covers ${ingestedNames} — ${book.instrumentCount} instruments in all. `,
+                  `覆盖 ${ingestedNames}，共 ${book.instrumentCount} 个标的。`,
+                  `対象は ${ingestedNames}、合計 ${book.instrumentCount} 銘柄です。`
+                )}
+            {t(
+              'The other issuers below have no ingested instrument list, so their rows carry their own published figures and nothing to open. Market cap is price times circulating supply on the CMC definition; turnover is 24h volume over market cap, so a small market cap inflates it. The on-chain size on an issuer row comes from another source at another date and will not tie out against the total above.',
+              '下面其余发行方没有已摄入的标的清单，所以那些行显示的是它们自己公布的数字，点不开。市值为 CMC 口径的价格 × 流通量；换手为 24h 成交额 ÷ 市值，分母小的时候这个比值会被放大。发行方行上的「链上规模」来自另一个来源和时点，不会与上面的合计对平。',
+              '下の他の発行体は銘柄一覧を取り込んでいないため、各行は自社公表値であり開くページはありません。時価総額は CMC 基準の価格 × 流通量、回転率は 24h 出来高 ÷ 時価総額で、分母が小さいと大きく出ます。発行体行の「オンチェーン規模」は別の出所・別の時点であり、上の合計とは一致しません。'
+            )}
+          </p>
+        </section>
+
+        {/* ── 发行方 ───────────────────────────────────────────── */}
+        {/* Two views over one slot: by issuer, or inverted by venue. Switching
+            rather than stacking keeps the page from growing another section. */}
+        <StocksIssuers />
 
         {/* ── 市场规模 ─────────────────────────────────────────── */}
         <section className='border-b border-border py-12'>
@@ -170,11 +244,6 @@ export async function renderPage(locale: Locale) {
             ))}
           </div>
         </section>
-
-        {/* ── 发行方 ───────────────────────────────────────────── */}
-        {/* Two views over one slot: by issuer, or inverted by venue. Switching
-            rather than stacking keeps the page from growing another section. */}
-        <StocksIssuers />
 
         {/* The token ranking moved into the issuer rows, where each token sits
             under the issuer that minted it. What stays here is the concentration

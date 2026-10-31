@@ -179,3 +179,49 @@ test('an issuer with no venues stays out of the index', () => {
 test('buildExchangeIndex handles an empty roster', () => {
   assert.deepEqual(buildExchangeIndex([]), []);
 });
+
+// /stocks renders the quote snapshot for every ingested issuer and these
+// hand-collected rows for the rest. A ticker in both places puts two different
+// market caps for the same token on one page, which is how CRCLB read as both
+// $143.4M and $147.23M before the instrument table moved onto /stocks.
+test('hand-collected token rows never cover an ingested issuer', async () => {
+  const { issuerSlugsWithInstruments, getAllInstruments } = await import('./instruments.ts');
+  const ingested = new Set(issuerSlugsWithInstruments());
+  const tickers = new Set(getAllInstruments().map((instrument) => instrument.ticker));
+
+  for (const token of TOP_TOKENS) {
+    assert.ok(
+      !ingested.has(token.issuerSlug),
+      `${token.ticker} belongs to ${token.issuerSlug}, whose full list is rendered from the snapshot`
+    );
+    assert.ok(!tickers.has(token.ticker), `${token.ticker} is quoted in the snapshot and must not be duplicated here`);
+  }
+});
+
+test('the book totals are the sum of the ingested instruments', async () => {
+  const { getAllInstruments, getBookTotals, getQuote, issuerSlugsWithInstruments } = await import('./instruments.ts');
+  const book = getBookTotals();
+  const instruments = getAllInstruments();
+
+  assert.equal(book.instrumentCount, instruments.length);
+  assert.equal(book.issuerCount, issuerSlugsWithInstruments().length);
+
+  let marketCap = 0;
+  let volume = 0;
+  let quoted = 0;
+  for (const instrument of instruments) {
+    const quote = getQuote(instrument.ticker);
+    if (!quote) continue;
+    marketCap += quote.marketCapUsd;
+    volume += quote.volume24hUsd;
+    quoted += 1;
+  }
+  assert.equal(book.quotedCount, quoted);
+  assert.equal(book.marketCapUsd, marketCap);
+  assert.equal(book.volume24hUsd, volume);
+  assert.equal(book.turnover, volume / marketCap);
+  // Turnover is a ratio of a 24h flow to a stock, so it is not a percentage and
+  // can exceed 1. It must still be finite and positive for a live book.
+  assert.ok(book.turnover > 0 && Number.isFinite(book.turnover));
+  assert.ok(book.firstListedAt <= book.lastListedAt);
+});

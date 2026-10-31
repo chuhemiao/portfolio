@@ -555,21 +555,27 @@ export const ISSUERS: Issuer[] = [
   },
 ];
 
+/**
+ * Hand-collected rows for issuers with no ingested instrument list, dated
+ * DATA_AS_OF. The bStocks rows that used to sit here are gone: /stocks now
+ * renders that issuer's full list from the quote snapshot, and leaving both in
+ * showed two different market caps for CRCLB on one page. Anything added here
+ * must belong to an issuer that is absent from src/data/instruments/.
+ */
 export const TOP_TOKENS: TokenRow[] = [
   { ticker: 'STRCX', issuerSlug: 'xstocks', marketCapUsd: 158_900_000, volume24hUsd: 442_000, change7dPct: -0.4 },
-  { ticker: 'CRCLB', issuerSlug: 'bstocks', marketCapUsd: 143_400_000, volume24hUsd: 38_200_000, change7dPct: -4.7 },
-  { ticker: 'SPCXB', issuerSlug: 'bstocks', marketCapUsd: 120_900_000, volume24hUsd: 108_900_000, change7dPct: -12 },
   { ticker: 'MSTRX', issuerSlug: 'xstocks', marketCapUsd: 110_500_000, volume24hUsd: 3_300_000, change7dPct: -8.7 },
   { ticker: 'CRCLX', issuerSlug: 'xstocks', marketCapUsd: 93_200_000, volume24hUsd: 26_700_000, change7dPct: -4.0 },
   { ticker: 'CRCLON', issuerSlug: 'ondo', marketCapUsd: 92_400_000, volume24hUsd: 619_000, change7dPct: -4.6 },
   { ticker: 'TSLAX', issuerSlug: 'xstocks', marketCapUsd: 67_900_000, volume24hUsd: 8_800_000, change7dPct: -3.8 },
-  { ticker: 'SNDKB', issuerSlug: 'bstocks', marketCapUsd: 53_800_000, volume24hUsd: 48_300_000, change7dPct: -20 },
 ];
 
+// The old wording said SPCXB trades roughly its own market cap in a day. The
+// snapshot puts it at 0.458x, and SPCXB is no longer one of these rows anyway.
 export const TURNOVER_READING: L10n = [
-  'Turnover separates the issuers more sharply than size does. SPCXB trades roughly its own market cap in a day; STRCX and CRCLON barely move.',
-  '换手率比规模更能区分发行方。SPCXB 一天的成交额约等于自身市值，而 STRCX 和 CRCLON 几乎不动。',
-  '回転率は規模以上に発行体を分けます。SPCXB は一日で時価総額に近い出来高、STRCX と CRCLON はほとんど動きません。',
+  'Turnover separates these tokens more sharply than size does: it runs from 0.003x on STRCX to 0.286x on CRCLX, a hundredfold spread at market caps of the same order. Both ends are xStocks rows, so this is not a difference between issuers.',
+  '换手率比规模更能区分这几个标的：从 STRCX 的 0.003× 到 CRCLX 的 0.286×，规模同在一个量级，换手却相差上百倍。两头都是 xStocks 的标的，所以这不是发行方之间的差别。',
+  '回転率は規模以上にこれらの銘柄を分けます。STRCX の 0.003 倍から CRCLX の 0.286 倍まで、時価総額は同じ桁なのに百倍以上の開きがあります。両端はいずれも xStocks の銘柄であり、発行体間の差ではありません。',
 ];
 
 /** Case study, 2026-09-19 — older than the rest of this file, kept because the
