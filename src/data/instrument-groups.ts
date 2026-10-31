@@ -16,6 +16,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 1,
     issuerSlug: 'bstocks',
     tickers: ['SPCXB', 'CRCLB', 'GOOGLB', 'MSTRB', 'QQQB'],
+    label: ['Flagships', '旗舰', '旗艦'],
     title: ['Five flagships, five pricing anchors', '旗舰与五种定价锚', '旗艦5銘柄、5つの価格アンカー'],
     thesis: [
       'The five largest are 47.4% of all bStocks value and no two are priced the same way: SPCXB tracks a private valuation with no public quote, CRCLB a recently listed stock, GOOGLB a mega-cap, MSTRB a bitcoin treasury, QQQB an index fund. Ranked by how loose the anchor is, the range traded since listing opens up from 1.158x to 2.168x.',
@@ -33,6 +34,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 2,
     issuerSlug: 'bstocks',
     tickers: ['MUUB', 'SNXXB', 'INTWB', 'MVLLB', 'SKUUB'],
+    label: ['Single-stock 2x', '单票 2x', '個別株2倍'],
     title: ['The denominator trap', '分母陷阱', '分母の罠'],
     thesis: [
       'Turnover of 0.58x, 4.17x, 38.46x, 2.60x and 0.96x — and INTWB, the highest on the book, still did less volume than its own spot token INTCB ($55.54M against $67.90M). All five 2x tokens trade below their spot counterparts; they hold 11.3% of those tokens market cap and do 44.6% of their volume. The turnover is the denominator, not the trading.',
@@ -50,6 +52,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 3,
     issuerSlug: 'bstocks',
     tickers: ['SNDKB', 'MUB', 'SKHYB', 'DRAMB', 'WDCB'],
+    label: ['Memory', '存储芯片', 'メモリ'],
     title: ['The heaviest bet on the book', '内存超级周期', '最も厚く賭けられた一角'],
     thesis: [
       'SNDKB holds a $77.0M market cap against $97.8M of daily volume — 1.27x turnover — while DRAMB, an ETF over the same theme, turns over 0.19x. The single name is roughly seven times more liquid than the basket.',
@@ -62,6 +65,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 4,
     issuerSlug: 'bstocks',
     tickers: ['NVDAB', 'AVGOB', 'AMDB', 'TSMB', 'ARMB'],
+    label: ['Chip design & fabs', '芯片设计与代工', '半導体設計・製造'],
     title: ['Attention inside one sector', '半导体设计与制造', 'セクター内の関心の偏り'],
     thesis: [
       'Same sector, very different engagement: NVDAB turns over 0.89x, ARMB 0.77x, TSMB 0.32x. Two of the five are ADRs, which changes what the token is a claim on.',
@@ -74,6 +78,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 5,
     issuerSlug: 'bstocks',
     tickers: ['SOXLB', 'SOXSB', 'TQQQB', 'SQQQB', 'UVXYB'],
+    label: ['3x & volatility', '3x 与波动率', '3倍・ボラティリティ'],
     title: ['Both sides of the same bet', '方向性 3X 与波动率', '同じ賭けの両側'],
     thesis: [
       'Bull and bear 3X of the same index, listed together. Over 30 days SOXLB fell 51.9% while SOXSB rose 70.8%. These are directional instruments with a decay cost, not holdings.',
@@ -86,6 +91,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 6,
     issuerSlug: 'bstocks',
     tickers: ['BNCB', 'BMNRB', 'FWDIB', 'CYPHB', 'USDEB'],
+    label: ['Crypto treasuries', '加密财库股', '暗号資産保有企業'],
     title: ['An exchange tokenizing coin-holding companies', '加密财库股', '通貨保有企業をトークン化する取引所'],
     thesis: [
       'An exchange issuing tokens over companies whose main asset is crypto — including a BNB treasury company, BNCB, which listed on 2026-09-14 and is already the tenth largest instrument here. The conflict of interest needs stating outright.',
@@ -98,6 +104,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 7,
     issuerSlug: 'bstocks',
     tickers: ['AAPLB', 'MSFTB', 'AMZNB', 'METAB', 'TSLAB'],
+    label: ['Mag 7', '美股七巨头', 'マグニフィセント7'],
     title: ['The crypto channel does not want Apple', 'Mag7 的冷门一半', '暗号資産チャネルはAppleを求めていない'],
     thesis: [
       "TSLAB's $23.68M market cap is 12.7% larger than AAPLB ($5.45M), MSFTB ($4.37M), AMZNB ($3.73M) and METAB ($7.46M) combined. Preference in this channel does not resemble the public market's.",
@@ -110,6 +117,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 8,
     issuerSlug: 'bstocks',
     tickers: ['EWYB', 'KORUB', 'KSTRB', 'BABAB', 'PDDB'],
+    label: ['Asia exposure', '亚洲敞口', 'アジア関連'],
     title: ['Korea, bet on four times over', '亚洲敞口', '4回重ねて賭けられた韓国'],
     thesis: [
       'The Korea trade appears four times across the book: SKHYB on the single name, SKUUB at 2x, KORUB at 3X and EWYB on the broad index. KORUB is down 49.7% over 30 days.',
@@ -122,6 +130,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 9,
     issuerSlug: 'bstocks',
     tickers: ['AAOIB', 'LITEB', 'COHRB', 'CRDOB', 'MRVLB'],
+    label: ['Optics & interconnect', '光模块与互连', '光通信・インターコネクト'],
     title: ['The second layer of AI capex', '光模块与互联', 'AI設備投資の二次受益'],
     thesis: [
       'Optics and interconnect sit one step downstream of the accelerator buildout. Engagement splits sharply: AAOIB turns over 0.59x and CRDOB 2.92x, while COHRB sits at 0.14x.',
@@ -134,6 +143,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 10,
     issuerSlug: 'bstocks',
     tickers: ['CRWVB', 'NBISB', 'CBRSB', 'IRENB', 'SMCIB'],
+    label: ['Neoclouds & datacenters', 'Neocloud 与数据中心', 'ネオクラウド・データセンター'],
     title: ['When the data is wrong about the data', '新算力与数据中心', 'データ自体が間違っているとき'],
     thesis: [
       "NBISB's market cap is $12.8M, but the payload reports its fully diluted value as 0 because total supply is 0 — read the wrong field and the instrument vanishes. A group about compute capacity, and about trusting the figures.",
@@ -146,6 +156,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 11,
     issuerSlug: 'bstocks',
     tickers: ['GEVB', 'VSTB', 'FLNCB', 'BEB', 'USARB'],
+    label: ['Power & energy', '电力与能源', '電力・エネルギー'],
     title: ['Power and materials get no attention here', 'AI 的物理瓶颈', '電力と素材には関心が向かない'],
     thesis: [
       'The physical constraints on AI — generation, storage, rare earths. VSTB turns over 0.21x, sixth lowest of all 100 instruments, with GEVB just above it at 0.31x. This channel is not buying infrastructure.',
@@ -158,6 +169,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 12,
     issuerSlug: 'bstocks',
     tickers: ['QNTB', 'AGPUB', 'SHAZB', 'BOTB', 'SECZB'],
+    label: ['No public anchor', '无公开锚', '公開アンカーなし'],
     title: ['A tokenized stock with nothing to track', '没有公开锚的标的', '追う対象のないトークン化株式'],
     thesis: [
       'None of these five has an established public listing to price against, and for SECZB and BOTB CMC carries no underlying name at all — the name had to be read off the token itself. If there is no anchor, what is the price?',
@@ -170,6 +182,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 13,
     issuerSlug: 'bstocks',
     tickers: ['GMEB', 'AMCB', 'DJTB', 'HIMSB', 'GPROB'],
+    label: ['Retail narrative', '散户叙事股', '個人投資家の物語株'],
     title: ['Narrative stocks, after the narrative', '散户叙事股', '物語が終わったあとの物語株'],
     thesis: [
       'The names that trade on story rather than earnings. DJTB is down 38.1% over 30 days and 51.5% over 90; GMEB turns over 0.16x, near the bottom of the book.',
@@ -182,6 +195,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 14,
     issuerSlug: 'bstocks',
     tickers: ['INTCB', 'IBMB', 'NOKB', 'BBB', 'QCOMB'],
+    label: ['Legacy tech', '转型中的老科技', '転換期の老舗テック'],
     title: ['The most traded name in the top ten', '老牌科技的转型', '上位10銘柄で最も回転する銘柄'],
     thesis: [
       'INTCB turns over 1.75x — the highest among the ten largest instruments, ahead of SNDKB at 1.27x — while down 8.1% in a day and 47.6% over 30 days. Turnover here is exit, not interest.',
@@ -194,6 +208,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 15,
     issuerSlug: 'bstocks',
     tickers: ['SPYB', 'SMHB', 'ASMLB', 'AMATB', 'TMFB'],
+    label: ['Index & equipment', '宽基与设备', '指数・製造装置'],
     title: ['The quietest group on the book', '宽基与设备', '最も静かな一群'],
     thesis: [
       'Turnover runs from 0.13x (AMATB) to 1.09x (ASMLB), the lowest median of any group. Broad-market funds and equipment makers are held here, not traded.',
@@ -206,6 +221,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 16,
     issuerSlug: 'bstocks',
     tickers: ['ORCLB', 'CRMB', 'ADBEB', 'PLTRB', 'CRWDB'],
+    label: ['Software & SaaS', '软件与 SaaS', 'ソフトウェア・SaaS'],
     title: ['Enterprise software does not travel', '软件与 SaaS', 'エンタープライズソフトは越境しない'],
     thesis: [
       'CRMB does $91.8K of volume in a day against a $502K market cap. Enterprise software, the largest category in the public market, is close to the smallest here.',
@@ -218,6 +234,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 17,
     issuerSlug: 'bstocks',
     tickers: ['JPMB', 'GSB', 'PYPLB', 'HOODB', 'COINB'],
+    label: ['Financials & payments', '金融与支付', '金融・決済'],
     title: ['An exchange listing its own competitors', '金融与支付', '取引所が競合を上場させる'],
     thesis: [
       'COINB and HOODB are tokens over the two venues this issuer competes with, and they are the two largest in the group — COINB at $18.2M against JPMB at $500K. The bank stocks are an afterthought.',
@@ -230,6 +247,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 18,
     issuerSlug: 'bstocks',
     tickers: ['STXB', 'DELLB', 'PENGB', 'ALABB', 'GLWB'],
+    label: ['Storage & systems', '存储硬件与系统', 'ストレージ・システム'],
     title: ['One name an order of magnitude apart', '存储硬件与整机', '桁がひとつ違う1銘柄'],
     thesis: [
       'ALABB turns over 5.11x while the rest of the group sits between 1.21x and 2.71x. A $674K instrument doing $3.44M a day is a different thing from its neighbours.',
@@ -242,6 +260,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 19,
     issuerSlug: 'bstocks',
     tickers: ['RKLBB', 'ASTSB', 'AXTIB', 'APPB', 'RDDTB'],
+    label: ['Space & materials', '太空与材料', '宇宙・素材'],
     title: ['Small caps, borrowed liquidity', '太空与材料', '小型株と借り物の流動性'],
     thesis: [
       'RKLBB is the largest here at $9.15M and turns over 0.40x; RDDTB is the smallest at $0.46M and turns over 3.70x. The order in between is not clean — AXTIB at $3.01M runs 1.58x while the smaller ASTSB runs 0.97x — so size alone does not explain it.',
@@ -254,6 +273,7 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 20,
     issuerSlug: 'bstocks',
     tickers: ['LLYB', 'MRNAB', 'NFLXB', 'WENB', 'BRKBB'],
+    label: ['Pharma & consumer', '医药与消费', '医薬・消費'],
     title: ['Why is a pharma stock second-most traded?', '医药与消费', 'なぜ製薬株が回転率2位なのか'],
     thesis: [
       'MRNAB turns over 10.31x, second only to INTWB on the entire book, on a $2.30M market cap and up 9.96% over 7 days. BRKBB, in the same group, turns over 0.22x. The reason for the gap is unexplained.',

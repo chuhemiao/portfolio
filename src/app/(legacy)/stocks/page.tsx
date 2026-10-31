@@ -57,16 +57,25 @@ export async function renderPage(locale: Locale) {
     .map((slug) => ISSUERS.find((issuer) => issuer.slug === slug)?.name ?? slug)
     .join(' / ');
 
+  // Its own source and date, older than DATA_AS_OF, so the hero points at it
+  // rather than folding it into the hand-collected layer.
+  const CONCENTRATION_AS_OF = '2026-10-15';
+
+  // DATA_AS_OF dates the hand-collected layer only. The instrument table
+  // carries its own snapshot timestamp, half a month fresher, so the page
+  // states both rather than letting one stand for everything on it.
+  const quotesAsOfLabel = `${QUOTES_AS_OF.slice(0, 10)} ${QUOTES_AS_OF.slice(11, 16)} UTC`;
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
     name: 'Tokenized US equities tracker',
     description:
-      'Issuer-level and instrument-level attributes for tokenized US equities: legal wrapper, custody, proof of reserve, redemption terms and order-book depth.',
+      'Tokenized US equities: a priced table of every instrument we hold a quote for, plus each issuer legal wrapper, custody, proof of reserve, redemption terms and order-book depth.',
     url: `${DATA.url}${href('/stocks')}`,
     creator: { '@type': 'Person', name: DATA.name, url: DATA.url },
     inLanguage: locale,
-    temporalCoverage: DATA_AS_OF,
+    temporalCoverage: `${CONCENTRATION_AS_OF}/${QUOTES_AS_OF.slice(0, 10)}`,
   };
 
   return (
@@ -96,9 +105,9 @@ export async function renderPage(locale: Locale) {
             <div className='mono-label mb-2 text-brand'>{t('Data age', '数据时效', 'データの鮮度')}</div>
             <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>
               {t(
-                `Figures measured on or before ${DATA_AS_OF}, except the AAPL case study, which is dated separately. Depth, spread and market share move within days — read these as research snapshots, not live quotes.`,
-                `数字观测截止日为 ${DATA_AS_OF}，AAPL 案例另有标注日期。这个赛道的深度、价差和份额以天为单位变化，请当作研究快照而不是实时报价。`,
-                `数値は ${DATA_AS_OF} 時点（AAPL のケースは別途記載）。板の厚み・スプレッド・シェアは数日で変わるため、リアルタイムの気配ではなく調査スナップショットとして扱ってください。`
+                `The instrument table is a snapshot taken ${quotesAsOfLabel}; the issuer, market-size and top-token figures are hand-collected and dated ${DATA_AS_OF}; the concentration read and the AAPL case study each carry their own source and date. Depth, spread and market share move within days — read these as research snapshots, not live quotes.`,
+                `标的表是 ${quotesAsOfLabel} 的行情快照；发行方、市场规模和主要代币为 ${DATA_AS_OF} 人工整理；需求集中度和 AAPL 案例各自标注了来源与日期。这个赛道的深度、价差和份额以天为单位变化，请当作研究快照而不是实时报价。`,
+                `銘柄テーブルは ${quotesAsOfLabel} 時点のスナップショット、発行体・市場規模・主要トークンは ${DATA_AS_OF} 時点の手集計、需要の集中度と AAPL のケースはそれぞれ出典と日付を併記しています。板の厚み・スプレッド・シェアは数日で変わるため、リアルタイムの気配ではなく調査スナップショットとして扱ってください。`
               )}
             </p>
           </div>
@@ -251,7 +260,7 @@ export async function renderPage(locale: Locale) {
         <section className='border-b border-border py-12'>
           <div className='mb-2 flex flex-wrap items-baseline justify-between gap-3'>
             <h2 className='text-xl font-semibold tracking-[-0.015em]'>{t('Where the demand sits', '需求集中在哪', '需要の集中先')}</h2>
-            <span className='tnum font-mono text-[11.5px] text-subtle'>2026-10-15 · CoinGecko / Castle Labs</span>
+            <span className='tnum font-mono text-[11.5px] text-subtle'>{CONCENTRATION_AS_OF} · CoinGecko / Castle Labs</span>
           </div>
           <div className='mt-4 grid gap-px border border-border bg-border sm:grid-cols-3 lg:grid-cols-5'>
             {UNDERLYING_CONCENTRATION.map((item) => (

@@ -256,6 +256,9 @@ export type InstrumentGroup = {
   index: number;
   issuerSlug: string;
   tickers: string[];
+  /** Short sector name for a table cell or a filter. `title` is the article's
+   *  headline, which is a sentence, so it cannot do this job. */
+  label: L10n;
   title: L10n;
   thesis: L10n;
   /**

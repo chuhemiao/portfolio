@@ -49,7 +49,7 @@ test('groups are five instruments each, numbered without gaps', () => {
 
 test('every group ships all three locales', () => {
   for (const group of INSTRUMENT_GROUPS) {
-    for (const field of ['title', 'thesis']) {
+    for (const field of ['label', 'title', 'thesis']) {
       assert.equal(group[field].length, 3, `${group.slug}.${field}`);
       group[field].forEach((text, i) => {
         assert.ok(text.trim().length > 0, `${group.slug}.${field}[${i}] is empty`);
@@ -111,5 +111,21 @@ test('every instrument has a group, so an instrument page always has a next read
     const group = groupForTicker(ticker);
     assert.ok(group, `${ticker} has no group`);
     assert.equal(group.tickers.filter((t) => t !== ticker).length, 4);
+  }
+});
+
+// The sector column and its filter render `label`, not `title`: a headline like
+// "Why is a pharma stock second-most traded?" is a sentence, not a sector, and
+// two groups sharing a label would make the filter ambiguous.
+test('sector labels are short and unique within each locale', () => {
+  for (let i = 0; i < 3; i += 1) {
+    const seen = new Map();
+    for (const group of INSTRUMENT_GROUPS) {
+      const label = group.label[i];
+      assert.ok(label.length <= 28, `${group.slug} label[${i}] is ${label.length} chars, too long for a cell`);
+      assert.ok(!seen.has(label), `${group.slug} and ${seen.get(label)} share the label "${label}"`);
+      seen.set(label, group.slug);
+      assert.ok(!label.endsWith('?') && !label.endsWith('\uff1f'), `${group.slug} label[${i}] is a question, not a sector`);
+    }
   }
 });

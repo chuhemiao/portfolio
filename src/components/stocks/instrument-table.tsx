@@ -4,8 +4,9 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useI18n } from '@/components/locale-provider';
 import { getAllInstruments, getInstruments, getQuote, issuerSlugsWithInstruments } from '@/data/instruments';
+import { INSTRUMENT_GROUPS, groupForTicker } from '@/data/instrument-groups';
 import { ISSUERS, UNDERLYING_KIND_LABEL, pick, type UnderlyingKind } from '@/data/tokenized-equities';
-import { localizeHref } from '@/lib/i18n';
+import { articleHref, localizeHref } from '@/lib/i18n';
 import {
   MISSING,
   TURNOVER_TONE_CLASS,
@@ -50,6 +51,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
   const [sort, setSort] = useState<Sort>('marketCap');
   const [kind, setKind] = useState<UnderlyingKind | 'all'>('all');
   const [issuer, setIssuer] = useState<string>('all');
+  const [sector, setSector] = useState<string>('all');
 
   const scoped = issuerSlug !== undefined;
   const issuerSlugs = useMemo(() => (scoped ? [issuerSlug] : issuerSlugsWithInstruments()), [scoped, issuerSlug]);
@@ -69,7 +71,8 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
     const picked = instruments.filter(
       (instrument) =>
         (kind === 'all' || instrument.underlying.kind === kind) &&
-        (issuer === 'all' || instrument.issuerSlug === issuer)
+        (issuer === 'all' || instrument.issuerSlug === issuer) &&
+        (sector === 'all' || groupForTicker(instrument.ticker)?.slug === sector)
     );
     const value = (ticker: string, key: 'marketCapUsd' | 'volume24hUsd' | 'turnover') =>
       getQuote(ticker)?.[key];
@@ -87,7 +90,14 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
       if (bv === undefined) return -1;
       return bv - av || a.ticker.localeCompare(b.ticker);
     });
-  }, [instruments, issuer, kind, sort]);
+  }, [instruments, issuer, kind, sector, sort]);
+
+  // Only the sectors that actually have a row here, so an issuer page does not
+  // offer twenty filters that each return nothing.
+  const sectors = useMemo(() => {
+    const present = new Set(instruments.map((instrument) => groupForTicker(instrument.ticker)?.slug));
+    return INSTRUMENT_GROUPS.filter((group) => present.has(group.slug));
+  }, [instruments]);
 
   const chip = (active: boolean) =>
     `min-h-11 rounded-full border px-3.5 py-2 font-mono text-[11.5px] transition-colors ${
@@ -146,6 +156,27 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
           </div>
         </div>
 
+        {sectors.length > 1 && (
+          <div>
+            <div className='mono-label mb-2'>{t('Sector', '板块', 'セクター')}</div>
+            <select
+              value={sector}
+              onChange={(event) => setSector(event.target.value)}
+              aria-label={t('Filter by sector', '按板块筛选', 'セクターで絞り込む')}
+              className={`min-h-11 rounded-full border bg-background px-3.5 py-2 font-mono text-[11.5px] ${
+                sector === 'all' ? 'border-border text-subtle' : 'border-brand text-brand'
+              }`}
+            >
+              <option value='all'>{t('All sectors', '全部板块', 'すべて')}</option>
+              {sectors.map((group) => (
+                <option key={group.slug} value={group.slug}>
+                  {pick(group.label, locale)}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
         {showIssuer && (
           <div>
             <div className='mono-label mb-2'>{t('Issuer', '发行方', '発行体')}</div>
@@ -175,7 +206,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
       </div>
 
       <div className='overflow-x-auto border border-border'>
-        <table className={`w-full border-collapse text-[12.5px] ${showIssuer ? 'min-w-[960px]' : 'min-w-[820px]'}`}>
+        <table className={`w-full border-collapse text-[12.5px] ${showIssuer ? 'min-w-[1080px]' : 'min-w-[940px]'}`}>
           <caption className='sr-only'>
             {scoped
               ? t('Instruments issued by this issuer', '该发行方已发行的标的', 'この発行体が発行した銘柄')
@@ -196,6 +227,9 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
               </th>
               <th scope='col' className={TH}>
                 {t('Type', '类型', '種類')}
+              </th>
+              <th scope='col' className={TH}>
+                {t('Sector', '板块', 'セクター')}
               </th>
               <th scope='col' className={`${TH} text-right`}>
                 {t('Price', '价格', '価格')}
@@ -221,6 +255,10 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
             {rows.map((instrument) => {
               const quote = getQuote(instrument.ticker);
               const leverage = instrument.underlying.leverage;
+              const group = groupForTicker(instrument.ticker);
+              // Linked only once the group's article ships, so the cell never
+              // promises a page that returns a 404.
+              const articleSlug = group?.articleSlugs?.[locale];
               return (
                 <tr key={`${instrument.issuerSlug}/${instrument.ticker}`} className='border-b border-border last:border-0'>
                   <td className='px-3.5 py-2.5 font-mono text-[12px] font-medium'>
@@ -246,6 +284,15 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
                   <td className='px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground'>
                     {pick(UNDERLYING_KIND_LABEL[instrument.underlying.kind], locale)}
                     {leverage !== undefined && <span className='ml-1 text-subtle'>{leverage}x</span>}
+                  </td>
+                  <td className='px-3.5 py-2.5 font-mono text-[11px] text-muted-foreground'>
+                    {group === undefined ? (
+                      MISSING
+                    ) : articleSlug === undefined ? (
+                      pick(group.label, locale)
+                    ) : (
+                      <Link href={articleHref(articleSlug, locale)}>{pick(group.label, locale)}</Link>
+                    )}
                   </td>
                   <td className='tnum px-3.5 py-2.5 text-right font-mono text-[11.5px]'>
                     {formatPrice(quote?.priceUsd)}
@@ -274,7 +321,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
             })}
             {rows.length === 0 && (
               <tr>
-                <td colSpan={showIssuer ? 10 : 9} className='px-3.5 py-5 font-mono text-[11.5px] text-subtle'>
+                <td colSpan={showIssuer ? 11 : 10} className='px-3.5 py-5 font-mono text-[11.5px] text-subtle'>
                   {t('No instruments of this type', '没有这个类型的标的', 'この種類の銘柄はありません')}{' '}
                   {MISSING}
                 </td>
