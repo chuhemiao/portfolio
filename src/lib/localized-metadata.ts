@@ -53,8 +53,22 @@ const PAGE_COPY: Record<string, { title: [string, string, string]; description: 
   },
 };
 
+type PageCopy = { title: [string, string, string]; description: [string, string, string] };
+
 export function localizedPageMetadata(route: string, locale: Locale, base: Metadata = {}): Metadata {
-  const copy = PAGE_COPY[route] ?? PAGE_COPY['/topics'];
+  return build(route, locale, PAGE_COPY[route] ?? PAGE_COPY['/topics'], base);
+}
+
+/**
+ * For routes whose copy cannot live in PAGE_COPY because there is one per
+ * issuer or per instrument. Canonical and alternates still come from the route,
+ * so localizeHref has to recognise it.
+ */
+export function localizedDynamicMetadata(route: string, locale: Locale, copy: PageCopy, base: Metadata = {}): Metadata {
+  return build(route, locale, copy, base);
+}
+
+function build(route: string, locale: Locale, copy: PageCopy, base: Metadata): Metadata {
   const t = getTranslator(locale);
   const title = t(...copy.title);
   const description = t(...copy.description);

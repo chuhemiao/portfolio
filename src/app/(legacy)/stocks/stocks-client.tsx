@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment, useMemo, useState } from 'react';
+import Link from 'next/link';
 import { useI18n } from '@/components/locale-provider';
 import {
   DIVIDEND_LABEL,
@@ -21,6 +22,16 @@ import {
   type IssuanceModel,
   type Issuer,
 } from '@/data/tokenized-equities';
+import { instrumentCountFor } from '@/data/instruments';
+import { localizeHref } from '@/lib/i18n';
+import {
+  TURNOVER_TONE_CLASS,
+  changeToneClass,
+  formatChange,
+  formatTurnover,
+  formatUsd as usd,
+  turnoverTone,
+} from '@/lib/instrument-format';
 
 const TH =
   'border-b border-border-strong px-3.5 py-2.5 text-left font-mono text-[10px] font-normal uppercase tracking-[0.12em] text-subtle';
@@ -31,14 +42,6 @@ const GRADE_TONE: Record<Grade, string> = {
   C: 'border-border-strong text-muted-foreground',
   D: 'border-negative text-negative',
   unrated: 'border-border text-subtle',
-};
-
-const usd = (value?: number) => {
-  if (value === undefined) return '—';
-  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
-  return `$${value}`;
 };
 
 const CHAINS_SHOWN = 4;
@@ -128,11 +131,6 @@ export default function StocksIssuers() {
       tone: issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground',
     },
     { key: t('Jurisdiction', '司法管辖', '法域'), value: L(issuer.jurisdiction), tone: 'text-muted-foreground' },
-    {
-      key: t('Instruments', '标的数', '銘柄数'),
-      value: issuer.instrumentCount === undefined ? '—' : `${issuer.instrumentCount}+`,
-      tone: 'text-muted-foreground',
-    },
   ];
 
   return (
@@ -197,6 +195,7 @@ export default function StocksIssuers() {
                   <th className={TH}>{t('Issuer', '发行方', '発行体')}</th>
                   <th className={`${TH} hidden sm:table-cell`}>{t('Issuance', '发行模型', '発行モデル')}</th>
                   <th className={`${TH} text-right`}>{t('On-chain', '链上规模', 'オンチェーン')}</th>
+                  <th className={`${TH} text-right`}>{t('Instruments', '标的数', '銘柄数')}</th>
                   <th className={TH}>{t('Grade', '评级', '評価')}</th>
                 </tr>
               </thead>
@@ -228,6 +227,32 @@ export default function StocksIssuers() {
                         <td className='tnum border-b border-border px-3.5 py-2.5 text-right font-mono text-[12px]'>
                           {usd(issuer.onchainValueUsd)}
                         </td>
+                        <td className='tnum border-b border-border px-3.5 py-2.5 text-right font-mono text-[12px]'>
+                          {(() => {
+                            const count = instrumentCountFor(issuer);
+                            if (!count) return <span className='text-subtle'>—</span>;
+                            // Only a counted figure has a page behind it; the
+                            // rest are the issuer's own claim with nothing to open.
+                            if (!count.counted) {
+                              return (
+                                <span
+                                  className='text-muted-foreground'
+                                  title={t("the issuer's own figure", '发行方自己公布的数字', '発行体の公表値')}
+                                >
+                                  {count.value}
+                                </span>
+                              );
+                            }
+                            return (
+                              <Link
+                                href={localizeHref(`/stocks/${issuer.slug}`, locale)}
+                                title={t('counted from ingested instruments', '按已摄入的标的清单计数', '取り込んだ銘柄一覧から集計')}
+                              >
+                                {count.value} →
+                              </Link>
+                            );
+                          })()}
+                        </td>
                         <td className='border-b border-border px-3.5 py-2.5'>
                           <span className={`inline-block rounded-sm border px-2 py-0.5 font-mono text-[11px] ${GRADE_TONE[issuer.grade]}`}>
                             {L(GRADE_LABEL[issuer.grade])}
@@ -236,7 +261,7 @@ export default function StocksIssuers() {
                       </tr>
                       {expanded && (
                         <tr className='bg-surface-2'>
-                          <td colSpan={4} className='border-b border-border-strong border-l-2 border-l-brand px-4 pb-5 pt-1'>
+                          <td colSpan={5} className='border-b border-border-strong border-l-2 border-l-brand px-4 pb-5 pt-1'>
                             <dl className='mb-3.5 grid grid-cols-2 gap-3 sm:grid-cols-4'>
                               {detailFields(issuer).map((field) => (
                                 <div key={field.key}>
@@ -288,7 +313,7 @@ export default function StocksIssuers() {
                                   </thead>
                                   <tbody>
                                     {(tokensByIssuer.get(issuer.slug) ?? []).map((token) => {
-                                      const turnover = (token.volume24hUsd / token.marketCapUsd) * 100;
+                                      const turnover = token.volume24hUsd / token.marketCapUsd;
                                       return (
                                         <tr key={token.ticker} className='border-b border-border last:border-0'>
                                           <td className='px-3.5 py-2 font-mono text-[12px] font-medium'>{token.ticker}</td>
@@ -296,12 +321,13 @@ export default function StocksIssuers() {
                                           <td className='tnum px-3.5 py-2 text-right font-mono text-[11.5px] text-muted-foreground'>
                                             {usd(token.volume24hUsd)}
                                           </td>
-                                          <td className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${turnover > 50 ? 'text-brand' : 'text-subtle'}`}>
-                                            {turnover < 1 ? '<1%' : `${turnover.toFixed(0)}%`}
+                                          <td
+                                            className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${TURNOVER_TONE_CLASS[turnoverTone(turnover)]}`}
+                                          >
+                                            {formatTurnover(turnover)}
                                           </td>
-                                          <td className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${token.change7dPct >= 0 ? 'text-positive' : 'text-negative'}`}>
-                                            {token.change7dPct > 0 ? '+' : ''}
-                                            {token.change7dPct}%
+                                          <td className={`tnum px-3.5 py-2 text-right font-mono text-[11.5px] ${changeToneClass(token.change7dPct)}`}>
+                                            {formatChange(token.change7dPct)}
                                           </td>
                                         </tr>
                                       );

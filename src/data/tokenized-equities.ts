@@ -139,7 +139,12 @@ export type Issuer = {
   proofOfReserve: { kind: 'chainlink-por' | 'attestation' | 'none' | 'unknown' };
   usPersons: UsAccess;
   chains: string[];
-  instrumentCount?: number;
+  /**
+   * What the issuer or an aggregator publishes, not a count of anything we
+   * hold. Where src/data/instruments/ has ingested rows, that count wins —
+   * this field said 80 for bStocks while CMC listed 105.
+   */
+  reportedInstrumentCount?: number;
   onchainValueUsd?: number;
   issuanceModel: IssuanceModel;
   venues: Venue[];
@@ -203,6 +208,63 @@ export function buildExchangeIndex(issuers: readonly Issuer[]): ExchangeView[] {
 }
 
 export type TokenRow = { ticker: string; issuerSlug: string | null; marketCapUsd: number; volume24hUsd: number; change7dPct: number };
+
+/**
+ * The instrument layer, between issuer and venue. Metadata only: quotes live in
+ * a generated snapshot keyed by ticker, so refreshing prices never touches a
+ * reviewed file. `underlying.symbol` is null when there is no listed share to
+ * point at — a pre-IPO name, or a wrapper CMC has no ticker for.
+ */
+export type UnderlyingKind =
+  | 'common-stock'
+  | 'adr'
+  | 'etf'
+  | 'leveraged-etf'
+  | 'inverse-etf'
+  | 'pre-ipo'
+  | 'unknown';
+
+export const UNDERLYING_KIND_LABEL: Record<UnderlyingKind, L10n> = {
+  'common-stock': ['common stock', '普通股', '普通株'],
+  adr: ['ADR', 'ADR', 'ADR'],
+  etf: ['ETF', 'ETF', 'ETF'],
+  'leveraged-etf': ['leveraged ETF', '杠杆 ETF', 'レバレッジ ETF'],
+  'inverse-etf': ['inverse ETF', '反向 ETF', 'インバース ETF'],
+  'pre-ipo': ['pre-IPO', 'Pre-IPO', 'Pre-IPO'],
+  unknown: ['unknown', '未知', '不明'],
+};
+
+export type Instrument = {
+  ticker: string;
+  issuerSlug: string;
+  underlying: {
+    symbol: string | null;
+    name: string;
+    kind: UnderlyingKind;
+    leverage?: number;
+  };
+  listedAt: string;
+  chains: string[];
+  cmcId?: number;
+  cmcSlug?: string;
+  nameSource?: 'cmc' | 'derived';
+};
+
+/** Five instruments sharing one argument; the unit a research article covers. */
+export type InstrumentGroup = {
+  slug: string;
+  index: number;
+  issuerSlug: string;
+  tickers: string[];
+  title: L10n;
+  thesis: L10n;
+  /**
+   * Filled when the group's article ships. Per-locale slugs rather than a
+   * translationKey: article slugs carry their own language, and resolving a key
+   * would mean reading the blog index from a page that needs nothing else in it.
+   */
+  articleSlugs?: Record<Locale, string>;
+};
 
 export type MarketSnapshot = {
   date: string;
@@ -285,7 +347,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Ethereum', 'BNB Chain', 'Solana', 'HyperEVM'],
-    instrumentCount: 100,
+    reportedInstrumentCount: 100,
     onchainValueUsd: 984_000_000,
     issuanceModel: 'independent',
     venues: [{ name: 'LI.FI', kind: 'aggregator' }, { name: 'Jupiter', kind: 'dex' }],
@@ -308,15 +370,14 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'attestation' },
     usPersons: 'blocked',
     chains: ['BNB Chain'],
-    instrumentCount: 80,
     onchainValueUsd: 914_000_000,
     issuanceModel: 'exchange-self',
     venues: [{ name: 'Binance', kind: 'cex', operatedByIssuer: true }],
     grade: 'B',
     note: [
-      'Launched 2026-06-11 and already second by size. Highest turnover in the category — SPCXB trades roughly its own market cap in a day. Dividends take a 30% US withholding deduction before being reinvested through a multiplier. Single chain: BSC deposits only, so a wrong-network transfer loses the asset.',
-      '2026-06-11 上线，规模已居第二。换手率全场最高 —— SPCXB 一天成交额约等于自身市值。分红先扣 30% 美国预扣税，再按乘数复投。单链：只支持 BSC 充值，转错网络会丢失资产。',
-      '2026-06-11 開始で既に規模は二位。回転率は最高で、SPCXB は一日で時価総額に近い出来高。配当は米国源泉 30% を控除後、乗数で再投資。BSC のみ対応のため、誤ったネットワーク送金は資産を失います。',
+      'Launched 2026-06-11 and already second by size. The book turns over about 0.66x of its market cap a day, but the activity sits in the tail: the five largest turn 0.38x against 0.92x for the other 95. Dividends take a 30% US withholding deduction before being reinvested through a multiplier. Single chain: BSC deposits only, so a wrong-network transfer loses the asset.',
+      '2026-06-11 上线，规模已居第二。全盘日换手约 0.66×，但活跃度在尾部：最大的 5 个只有 0.38×，其余 95 个是 0.92×。分红先扣 30% 美国预扣税，再按乘数复投。单链：只支持 BSC 充值，转错网络会丢失资产。',
+      '2026-06-11 開始で既に規模は二位。全体の日次回転率は約 0.66 倍だが、活発なのはテール側で、上位5銘柄は 0.38 倍、残り95銘柄は 0.92 倍。配当は米国源泉 30% を控除後、乗数で再投資。BSC のみ対応のため、誤ったネットワーク送金は資産を失います。',
     ],
   },
   {
@@ -331,7 +392,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'chainlink-por' },
     usPersons: 'blocked',
     chains: ['Solana', 'Ethereum', 'Arbitrum', 'BNB Chain', 'TON', 'Tron', 'Mantle', 'Ink', 'Monad', 'Optimism', 'X Layer', 'Hyperliquid'],
-    instrumentCount: 100,
+    reportedInstrumentCount: 100,
     onchainValueUsd: 847_000_000,
     issuanceModel: 'independent',
     venues: [{ name: 'Kraken', kind: 'cex', operatedByIssuer: true }, { name: 'Bybit', kind: 'cex' }, { name: 'OKX', kind: 'cex' }],
@@ -354,7 +415,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Robinhood Chain'],
-    instrumentCount: 190,
+    reportedInstrumentCount: 190,
     onchainValueUsd: 151_000_000,
     issuanceModel: 'broker-self',
     venues: [{ name: 'Robinhood app', kind: 'broker-app', operatedByIssuer: true }],
@@ -397,7 +458,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'accredited',
     chains: ['Ethereum', 'Arbitrum', 'Avalanche', 'Base'],
-    instrumentCount: 724,
+    reportedInstrumentCount: 724,
     issuanceModel: 'independent',
     venues: [],
     grade: 'B',
@@ -439,7 +500,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Base'],
-    instrumentCount: 10,
+    reportedInstrumentCount: 10,
     onchainValueUsd: 7_500_000,
     issuanceModel: 'exchange-onchain',
     venues: [{ name: 'Uniswap', kind: 'dex' }, { name: 'Aerodrome', kind: 'dex' }, { name: 'Aave', kind: 'lending' }, { name: 'Morpho', kind: 'lending' }],
@@ -461,7 +522,7 @@ export const ISSUERS: Issuer[] = [
     proofOfReserve: { kind: 'unknown' },
     usPersons: 'blocked',
     chains: ['Arbitrum', 'Morph'],
-    instrumentCount: 36,
+    reportedInstrumentCount: 36,
     issuanceModel: 'exchange-self',
     venues: [{ name: 'Bitget', kind: 'cex', operatedByIssuer: true }],
     grade: 'C',

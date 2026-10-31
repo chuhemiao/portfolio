@@ -49,7 +49,10 @@ export function localizeHref(href: string, locale: Locale): string {
   const pathname = stripLocale(match[1]);
   // Article slugs carry their own language; resolve them through getPostHref.
   if (/^\/blog\/.+/.test(pathname)) return href;
-  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|thoughts|research|stocks|fear|fund|oscillator|pulse|stack|watch)\/?$/;
+  // stocks takes an issuer and an instrument below it; without those segments
+  // here a link to /stocks/bstocks/SPCXB would silently keep serving the
+  // unprefixed route, the way /blog/* does by design.
+  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|thoughts|research|stocks(?:\/[^/]+){0,2}|fear|fund|oscillator|pulse|stack|watch)\/?$/;
   if (pathname !== '/' && !routes.test(pathname)) return href;
   return `/${locale}${pathname === '/' ? '' : pathname}${match[2]}`;
 }

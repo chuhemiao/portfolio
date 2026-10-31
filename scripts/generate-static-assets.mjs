@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 
 import { LOCALES, articleHref, localizeHref } from '../src/lib/i18n.ts';
+import { instrumentRouteParams, issuerSlugsWithInstruments } from '../src/data/instruments.ts';
 import { loadTopics } from './lib/content/indexes.mjs';
 import { BLOG_INDEX_FILE, ROOT } from './lib/content/paths.mjs';
 
@@ -228,7 +229,14 @@ function buildSitemapShards(posts, topics) {
     '/pulse',
     '/topics',
     ...topics.map((topic) => `/topics/${topic.slug}`),
+    ...issuerSlugsWithInstruments().map((issuer) => `/stocks/${issuer}`),
   ];
+
+  // Instrument pages are reference data rather than reading, so they go in at a
+  // lower priority than the pages above and stay out of the feeds entirely.
+  const instrumentRoutes = instrumentRouteParams().map(
+    ({ issuer, ticker }) => `/stocks/${issuer}/${ticker}`
+  );
 
   const shards = [
     {
@@ -242,7 +250,15 @@ function buildSitemapShards(posts, topics) {
           changefreq: 'weekly',
           priority:
             route === '' ? '1.0' : route === '/research' || route === '/oscillator' ? '0.95' : '0.85',
-        })))
+        }))).concat(
+          instrumentRoutes.flatMap((route) => LOCALES.map((locale) => ({
+            loc: `${SITE.url}${localizeHref(route, locale)}`,
+            alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route, language)}`]),
+            lastmod: now,
+            changefreq: 'daily',
+            priority: '0.6',
+          })))
+        )
       ),
     },
   ];

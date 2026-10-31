@@ -1,0 +1,181 @@
+---
+title: 'The looser the anchor, the wider the range: what prices the five largest bStocks instruments'
+publishedAt: '2026-10-31'
+summary: 'The five largest bStocks instruments are 47.4% of the book by market cap and only 26.9% of it by volume. Rank them by what each price is anchored to and the range traded since listing opens up almost monotonically: an index ETF at 1.158x, a mega-cap at 1.383x, a recent listing at 1.815x, a bitcoin treasury at 2.162x, a private company with no public quote at 2.168x. The pattern does not survive contact with the rest of the book — SNDKB, listed the same day, is 2.432x, wider than the private company.'
+slug: 'bstocks-flagship-pricing-anchors-en'
+category: 'research'
+language: 'en'
+translationKey: 'bstocks-flagship-pricing-anchors'
+sourceSlug: 'bstocks-flagship-pricing-anchors'
+---
+
+## TL;DR
+
+**One issuer, one chain, one legal wrapper — and five completely different pricing anchors underneath. The looser the anchor, the wider the range the token has traded since listing.**
+
+- **The top five are 47.4% of market cap ($625.37M of $1,318.38M) and only 26.9% of volume.** They turn over at 0.3759x against 0.9212x for the other 95 — **the tail turns over 2.45 times faster than the head. Concentrated value is not concentrated attention.**
+- **Ranked by how tight the anchor is, range width (high ÷ low since listing) is almost monotone**: QQQB, an index ETF, `1.158x` → GOOGLB, a mega-cap, `1.383x` → CRCLB, a recent listing, `1.815x` → MSTRB, a bitcoin treasury, `2.162x` → SPCXB, a private company, `2.168x`.
+- **That is an ordering of these five, not a law.** SNDKB, listed the same day with the identical window, is `2.432x` — an ordinary common stock wider than the one with no public quote. **Sector volatility can beat anchor looseness.**
+- **The largest instrument on the book is the only one with no public price.** SPCXB carries a $173.96M market cap, 13.2% of the book and 9.1% of its volume; the underlying, SpaceX, is private, so **no exchange price exists to measure the token against**. The wrapper is an ADGM tracker certificate and reserves are covered by attestation, not an on-chain proof of reserve.
+- **GOOGLB is pinned to the bottom of its own range**: `1.5%` above its lowest price since listing, `3.8%` of the way up the range, down `20.66%` over 30 days — worst of the five and worse than the book median of `−16.71%`.
+- **This snapshot cannot produce a premium.** It carries no underlying reference price and no dividend-reinvestment multiplier, **so this piece publishes no premium or discount figure at all** — not an omission, an impossibility.
+
+---
+
+## 1. What these five are
+
+bStocks is Binance's in-house tokenized-equity issuer (BTech Holdings Limited, ADGM / FSRA listed certificates, BNB Chain only, traded on Binance only). CoinMarketCap reports 105 instruments; the snapshot behind this piece holds 100 of them, timestamped `2026-10-31T06:06:52Z`.
+
+Of those 100, only 7 have a market cap above $50M and 12 above $25M, while 61 sit below $5M and 33 below $1M, with a median of $2.39M. **The head and the tail are not the same order of magnitude**, which is why "the top five" is not an arbitrary cut.
+
+| Token | Underlying | Type | Listed | Price | Market cap | 24h volume | Turnover | 30d |
+|---|---|---|---|---:|---:|---:|---:|---:|
+| [**SPCXB**](/en/stocks/bstocks/SPCXB) | SpaceX | pre-IPO | 2026-06-11 | $136.98 | **$173.96M** | $79.66M | 0.458x | −9.77% |
+| [**CRCLB**](/en/stocks/bstocks/CRCLB) | Circle | common stock | 2026-06-11 | $73.12 | $147.23M | $47.99M | 0.326x | −12.26% |
+| [**GOOGLB**](/en/stocks/bstocks/GOOGLB) | Alphabet A | common stock | 2026-07-06 | $281.20 | $104.99M | $30.52M | 0.291x | **−20.66%** |
+| [**MSTRB**](/en/stocks/bstocks/MSTRB) | MicroStrategy | common stock | 2026-06-21 | $133.20 | $100.97M | $44.75M | 0.443x | −14.75% |
+| [**QQQB**](/en/stocks/bstocks/QQQB) | Invesco QQQ | ETF | 2026-07-02 | $694.13 | $98.22M | $32.12M | 0.327x | **−7.40%** |
+
+Together they hold $625.37M of the book's $1,318.38M — **47.4%**.
+
+**The biggest difference between them is not size, it is what the price is anchored to.** SPCXB's underlying is not listed. CRCLB's is a stock that listed recently. MSTRB's is a company whose assets are mostly bitcoin. GOOGLB is a large-cap technology stock. QQQB is an index fund. **Five entirely different pricing bases inside one wrapper.**
+
+## 2. The looser the anchor, the wider the range
+
+Each snapshot row carries the highest and lowest price the token has printed since listing. Dividing one by the other gives a range width — how much ground the token has covered in its own history.
+
+Ordered by the five anchors above, tightest first:
+
+| Token | Pricing anchor | High since listing | Low | Range width | From high | Position in range |
+|---|---|---:|---:|---:|---:|---:|
+| QQQB | index fund | $762.84 | $658.79 | **1.158x** | −9.0% | 34.0% |
+| GOOGLB | mega-cap | $383.45 | $277.18 | 1.383x | −26.7% | **3.8%** |
+| CRCLB | recent listing | $105.57 | $58.16 | 1.815x | −30.7% | 31.6% |
+| MSTRB | bitcoin treasury | $172.83 | $79.95 | 2.162x | −22.9% | **57.3%** |
+| SPCXB | no public quote | $229.18 | $105.69 | **2.168x** | **−40.2%** | 25.3% |
+
+**The ordering is monotone.** Anchored to an index fund that trades billions a day, the range is 1.158x. Anchored to a company with no public price, it is 2.168x. The three in between open up in the order of how easily the anchor can be independently verified.
+
+The mechanism is straightforward. **An underlying with a continuous public quote gives the token a reference point anyone can cite**: drift too far and an arbitrageur has a specific target to push it back toward. SPCXB's underlying has no exchange price, so **this token's price is set by one venue alone** — there is no outside quote to pull it back.
+
+## 3. The counter-example: SNDKB is wider than SPCXB
+
+The table above reads like a law. **It is not one.**
+
+Window length affects range width on its own — the longer a token has been listed, the more chances it has had to print an extreme. These five have windows of 142, 142, 132, 121 and 117 days, which are not equal. But window length does not explain the ordering: **SPCXB and CRCLB listed the same day (2026-06-11, both 142 days) and sit at 2.168x against 1.815x; QQQB and GOOGLB are four days apart (121 against 117) and sit at 1.158x against 1.383x.**
+
+The real counter-example is inside one listing cohort. Six instruments listed on 2026-06-11; laid out by width:
+
+| Token | Underlying | Type | Range width |
+|---|---|---|---:|
+| **SNDKB** | SanDisk | common stock | **2.432x** |
+| SPCXB | SpaceX | pre-IPO | 2.168x |
+| CRCLB | Circle | common stock | 1.815x |
+| MUB | Micron | common stock | 1.767x |
+| TSLAB | Tesla | common stock | 1.472x |
+| NVDAB | NVIDIA | common stock | 1.286x |
+
+**SNDKB is an ordinary common stock with a public quote that can be arbitraged at any time, on exactly the same window as SPCXB, and its range is wider.** Sector volatility can beat anchor looseness — which has to be said plainly, or the table in section 2 gets read as a law that does not exist.
+
+Widening the view to the whole book is only directional support. Among the 46 instruments listed for 100 days or more, median width by type:
+
+| Type | n | Median width |
+|---|---:|---:|
+| ETF | 4 | 1.350x |
+| ADR | 4 | 1.459x |
+| Common stock | 28 | 1.768x |
+| Leveraged ETF | 7 | **2.892x** |
+
+**The direction holds, but ETFs and ADRs have four samples each and those medians cannot carry a conclusion.** The leveraged-ETF row is wide for a mechanical reason — daily compounding of 2x exposure widens the range by construction, with nothing to do with how loose an anchor is.
+
+The narrow end needs the same discount. The narrowest width on the whole book is BRKBB at `1.031x`, listed for 12 days. **A freshly listed token must have a narrow range; the number carries no information.** Hence the 100-day cut above. Within those 46, the two narrowest are SPYB at `1.074x` and QQQB at `1.158x` — two broad-market index ETFs, consistent with section 2.
+
+## 4. 47.4% of market cap, 26.9% of volume
+
+Splitting the five from the other 95:
+
+| Group | Market cap | 24h volume | Turnover |
+|---|---:|---:|---:|
+| Top five | $625.37M (47.4%) | $235.05M (26.9%) | **0.3759x** |
+| Other 95 | $693.01M | $638.41M | **0.9212x** |
+| Whole book | $1,318.38M | $873.46M | 0.6625x |
+
+**The tail turns over 2.45 times faster than the head.** Nearly half the market cap sits in five instruments while volume is distributed far more evenly.
+
+Cut by listing month, the same thing is clearer:
+
+| Listing month | Instruments | Combined market cap | Turnover |
+|---|---:|---:|---:|
+| 2026-06 | 10 | **$689.03M** | 0.619x |
+| 2026-07 | 46 | $524.74M | 0.676x |
+| 2026-08 | 12 | $38.57M | 0.537x |
+| 2026-09 | 17 | $54.71M | 1.075x |
+| 2026-10 | 15 | $11.34M | **1.143x** |
+
+**The 10 earliest listings hold more than half the book's market cap; the 15 most recent hold $11.34M between them — and turn over at nearly twice the rate.** Newly listed instruments have almost no parked capital; their volume comes from moving through, not from holding.
+
+**One accounting trap to note here**: turnover is 24h volume divided by market cap. A small denominator inflates the ratio, so high turnover in the tail is first a consequence of a tiny market cap and only second a sign of activity. **Do not read it as the tail being more liquid** — an instrument with a $500K market cap turning over 1.5x has done $750K in absolute volume.
+
+## 5. SPCXB: the number one with no public price
+
+Across the 100 instruments the type mix is 67 common stocks, 10 leveraged ETFs, 8 unclassified, 6 ADRs, 6 ETFs and 2 inverse ETFs. **There is exactly one pre-IPO instrument, and it is the largest on the book.**
+
+Its figures: price $136.98, market cap $173.96M (**13.2% of the book**), 24h volume $79.66M (**9.1% of the book's volume**), 1,270,026 tokens in circulation, turnover 0.458x.
+
+And its structure:
+
+- **The underlying, SpaceX, is private.** No closing price, no intraday quote — **no public price exists for the token to be measured against**.
+- **The wrapper is a tracker certificate**, not equity. No voting rights; dividends take a 30% US withholding deduction and are then reinvested through a multiplier (see section 8).
+- **Reserves are covered by attestation, not an on-chain proof of reserve.** xStocks, the nearest comparable, uses Chainlink proof of reserve — updated daily or on a 10% move in reserves, verifiable on-chain. An attestation is not.
+- **Redemption requires KYC**, with a $5 minimum.
+- **US persons are blocked.**
+
+Put together: **the largest instrument on this book is a certificate referencing a private company's valuation, with reserves evidenced by an attestation, priced at a single venue.** That is a description of the structure, not an accusation — but it means no discussion of SPCXB's value can be expressed as a distance from its underlying.
+
+Its price behaviour matches the structure. **It is 40.2% below its highest print since listing, the deepest drawdown of the five**, while its 30-day move is only −9.77%, the shallowest of the five. **The high is long past, and the last month has been the steadiest of the group.** A price with no external reference moves more, and also follows outside news less — both facts come from the same cause.
+
+## 6. GOOGLB is pinned to the bottom of its own range
+
+The most structurally ordinary of the five has performed the worst.
+
+**GOOGLB is at $281.20 against a lowest-since-listing print of $277.18 — 1.5% above it.** That puts it `3.8%` of the way up its own range, the only one of the five sitting on the floor. MSTRB, by contrast, is at `57.3%` of its range after falling 14.75% in 30 days.
+
+**The reason is the width of the range itself**: MSTRB's range is $79.95–$172.83, a 2.16x span, so a 14.75% fall still leaves it in the upper middle. GOOGLB's is $277.18–$383.45, a span of only 1.38x, and **the same percentage decline inside a narrow range pushes the price straight to the bottom.**
+
+Which is why position in range has to be read together with range width. **On position alone GOOGLB looks like it has fallen to an extreme; on width alone it is the second steadiest of the five. Both readings are correct.**
+
+The rest of its numbers: 30 days `−20.66%` (worst of the five, and worse than the book median of `−16.71%`), 7 days `−12.46%`, and 24 hours `+0.04%` — **the only one of the five that was not down on the day.**
+
+One piece of background for calibration: **this is not a flagship story, it is a book-wide drawdown.** Of the 100 instruments, 82 are negative over 30 days, with a median of −16.71%. The five flagships run from −7.40% to −20.66%, a 13.3-point spread straddling that median — **they have not outperformed, they are simply distributed either side of the average.**
+
+## 7. This snapshot was taken on a Saturday
+
+The timestamp `2026-10-31T06:06:52Z` is a Saturday morning in UTC.
+
+The US cash market closed on Friday at 20:00 UTC and does not open again until Monday. **At the moment of this snapshot, four of these five instruments have no underlying reference — and the fifth, SPCXB, never has one.**
+
+This has already been quantified once on the same issuer: [one stock, four books](/en/blog/aapl-four-books-tokenized-equity-liquidity-en) laid AAPL's four tokenized versions side by side on a Saturday and concluded that **an off-hours quote is a market maker's opinion, not a market price**. That piece was about order-book structure and this one is about pricing bases, but the caveat transfers intact.
+
+So read the 24-hour moves here accordingly: the window (Friday 06:06 UTC to Saturday 06:06 UTC) **does contain a full US session on Friday**, so these are not purely off-hours prints; but the snapshot itself lands inside the closure, and **for the two-plus days until Monday's open, these token prices are the only prices these names have.**
+
+## 8. What this method cannot compute
+
+**First, no premium or discount.** The snapshot holds only the token's own price and **no reference price for the underlying**. More decisively, bStocks reinvests dividends through a multiplier after a 30% US withholding deduction — **without knowing the current multiplier, a token's unit price is not comparable to a share price at all**. No premium figure appears in this piece because none can be computed, not because one was overlooked.
+
+**Second, no tokens-per-share ratio.** The snapshot carries no conversion ratio. SPCXB's 1,270,026 circulating tokens cannot be converted into any claim size without it.
+
+**Third, range windows are not equal.** The five run 142/142/132/121/117 days, and the book is far less even (the shortest is 5 days). Book-wide comparisons here use only the 46 instruments listed 100 days or more, and even within those the windows differ by over a month.
+
+**Fourth, market cap is CMC's definition**: price times circulating supply. The book total of $1,318.38M used here is the sum of these 100 rows, while the bStocks row on [this site's /stocks page](/en/stocks) shows an on-chain size of $914M — **two figures from a different source and a different moment, which will not tie out.** This piece uses the former throughout and states the timestamp at every point.
+
+**Fifth, 100 of 105.** CMC reports 105 instruments; the snapshot holds 100. The missing five appear in no figure here.
+
+**Sixth, one chain.** All 100 live on BNB Chain only. There is no cross-chain liquidity fragmentation to worry about — **and no redundancy either**: the availability of that one chain is the availability of every instrument.
+
+---
+
+**Conclusion.** The five largest bStocks instruments hold nearly half the book's market cap, and the only things they genuinely share are a legal wrapper and a chain. **The pricing anchor loosens all the way from a broad index fund to a private company with no public quote, and the range traded since listing opens up with it, from 1.158x to 2.168x.**
+
+The ordering is monotone across these five, but **SNDKB, listed in the same cohort, breaks it at 2.432x** — so what travels is not "looser anchor, wider range" as a conclusion, but the habit of **asking what a token's price is anchored to and whether that thing can be independently verified, before reading any of its volatility numbers**. For SPCXB, the number one on this book, the answers are "a private company's valuation" and "it cannot".
+
+*Source CoinMarketCap, timestamped 2026-10-31T06:06:52Z, covering 100 of the 105 instruments bStocks reports. Instrument detail and quotes at [/stocks/bstocks](/en/stocks/bstocks). Research notes, not investment advice. DYOR.*

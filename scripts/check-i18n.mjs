@@ -14,7 +14,15 @@ import { BLOG_INDEX_FILE } from './lib/content/paths.mjs';
 const root = process.cwd();
 const index = JSON.parse(fs.readFileSync(BLOG_INDEX_FILE, 'utf8'));
 const { TOPICS } = await import('../src/data/topics.ts');
-const pages = ['', 'blog', 'research', 'topics', 'thoughts', 'watch', 'pulse', 'fear', 'fund', 'oscillator', 'stack', ...TOPICS.map((topic) => `topics/${topic.slug}`)];
+const { instrumentRouteParams, issuerSlugsWithInstruments } = await import('../src/data/instruments.ts');
+// /stocks was never in this list, which is why nothing caught that localizeHref
+// did not recognise routes below it.
+const pages = [
+  '', 'blog', 'research', 'topics', 'thoughts', 'watch', 'pulse', 'fear', 'fund', 'oscillator', 'stack', 'stocks',
+  ...TOPICS.map((topic) => `topics/${topic.slug}`),
+  ...issuerSlugsWithInstruments().map((issuer) => `stocks/${issuer}`),
+  ...instrumentRouteParams().map(({ issuer, ticker }) => `stocks/${issuer}/${ticker}`),
+];
 const site = 'https://kkdemian.com';
 
 function readRoute(route) {

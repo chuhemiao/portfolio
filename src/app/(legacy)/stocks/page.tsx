@@ -1,4 +1,5 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
+import { formatUsd as usd } from '@/lib/instrument-format';
 import { articleHref, getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { DATA } from '@/data/resume';
 import StocksIssuers from './stocks-client';
@@ -25,13 +26,6 @@ export const metadata: Metadata = localizedPageMetadata('/stocks', 'en', {
     'A tracker for tokenized US equities: legal wrapper, custody, proof of reserve, redemption, trading hours and real order-book depth — per issuer, per instrument.',
 });
 
-const usd = (value?: number) => {
-  if (value === undefined) return '—';
-  if (value >= 1_000_000_000) return `$${(value / 1_000_000_000).toFixed(2)}B`;
-  if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
-  if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
-  return `$${value}`;
-};
 
 // The case study lives as a research article now; its slug differs per locale.
 const CASE_STUDY_SLUG: Record<Locale, string> = {
