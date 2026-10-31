@@ -1,0 +1,220 @@
+---
+title: 'Not whether a public quote exists, but how far down the instrument is identified'
+publishedAt: '2026-10-31'
+summary: 'The first article used SPCXB to describe tracking a valuation with no public quote. These five go one layer down. Of the 100 instruments on the book, 8 carry a type that could not be established at ingest, and this group holds 5 of them; for BOTB and SECZB the name of the underlying was itself read back out of the token name — only 4 instruments on the book are both unclassified by type and named by inference, and this group holds 2. The price consequence, controlled for window: in four of the five listing batches the widest instrument is a member of this group, and three of those windows are under 40 days. SPCXB took 142 days to reach 2.168x; SHAZB reached 2.688x in 32. The exception is QNTB, listed 103 days, which ranks only 7th of the ten instruments listed with it.'
+slug: 'bstocks-no-public-anchor-en'
+category: 'research'
+language: 'en'
+translationKey: 'bstocks-no-public-anchor'
+sourceSlug: 'bstocks-no-public-anchor'
+---
+
+## TL;DR
+
+**"Does a public quote exist" is a yes-or-no question. What this data actually carries is a depth — an instrument can be identified or unidentified at three separate levels.**
+
+- **Of the 100 instruments, 8 carry a type recorded as unclassified**, meaning the listing status of the underlying company could not be established at ingest. **This group holds 5 of them** (the other 3 are CBRSB, CYPHB and USDEB).
+- **One level further down: the underlying names of BOTB and SECZB were read back out of the token names**, not supplied upstream. Six instruments on the book have a name obtained that way, **and only 4 of those are also unclassified by type** — BOTB, SECZB, CYPHB, USDEB. **This group holds 2.**
+- **The price consequence, controlled for window**: within their own listing batches, **four of the five are the widest instrument of that batch**, and the windows of AGPUB (39 days), SHAZB (32) and SECZB (24) are all under 40 days. **SPCXB in the first article took 142 days to reach `2.168x`; SHAZB reached `2.688x` in 32.**
+- **The counter-example is QNTB.** It is the longest-listed member at 103 days and `2.249x` wide, yet it ranks **only 7th of the ten instruments listed with it** — four leveraged ETFs, one plain common stock (AXTIB at `2.658x`) and CRWVB (`2.274x`) are all wider.
+- **This property predicts neither size nor attention.** SPCXB has no public quote either, carries a `$173.96M` market cap and is the largest instrument on the book; these five total `$7.17M`, **1/24th of SPCXB alone. The smallest instrument on the whole book is this group's BOTB at `$415.5K`.**
+- **The `−58.17%` 30-day decline on SHAZB is the third worst on the book and the worst of any unlevered instrument** — only INTWB and SNXXB, both 2x leveraged ETFs, did worse.
+- **This snapshot cannot produce a premium.** It carries no underlying reference price and no dividend-reinvestment multiplier, **so this piece publishes no premium or discount figure at all** — not an omission, an impossibility.
+
+---
+
+## 1. What these five are
+
+bStocks is Binance's in-house tokenized-equity issuer (BTech Holdings Limited, ADGM / FSRA listed certificates, BNB Chain only, traded on Binance only). CoinMarketCap reports 105 instruments; the snapshot behind this piece holds 100 of them, timestamped `2026-10-31T06:06:52Z`.
+
+What these five share is not an industry. It is that **none of them has a public quote that can be independently cited.**
+
+| Token | Underlying | Type | Listed | Days | Price | Market cap | 24h volume | Turnover | 7d | 30d |
+|---|---|---|---|---|---:|---:|---:|---:|---:|---:|
+| [**AGPUB**](/en/stocks/bstocks/AGPUB) | Axe Compute | unclassified | 2026-09-22 | 39 | $8.17 | **$4.26M** | $2.04M | **0.480x** | **+4.94%** | −30.70% |
+| [**SECZB**](/en/stocks/bstocks/SECZB) | Securitize | unclassified | 2026-10-07 | 24 | $7.54 | $1.24M | $1.82M | 1.462x | −3.11% | −38.92% |
+| [**QNTB**](/en/stocks/bstocks/QNTB) | Quantinuum | unclassified | 2026-07-20 | **103** | $33.88 | $726.9K | $1.94M | 2.675x | −6.63% | −30.51% |
+| [**SHAZB**](/en/stocks/bstocks/SHAZB) | SharonAI Holdings | unclassified | 2026-09-29 | 32 | $22.81 | $530.9K | $1.45M | **2.726x** | −0.09% | **−58.17%** |
+| [**BOTB**](/en/stocks/bstocks/BOTB) | RoboStrategy | unclassified | 2026-10-19 | **12** | $20.70 | **$415.5K** | $420.8K | 1.013x | −9.43% | −11.58% |
+
+Together they hold $7.17M of the book's $1,318.38M — **0.5%** — and $7.67M of its $873.46M of volume, **0.9%**. **The $415.5K on BOTB is the smallest market cap of all 100 instruments.**
+
+[The first article](/en/blog/bstocks-flagship-pricing-anchors-en) already handled one instance of this property: SPCXB, the largest instrument on the book, whose underlying SpaceX is private, so no exchange price exists to measure it against. **This piece does not repeat that observation. It goes one layer down, because "no public quote" is not a switch in this data.**
+
+## 2. No public anchor is not a switch, it is a depth
+
+This data records three things about each instrument: the **type** of the underlying (common stock / ADR / ETF / pre-IPO / unclassified), the **symbol** of the underlying, and the **name** of the underlying — plus whether that name came from upstream or was inferred.
+
+Those three can fail separately, so "unidentified" has levels:
+
+| Level | Count on book | Meaning | In this group |
+|---|---:|---|---:|
+| Symbol empty | 17 | No ticker recorded for the underlying | 5 |
+| Type unclassified | 8 | Listing status of the underlying not established at ingest | **5** |
+| Name inferred | 6 | Underlying name read out of the token name, not supplied upstream | 2 |
+| **Unclassified and inferred** | **4** | Neither how it trades nor its name is known for certain | **2** |
+
+**The first level is the shallowest, and it misleads.** Of the 17 with an empty symbol, 5 are the 2x leveraged tokens from [the second article](/en/blog/bstocks-single-stock-2x-etfs-en) — their underlyings are ETFs rather than stocks, so no stock symbol is correct; another is SKHYB, whose underlying SK Hynix is listed in Korea with no US ticker; another is SPCXB, whose underlying is private. **In the other direction, BNCB and FWDIB have their type recorded explicitly as common stock and still carry an empty symbol.** So "no symbol" neither implies nor denies an anchor.
+
+**The second level is what defines this group.** Type unclassified has a specific meaning: **at ingest it could be established neither that the underlying is a US common stock nor that it is private, so the field was left blank** rather than guessed. Eight on the book, five here, the other three being CBRSB (in [the neocloud group](/en/blog/bstocks-neoclouds-and-datacenters-en)), CYPHB and USDEB.
+
+**The third level is BOTB and SECZB.** Their underlying names were read back out of the token names. Six instruments on the book have a name obtained that way, but for two of the other four the inference is verifiable: **BRKBB resolves to Berkshire Hathaway, with the symbol `BRK.B` filled in by hand; SKUUB resolves to a GraniteShares 2x SK Hynix product.** Those two inferences landed on something that demonstrably exists.
+
+**The remaining 4 are both unclassified by type and named by inference** — BOTB, SECZB, CYPHB, USDEB, **and this group holds 2 of them.** For those two rows, everything this data provides is a token symbol, a name derived from that symbol, and a price series.
+
+**That is this piece advancing on the first one.** SPCXB has no public quote, but its type is settled (pre-IPO), its name came from upstream, and its underlying is a company everyone knows. **"No public quote" and "not even established what the underlying is" are not the same thing, and this data records them separately.**
+
+One detail worth noting in passing: **the underlying of SECZB is Securitize, a company in the business of tokenizing assets.** A tokenized certificate whose underlying is a tokenization company, and whose name was inferred from the token symbol. That is an observation, not a comment.
+
+## 3. Controlled for window: they are the widest in four batches
+
+Range width = highest price since listing ÷ lowest.
+
+| Token | Days | High since listing | Low | Range width | From high | In range |
+|---|---|---:|---:|---:|---:|---:|
+| **SHAZB** | 32 | $57.82 | $21.51 | **2.688x** | **−60.5%** | 3.6% |
+| QNTB | **103** | $72.35 | $32.17 | 2.249x | −53.2% | 4.2% |
+| SECZB | 24 | $15.29 | $7.31 | 2.092x | −50.7% | **2.9%** |
+| AGPUB | 39 | $14.42 | $7.41 | 1.945x | −43.4% | **10.7%** |
+| BOTB | **12** | $24.83 | $20.00 | **1.242x** | −16.6% | 14.6% |
+
+**The windows here run from 12 to 103 days, an 8.6-fold spread, so comparing the rows of that table directly is meaningless.**
+
+The comparison that works is each instrument against those **listed on the same day** — identical windows:
+
+| Token | Days | Range width | Instruments that day | Rank in batch | Second widest in batch |
+|---|---|---:|---:|---:|---|
+| SHAZB | 32 | **2.688x** | 5 | **1st** | FWDIB 1.419x |
+| SECZB | 24 | 2.092x | 4 | **1st** | USDEB 1.711x |
+| AGPUB | 39 | 1.945x | 3 | **1st** | CYPHB 1.835x |
+| BOTB | 12 | 1.242x | 5 | **1st** | KSTRB 1.224x |
+| **QNTB** | **103** | 2.249x | 10 | **7th** | — |
+
+**In four of five batches the widest instrument is a member of this group.**
+
+The force of that comparison is that it removes the window: **SHAZB and FWDIB listed the same day (2026-09-29) with identical 32-day windows, at `2.688x` against `1.419x` — 89% apart.** SECZB and USDEB listed the same day (2026-10-07) with identical 24-day windows, at `2.092x` against `1.711x`.
+
+**And the short window is working against them, not for them.** [The first article](/en/blog/bstocks-flagship-pricing-anchors-en) established that a longer listing gives more chances to print an extreme, so a narrow range on a newly listed instrument carries no information — the narrowest on the book, BRKBB at `1.031x`, has been listed only 12 days. **Against that premise, SHAZB covering `2.688x` in 32 days and SECZB `2.092x` in 24 is more notable, not less.** For reference, the `2.168x` on SPCXB took 142 days.
+
+**The `2.688x` on SHAZB is the eighth-widest of all 100** on a 32-day window — and five of the seven above it are leveraged or inverse ETFs.
+
+The 30-day declines point the same way:
+
+- **The `−58.17%` on SHAZB is the third worst on the book and the worst of any unlevered instrument.** Only INTWB (`−78.03%`) and SNXXB (`−61.18%`) did worse, both 2x leveraged ETFs.
+- SECZB `−38.92%`, AGPUB `−30.70%` and QNTB `−30.51%` are all worse than the book median of `−16.71%`.
+- BOTB at `−11.58%` looks better, but it has been listed 12 days — **that figure is its entire history and cannot be compared with anyone else's 30 days.** Its 24-hour change of `−12.21%` is the fourth worst on the book, behind INTWB `−22.62%`, SNXXB `−21.74%` and RDDTB `−12.81%`.
+
+In-range positions agree: **SHAZB sits `3.6%` up its own range, SECZB `2.9%` and QNTB `4.2%` — all three pinned to the bottom, while AGPUB at `10.7%` and BOTB at `14.6%` are the only two of the five any distance off it.**
+
+## 4. The counter-example: QNTB, and two same-property pairs
+
+The table in section 3 invites the reading "no public anchor, therefore widest." **It fails in two places.**
+
+**The first is QNTB, and it happens to be the one with the longest window.** Ten instruments listed on 2026-07-20:
+
+| Token | Type | Range width |
+|---|---|---:|
+| INTWB | leveraged ETF (2x) | **5.583x** |
+| SNXXB | leveraged ETF (2x) | 3.243x |
+| MVLLB | leveraged ETF (2x) | 3.075x |
+| KORUB | leveraged ETF (3x) | 2.669x |
+| AXTIB | **common stock** | **2.658x** |
+| CRWVB | common stock | 2.274x |
+| **QNTB** | **unclassified** | **2.249x** |
+| MUUB | leveraged ETF (2x) | 2.223x |
+| TQQQB | leveraged ETF (3x) | 1.512x |
+| ORCLB | common stock | 1.470x |
+
+**QNTB ranks 7th.** Four leveraged ETFs being wider is mechanical, but **AXTIB and CRWVB are two common stocks with public quotes that can be arbitraged at any time, over the identical 103-day window, and at `2.658x` and `2.274x` both beat it.**
+
+**And this is the only member of the group with a window past 100 days.** Put those two facts together and the conclusion in section 3 shrinks to this: **over short windows of 12 to 39 days, these unidentified instruments are the widest in their own batch; stretch the window to 103 days and ordinary common stocks catch up.** That is an observation about short windows, not a law about pricing anchors.
+
+**The second place is same-property pairs.** Two listing batches contain two unclassified instruments each, which is the cleanest control available — same day, same property:
+
+| Listed | Window | Token A | Width | Token B | Width | Apart |
+|---|---|---|---:|---|---:|---:|
+| 2026-09-22 | 39 days | **AGPUB** | 1.945x | [CYPHB](/en/stocks/bstocks/CYPHB) | 1.835x | 6% |
+| 2026-10-07 | 24 days | **SECZB** | 2.092x | [USDEB](/en/stocks/bstocks/USDEB) | 1.711x | **22%** |
+
+**Listed the same day, both unclassified, and the widths can differ by 6% or by 22%.** So the property does not pin a width value — at most it is a tendency. CYPHB and USDEB belong to a different group, not this one, but they share exactly the same identification depth as members here (type unclassified, name inferred).
+
+## 5. The property predicts neither size nor attention
+
+**The error most easily carried along is "instruments with no public anchor are unwanted."** This snapshot refutes it from both ends.
+
+Against SPCXB first:
+
+| | SPCXB | These 5 combined |
+|---|---:|---:|
+| Market cap | **$173.96M** | $7.17M |
+| Share of book market cap | 13.2% | 0.5% |
+| 24h volume | $79.66M | $7.67M |
+| Turnover | 0.458x | **1.0696x** |
+| Days listed | 142 | 12–103 |
+| Range width | 2.168x | 1.242x–2.688x |
+
+**One instrument, SPCXB, carries 24.3 times the combined market cap of this group, and it shares the no-public-quote property with them.** So size is not decided by the property — **the size of SPCXB comes from the name SpaceX, not from its pricing structure.**
+
+Then turnover:
+
+| Bucket | Market cap | 24h volume | Turnover |
+|---|---:|---:|---:|
+| These 5 | $7.17M (0.5%) | $7.67M (0.9%) | **1.0696x** |
+| Other 95 | $1,311.21M | $865.79M | **0.6603x** |
+| All 100 | $1,318.38M | $873.46M | 0.6625x |
+
+**This group turns over 1.62 times as fast as the other 95.** SHAZB at `2.726x` is the eighth-highest on the book, QNTB at `2.675x` the eleventh.
+
+**But the caliber warning has to come immediately.** Turnover = 24h volume ÷ market cap, and **a small denominator inflates the ratio mechanically**. SHAZB carries a $530.9K market cap and QNTB $726.9K, against a book median of $2.39M. **Their absolute volumes are $1.45M and $1.94M, ranking 69th and 56th on the book.** So this group is not actively traded; its float is thin.
+
+**Taken together, the property predicts neither size (SPCXB is 1st, BOTB is 100th) nor attention.** The only thing it predicts is what section 3 found: **over a short window, the price covers more ground.**
+
+## 6. Structure: all five share one wrapper
+
+- **The wrapper is a tracker certificate**, not equity. The issuing entity is BTech Holdings Limited, ADGM / FSRA listed certificates.
+- **No voting rights.**
+- **Dividends are passed through**: a 30% US withholding deduction first, then reinvestment through a multiplier (see section 8).
+- **Reserves are covered by attestation, not an on-chain proof of reserve.** Among comparable issuers xStocks uses Chainlink proof of reserve, which updates daily or on a 10% move in reserves and can be checked on-chain. An attestation cannot.
+- **Redemption requires KYC**, with a $5 minimum.
+- **US persons are blocked.**
+- **One chain.** BNB Chain only, BSC deposits only, so a wrong-network transfer loses the asset.
+
+This is a description of structure, not an allegation. But for this group it produces one combination that cannot be sidestepped: **reserves are backed by an attestation, while this data has not established in what form the underlying company trades — and for BOTB and SECZB, even the name was inferred from the token symbol.** The attestation is the issuer's and the identification fields are the ingest step, so the two do not contradict each other; **but for a reader, these five rows are the thinnest tier of verifiability on the book.** The certificates themselves may be entirely in order — this data cannot be used to judge that. It can only state what it does not know.
+
+## 7. The snapshot was taken on a Saturday
+
+The timestamp `2026-10-31T06:06:52Z` is a Saturday morning UTC. The US cash market closed Friday at 20:00 UTC and does not open again until Monday.
+
+The same issuer has already been measured on this point once: [one stock, four books](/en/blog/aapl-four-books-tokenized-equity-liquidity-en) laid the four tokenized versions of AAPL side by side on a Saturday and concluded that **a quote outside trading hours is a market maker opinion, not a market price**.
+
+**For this group, whether that even applies is itself uncertain.** In the other groups all underlyings are US-listed, so "the US market is closed" holds unambiguously. **Here the listing status could not be established at ingest — if an underlying really is private, the close adds no condition because the reference price never existed; if it is listed somewhere, this data has not recorded that venue's hours either.**
+
+The conclusion is the same under both readings but for different reasons: **for the two-plus days from here until Monday, these token prices are the only prices these names have** — and for these five, quite possibly at any hour.
+
+## 8. What this method cannot calculate
+
+**First, no premium or discount.** The snapshot carries only the token price and **no reference price for the underlying**. For this group that holds harder than for the others: **it has not even been established whether a public price for the underlying exists.** And the bStocks dividend mechanism takes a 30% US withholding deduction before reinvesting through a multiplier, so without the current multiplier the token unit price and any underlying share price are not comparable quantities. This piece publishes no premium figure.
+
+**Second, no shares per token.** The snapshot has no conversion ratio. The 23,273 SHAZB tokens in circulation cannot be converted into any number of shares without it.
+
+**Third, nothing about the underlying follows from "type unclassified."** The field means "could not be established at ingest." It does **not** mean private and does **not** mean nonexistent. This piece treats it throughout only as "this data does not know," never as a judgement about the company.
+
+**Fourth, the range-width windows are not equal length, and in this group that is severe.** This group runs 12 / 24 / 32 / 39 / 103 days, **an 8.6-fold spread**. Book-wide comparisons use only the 46 instruments listed 100 days or more — **only QNTB is among those 46, at 36th** — which is why all of section 3 uses same-day batches as window-controlled comparisons rather than book-wide ranks.
+
+**Fifth, market cap is the CMC definition**: price × circulating supply. The book total of $1,318.38M here is these 100 rows added up, while [the /stocks page on this site](/en/stocks) shows $914M of on-chain value for the bStocks row — **two figures from different sources at different moments, and they will not reconcile.** This piece uses the former throughout and timestamps it everywhere.
+
+**Sixth, 100 of 105.** CMC reports 105 instruments, the snapshot holds 100, and the missing 5 are in none of these statistics. **That matters more here: if any of the missing 5 is also unclassified, both the 8 and the 4 in section 2 grow.**
+
+**Seventh, turnover = 24h volume ÷ market cap.** Section 5 already shows the high turnover here comes first from a small denominator. **It cannot be read as this group having better liquidity.**
+
+---
+
+**Conclusion.** The first article concluded that a looser anchor means a wider range, and its loosest example, SPCXB, still had a settled type, a name supplied upstream, and an underlying company everyone knows. **These five go one layer down: their listing status could not be established at ingest (8 on the book, 5 here), and the names of BOTB and SECZB were read back out of the token symbols (only 4 instruments on the book satisfy both conditions, and 2 of them are here).**
+
+The price consequence is clearest controlled for window: **in four of five listing batches the widest instrument is a member of this group**, with SHAZB covering `2.688x` in 32 days — the eighth-widest range on the book — and SECZB `2.092x` in 24, against the 142 days SPCXB took to reach `2.168x`. The `−58.17%` on SHAZB over 30 days is the worst of any unlevered instrument on the book.
+
+**But it holds only over short windows.** QNTB, the only member listed a full 103 days, ranks 7th of ten in its batch, beaten by two common stocks with public quotes; and in the two batches that each contain two unclassified instruments, the widths differ by 6% and 22%. **The property does not pin a number.**
+
+What travels is an order of questioning. **Do not stop at "does this token have a public quote to measure against." Ask two more: has its type been established, and did its underlying name come from upstream or get inferred from the token symbol?** For these five rows the answer to the first is "not established," and for two of them the answer to the second is "inferred."
+
+*Data from CoinMarketCap, timestamped 2026-10-31T06:06:52Z, covering 100 of the 105 instruments bStocks reports. Instrument detail and quotes at [/stocks/bstocks](/en/stocks/bstocks). Research notes, not investment advice. DYOR.*
