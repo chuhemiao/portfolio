@@ -19,8 +19,9 @@ sourceSlug: 'onchain-card-gacha-revenue-not-gmv'
 - **Two protocols rank in the top five and appear in neither source report**: Gemint (BSC, $462,235 of 30-day net revenue) and Gacha TCG (Abstract, $442,244). The latter is the only protocol in the category with a large gap between fees and net revenue, keeping 24.3% of $1,816,221.
 - **Renaiss is not among the 21.** That is not a sampling choice — the same table tracks YourGrails at $6,261. So it genuinely cannot be compared on this basis, but its own index API is public and I pulled it day by day yesterday: turnover in its flagship Pokémon basket is down 58% over four weeks.
 - **"Up to 95% buyback" is a ceiling, not a guarantee.** The Monster site says "up to 95%" and explicitly states no time limits; the Courtyard page gives no buyback percentage or window at all. Treating a promotional boost or a top tier as the realised net recovery rate is the most common misreading in this category.
+- **The real gross margin is about 6%, and three independent routes agree.** The DeFiLlama aggregate across five platforms over 30 days is 6.09%; Pine Analytics puts Collector Crypt Q3 2026 at $433.5M of pack revenue against $25.4M of gross profit, or **5.9%** (Q1 6.1%, Q2 5.7%); the 4pillars cumulative measure is $635M against roughly $43M, or **6.7%**. But DeFiLlama deducts buybacks and not redemptions, so the 8.67% in section 3 is too high — see the addendum below.
 
-> How this was checked, and the limits. The timestamp is 2026-10-31. The category table, volumes, net revenue and daily series I pulled myself from the public DeFiLlama API (`api.llama.fi/summary/fees/<slug>?dataType=dailyRevenue` and `summary/dexs/<slug>`, queried for all 21 protocols one by one). **Fees and net revenue are two different series and mixing them breaks the ranking** — that is one disagreement with the source material, explained in section 2. Fee and buyback policies come from each site and its docs as they read today. The Renaiss figures come from my own work yesterday: the [deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en) and the [onchain check](/en/blog/renaiss-sells-pack-opening-not-collecting-en). **The July 2026 monthly set — daily actives, user concentration, team-buyback share — comes from Blockworks research that I did not independently verify**, and every use of it is marked. I did not fund a real pack pull, and I did not test a cross-border physical redemption.
+> How this was checked, and the limits. The timestamp is 2026-10-31. The category table, volumes, net revenue and daily series I pulled myself from the public DeFiLlama API (`api.llama.fi/summary/fees/<slug>?dataType=dailyRevenue` and `summary/dexs/<slug>`, queried for all 21 protocols one by one). **Fees and net revenue are two different series and mixing them breaks the ranking** — that is one disagreement with the source material, explained in section 2. Fee and buyback policies come from each site and its docs as they read today. The Renaiss figures come from my own work yesterday: the [deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en) and the [onchain check](/en/blog/renaiss-sells-pack-opening-not-collecting-en). **The July 2026 monthly set — daily actives, user concentration, team-buyback share — comes from Blockworks research that I did not independently verify**, and every use of it is marked. I did not fund a real pack pull, and I did not test a cross-border physical redemption. **On the evening of publication I added an addendum** (after section 3): the DeFiLlama `revenue` series deducts buybacks but not redemptions, and the definitions differ from protocol to protocol. The Pine Analytics and 4pillars figures cited there are likewise not independently verified by me; I only checked whether they reconcile with the series I pulled myself.
 
 ## 1. Retire turnover as a metric first
 
@@ -113,6 +114,38 @@ Several things deserve naming.
 
 **The Beezie retention rate (3.47%) beats Courtyard, but at an order of magnitude less scale**, and Blockworks records that roughly 85.5% of its July 2026 marketplace volume came from the team buying back its own inventory (not independently verified). Under that structure, a retention rate reflects pricing power rather than organic demand.
 
+**The figures in this table are not all on the same accounting basis.** I established that after publishing, by reading the DeFiLlama methodology text for each protocol. It does not change the ordering, the concentration or the negative-day counts above, but it does change what the retention rate means as an absolute number. The next section covers it.
+
+## Addendum (evening of 2026-10-31): these "net revenue" figures are not the same thing
+
+After publishing I read the DeFiLlama methodology text for each protocol line by line and found three definitional problems. They do not change the ordering, the concentration or the negative-day counts in sections 2 and 3, but they do change what the retention rate means as an absolute number.
+
+**First, it deducts buybacks but not redemptions.** The Collector Crypt methodology reads "net of gacha pack buybacks" and never mentions physical redemption. Pine Analytics deducts both for that platform in Q3 2026: $433.5M of pack revenue, $408.1M of buybacks and redemptions (**94.1%**), leaving **$25.4M of gross profit, a 5.9% margin**. The DeFiLlama protocol revenue for the same quarter is $34.75M, or 8.0%.
+
+```text
+DeFiLlama Q3 protocol revenue   34,750,000   (8.0% of 433.5M)
+Pine gross profit, Q3           25,400,000   (5.9% of 433.5M)
+difference                       9,350,000   ≈ 37% overstatement
+```
+
+So the 8.67% in section 3 is a figure **before redemptions**. On the Pine measure the real gross margin for the same company sits around 5.9%, and the quarterly series — 6.1%, 5.7%, 5.9% — is remarkably stable, which argues that the take is structural rather than a single quarter's noise.
+
+**Second, the Beezie basis is different in kind.** Its methodology states plainly that "Trade volume itself is not counted — only Beezie's cut". That $474,100 is **6% commission revenue**, not pack spend less buybacks. So the Beezie 3.47% and the Monster 1.17% in section 3 are not the same quantity: the first is a commission rate, the second is what survives of pack spend after buybacks. **That row should not be compared across the table.**
+
+**Third, the Collector Crypt figure mixes in DeFi income.** Subtracting `dailyUserFees` from `dailyFees` separates it out:
+
+| Series | 30 days | What it is |
+| --- | --- | --- |
+| `dailyFees` / `dailyRevenue` | 18,592,284 | includes LP fees |
+| `dailyUserFees` | 18,243,550 | the card business itself, net of buybacks |
+| difference = CARDS/USDC pool LP fees | **348,734** | 1.9%, nothing to do with cards |
+| `dailyHoldersRevenue` | 392,220 | CARDS bought with revenue and burned |
+| `dailyProtocolRevenue` | 18,200,066 | kept by the protocol after the token buyback |
+
+**An independent cross-check.** The 4pillars research finds that of $635M in cumulative card value at Collector Crypt, only $18.5M was ever redeemed for physical cards — "just 2.9%" in their words — with the remaining 97% sold back to the protocol, "mostly within seconds". That is the same order of magnitude as the 2%–4% I derived from the Renaiss contract yesterday, on a different platform by a different method from different data. The title of that research is "Collector Crypt has no collectors".
+
+**What still cannot be found.** Even the Pine $25.4M is gross profit, not net. None of these platforms publishes card procurement cost, grading fees, vaulting and insurance, fulfilment logistics, payment processing or headcount, and 4pillars states explicitly that its report gives no gross profit, operating cost or card acquisition figures. Courtyard is private; third-party estimates of its annual revenue run from $10M–$25M in one place to $1M in another, a 25x spread, which makes them unusable. So the conclusion of this piece stands: **an absolute "real revenue" figure exists for exactly one platform in this category, because one third party computed it. Everything else has to be compared on relative measures — negative-day counts, concentration, and the direction of the retention rate.**
+
 ## 4. The six platforms are really three different businesses
 
 Classifying them by what the user actually buys explains more than sorting them by chain or by turnover.
@@ -163,6 +196,8 @@ But its own data API is public and I pulled it day by day yesterday. The quantit
 - **On the contract side**: a BEP-721 on BSC whose `totalSupply()` returns 18,439, with a populated ERC-1967 implementation slot (the UUPS shape), and a 2% marketplace fee.
 
 A definitional caveat: those turnover figures are **card-market trades**, not Renaiss gacha GMV, and cannot be placed beside the table in section 3. I include them to make one point — this platform has no third-party protocol-revenue tracking, yet it is the only one of the six publishing a price index and a daily trade series, so **its market-side transparency is actually the highest of the group; what is missing is its own operating data.**
+
+One independent cross-check in passing: the 4pillars research on Collector Crypt finds that of $635M in cumulative card value only 2.9% was ever redeemed for physical cards, with the other 97% sold back to the protocol. The keep rate I derived from the Renaiss contract yesterday was 2%–4%. Different platform, different method, same order of magnitude — **which says that "almost nobody wants the card" is not a Renaiss trait but the normal condition of this business.**
 
 It also restricts a number of regions today, including mainland China, Hong Kong, the United States and the United Kingdom. For anything aimed at Asian users that constraint sits ahead of API quality.
 
