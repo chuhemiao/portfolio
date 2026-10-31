@@ -1,0 +1,235 @@
+---
+title: 'Onchain card gacha platforms: one protocol takes 80% of the category revenue, four are underwater'
+publishedAt: '2026-10-31'
+summary: 'Twenty-one protocols that turn graded physical cards into RWA gacha products are now publicly tracked, but 80.2% of the 30-day net revenue goes to Collector Crypt alone, the top two together take 90.0%, and four sit at or below zero. The reason rankings by turnover mislead is recycling: of the $350.8M in 30-day volume across the five tracked platforms, 93.91% flows back to users as buybacks, so on a geometric series one dollar of outside money supports $16.4 of turnover. What separates the businesses is net revenue after buybacks and how many days of the last thirty were negative — zero for Courtyard and Collector Crypt, twelve for Phygitals.'
+slug: 'onchain-card-gacha-revenue-not-gmv-en'
+category: 'research'
+language: 'en'
+translationKey: 'onchain-card-gacha-revenue-not-gmv'
+sourceSlug: 'onchain-card-gacha-revenue-not-gmv'
+---
+
+## TL;DR
+
+- **Turnover is close to meaningless in this category.** The five tracked platforms did $350.8M of 30-day volume and kept $21.4M after buybacks — a **retention rate of 6.09%**. So 93.91% of the money went back to users, and money paid back out can buy another pack. On a geometric series, at that ratio one dollar of outside money supports **$16.4** of cumulative turnover.
+- **The category is one protocol plus a long tail.** Of the 21 publicly tracked protocols, Collector Crypt takes 80.2% of 30-day net revenue, the top two (with Courtyard) take 90.0%, and the remaining 19 split 10.0%.
+- **Four are at or below zero.** Phygitals shows **−$6,089** of 30-day net revenue and Pull.fun −$21,170, with two more at zero. One of the two source reports puts Phygitals at +$2.14K; the sign is wrong, not just the magnitude.
+- **What actually separates a good business here is how many days were negative.** Collector Crypt and Courtyard had **no negative days at all** in the last thirty, with Courtyard sitting steadily between $55.7K and $86K a day. Phygitals had **12** (worst −$99,725) and Monster **9** (worst −$34,714).
+- **A low retention rate has two opposite causes** and cannot be read on its own. The Courtyard 2.28% is because it charges nothing on ordinary trades — its own page lists buyer fees as None and seller fees as None. The Phygitals −0.03% is because buybacks exceeded pack sales. Negative-day counts are what tell them apart.
+- **Two protocols rank in the top five and appear in neither source report**: Gemint (BSC, $462,235 of 30-day net revenue) and Gacha TCG (Abstract, $442,244). The latter is the only protocol in the category with a large gap between fees and net revenue, keeping 24.3% of $1,816,221.
+- **Renaiss is not among the 21.** That is not a sampling choice — the same table tracks YourGrails at $6,261. So it genuinely cannot be compared on this basis, but its own index API is public and I pulled it day by day yesterday: turnover in its flagship Pokémon basket is down 58% over four weeks.
+- **"Up to 95% buyback" is a ceiling, not a guarantee.** The Monster site says "up to 95%" and explicitly states no time limits; the Courtyard page gives no buyback percentage or window at all. Treating a promotional boost or a top tier as the realised net recovery rate is the most common misreading in this category.
+
+> How this was checked, and the limits. The timestamp is 2026-10-31. The category table, volumes, net revenue and daily series I pulled myself from the public DeFiLlama API (`api.llama.fi/summary/fees/<slug>?dataType=dailyRevenue` and `summary/dexs/<slug>`, queried for all 21 protocols one by one). **Fees and net revenue are two different series and mixing them breaks the ranking** — that is one disagreement with the source material, explained in section 2. Fee and buyback policies come from each site and its docs as they read today. The Renaiss figures come from my own work yesterday: the [deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en) and the [onchain check](/en/blog/renaiss-sells-pack-opening-not-collecting-en). **The July 2026 monthly set — daily actives, user concentration, team-buyback share — comes from Blockworks research that I did not independently verify**, and every use of it is marked. I did not fund a real pack pull, and I did not test a cross-border physical redemption.
+
+## 1. Retire turnover as a metric first
+
+Both source reports rank platforms by turnover, which is the easiest way to reach a wrong conclusion in this category. The reason is the buyback.
+
+Every gacha platform offers to buy a pulled card back at some percentage. The user takes the cash, and that cash frequently becomes the next pack immediately. So the same outside dollar is counted into turnover again and again.
+
+With a buyback ratio `b` and net outside deposits `D`, in the limiting case where everything recovered is reinvested:
+
+```text
+cumulative turnover = D × (1 + b + b² + b³ + …) = D / (1 - b)
+```
+
+Substituting the measured values. The five tracked platforms did $350,795,579 of 30-day volume and kept $21,373,055, so:
+
+```text
+b = 1 − 21,373,055 / 350,795,579 = 93.91%
+multiplier = 1 / (1 − 0.9391) = 16.4x
+```
+
+| Buyback ratio | Turnover supported per dollar of outside money |
+| --- | --- |
+| 85% | 6.7x |
+| 90% | 10.0x |
+| 93.91% (measured for this category) | **16.4x** |
+| 95% | 20.0x |
+| 97.9% | **47.6x** |
+
+That last row is not hypothetical. Blockworks research on July 2026 records a Monster buyback ratio of 97.9% that month, with $14.5M of turnover corresponding to roughly $304K of revenue after buybacks (figures I did not independently verify). At a 47.6x multiplier, "$14.5M of monthly turnover" carries almost no information about the size of the business.
+
+So every comparison below uses two measures instead: **net revenue after buybacks**, and **how many days of its daily series were negative**.
+
+## 2. The real shape of the category: 21 protocols, one takes 80%
+
+One source report listed four platforms and the other six. The number publicly tracked is **21**. Ranked by 30-day net revenue as of 2026-10-31:
+
+| Protocol | 30-day net revenue | Main chains |
+| --- | --- | --- |
+| Collector Crypt | **18,592,284** | Solana, Base, Robinhood Chain |
+| Courtyard | **2,278,855** | Polygon |
+| Beezie | 474,100 | Base, Flow, Solana |
+| Gemint | 462,235 | BSC |
+| Gacha TCG | 442,244 | Abstract |
+| PumpBox | 253,662 | Base, Robinhood Chain |
+| CARDZ.GAME | 236,170 | Sui |
+| Top.Market | 220,643 | Base |
+| DYLI | 143,534 | Abstract, Base |
+| Monster | 33,905 | MegaETH, off-chain |
+| Raflux | 32,770 | Base, Solana |
+| Shiny | 13,115 | Abstract, Base, Solana |
+| Rankz | 13,007 | Robinhood Chain |
+| Ready Cards | 9,574 | Solana |
+| YourGrails | 6,261 | Avalanche |
+| Chapool / NextRare / Emporium / Collex | 0 | opBNB / MegaETH / Solana / Aptos |
+| Phygitals | **−6,089** | Solana |
+| Pull.fun | **−21,170** | off-chain |
+| **Category total** | **23,185,100** | |
+
+Concentration:
+
+- Collector Crypt alone takes **80.2%**;
+- with Courtyard, the top two take **90.0%**;
+- the remaining 19 split $2.31M, or **10.0%**;
+- **four are at or below zero.**
+
+**One methodological point that has to be stated.** DeFiLlama publishes both a `dailyFees` and a `dailyRevenue` series per protocol. For most they are equal, but not for all. Gacha TCG shows $1,816,221 of 30-day fees against $442,244 of net revenue (24.3% retained), Top.Market $270,717 against $220,643 (81.5%), and Rankz $19,489 against $13,007 (66.7%). Ranked by `fees`, Gacha TCG comes third; ranked by `revenue` it is fifth. Everything here uses `revenue`, because that is the figure net of buybacks.
+
+One source report puts the Phygitals 30-day revenue at "$2.14K". The actual value is **−$6,089**, with −$35,363 over 7 days and +$2,023 over 24 hours. The sign is inverted, not merely the magnitude.
+
+## 3. After buybacks, how many days were negative
+
+This is the table with the most discriminating power. Volume, net revenue, retention rate, and the number of days in the last 30 whose net revenue was negative:
+
+| Platform | 30-day volume | 30-day net revenue | Retention | Negative days | Worst single day |
+| --- | --- | --- | --- | --- | --- |
+| Collector Crypt | 214,418,479 | 18,592,284 | **8.67%** | **0** | +194,645 |
+| Courtyard | 100,155,422 | 2,278,855 | 2.28% | **0** | +55,663 |
+| Phygitals | 19,687,258 | −6,089 | **−0.03%** | **12** | −99,725 |
+| Beezie | 13,644,027 | 474,100 | 3.47% | 0 | +3,766 |
+| Monster | 2,890,393 | 33,905 | 1.17% | **9** | −34,714 |
+| Total | 350,795,579 | 21,373,055 | 6.09% | | |
+
+Several things deserve naming.
+
+**Courtyard daily revenue is remarkably flat.** The last ten days run between $66,000 and $86,000, and the worst day in thirty is still +$55,663. This is not a business driven by campaign pulses.
+
+**The Collector Crypt retention rate is 3.8x the second place.** 8.67% against 2.28%. But that does **not** mean its secondary market is 3.8x stronger than Courtyard — the two have different revenue structures, which is the next point.
+
+**A low retention rate has two opposite explanations, and negative-day counts are what separate them.** The Courtyard page states buyer fees of None and seller fees of None, with the exception of Vending Machine buyback offers, the policy applying to listings and offers made after 2025-06-03. A large part of its $100M of volume is ordinary trading it has chosen not to charge for, so the 2.28% is **deliberate**. The Phygitals −0.03% is not a choice: buybacks exceeded pack sales, and did so on 12 of 30 days. Both numbers are low and they mean opposite things.
+
+**The Beezie retention rate (3.47%) beats Courtyard, but at an order of magnitude less scale**, and Blockworks records that roughly 85.5% of its July 2026 marketplace volume came from the team buying back its own inventory (not independently verified). Under that structure, a retention rate reflects pricing power rather than organic demand.
+
+## 4. The six platforms are really three different businesses
+
+Classifying them by what the user actually buys explains more than sorting them by chain or by turnover.
+
+| Business type | Examples | Revenue comes from | Largest risk |
+| --- | --- | --- | --- |
+| Consumer custody and trading | Courtyard | Packs, buyback spread, inventory turns | Physical custody, cost of acquiring inventory |
+| Distribution and interface layer | Collector Crypt | Gacha spread, partner-channel share, off-chain invoicing | Dependence on partner traffic, token unlocks |
+| High-velocity money recycling | Monster, Phygitals, Beezie | What is left of pack sales after buybacks | A few large users, campaign dependence, negative revenue |
+
+The same metric means different things across the three. For consumer custody the health signal is flat daily revenue and independent secondary volume; for a distribution layer it is the number of integrations and the unit economics per channel; for the recycling model there is only one signal — **whether it still earns positive revenue in a month with no new incentives**.
+
+Renaiss belongs to none of the three. It is a fourth thing: **pricing and redemption infrastructure.** That is also why it does not appear in the category table above.
+
+## 5. Courtyard: Crypto hidden away, and an actual operating margin
+
+Confirmed on the About page today:
+
+- buyer fees None and seller fees None, with the noted exception for Vending Machine buyback offers, the policy applying to listings and offers after 2025-06-03;
+- vaulting and insurance **free**, submission and vault fees Free, withdrawal fees $0;
+- on physical redemption an invoice covering shipping and taxes is generated for the user location, paid by the user;
+- cards pulled from the Vending Machine can be sold back through instant buyback offers, **but the page gives no buyback percentage and no window**.
+
+That last point matters. One source report lists Courtyard in its fee table as "90% FMV, less a further 6%". The site carries no such statement today, and a further 6% deduction is precisely what **Beezie** used to take on some SWAP operations — which the same report elsewhere says Beezie removed in September. Two platforms' policies have been crossed here; I have followed the wording on the site instead.
+
+The product verdict: Courtyard is the only one of the six that simultaneously has zero negative revenue days in thirty, a retention rate it has deliberately suppressed, and a flow where an ordinary user never has to understand a chain. The cost is that it carries inventory purchasing and custody itself, and that 0% trading fees mean secondary-market activity does not convert into revenue directly.
+
+## 6. Collector Crypt: the moat is distribution, not the marketplace
+
+Collector Crypt leads on 30-day volume ($214M), on net revenue ($18.6M) and on retention rate. But reading it as "the largest card marketplace" misjudges its shape.
+
+Its Invoiced API lets a partner sell packs through its own accounts, payment system and storefront, **without requiring every sale to settle onchain**. Once a pack is opened the result is fixed and stored; the partner can execute buybacks, manage user collections and handle shipping requests, and settle packs, buybacks and logistics on a monthly invoice.
+
+That path is considerably wider than a pure Web3 SDK — it can sell physical-card pull mechanics to ordinary gaming sites, content creators and consumer apps whose users need no wallet at all. So the high retention rate likely comes from **channel economics and off-chain billing** rather than from users trading cards with each other.
+
+That is also its largest structural risk: revenue quality depends on partner continuity, and the partners' users do not belong to it. Add the $CARDS unlock schedule, which the official page runs in a second phase through July 2027, and there is no automatic link between token price and platform revenue.
+
+## 7. Renaiss: the one nobody tracks, so I measured it myself
+
+Renaiss is absent from all 21 protocols. That is not sampling bias — the same table includes YourGrails at $6,261 of 30-day net revenue and Rankz at $13,007. So it genuinely **cannot** be compared on the same basis, and both source reports are right about that.
+
+But its own data API is public and I pulled it day by day yesterday. The quantities relevant here:
+
+- **Turnover in its flagship basket is collapsing.** Daily Pokémon basket turnover fell from $736,227 in early October to $312,007 (**−58%** over four weeks), with sale counts from 10,450 to 6,335; One Piece fell from $153,164 to $43,503 (−72%).
+- **Its own index is below its starting level.** Pokémon sits at 7,964, which is 20.4% below the 10,000 base set on 2023-07-01.
+- **Its buyback spread lines up with the retention figures here.** Pack EV is set equal to price (the fairness page targets within ±7% of the pool mean), so the 10% left by the 90% instant buyback is the entire gross margin — and 10% sits squarely in the middle of this category's buyback band.
+- **But it borrows inventory at 48%–60% APY.** That 10% spread is the only gross margin on a staked card, and 60 days at 48% consumes 79% of it while 90 days at 60% consumes **148%**.
+- **On the contract side**: a BEP-721 on BSC whose `totalSupply()` returns 18,439, with a populated ERC-1967 implementation slot (the UUPS shape), and a 2% marketplace fee.
+
+A definitional caveat: those turnover figures are **card-market trades**, not Renaiss gacha GMV, and cannot be placed beside the table in section 3. I include them to make one point — this platform has no third-party protocol-revenue tracking, yet it is the only one of the six publishing a price index and a daily trade series, so **its market-side transparency is actually the highest of the group; what is missing is its own operating data.**
+
+It also restricts a number of regions today, including mainland China, Hong Kong, the United States and the United Kingdom. For anything aimed at Asian users that constraint sits ahead of API quality.
+
+## 8. Phygitals, Beezie, Monster: three different kinds of fragility
+
+**Phygitals: third by scale, negative on operations.** Third on 30-day volume at $19.7M, third from last on net revenue at −$6,089, negative on 12 days. The most interesting thing about it is the April 2026 cross-listing with Fanatics Collect — pushing existing inventory into the traditional collectibles network, the opposite direction from the Collector Crypt strategy of embedding pulls into more Crypto apps. But Blockworks records its own marketplace volume in July at roughly $111K, down 76.4% month over month (not independently verified), and Fanatics off-chain sales fall outside all of these measures. So its real value cannot currently be judged from public data; **it needs the Fanatics channel volume, turns and net revenue**.
+
+Its public API, on the other hand, is among the best designed of the six: OpenAPI 3.1.1 covering pack information, pulls, instant buyback, marketplace filtering and the full redemption flow, with an idempotency key plus a purchase session to handle "payment succeeded but the client disconnected". That is an interface shaped by real payment-failure scenarios.
+
+**Beezie: retention is respectable, organic demand is in question.** $474,100 of 30-day net revenue, a 3.47% retention rate and zero negative days are all healthier than Phygitals or Monster. The problem is the structure: 85.5% of July marketplace volume was the team buying back (not independently verified). In October it consolidated its Base claws, marketplace and collectibles onto Solana, pausing Base claws on 10-19 and closing the user-initiated migration window on 10-27, and launched Claw Credits (card-funded prepaid balance) on 10-29. Custody is with **Brink's** (confirmed in the docs). Consolidating chains is the right call in this category — for a business built on shared physical inventory, putting the inventory and the main market on one chain beats opening more entrances. But as of 10-31 this is a migration just executed, not a verified result.
+
+**Monster: the most extreme recycling case.** $2.89M of 30-day volume, $33,905 of net revenue, 9 negative days, worst day −$34,714. The site confirms buybacks of "up to 95%" (ceiling wording) with **no time limit**, payments via Visa, Mastercard, Apple Pay, Google Pay, USDC, ETH and USDm, and core settlement in the MegaETH native stablecoin USDm. The page gives no pack prices and states no marketplace fee — one source report puts it at 0%, which I could not find on the site today.
+
+Its July figures are worth remembering (Blockworks, not independently verified): $14.5M of turnover, **about 51 daily active users**, a 97.9% buyback ratio, roughly $304K of revenue after buybacks, and **0.52% of wallets producing 54.7% of that revenue**. From $14.5M in July to $2.89M over the last 30 days is a contraction of about 80%. A business with 51 daily actives was never going to be resilient to a few users changing behaviour.
+
+## 9. Fees and buybacks: which are guarantees and which are only ceilings
+
+| Platform | Marketplace fee | Buyback policy | Window | Source |
+| --- | --- | --- | --- | --- |
+| Courtyard | None both sides (exception: Vending Machine buyback offers) | no percentage given on the page | none given | About page today |
+| Collector Crypt | about 2% including royalty | product page discloses about 85% of insured value | has a window | official docs |
+| Renaiss | 2% (terms §5.7) | 90% instant buyback | no window on the public pages | my check yesterday |
+| Phygitals | about 1.96% | typically 85%–90%, plus boost campaigns | not confirmed | source material |
+| Beezie | 6% | typically 85%–92%; the extra 6% deduction removed in September | previously 15 minutes | source material |
+| Monster | not given on the page | **up to** 95% | **explicitly no time limit** | site today |
+
+The buyback column is the one most often misread. Three different statements get treated as the same thing in ordinary discussion:
+
+1. **"Up to 95%" is a ceiling**, not a guaranteed value for any individual card;
+2. **"Buyback Boost +90%/+100%" is a time-limited campaign marker**, whose conditions live on the specific pack page and cannot be taken as a uniform rate;
+3. **Insured value, FMV and the platform buyback price are three different numbers**, and only the third is cash you can actually collect.
+
+For a user the only meaningful quantity is:
+
+```text
+expected net value = Σ(pᵢ × actually-realisable priceᵢ) − pack price − trading and redemption costs
+```
+
+where "actually-realisable price" must be the platform buyback price, not FMV and not insured value. On the measurement in section 1, the buyback ratio for the category as a whole is 93.91% — meaning that **before any single-pack variance, the long-run expectation is a loss of about six cents on every dollar opened.** Variance only determines how fast you arrive at that expectation.
+
+## 10. Where the moat is, and what to watch
+
+The moat in this category is not the smart contract, and it is not verifiable randomness. On the data above, three things are actually scarce:
+
+1. **Earning positive revenue in a month with no incentives.** On the zero-negative-days test, only three of the six pass (Collector Crypt, Courtyard, Beezie), and only two of those three are at meaningful scale.
+2. **Independent buyers.** A marketplace where 85.5% of volume is the team buying back and one where users trade with each other can post the same turnover and differ by an order of magnitude in quality.
+3. **Credible physical delivery.** Custody, insurance, bankruptcy remoteness, redemption SLA — none of which onchain composability substitutes for, and none of the six has fully removed centralised custody risk.
+
+Specific things to watch:
+
+- **Negative-day counts**, recounted monthly. They turn before turnover, before TVL, and before any token price when incentives recede.
+- **Collector Crypt channel concentration.** It holds 80.2% of category net revenue, but that revenue comes from partners' users. How fragile that 80.2% is to the largest few channels switching platforms cannot currently be judged from outside.
+- **Phygitals Fanatics volume.** It is the only number that can answer whether cross-market distribution is worth anything, and it is entirely outside the public measures today.
+- **The Beezie independent-buyer share after migration.** Not total Solana volume, but whether the team-buyback share can come down from 85.5%.
+- **Whether Renaiss gets third-party tracking.** It is the most transparent of the six on the market side and the least transparent on the operating side, and that combination is unstable in itself.
+- **The incumbents.** GameStop runs digital pack openings on PSA Vault custody with Stripe payments, and the user never has to understand an NFT. A company with physical supply, grader relationships and payment rails does not have to solve the chain problem first.
+
+Both source reports conclude that collectors should pick Courtyard, Crypto-native users should study Collector Crypt, and product teams should study Renaiss. On this data the direction holds but the reasoning has to change: **Courtyard is the pick not because it is easy to use, but because it is the only platform that went thirty days without a single day of paying out more than it took in, while deliberately holding its retention rate down to 2.28% and still keeping daily revenue flat.** Ease of use is the method; zero negative days is the result.
+
+## Sources checked
+
+- Category table and daily series: `https://api.llama.fi/summary/fees/<slug>?dataType=dailyRevenue`, with slugs from [DeFiLlama Physical TCG](https://defillama.com/protocols/physical-tcg); volumes from `https://api.llama.fi/summary/dexs/<slug>`
+- **Mind the two series**: `dailyFees` and `dailyRevenue` are not always equal for the same protocol, and a ranking must use the latter
+- Courtyard fees and custody: [courtyard.io/about](https://courtyard.io/about)
+- Collector Crypt docs and cross-chain contracts: [docs.collectorcrypt.com](https://docs.collectorcrypt.com/)
+- Phygitals public API: [phygitals.com/docs/public-api](https://www.phygitals.com/docs/public-api)
+- Beezie docs, including Brink's custody: [docs.beezie.com](https://docs.beezie.com/)
+- Monster buyback wording and payment methods: [mnstr.xyz](https://mnstr.xyz/)
+- Renaiss daily index series: `https://api.renaissos.com/v1/indices/pokemon/series`; my two checks are the [deep research](/en/blog/renaiss-ev-equals-price-custody-not-delivery-en) and the [onchain data](/en/blog/renaiss-sells-pack-opening-not-collecting-en)
+- The July 2026 monthly measures (daily actives, user concentration, team-buyback share): Blockworks research, not independently verified here
