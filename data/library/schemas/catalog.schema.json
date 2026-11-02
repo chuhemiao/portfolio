@@ -1836,6 +1836,14 @@
         },
         "event_hash": {
           "$ref": "#/$defs/hash"
+        },
+        "reviewer_role": {
+          "type": "string",
+          "enum": [
+            "editor",
+            "rights_reviewer",
+            "publisher"
+          ]
         }
       },
       "required": [
@@ -2383,6 +2391,120 @@
         "project_slugs"
       ],
       "additionalProperties": false
+    },
+    "operator_command": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "schema_version": {
+          "const": "library-review-command/v1"
+        },
+        "id": {
+          "type": "string",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{0,79}$"
+        },
+        "actor": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "type": "string",
+          "enum": [
+            "editor",
+            "rights_reviewer",
+            "publisher"
+          ]
+        },
+        "action": {
+          "type": "string",
+          "enum": [
+            "revise",
+            "approve",
+            "approve_rights",
+            "publish",
+            "reject",
+            "takedown",
+            "archive",
+            "quarantine",
+            "restore"
+          ]
+        },
+        "entity_type": {
+          "type": "string",
+          "enum": [
+            "source",
+            "item",
+            "item_locale",
+            "reason",
+            "evidence",
+            "editorial_selection",
+            "item_topic",
+            "item_relation"
+          ]
+        },
+        "entity_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "expected_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "expected_content_hash": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/hash"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_catalog_hash": {
+          "$ref": "#/$defs/hash"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 3000
+        },
+        "as_of": {
+          "$ref": "#/$defs/timestamp"
+        },
+        "replacement": {
+          "type": "object"
+        },
+        "check": {
+          "type": "string",
+          "enum": [
+            "metadata_valid",
+            "evidence_checked",
+            "content_status"
+          ]
+        },
+        "verification_scope": {
+          "type": "string",
+          "enum": [
+            "metadata_only",
+            "source_text"
+          ]
+        }
+      },
+      "required": [
+        "schema_version",
+        "id",
+        "actor",
+        "role",
+        "action",
+        "entity_type",
+        "entity_id",
+        "expected_revision",
+        "expected_content_hash",
+        "expected_catalog_hash",
+        "reason",
+        "as_of"
+      ]
     }
   }
 }

@@ -185,6 +185,7 @@ export type LibraryReviewEvent = {
   redacted_diff: { field: string; before_hash: string | null; after_hash: string | null }[];
   reason: string;
   reviewer_id: string;
+  reviewer_role?: 'editor' | 'rights_reviewer' | 'publisher';
   created_at: string;
   previous_event_hash: string | null;
   event_hash: string;

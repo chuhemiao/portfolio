@@ -3,7 +3,7 @@ import path from 'node:path';
 import { createHash } from 'node:crypto';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
-import { SCHEMA_VERSION, LOCALES, CATALOG_FILES, canonicalJson, hashJson, validateCatalog, validateRecord, entityKey, parseJsonStrict, reviewContentHash, reviewEventHash, LibraryValidationError } from './contract.mjs';
+import { SCHEMA_VERSION, LOCALES, CATALOG_FILES, MAX_FILE_BYTES, canonicalJson, hashJson, validateCatalog, validateRecord, entityKey, parseJsonStrict, reviewContentHash, reviewEventHash, LibraryValidationError } from './contract.mjs';
 import { normalizeResource, publicHttpsUrl, resolveLibraryIdentity } from './normalize.mjs';
 import { directoryPath, regularFile, writeAtomic, withDirectoryLock } from './files.mjs';
 
@@ -136,24 +136,58 @@ async function ownedOutput(directory, create = true) {
   }
   return root;
 }
-async function clearSnapshots(root, keep = null) {
+async function fingerprintStaging(root, name) {
+  if (!/^\.staging-[A-Za-z0-9]{6}$/.test(name)) fail('OUTPUT_NOT_OWNED', 'Unrecognized staging directory name.');
+  const folder = await directoryPath(path.join(root, 'snapshots', name));
+  const files = []; const snapshotIds = new Set();
+  for (const file of (await fs.readdir(folder)).sort()) {
+    const location = path.join(folder, file); const stat = await regularFile(location);
+    if (stat.size > MAX_FILE_BYTES) fail('LIMIT_EXCEEDED', 'Staging file exceeds the bounded public file size.');
+    const bytes = await fs.readFile(location);
+    if (!/^\.library-[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}\.tmp$/.test(file)) {
+      const wrapper = validatePublicRecord(`${fileType(file)}_file`, parseJsonStrict(bytes)); snapshotIds.add(wrapper.snapshot_id);
+    }
+    files.push({ name: file, sha256: digest(bytes), bytes: bytes.length });
+  }
+  if (snapshotIds.size > 1) fail('OUTPUT_NOT_OWNED', 'Staging contains mixed snapshot identities.');
+  return { name, hash: hashJson({ name, files }), file_count: files.length };
+}
+export async function inspectSnapshotStaging(directory) {
+  let root;
+  try { root = await ownedOutput(directory, false); } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  const folder = path.join(root, 'snapshots');
+  try { await directoryPath(folder); } catch (error) { if (error.code === 'ENOENT') return []; throw error; }
+  const result = [];
+  for (const name of (await fs.readdir(folder)).sort()) {
+    if (/^sha256-[a-f0-9]{64}$/.test(name)) await directoryPath(path.join(folder, name));
+    else result.push(await fingerprintStaging(root, name));
+  }
+  return result;
+}
+async function clearSnapshots(root, keep = null, stagingReceipt = null) {
   const snapshots = path.join(root, 'snapshots');
   let names;
   try { await directoryPath(snapshots); names = await fs.readdir(snapshots); } catch (failure) { if (failure.code === 'ENOENT') return; throw failure; }
+  if (stagingReceipt && !names.includes(stagingReceipt.name)) fail('REVIEW_CONFLICT', 'The explicitly observed staging directory no longer exists.');
   for (const name of names) {
+    if (stagingReceipt?.name === name) {
+      const current = await fingerprintStaging(root, name);
+      if (current.hash !== stagingReceipt.hash) fail('REVIEW_CONFLICT', 'Staging bytes changed after inspection.');
+      await fs.rm(path.join(snapshots, name), { recursive: true }); continue;
+    }
     if (!/^sha256-[a-f0-9]{64}$/.test(name)) fail('OUTPUT_NOT_OWNED', 'Unexpected object in the generated snapshot directory.');
     const folder = path.join(snapshots, name);
     await directoryPath(folder);
     if (name !== keep) await fs.rm(folder, { recursive: true });
   }
 }
-async function suspendUnsafeOutput(directory) {
+export async function suspendUnsafeOutput(directory, { create = false, stagingReceipt = null } = {}) {
   try {
-    const root = await ownedOutput(directory, false);
+    const root = await ownedOutput(directory, create);
     await withDirectoryLock(root, async () => {
       await regularFile(path.join(root, 'manifest.json'), { missing: true });
       await fs.rm(path.join(root, 'manifest.json'), { force: true });
-      await clearSnapshots(root);
+      await clearSnapshots(root, null, stagingReceipt);
     });
   } catch (failure) { if (failure.code !== 'ENOENT') throw failure; }
 }

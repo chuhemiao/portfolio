@@ -169,14 +169,36 @@ export function reviewEventHash(event) {
   const value = { ...event }; delete value.event_hash; return hashJson(value);
 }
 
-export async function readCatalog(directory) {
+export const CATALOG_TRANSACTION_FILE = '.library-transaction.json';
+async function transactionGuard(directory, recoveryHash) {
+  const filename = path.join(directory, CATALOG_TRANSACTION_FILE);
+  const stat = await fs.lstat(filename).catch(error => { if (error.code === 'ENOENT') return null; throw error; });
+  if (!stat) {
+    if (recoveryHash) throw new LibraryValidationError('REVIEW_CONFLICT', 'The expected recovery transaction no longer exists.');
+    return null;
+  }
+  if (!recoveryHash) throw new LibraryValidationError('CATALOG_TRANSACTION_PENDING', 'An interrupted operator transaction requires explicit recovery before reading this catalog.');
+  if (stat.isSymbolicLink() || !stat.isFile() || stat.size > MAX_FILE_BYTES || hashJson(parseJsonStrict(await fs.readFile(filename))) !== recoveryHash) throw new LibraryValidationError('REVIEW_CONFLICT', 'Recovery transaction hash or file does not match.');
+  return recoveryHash;
+}
+export async function readCatalog(directory, { transactionHash = null } = {}) {
+  await transactionGuard(directory, transactionHash);
   const catalog = emptyCatalog();
+  const initial = new Map();
+  for (const file of Object.values(CATALOG_FILES)) {
+    const stat = await fs.lstat(path.join(directory, file), { bigint: true });
+    if (stat.isSymbolicLink() || !stat.isFile() || stat.size > BigInt(MAX_FILE_BYTES)) throw new LibraryValidationError('LIMIT_EXCEEDED', `Invalid or oversized catalog file: ${file}.`);
+    initial.set(file, `${stat.dev}:${stat.ino}:${stat.size}:${stat.mtimeNs}`);
+  }
   for (const [key, file] of Object.entries(CATALOG_FILES)) {
     const filename = path.join(directory, file);
-    const stat = await fs.stat(filename);
-    if (!stat.isFile() || stat.size > MAX_FILE_BYTES) throw new LibraryValidationError('LIMIT_EXCEEDED', `Invalid or oversized catalog file: ${file}.`);
     const buffer = await fs.readFile(filename);
     catalog[key] = file.endsWith('.jsonl') ? parseJsonLines(buffer) : parseJsonStrict(buffer);
+  }
+  await transactionGuard(directory, transactionHash);
+  for (const file of Object.values(CATALOG_FILES)) {
+    const stat = await fs.lstat(path.join(directory, file), { bigint: true });
+    if (initial.get(file) !== `${stat.dev}:${stat.ino}:${stat.size}:${stat.mtimeNs}`) throw new LibraryValidationError('CATALOG_CHANGED_DURING_READ', 'Catalog files changed during the read; retry from a stable state.');
   }
   return catalog;
 }

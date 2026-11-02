@@ -374,3 +374,12 @@ test('catalog and standalone record readers enforce the same per-record byte lim
   assert.equal(validateRecord('item_locale', local).errors[0].code, 'LIMIT_EXCEEDED');
   denied(fixture, 'LIMIT_EXCEEDED');
 });
+
+test('an interrupted multi-file operator transaction blocks ordinary catalog readers', async t => {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'library-interrupted-read-'));
+  t.after(() => fs.rm(dir, { recursive: true, force: true }));
+  const catalog = emptyCatalog();
+  for (const [key, file] of Object.entries(CATALOG_FILES)) await fs.writeFile(path.join(dir, file), file.endsWith('.jsonl') ? '' : canonicalJson(catalog[key]));
+  await fs.writeFile(path.join(dir, '.library-transaction.json'), '{"schema_version":"library-review-transaction/v1"}\n');
+  await assert.rejects(readCatalog(dir), { code: 'CATALOG_TRANSACTION_PENDING' });
+});
