@@ -62,10 +62,12 @@ test('interrupted operator transactions remain refused without a retry or partia
 test('a failed build-process snapshot promise can recover after the observed file failure is repaired', async t => {
   const { root } = await setup(t);
   const moduleUrl = pathToFileURL(path.resolve('src/lib/library/catalog.ts')).href;
+  const siteModels = Object.fromEntries(['topics', 'research-projects'].map(name => [`@/data/${name}`, pathToFileURL(path.resolve(`src/data/${name}.ts`)).href]));
   const script = `
     import fs from 'node:fs/promises';
     import {registerHooks} from 'node:module';
-    registerHooks({resolve(specifier,context,next){return specifier==='server-only'?{url:'data:text/javascript,export%20%7B%7D',shortCircuit:true}:next(specifier,context);}});
+    const siteModels=${JSON.stringify(siteModels)};
+    registerHooks({resolve(specifier,context,next){return specifier==='server-only'?{url:'data:text/javascript,export%20%7B%7D',shortCircuit:true}:next(siteModels[specifier]??specifier,context);}});
     const RealDate=Date;
     globalThis.Date=class extends RealDate {constructor(...args){super(...(args.length?args:[${JSON.stringify(FIXTURE_AS_OF)}]));}static now(){return new RealDate(${JSON.stringify(FIXTURE_AS_OF)}).getTime();}};
     const {getLibrarySnapshot}=await import(${JSON.stringify(moduleUrl)});

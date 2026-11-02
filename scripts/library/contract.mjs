@@ -1,10 +1,12 @@
 import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import { publicHttpsUrl, resolveLibraryIdentity } from './normalize.mjs';
+import catalogSchema from '../../data/library/schemas/catalog.schema.json' with { type: 'json' };
+
+export { catalogSchema };
 
 export const SCHEMA_VERSION = '1.1.0';
 export const LOCALES = Object.freeze(['zh-CN', 'en', 'ja']);
@@ -24,8 +26,6 @@ const RECORD_TYPES = Object.freeze({
   editorial_selections: 'editorial_selection', identity_history: 'identity_event',
   review_log: 'review_event', scores: 'score',
 });
-const schemaPath = fileURLToPath(new URL('../../data/library/schemas/catalog.schema.json', import.meta.url));
-export const catalogSchema = JSON.parse(await fs.readFile(schemaPath, 'utf8'));
 const ajv = new Ajv2020({ strict: true, allErrors: true, coerceTypes: false, useDefaults: false, removeAdditional: false, ownProperties: true });
 addFormats(ajv);
 ajv.addFormat('library-https-url', value => {

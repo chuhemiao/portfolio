@@ -4,14 +4,14 @@ import { pathToFileURL } from 'node:url';
 import { readCatalog, validateCatalog, parseJsonStrict, LibraryValidationError } from './contract.mjs';
 import { resolveGeneratedDir } from '../lib/content/paths.mjs';
 
-export async function loadReferenceContext(root, catalog) {
+export async function loadReferenceContext(root, catalog, siteModels) {
   const context = { topic_slugs: [], articles: [], project_slugs: [] };
   if (catalog.item_topics.length) {
-    const { TOPICS } = await import(pathToFileURL(path.join(root, 'src/data/topics.ts')).href);
+    const TOPICS = siteModels?.TOPICS ?? (await import(pathToFileURL(path.join(root, 'src/data/topics.ts')).href)).TOPICS;
     context.topic_slugs = TOPICS.map(topic => topic.slug);
   }
   if (catalog.item_relations.some(relation => relation.existing_entity_type === 'project')) {
-    const { PROJECTS } = await import(pathToFileURL(path.join(root, 'src/data/research-projects.ts')).href);
+    const PROJECTS = siteModels?.PROJECTS ?? (await import(pathToFileURL(path.join(root, 'src/data/research-projects.ts')).href)).PROJECTS;
     const targets = new Set(catalog.item_relations.filter(relation => relation.existing_entity_type === 'project').map(relation => relation.existing_entity_slug));
     context.project_slugs = PROJECTS.filter(project => targets.has(project.slug)).map(project => project.slug);
   }

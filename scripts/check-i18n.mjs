@@ -11,6 +11,7 @@ import { assets } from '../src/data/fund.ts';
 // so it survives between builds (see resolveGeneratedDir).
 import { BLOG_INDEX_FILE } from './lib/content/paths.mjs';
 import { readCurrentLibrary } from './library/public-reader.mjs';
+import { countInitialHeaderLanguageMenus } from './lib/export-html.mjs';
 
 const root = process.cwd();
 const index = JSON.parse(fs.readFileSync(BLOG_INDEX_FILE, 'utf8'));
@@ -51,7 +52,7 @@ for (const locale of LOCALES) {
     if (page === 'library' || page.startsWith('library/items/')) {
       assert.ok(html.includes('<meta name="referrer" content="no-referrer"'), `missing Library referrer policy: ${route}`);
       assert.ok(html.includes(`<meta name="robots" content="${page === 'library' ? 'noindex' : 'index'}, follow"`), `wrong Library robots: ${route}`);
-      assert.equal((markup.match(/<select\b[^>]*aria-label="(?:Site language|网站语言|サイトの言語)"/g) ?? []).length, 1, `Library needs one top language menu: ${route}`);
+      assert.equal(countInitialHeaderLanguageMenus(markup), 1, `Library needs one initial header language menu: ${route}`);
       assert.ok(!/googletagmanager\.com|gtag\('config'/u.test(html), `Library HTML initializes analytics: ${route}`);
     }
     if (page === 'fund') {

@@ -6,11 +6,10 @@ import addFormats from 'ajv-formats';
 import { SCHEMA_VERSION, LOCALES, CATALOG_FILES, MAX_FILE_BYTES, canonicalJson, hashJson, validateCatalog, validateRecord, entityKey, parseJsonStrict, reviewContentHash, reviewEventHash, LibraryValidationError } from './contract.mjs';
 import { normalizeResource, publicHttpsUrl, resolveLibraryIdentity } from './normalize.mjs';
 import { directoryPath, regularFile, writeAtomic, withDirectoryLock } from './files.mjs';
+import schema from '../../data/library/schemas/public-snapshot.schema.json' with { type: 'json' };
 
 export const RANK_VERSION = 'editorial-v1';
 const OWNER = 'kkdemian-library-v1';
-const schemaUrl = new URL('../../data/library/schemas/public-snapshot.schema.json', import.meta.url);
-const schema = JSON.parse(await fs.readFile(schemaUrl, 'utf8'));
 const ajv = new Ajv2020({ strict: true, allErrors: true, coerceTypes: false });
 addFormats(ajv); ajv.addFormat('library-public-url', value => { try { publicHttpsUrl(value); return true; } catch { return false; } });
 ajv.addSchema(schema);

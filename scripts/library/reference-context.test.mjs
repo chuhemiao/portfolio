@@ -93,3 +93,20 @@ test('current actual relations validate against only their real site references'
   assert.equal(context.articles.length, targets.size);
   assert.ok(context.articles.every(row => targets.has(row.slug)));
 });
+
+test('statically supplied real site models produce the same context as current Node CLI discovery', async () => {
+  const { TOPICS } = await import('../../src/data/topics.ts');
+  const { PROJECTS } = await import('../../src/data/research-projects.ts');
+  const catalog = await readCatalog('data/library');
+  assert.deepEqual(await loadReferenceContext(process.cwd(), catalog, { TOPICS, PROJECTS }), await loadReferenceContext(process.cwd(), catalog));
+});
+
+test('default CLI discovery still reads the provided source root rather than the bundled site models', async t => {
+  const root = await fs.mkdtemp(path.join(os.tmpdir(), 'library-root-models-'));
+  t.after(() => fs.rm(root, { recursive: true, force: true }));
+  await fs.mkdir(path.join(root, 'src/data'), { recursive: true });
+  await fs.writeFile(path.join(root, 'src/data/topics.ts'), 'export const TOPICS = [{slug:"fixture-root-topic"}];');
+  await fs.writeFile(path.join(root, 'src/data/research-projects.ts'), 'export const PROJECTS = [{slug:"fixture-root-project"}];');
+  const catalog = { item_topics: [{ existing_topic_slug: 'fixture-root-topic' }], item_relations: [{ existing_entity_type: 'project', existing_entity_slug: 'fixture-root-project' }] };
+  assert.deepEqual(await loadReferenceContext(root, catalog), { topic_slugs: ['fixture-root-topic'], project_slugs: ['fixture-root-project'], articles: [] });
+});
