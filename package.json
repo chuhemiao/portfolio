@@ -38,7 +38,12 @@
     "test:i18n": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test scripts/i18n.test.mjs scripts/lib/content/tests/multilingual.test.mjs src/lib/post-locale-selection.test.mjs src/data/research-localization.test.mjs scripts/lib/translations/research-template.test.mjs src/lib/thought-localization.test.mjs src/lib/weekly-localization.test.mjs",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"scripts/**/*.test.mjs\" \"src/**/*.test.mjs\"",
     "test:markets": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --experimental-strip-types --test src/lib/oscillator-helpers.test.mjs src/lib/oscillator-snapshot.test.mjs src/lib/watch-client-data.test.mjs src/lib/btc-score-client-data.test.mjs scripts/sync-watch-snapshot.test.mjs",
-    "check:i18n": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-i18n.mjs"
+    "check:i18n": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/check-i18n.mjs",
+    "library:validate": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/library/validate.mjs",
+    "library:import": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/library/import.mjs",
+    "library:build": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/library/build-index.mjs",
+    "library:benchmark": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/library/benchmark.mjs",
+    "test:library": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test \"scripts/library/**/*.test.mjs\""
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.6",
@@ -77,6 +82,8 @@
     "@types/node": "^25.0.3",
     "@types/react": "^19.0.6",
     "@types/react-dom": "^19.0.6",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "eslint": "^9.39.2",
     "eslint-config-next": "^16.1.1",
     "postcss": "^8.5.3",

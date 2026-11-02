@@ -1,0 +1,260 @@
+{
+  "schema": "library-source-reading-facts/v1",
+  "author": "Codex analysis agent /root/library_m1_seed_research",
+  "transfer_receipts": [
+    {
+      "sha256": "d902ab03dddbec3aebfc292280b10266c812ce41833eeb1f54e7e14ba8facae0",
+      "bytes": 3082,
+      "count": 10
+    },
+    {
+      "sha256": "6ca4bfe35baec4ea4f9813b7ec170a6abf0804fca526d084cffd58a12b9b6ac9",
+      "bytes": 3028,
+      "count": 10
+    }
+  ],
+  "facts": [
+    {
+      "eip_number": 20,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-20.md",
+      "source_file_sha256": "50d0bdc535ed8987ac5c124cb5f9c39606806c97e909aae66ef4b747dd9c93dd",
+      "read_sections": "Abstract",
+      "source_facts_zh": [
+        "规范定义智能合约代币的标准 API，提供代币转移的基本功能。",
+        "代币持有人可批准链上第三方支出代币。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 721,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-721.md",
+      "source_file_sha256": "238787165c08ac748928ffad57a24045802174bb38220af9e7b63c44778b7372",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "规范用于逐个追踪和转移可区分的 NFT 所有权。",
+        "操作员可获授权管理某持有人的 NFT。",
+        "符合规范的合约须实现 ERC721 与 ERC165 接口，正文另列例外说明。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 1155,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-1155.md",
+      "source_file_sha256": "beac04fc902314ec0d60000e3bcb73cb7080d586f6a718b6b35a6d68a8ac98b1",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "单个合约接口可表示多种同质化与非同质化代币类型。",
+        "每个 token ID 可有自己的元数据、供应量及其他属性。",
+        "规范要求实现 ERC1155 全部函数，并通过 ERC165 报告相应接口支持。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 1559,
+      "source_url": "https://github.com/ethereum/EIPs/blob/dc5d5fa688b7fe87b95a907fcc128b4fde2f4d2f/EIPS/eip-1559.md",
+      "source_file_sha256": "4460ad966a22d8501e12d75165c2c784c61748d8128229f115ebac1bfccac59f",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "引入交易类型 0x02，将最高总费率与最高优先费率分开表达。",
+        "基础费随父区块用量相对 gas 目标的关系上调或下调。",
+        "基础费被销毁；发送方支付的基础费与优先费合计受交易最高总费率约束。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 4337,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-4337.md",
+      "source_file_sha256": "baaa07330dcb67838234774ee8cf8022b5e16e68ddbfa4958913505dc7d44562",
+      "read_sections": "Abstract; Specification/Definitions",
+      "source_facts_zh": [
+        "UserOperation 在独立内存池传播，由 bundler 打包调用 EntryPoint 的 handleOps。",
+        "该方案依靠上层基础设施，而非修改共识层协议。",
+        "signature 字段的验证方式由智能合约账户实现决定；Paymaster 可同意代发送方支付费用。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 7702,
+      "source_url": "https://github.com/ethereum/EIPs/blob/dc5d5fa688b7fe87b95a907fcc128b4fde2f4d2f/EIPS/eip-7702.md",
+      "source_file_sha256": "3d46953e13ebc7ebe229971b301ede853aad6e29f4faf4db1eb9a2085accde1b",
+      "read_sections": "Abstract; Specification/Behavior",
+      "source_facts_zh": [
+        "交易类型 0x04 通过授权元组在 EOA 写入 0xef0100 加目标地址的委托标记，执行时加载目标代码。",
+        "元组处理校验 chain_id 为 0 或当前链 ID，并核对授权账户 nonce；校验失败的元组被跳过。",
+        "授权列表先于交易执行处理，已处理的委托标记不会随随后交易执行失败而回滚。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 4626,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-4626.md",
+      "source_file_sha256": "698c05bff73bfb796f59cd7c4732edccdf7e40176f9bb027c19a0bbe7251e10a",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "规范围绕单一底层 ERC20 资产定义代币化金库的存入、取出和余额接口。",
+        "金库须以 ERC20 表示份额，份额操作与底层资产数量属于不同口径。",
+        "金库可实现 ERC2612 改善份额授权体验；不可转让金库可让 transfer 或 transferFrom 回退。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 3643,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-3643.md",
+      "source_file_sha256": "f1b564f7fa0ab763bf0e386eeba2e44c31f84f51b5a9a87aaa7abfba91ddd999",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "规范要求兼容 ERC20，并结合链上身份系统执行转移合规与持有人资格检查。",
+        "接口包括身份注册、合规、可信发行者及声明主题注册等模块。",
+        "要求提供转移预检查、密钥丢失恢复、冻结、暂停及 Agent/Owner 角色等控制能力。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 8004,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-8004.md",
+      "source_file_sha256": "249dc3d96ad7bbe4afd25cacd14be942eb87751abcf1608bab19a610f3c3f8a9",
+      "read_sections": "Abstract; Specification/Identity Registry",
+      "source_facts_zh": [
+        "该 Draft 提案用于跨组织发现、选择及交互代理，信任模型可插拔。",
+        "身份注册使用带 URIStorage 的 ERC721，agentId 对应 tokenId，agentURI 指向注册文件。",
+        "正文列举客户反馈声誉、质押支持的重新执行、zkML 与 TEE 等验证选择。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 7540,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-7540.md",
+      "source_file_sha256": "3d517b81b0a39848241578efa6e175024ce8b52d03e15b6edda357087a38bc72",
+      "read_sections": "Abstract; Specification/Request Flows",
+      "source_facts_zh": [
+        "以 Request 扩展 ERC4626，支持异步存入、异步赎回或两者。",
+        "请求可处于 Pending、Claimable、Claimed 状态，原有存取接口用于领取已可领取的请求。",
+        "异步存入中资产已在 requestDeposit 转入，deposit 和 mint 不再重复转入；previewDeposit 和 previewMint 须回退。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 7575,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-7575.md",
+      "source_file_sha256": "f8cd419ec250eca9201b13ed05d4f0e698a81b074d874e499ab7724954e8b077",
+      "read_sections": "Abstract; Specification/Methods",
+      "source_facts_zh": [
+        "扩展 ERC4626，使多个资产入口可对应同一 share 代币。",
+        "新增 share 方法，把 ERC20 份额代币从金库本体分离，也支持两种外部代币间转换的 Pipe。",
+        "金库实现 ERC4626 但排除其 ERC20 方法与事件，并要求金库和份额代币提供 ERC165 支持。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 712,
+      "source_url": "https://github.com/ethereum/EIPs/blob/dc5d5fa688b7fe87b95a907fcc128b4fde2f4d2f/EIPS/eip-712.md",
+      "source_file_sha256": "459086f5a0b2d6a0ac4e404faebf3660a49aa4b1712711521093380689f02304",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "定义结构化类型数据的编码、哈希和签名，并提供可扩展的域分离机制。",
+        "签名编码组合 0x1901、domainSeparator 与 hashStruct，另定义 eth_signTypedData RPC。",
+        "正文明确说明该标准本身不包含重放保护。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 1271,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-1271.md",
+      "source_file_sha256": "99641cf0c535eed30843e61e3202bd8824b9d50004abe147532400b3f4f632ea",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "为合约账户定义 isValidSignature(hash, signature)，供外部调用者验证代表合约的签名。",
+        "验证通过时须返回 bytes4 魔数 0x1626ba7e。",
+        "验证不得修改状态；具体验证逻辑可依赖上下文、授权或签名方案。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 2612,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-2612.md",
+      "source_file_sha256": "7e84b4834dc4b55362c79fac29aa55e0372deea2a129a024bd147cc662bd8683",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "permit 允许以签名消息修改 ERC20 allowance，而非仅依赖直接调用 approve。",
+        "规范增加 permit、nonces 与 DOMAIN_SEPARATOR 三个接口。",
+        "成功许可设置额度、递增 owner 的 nonce 并发出 Approval；须满足期限、非零 owner、nonce 与签名条件。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 2771,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-2771.md",
+      "source_file_sha256": "036f7c1eba1cd75205e4663ed49c82a3c239ed31a5fed5d6a13ec64964845990",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "Recipient 通过受信任 Forwarder 接收元交易，无需修改协议层。",
+        "Forwarder 须正确校验签名和 nonce，并把签名者的 20 字节地址附加到 calldata 尾部。",
+        "Recipient 从附加数据恢复有效发送方和数据，信任边界在其认可的 Forwarder。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 4361,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-4361.md",
+      "source_file_sha256": "bf30a6e2cf0580d2cb0ded54b4436fb5a3d3ff6ae01b3e404c946780e6a4eb4c",
+      "read_sections": "Abstract; Specification/Overview",
+      "source_facts_zh": [
+        "以标准签名消息让以太坊账户向链下服务认证，消息包含范围、会话详情与 nonce 等安全参数。",
+        "钱包按 ERC191 格式展示并签名 SIWE 消息。",
+        "依赖方须验证签名及消息内容；用途是链下认证与会话建立。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 4844,
+      "source_url": "https://github.com/ethereum/EIPs/blob/dc5d5fa688b7fe87b95a907fcc128b4fde2f4d2f/EIPS/eip-4844.md",
+      "source_file_sha256": "2772bdb675d90d89ebb4bf74269e48c8ea46745e78161c8574ffa78328b31885",
+      "read_sections": "Abstract; Specification/Parameters",
+      "source_facts_zh": [
+        "引入携带大量数据的 blob 交易类型 0x03。",
+        "blob 数据本体不可由 EVM 执行直接访问，但其承诺可被访问。",
+        "规范设计该格式以兼容完整分片所使用的格式。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 5564,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-5564.md",
+      "source_file_sha256": "8201d5ea60e98d1d5e68c37fd5a481092604ed274fa50197080c191701145f8e",
+      "read_sections": "Abstract; Specification/Definitions",
+      "source_facts_zh": [
+        "发送方可非交互地生成仅接收方可访问的 stealth address。",
+        "规范区分支出密钥与查看密钥，并定义由公钥组成的 stealth meta-address。",
+        "使用单例合约发布接收方识别所需的信息，并给出基于 secp256k1 的首个方案。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 3156,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-3156.md",
+      "source_file_sha256": "5a6d84516fa65e7be9f0e235498fdcb6a81c9770b09b0ac6cb633d4a07769e22",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "闪电贷要求在同一交易结束前归还资产及可选费用。",
+        "规范定义 lender 与 receiver 的回调交互接口。",
+        "借款方可在 lender 执行期间通过回调暂时控制交易执行。"
+      ],
+      "read_level": "spec_text"
+    },
+    {
+      "eip_number": 3525,
+      "source_url": "https://github.com/ethereum/ERCs/blob/90b1b4f10634290c1e227d700554065c755f0816/ERCS/erc-3525.md",
+      "source_file_sha256": "8c8fff18a53638a7c3e4696f35a0947f08cc562ce4bcd91d4b5d69a18d2213c5",
+      "read_sections": "Abstract; Specification",
+      "source_facts_zh": [
+        "以 ID、SLOT、VALUE 三元模型定义半同质化代币，兼容 ERC721。",
+        "不同 ID 的 token 在相同 SLOT 下，其 value 被视为可互换。",
+        "规范增加适合半同质化语义的 value 转移与授权模型，并要求实现 ERC3525、ERC721 与 ERC165 接口。"
+      ],
+      "read_level": "spec_text"
+    }
+  ],
+  "limitations": [
+    "Agent-authored observations of selected sections, not a human review, full reading or implementation/security audit. Source normative requirements are not proof any implementation satisfies them. ERC8004 remains Draft. Other 280 resources remain metadata-only."
+  ]
+}
