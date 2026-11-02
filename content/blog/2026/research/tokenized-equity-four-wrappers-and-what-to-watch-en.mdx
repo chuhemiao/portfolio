@@ -1,0 +1,99 @@
+---
+title: 'One Ticker, Four Legal Structures: What You Actually Own in a Tokenized Stock'
+publishedAt: '2026-11-02'
+summary: 'The same AAPL ticker can sit behind four completely different legal wrappers, and they have nothing in common on dividends, voting, collateral, or what you can claim when the issuer fails. Sorting the 10 issuers tracked on this site by wrapper shows that only 2 of them give you a token that is actually the registered share, not one offers full voting rights, and 8 disclose nothing about proof of reserve or dividend handling. This piece explains the four structures and how to read one row of data to tell which one you are holding.'
+slug: 'tokenized-equity-four-wrappers-and-what-to-watch-en'
+category: 'research'
+language: 'en'
+translationKey: 'tokenized-equity-four-wrappers-and-what-to-watch'
+sourceSlug: 'tokenized-equity-four-wrappers-and-what-to-watch'
+---
+
+## TL;DR
+
+- **A tokenized stock is not one thing, it is four.** Behind the same ticker you may hold a registered share, a bearer note, a claim on the issuer, or simply a derivative wearing the ticker as a name.
+- **Only `2` of the 10 issuers give you a token that is the share.** Another `2` give a certificate over custodied shares, `3` give a debt claim, and `3` do not disclose the wrapper at all.
+- **Not one issuer offers full voting rights.** The best on offer is `1` proxy arrangement and `1` marked as planned; `3` say explicitly none, `5` disclose nothing.
+- **The largest column in this table is the blank one**: dividend handling unknown at `8`, proof of reserve unknown at `8`, redemption terms unknown at `6`.
+- **The structure decides where you stand when the issuer fails**, not whether the price tracks day to day. On a normal day all four look identical.
+
+> The classification and counts here come from the issuer records behind the [tokenized equity tracker](/en/stocks), covering the `10` issuers on that page. These are the issuers own disclosures, not legal opinions, and no offering document was checked line by line.
+
+---
+
+## 1. The four structures
+
+| Structure | What the token is | Voting | When the issuer fails you are |
+|---|---|---|---|
+| **Registered share** | the token is the share on the register | retained | a shareholder |
+| **Tracker certificate** | a bearer note over custodied shares | none | a claimant on collateral, not on the company |
+| **Debt claim** | a claim on the issuer, collateral held off-chain | none | a creditor |
+| **Price exposure only** | no share behind it at all | none | the counterparty to a derivative |
+
+**Registered share.** The token is the share on the register, so dividends and voting rights survive. The cost is that it usually has to be permissioned and KYC-gated, because the register has to resolve to a person.
+
+**Tracker certificate.** A bearer note over custodied shares: economic exposure, no vote. The part that gets missed is that **the claim points at the collateral, not at the company**. Whether that custodied share exists, and whether there is enough of it, is what the note is worth.
+
+**Debt claim.** A claim on the issuer with collateral held off-chain. If the issuer fails you are a creditor, not a shareholder, so you queue with the other creditors rather than holding the share directly.
+
+**Price exposure only.** No share behind it at all, a derivative wearing a ticker as a name. The price may track closely on a normal day, and there is still no legal relationship between it and the company.
+
+## 2. The 10 issuers sorted
+
+| Legal wrapper | Count | Who |
+|---|---|---|
+| Registered share | `2` | Dinari dShares, Coinbase (Base) |
+| Tracker certificate | `2` | bStocks, xStocks (Backed) |
+| Debt claim | `3` | Ondo Stocks, Robinhood Stock Tokens, Reality rTokens |
+| **Not disclosed** | `3` | Remora rStocks, Backpack Securities, ST0x / PreStocks |
+
+**First finding: at most 2 of them can say you own the share.** Of the remaining 8, five are explicitly a certificate or a claim, and three do not state this at all.
+
+Across the other columns, the blank answer beats every real one:
+
+| Field | Distribution |
+|---|---|
+| Voting | full `0` · proxy `1` · planned `1` · explicitly none `3` · not disclosed `5` |
+| Dividend | passed through `1` · reinvested `1` · not disclosed `8` |
+| Proof of reserve | Chainlink PoR `1` · attestation `1` · not disclosed `8` |
+| Redemption | available `4` (`1` of which states it can be refused) · not disclosed `6` |
+| US persons | blocked `6` · accredited only `1` · not disclosed `3` |
+| Grade | A `1` · B `5` · C `1` · unrated `3` |
+
+**Second finding: not one issuer offers full voting rights.** The closest are the Ondo proxy arrangement and the Robinhood entry marked as planned. That is consistent with the first table, since voting follows the register and eight of them are not registered shares.
+
+**Third finding: proof of reserve is covered far less than anything else.** Of the `10`, only xStocks wires up Chainlink PoR and bStocks publishes an attestation; the remaining `8` carry no verifiable reserve disclosure at all. For a tracker certificate or a debt claim, **whether the collateral is there is the only thing that matters**.
+
+## 3. How to read one row
+
+Expand any issuer on the [tracker](/en/stocks) and look at the combination:
+
+- **Wrapper is registered share, but voting says not disclosed** — the register holds, the issuer just has not said how the vote travels. That is an information gap, not a structural one.
+- **Wrapper is tracker certificate or debt claim, and proof of reserve says not disclosed** — this is the combination to stop at. Both structures derive their entire value from the collateral, and there is no third-party evidence that the collateral exists.
+- **Redemption says available, can be refused** — there is no hard redemption right. A refusable redemption is exactly the kind that gets refused under stress.
+- **Wrapper says not disclosed** — the row cannot be read. It is not a low grade, it is ungradable, which is why all `3` of those are unrated.
+
+Only [bStocks](/en/stocks/bstocks) has a full instrument list ingested so far; its `100` instruments are split by sector into `20` reports reachable from that page.
+
+## 4. What to watch next
+
+1. The license filings and launch lists of the first TSV cohort.
+2. When Robinhood 1:1 redemption and voting actually land, which decides whether it moves from debt claim to registered share or stays in the planned column.
+3. Whether monthly active addresses on rwa.xyz stop falling.
+4. Share shifts among Ondo, bStocks and xStocks.
+5. The volume gap between Hyperliquid equity perps and spot tokens.
+
+## 5. What this piece cannot tell you
+
+- **This is not a legal opinion and no offering document was checked line by line.** Every cell above is what the issuer disclosed as recorded on this site; `not disclosed` means not in that record, which is not the same as never stated anywhere.
+- **It cannot give a recovery rate.** Being a creditor is an ordering, not a percentage. Collateral quality, custody arrangements and governing law all differ, and the records here carry only the jurisdiction column.
+- **The four structures do not explain price.** All four can behave identically on a normal day; the difference only surfaces under stress, so tracking closely is not evidence that a structure is safe.
+- **The number of blanks will move.** This is the disclosure state of `10` issuers at one point in time, not a permanent property, and it reads better as a to-do list than as a verdict.
+
+---
+
+**Conclusion.** The same ticker has at least four legal identities on-chain, and they only behave differently on the day the issuer is in trouble. Of the `10` tracked here, `2` can say you own the share, `0` offer full voting rights, and `8` have no verifiable proof of reserve.
+
+At this disclosure density, **the usable judgment is not which issuer to pick but which column is empty** — the empty column is the part of the risk you are carrying for the issuer.
+
+*Per-issuer wrapper, voting, dividend, redemption, proof of reserve and US access are on the [tokenized equity tracker](/en/stocks). Research notes, not investment advice. DYOR.*

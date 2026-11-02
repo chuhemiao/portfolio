@@ -20,9 +20,6 @@ import {
   MARKET_SNAPSHOTS,
   REGULATORY_NOTES,
   UNDERLYING_CONCENTRATION,
-  WATCH_SIGNALS,
-  WRAPPER_LABEL,
-  WRAPPER_RUBRIC,
   pick,
 } from '@/data/tokenized-equities';
 import type { Metadata } from 'next';
@@ -41,6 +38,14 @@ const CASE_STUDY_SLUG: Record<Locale, string> = {
   'zh-CN': 'aapl-four-books-tokenized-equity-liquidity',
   en: 'aapl-four-books-tokenized-equity-liquidity-en',
   ja: 'aapl-four-books-tokenized-equity-liquidity-ja',
+};
+
+// The four wrappers, and the watch list that followed from them, were prose on
+// this page. They read as research, so they moved out to one.
+const WRAPPER_SLUG: Record<Locale, string> = {
+  'zh-CN': 'tokenized-equity-four-wrappers-and-what-to-watch',
+  en: 'tokenized-equity-four-wrappers-and-what-to-watch-en',
+  ja: 'tokenized-equity-four-wrappers-and-what-to-watch-ja',
 };
 
 export default async function Page() { return renderPage('en'); }
@@ -174,6 +179,25 @@ export async function renderPage(locale: Locale) {
             rather than stacking keeps the page from growing another section. */}
         <StocksIssuers />
 
+        <div className='border-b border-border py-8'>
+          <Link
+            href={articleHref(WRAPPER_SLUG[locale], locale)}
+            className='flex items-center justify-between gap-4 rounded border border-border bg-surface px-5 py-4 transition-colors hover:border-border-strong'
+          >
+            <span className='text-[13.5px] leading-[1.6]'>
+              {t(
+                'What you actually hold: one ticker, four legal structures — and which column is empty',
+                '你买的到底是什么：同一个代码，四种法律结构 —— 以及哪一栏是空的',
+                '実際に保有するもの：同じティッカー、四つの法的構造 —— そしてどの欄が空いているか'
+              )}
+              <span className='ml-2 font-mono text-[11px] text-subtle'>
+                {t(`${ISSUERS.length} issuers`, `${ISSUERS.length} 家发行方`, `${ISSUERS.length} 社`)}
+              </span>
+            </span>
+            <ArrowUpRightIcon aria-hidden='true' className='size-4 shrink-0 text-subtle' />
+          </Link>
+        </div>
+
         {/* ── 市场规模 ─────────────────────────────────────────── */}
         <section className='border-b border-border py-12'>
           <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>{t('Market size', '市场规模', '市場規模')}</h2>
@@ -232,28 +256,6 @@ export async function renderPage(locale: Locale) {
           </div>
         </section>
 
-        {/* ── 你买的到底是什么 ─────────────────────────────────── */}
-        <section className='border-b border-border py-12'>
-          <h2 className='mb-2 text-xl font-semibold tracking-[-0.015em]'>
-            {t('What you actually hold', '你买的到底是什么', '実際に保有するもの')}
-          </h2>
-          <p className='mb-6 max-w-[700px] text-[14px] leading-[1.7] text-muted-foreground'>
-            {t(
-              'Four structures sit behind the same ticker. They differ in dividends, voting, collateral and what happens if the issuer fails.',
-              '同一个股票代码背后有四种结构。它们在分红、投票权、抵押品，以及发行方违约时你能拿回什么上，完全不同。',
-              '同じティッカーの裏に四つの構造があります。配当、議決権、担保、発行体が破綻した場合の扱いが異なります。'
-            )}
-          </p>
-          <div className='grid gap-px border border-border bg-border sm:grid-cols-2'>
-            {WRAPPER_RUBRIC.map((item) => (
-              <div key={item.kind} className='bg-background p-5'>
-                <div className='mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-brand'>{L(WRAPPER_LABEL[item.kind])}</div>
-                <p className='text-[13.5px] leading-[1.7] text-muted-foreground'>{L(item.meaning)}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* The token ranking moved into the issuer rows, where each token sits
             under the issuer that minted it. What stays here is the concentration
             read, which is about underlyings rather than issuers. */}
@@ -307,16 +309,6 @@ export async function renderPage(locale: Locale) {
               </div>
             ))}
           </div>
-
-          <h3 className='mb-3 mt-10 text-base font-semibold'>{t('What to watch next', '接下来看什么', '次に見る指標')}</h3>
-          <ol className='border border-border'>
-            {WATCH_SIGNALS.map((signal, i) => (
-              <li key={signal[0]} className='flex gap-4 border-b border-border px-4 py-3 last:border-0'>
-                <span className='tnum shrink-0 font-mono text-[12px] text-brand'>{String(i + 1).padStart(2, '0')}</span>
-                <span className='text-[13.5px] leading-[1.65] text-muted-foreground'>{L(signal)}</span>
-              </li>
-            ))}
-          </ol>
 
           <p className='mt-8 max-w-[760px] font-mono text-[11px] leading-[1.8] text-subtle'>
             {t(

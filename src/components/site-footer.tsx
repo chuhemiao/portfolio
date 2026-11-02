@@ -32,7 +32,7 @@ export default function SiteFooter() {
     <footer className="mt-20 border-t border-border">
       <div className="mx-auto flex max-w-[1240px] flex-wrap gap-10 px-4 pb-14 pt-11 sm:px-8">
         <div className="min-w-0 flex-[999_1_340px]">
-          <div className="mb-3.5 flex items-center gap-3">
+          <div className="mb-5 flex items-center gap-3">
             <span className="flex size-10 items-center justify-center rounded-full bg-muted font-mono text-[13px] text-muted-foreground">
               {DATA.initials}
             </span>
@@ -43,13 +43,6 @@ export default function SiteFooter() {
               </span>
             </span>
           </div>
-          <p className="mb-4 max-w-[380px] text-[13px] leading-[1.75] text-subtle">
-            {t(
-              "iBuidl Founder · Yamaswap TPM. Research is published as soon as it is written.",
-              "iBuidl Founder · Yamaswap TPM。研究写完就公开。",
-              "iBuidl Founder · Yamaswap TPM。書き上げたリサーチはそのまま公開。"
-            )}
-          </p>
           <div className="flex flex-wrap gap-2">
             {socials.map((s) => (
               <Link
@@ -128,7 +121,7 @@ export default function SiteFooter() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-[1240px] flex-wrap justify-between gap-4 px-4 py-4 font-mono text-[11px] tracking-[0.06em] text-subtle sm:px-8">
           <span>© {new Date().getFullYear()} KKDEMIAN.COM</span>
-          <span>DYOR</span>
+          <span>DYOR DYOR DYOR</span>
         </div>
       </div>
     </footer>

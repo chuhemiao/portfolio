@@ -131,7 +131,17 @@ export default function StocksIssuers() {
       value: L(US_LABEL[issuer.usPersons]),
       tone: issuer.usPersons === 'accredited' ? 'text-positive' : issuer.usPersons === 'blocked' ? 'text-negative' : 'text-muted-foreground',
     },
-    { key: t('Jurisdiction', '司法管辖', '法域'), value: L(issuer.jurisdiction), tone: 'text-muted-foreground' },
+    // The issuing entity used to render only on an issuer's own detail page,
+    // and nine issuers have no such page, so the Jersey and BVI entities behind
+    // three of them appeared nowhere. It shares the jurisdiction cell rather
+    // than taking one of its own.
+    {
+      key: issuer.entity
+        ? t('Entity · jurisdiction', '发行实体 · 司法管辖', '発行主体 · 法域')
+        : t('Jurisdiction', '司法管辖', '法域'),
+      value: issuer.entity ? `${issuer.entity} · ${L(issuer.jurisdiction)}` : L(issuer.jurisdiction),
+      tone: 'text-muted-foreground',
+    },
   ];
 
   return (

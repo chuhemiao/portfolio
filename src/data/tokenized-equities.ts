@@ -640,49 +640,6 @@ export const METHOD_NOTE: L10n = [
   '出来高は 24h 数量 × 直近価格、板は上位 20 段を仲値換算した推定で全板ではありません。コントラクトアドレスは observed 状態のマッピングであり、発行体のホワイトリストではありません。',
 ];
 
-export const WATCH_SIGNALS: L10n[] = [
-  ['Which venues file for and receive the first TSV approvals.', '首批 TSV 的牌照申请与上线名单。', '最初の TSV 認可を申請・取得する取引場所。'],
-  ['When Robinhood’s 1:1 redemption and voting rights actually ship.', 'Robinhood 的 1:1 赎回与投票权何时真正落地。', 'Robinhood の 1:1 償還と議決権がいつ実装されるか。'],
-  ['Whether rwa.xyz monthly active addresses stop falling.', 'rwa.xyz 的月活地址能否止跌。', 'rwa.xyz の月間アクティブアドレスが下げ止まるか。'],
-  ['Share movement between Ondo, bStocks and xStocks.', 'Ondo、bStocks、xStocks 三家的份额变化。', 'Ondo、bStocks、xStocks のシェア変動。'],
-  ['The volume gap between Hyperliquid stock perps and spot tokens.', 'Hyperliquid 股票永续与现货代币之间的成交量差距。', 'Hyperliquid の株式無期限先物と現物トークンの出来高差。'],
-];
-
-export const WRAPPER_RUBRIC: { kind: Wrapper; meaning: L10n }[] = [
-  {
-    kind: 'direct-security',
-    meaning: [
-      'The token is the registered share. Dividends and voting survive. Usually permissioned and KYC-gated.',
-      '代币就是登记在册的股份。分红和投票权都保留。通常是许可制并需要 KYC。',
-      'トークン自体が登録株式。配当も議決権も残ります。多くは許可制で KYC が必要です。',
-    ],
-  },
-  {
-    kind: 'tracker-certificate',
-    meaning: [
-      'A bearer debt instrument over a share held by a custodian. Economic exposure only; no voting. Recourse runs to the collateral, not to the company.',
-      '针对托管股份的不记名债务凭证。只有经济敞口，没有投票权。追索指向抵押品，而不是公司。',
-      'カストディアンが保有する株式に対する無記名債務証券。経済的エクスポージャーのみで議決権なし。遡求先は担保であり企業ではありません。',
-    ],
-  },
-  {
-    kind: 'debt-claim',
-    meaning: [
-      'A claim on the issuer, collateral held off-chain. If the issuer fails you are a creditor, not a shareholder.',
-      '对发行方的债权，抵押品在链下。发行方违约时，你是债权人，不是股东。',
-      '発行体への請求権で、担保はオフチェーン。発行体が破綻すれば株主ではなく債権者です。',
-    ],
-  },
-  {
-    kind: 'price-exposure',
-    meaning: [
-      'No share held against it. A derivative wearing a ticker.',
-      '背后没有任何股票。一个套着股票代码的衍生品。',
-      '裏付けとなる株式はありません。ティッカーを被せたデリバティブです。',
-    ],
-  },
-];
-
 /** Compact legend for the grade column; `meaning` is the full definition. */
 export const GRADE_RUBRIC: { grade: Grade; short: L10n; meaning: L10n }[] = [
   {
