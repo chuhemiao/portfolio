@@ -158,7 +158,8 @@ draft→pending_review→published；pending_review可rejected/quarantined；pub
 - 先B1关键词/字段权重；中英日规范化、分词和100 queries在M2冻结，不能宣称includes等价BM25；B3待评测。
 - 首屏静态HTML含可用精选，不让useSearchParams把全页退为客户端空壳。客户端只取Library必要公开字段，不能导入8.9MB blog-index或全PROJECTS。
 - 独立关系adapter构建端校验Topic/文章/项目，不改MDX/compiler；无关系不显示区块。
-- localStorage key为kkdemian.library.v1：`{schema_version:"1.1.0",items:{[id]:{saved_at,read_at,hidden_at}}}`，时间可空。稍后读=已保存且未读；仅本地ID与状态；禁存储/损坏/超限降级内存并提示，不上传。alias可迁移，split不擅自扩散收藏；过期/下架不展示缓存正文。
+- M3实际localStorage key为`kkdemian:library:v1`：`{version:1,items:{[id]:{saved:boolean,reading:null|"later"|"read",hidden:boolean}}}`。保存与阅读标记相互独立；只存ID和状态，不保存正文、题名、URL、query、身份或时间戳。最多1000个ID、128000字符，保留至用户清空或浏览器存储策略清理，不使用账号或上传。Phase0的点分key及三时间戳是未部署提案，已由此实现替代，无旧客户端数据迁移。
+- 损坏、未知版本或超限数据整份忽略，明确提示；存储禁用、配额不足时仅当前页内存生效。清空只删除本模块key，删除失败不宣告持久清空，明确旧数据可能在刷新后恢复，并提供重试。跨tab与pageshow重新核对；仅当前公开ID可恢复，1→1 alias可迁移，split不扩散收藏，失效/撤稿ID移除。保存中不缓存正文；静态旧部署的撤稿可达性仍按M4单独验证。
 
 ## 7. 必测拒绝路径
 

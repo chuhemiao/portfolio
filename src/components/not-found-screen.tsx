@@ -1,6 +1,6 @@
 'use client';
 
-import Link from 'next/link';
+import Link from '@/components/library-boundary-link';
 import { useI18n } from '@/components/locale-provider';
 
 export default function NotFoundScreen() {

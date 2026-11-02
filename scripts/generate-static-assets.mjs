@@ -5,6 +5,7 @@ import { LOCALES, articleHref, localizeHref } from '../src/lib/i18n.ts';
 import { instrumentRouteParams, issuerSlugsWithInstruments } from '../src/data/instruments.ts';
 import { loadTopics } from './lib/content/indexes.mjs';
 import { BLOG_INDEX_FILE, ROOT } from './lib/content/paths.mjs';
+import { readCurrentLibrary } from './library/public-reader.mjs';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const SITEMAP_DIR = path.join(PUBLIC_DIR, 'sitemaps');
@@ -213,7 +214,7 @@ ${body}
 // /sitemap.xml stays the single entry point but is now an index over shards of
 // at most SITEMAP_SHARD_SIZE URLs, so the blog can keep growing past the 50k
 // URL / 50MB per-file sitemap limits.
-function buildSitemapShards(posts, topics) {
+function buildSitemapShards(posts, topics, libraryItems) {
   const now = new Date().toISOString();
   const routes = [
     '',
@@ -280,11 +281,22 @@ function buildSitemapShards(posts, topics) {
     });
   }
 
+  const curated = libraryItems.filter(item => item.detail_enabled);
+  for (let start = 0, shard = 1; start < curated.length; start += SITEMAP_SHARD_SIZE, shard += 1) {
+    const items = curated.slice(start, start + SITEMAP_SHARD_SIZE).flatMap(item => LOCALES.map(locale => ({
+      loc: `${SITE.url}${localizeHref(`/library/items/${item.slug}`, locale)}`,
+      alternates: LOCALES.map(language => [language, `${SITE.url}${localizeHref(`/library/items/${item.slug}`, language)}`]),
+      lastmod: item.updated_at,
+      changefreq: 'monthly',
+      priority: '0.7',
+    })));
+    shards.push({ name: `library-${String(shard).padStart(4, '0')}.xml`, lastmod: items.reduce((latest, item) => item.lastmod > latest ? item.lastmod : latest, items[0].lastmod), body: renderUrlSet(items) });
+  }
   return shards;
 }
 
-async function writeSitemaps(posts, topics) {
-  const shards = buildSitemapShards(posts, topics);
+async function writeSitemaps(posts, topics, libraryItems) {
+  const shards = buildSitemapShards(posts, topics, libraryItems);
   const expected = new Set(shards.map((shard) => shard.name));
 
   await fs.mkdir(SITEMAP_DIR, { recursive: true });
@@ -376,11 +388,11 @@ function renderOgSvg() {
 
 async function main() {
   const started = Date.now();
-  const [posts, topics] = await Promise.all([loadPosts(), loadTopics()]);
+  const [posts, topics, library] = await Promise.all([loadPosts(), loadTopics(), readCurrentLibrary(ROOT)]);
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
 
   const [shardCount] = await Promise.all([
-    writeSitemaps(posts, topics),
+    writeSitemaps(posts, topics, library.items),
     ...LOCALES.map((locale) => fs.writeFile(path.join(PUBLIC_DIR, `rss-${locale}.xml`), renderRss(posts.filter((post) => post.metadata.language === locale), locale), 'utf8')),
     fs.writeFile(path.join(PUBLIC_DIR, 'rss.xml'), renderRss(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'llms.txt'), renderLlmsTxt(posts), 'utf8'),

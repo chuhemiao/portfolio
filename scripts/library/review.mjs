@@ -187,7 +187,10 @@ export async function applyReview({ directory, output, command, write = false, c
   if (!checked.valid) fail('INVALID_REVIEW_COMMAND', 'Review command does not match its strict schema.', checked.errors);
   authorize(command);
   const run = async () => {
-    const catalog = await readCatalog(root); const references = context ?? await loadReferenceContext(process.cwd(), catalog);
+    const catalog = await readCatalog(root);
+    const collection = command.action === 'revise' && command.replacement && ['item_relation', 'item_topic'].includes(command.entity_type) ? COLLECTIONS[command.entity_type] : null;
+    const referenceCatalog = collection ? { ...catalog, [collection]: [...catalog[collection], command.replacement] } : catalog;
+    const references = context ?? await loadReferenceContext(process.cwd(), referenceCatalog);
     const before = validateCatalog(catalog, { asOf, context: references });
     if (!before.valid) { if (write) await buildSnapshot({ catalog, context: references, directory: output, asOf }); fail('CATALOG_INVALID', 'Current catalog is not eligible for an operator mutation.', before.errors); }
     const planned = planReview(catalog, command, references);

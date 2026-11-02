@@ -12,11 +12,13 @@ export async function loadReferenceContext(root, catalog) {
   }
   if (catalog.item_relations.some(relation => relation.existing_entity_type === 'project')) {
     const { PROJECTS } = await import(pathToFileURL(path.join(root, 'src/data/research-projects.ts')).href);
-    context.project_slugs = PROJECTS.map(project => project.slug);
+    const targets = new Set(catalog.item_relations.filter(relation => relation.existing_entity_type === 'project').map(relation => relation.existing_entity_slug));
+    context.project_slugs = PROJECTS.filter(project => targets.has(project.slug)).map(project => project.slug);
   }
   if (catalog.item_relations.some(relation => relation.existing_entity_type === 'article')) {
     const data = parseJsonStrict(await fs.readFile(path.join(resolveGeneratedDir(root), 'blog-index.json')));
-    context.articles = data.posts.map(post => ({ slug: post.slug, translation_key: post.translationKey }));
+    const targets = new Set(catalog.item_relations.filter(relation => relation.existing_entity_type === 'article').map(relation => relation.existing_entity_slug));
+    context.articles = data.posts.filter(post => targets.has(post.slug)).map(post => ({ slug: post.slug, translation_key: post.translationKey }));
   }
   return context;
 }

@@ -1,0 +1,227 @@
+{
+  "schema_version": "library-m3-validation/v1",
+  "recorded_at": "2026-11-02T14:59:44.606Z",
+  "baseline_commit": "38300d41ca6a60726a693a02cf92913c0e9534e3",
+  "status": "m3-local-implementation-and-independent-source-review-complete; actual-export-browser-and-human-gates-remain-M4-or-not-run",
+  "counts": {
+    "candidates": 300,
+    "published_items": 100,
+    "details": 100,
+    "complete_locale_bodies": 300,
+    "approved_article_groups": 10,
+    "relations": 10,
+    "topics": 5,
+    "review_events": 1295,
+    "declared_new_routes": 404,
+    "actual_next_export_routes": null
+  },
+  "snapshot": {
+    "id": "sha256-ec221e64fcc4214042ecab360e16383079fc0dfc3421efc2b1b7f8714f8c6e8a",
+    "input_hash": "3132e3d5f4529b4b0913d6480865b35bfebaa15207882780c1e861c83fb95c4d",
+    "raw_bytes": 590072,
+    "individual_file_gzip_bytes": 231660,
+    "file_count": 111,
+    "ui_rsc_or_browser_bundle_size": null
+  },
+  "catalog_preservation": {
+    "sources": {
+      "path": "data/library/sources.json",
+      "before_sha256": "b39d131e6f29f6fc8e570a296f69ef5e5b6a07646266508f2e15e566074abfda",
+      "after_sha256": "b39d131e6f29f6fc8e570a296f69ef5e5b6a07646266508f2e15e566074abfda",
+      "unchanged": true
+    },
+    "candidates": {
+      "path": "data/library/candidates.jsonl",
+      "before_sha256": "637eb6e3f8a8bf8f7bf218eef83904f8a3925a085f4077f709cb2be60d11566e",
+      "after_sha256": "637eb6e3f8a8bf8f7bf218eef83904f8a3925a085f4077f709cb2be60d11566e",
+      "unchanged": true
+    },
+    "items": {
+      "path": "data/library/items.jsonl",
+      "before_sha256": "b3e3d2425119936374565ed2e3e2dd2299a63d2f9a84492d37b388372f4dc2df",
+      "after_sha256": "b3e3d2425119936374565ed2e3e2dd2299a63d2f9a84492d37b388372f4dc2df",
+      "unchanged": true
+    },
+    "item_locales": {
+      "path": "data/library/item-locales.jsonl",
+      "before_sha256": "5e061e5e90fb0e9f2acc26abf87a1342116bec10f481b47f4937c3d531c579ea",
+      "after_sha256": "5e061e5e90fb0e9f2acc26abf87a1342116bec10f481b47f4937c3d531c579ea",
+      "unchanged": true
+    },
+    "evidence": {
+      "path": "data/library/evidence.jsonl",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "item_topics": {
+      "path": "data/library/item-topics.jsonl",
+      "before_sha256": "735edddb41aa272b33a43c810888ca2d29851c5ed6daad457ef6945f58b33705",
+      "after_sha256": "735edddb41aa272b33a43c810888ca2d29851c5ed6daad457ef6945f58b33705",
+      "unchanged": true
+    },
+    "editorial_selections": {
+      "path": "data/library/editorial-selections.jsonl",
+      "before_sha256": "bba408b19a3ce1e994cb7a6ec2d486b3b1e9d9e536653329d15f7ee414f40877",
+      "after_sha256": "bba408b19a3ce1e994cb7a6ec2d486b3b1e9d9e536653329d15f7ee414f40877",
+      "unchanged": true
+    },
+    "identity_history": {
+      "path": "data/library/identity-history.jsonl",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    },
+    "scores": {
+      "path": "data/library/scores.jsonl",
+      "before_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "after_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "unchanged": true
+    }
+  },
+  "checks": [
+    {
+      "command": "pnpm test",
+      "tests": 292,
+      "pass": 292,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit_code": 0,
+      "artifact": "global-tests.log",
+      "freshness": "before the final public-reader/catalog concurrency repair; all other business sources unchanged afterwards"
+    },
+    {
+      "command": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test scripts/library/public-reader.test.mjs scripts/library/frontend.test.mjs scripts/library/local-state.test.mjs scripts/library/navigation.test.mjs scripts/library/editorial-seed.test.mjs scripts/library/reference-context.test.mjs",
+      "tests": 34,
+      "pass": 34,
+      "fail": 0,
+      "skipped": 0,
+      "cancelled": 0,
+      "exit_code": 0,
+      "artifact": "final-targeted-tests.log",
+      "freshness": "after final public-reader/catalog repair"
+    },
+    {
+      "command": "pnpm typecheck",
+      "exit_code": 0,
+      "artifact": "typecheck.log",
+      "freshness": "after final public-reader/catalog repair"
+    },
+    {
+      "command": "pnpm exec eslint <all changed business sources and tests>",
+      "exit_code": 0,
+      "artifact": "eslint.log",
+      "freshness": "all changed sources except later reader/catalog; those covered by reader-eslint.log"
+    },
+    {
+      "command": "pnpm exec eslint scripts/library/public-reader.mjs scripts/library/public-reader.test.mjs src/lib/library/catalog.ts",
+      "exit_code": 0,
+      "artifact": "reader-eslint.log",
+      "freshness": "after final reader/catalog repair"
+    },
+    {
+      "command": "pnpm content:check",
+      "exit_code": 0,
+      "scanned_mdx": 7428,
+      "freshness": "editorial and MDX content never changed in M3"
+    },
+    {
+      "command": "pnpm test:i18n",
+      "exit_code": 0,
+      "tests": 59
+    },
+    {
+      "command": "pnpm library:validate",
+      "exit_code": 0,
+      "artifact": "library-validate.log"
+    },
+    {
+      "command": "pnpm library:build",
+      "exit_code": 0,
+      "artifact": "library-build.log",
+      "generation_ms": 711.000792
+    },
+    {
+      "command": "pnpm assets:build",
+      "exit_code": 0,
+      "artifact": "assets-build.log"
+    }
+  ],
+  "failed_attempts": [
+    {
+      "scope": "first real relation insertion",
+      "result": "CATALOG_INVALID LIMIT_EXCEEDED /context before any mutation",
+      "cause": "all 7428 article rows were projected into the reference-context record",
+      "repair": "data owner now projects referenced real targets; default review context includes before/replacement union",
+      "behavioral_red": true
+    },
+    {
+      "scope": "corrupt local state",
+      "result": "a valid saved entry before a malformed entry survived despite status corrupt",
+      "repair": "reject the complete document with a fresh empty state",
+      "behavioral_red": true
+    },
+    {
+      "scope": "SSR list assertion",
+      "result": "test expected href to be the first anchor attribute, actual Next Link emitted className before href",
+      "repair": "attribute-order-independent rendered-link assertion; no product fix claimed",
+      "behavioral_red": false
+    },
+    {
+      "scope": "existing M1 actor oracle",
+      "result": "137/138 Library tests passed; fixed set of two actors rejected the actual M3 relation actor",
+      "repair": "M1 actor oracle is scoped to non-item_relation events; full chain still verified",
+      "behavioral_red": false
+    },
+    {
+      "scope": "parallel server reader",
+      "result": "real tmp wx lock: [fulfilled(1 item),WRITE_LOCKED,WRITE_LOCKED,WRITE_LOCKED]",
+      "repair": "only WRITE_LOCKED waits at most 10 seconds in 25ms steps; no force unlock or validation bypass",
+      "behavioral_red": true
+    },
+    {
+      "scope": "rejected build-process promise",
+      "result": "first ENOENT stayed cached after the manifest was restored; second call still rejected",
+      "repair": "clear rejected promise and rethrow; a later explicit call can read and validate again",
+      "behavioral_red": true
+    }
+  ],
+  "relation_approval": {
+    "actor": "codex-library-m3-ui",
+    "operations": 20,
+    "approved": 10,
+    "artifact": "relations-review.json",
+    "sources": "Main source-backed analysis plus bounded reads of the ten source paragraphs; no new external reads"
+  },
+  "not_run": [
+    "pnpm build / next build / full-site export on this machine",
+    "pnpm check:i18n (requires the M4 complete export)",
+    "dev/preview server or browser page preview",
+    "actual browser layout, keyboard focus, history, cross-tab storage, BFCache and GA collector request interception",
+    "human labels, F1/precision/NDCG/kappa or user experiments",
+    "push, deployment or production mutation"
+  ],
+  "limits": [
+    "Node SSR uses actual React/Next Link code with a Node TSX/alias loader and server-only marker adaptation. It does not exercise Next RSC serialization, a real route export, browser navigation, layout or network.",
+    "Real tmp reader tests use one synthetic approved item; M4 must validate the real 100-item export under actual Next workers.",
+    "Search/filter query parameters remain in the URL and direct GETs reach this site. Host log retention is unknown.",
+    "Only local reading-state IDs/status are persisted; an unavailable/failed clear may leave old durable data until retry succeeds.",
+    "Successful source snapshot promise is scoped to one static-build process; source changes require a new build. Old deployed artifacts need M4 withdrawal checks."
+  ],
+  "independent_review": {
+    "general": {
+      "status": "closed; no unresolved blockers",
+      "scope": "server reader/cache, routes, metadata, sitemap, real relations/fallback, B1 local pagination, source-level states",
+      "concurrency_p2": "closed after real tmp RED/GREEN and independent read-only reproduction",
+      "limits": "not actual Next export/browser"
+    },
+    "privacy": {
+      "status": "closed; both local-state P2 issues repaired, no new finding",
+      "scope": "frozen analytics/nav/query/state privacy chain; directed corrupt and failed-clear lifecycle recheck",
+      "independent_pure_local_state_tests": 6,
+      "limits": "no actual DOM/storage/network/history/focus proof"
+    },
+    "evidence_kind": "direct independent reviewer task handoffs received by Main; not a human research evaluation"
+  }
+}

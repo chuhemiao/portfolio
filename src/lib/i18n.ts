@@ -52,7 +52,7 @@ export function localizeHref(href: string, locale: Locale): string {
   // stocks takes an issuer and an instrument below it; without those segments
   // here a link to /stocks/bstocks/SPCXB would silently keep serving the
   // unprefixed route, the way /blog/* does by design.
-  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|thoughts|research|stocks(?:\/[^/]+){0,2}|fear|fund|oscillator|pulse|stack|watch)\/?$/;
+  const routes = /^\/(?:blog|topics(?:\/[^/]+)?|library(?:\/items\/[^/]+)?|thoughts|research|stocks(?:\/[^/]+){0,2}|fear|fund|oscillator|pulse|stack|watch)\/?$/;
   if (pathname !== '/' && !routes.test(pathname)) return href;
   return `/${locale}${pathname === '/' ? '' : pathname}${match[2]}`;
 }

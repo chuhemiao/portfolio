@@ -128,7 +128,7 @@ test('complete trilingual editorial content shares a same-item selection basis w
 });
 
 test('actual agent review attribution and rejected overbroad mappings remain visible', () => {
-  assert.deepEqual(new Set(catalog.review_log.map(event => event.reviewer_id)), new Set(['codex-library-m1-real-sources', 'codex-library-m1-trilingual-editorial']));
+  assert.deepEqual(new Set(catalog.review_log.filter(event => event.entity_type !== 'item_relation').map(event => event.reviewer_id)), new Set(['codex-library-m1-real-sources', 'codex-library-m1-trilingual-editorial']));
   let previous = null;
   for (const event of catalog.review_log) {
     assert.equal(event.previous_event_hash, previous);

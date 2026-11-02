@@ -14,6 +14,9 @@ test('canonical locales accept existing metadata aliases without broadening supp
 test('page links switch locale and retain query/hash without touching external links or assets', () => {
   assert.equal(localizeHref('/en/research?q=BTC#results', 'ja'), '/ja/research?q=BTC#results');
   assert.equal(localizeHref('/topics/quantum', 'zh-CN'), '/zh-CN/topics/quantum');
+  assert.equal(localizeHref('/en/library?q=ERC-7702&page=2#library-results', 'ja'), '/ja/library?q=ERC-7702&page=2#library-results');
+  assert.equal(localizeHref('/library/items/shared-slug', 'zh-CN'), '/zh-CN/library/items/shared-slug');
+  assert.equal(localizeHref('/library/candidates/private', 'ja'), '/library/candidates/private');
   assert.equal(localizeHref('/', 'en'), '/en');
   assert.equal(localizeHref('https://example.com', 'ja'), 'https://example.com');
   assert.equal(localizeHref('//example.com', 'ja'), '//example.com');

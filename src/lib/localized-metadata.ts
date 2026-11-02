@@ -19,6 +19,10 @@ const PAGE_COPY: Record<string, { title: [string, string, string]; description: 
     title: ['Topics', '研究主题', 'トピック'],
     description: ['Explore research themes across DeFi, blockchains, AI, and market structure.', '探索 DeFi、公链、AI 与市场结构等研究主题。', 'DeFi、ブロックチェーン、AI、市場構造のリサーチテーマを探す。'],
   },
+  '/library': {
+    title: ['Library', '资料库', 'ライブラリ'],
+    description: ['An editorial reading list of specifications, papers, books, articles, and videos with source links and reading notes.', '精选规范、论文、书籍、文章与视频，保留原始来源和编辑阅读说明。', '仕様、論文、書籍、記事、動画を原典リンクと編集者の読書メモから探すライブラリ。'],
+  },
   '/stocks': {
     title: ['Tokenized Equities', '链上美股', 'オンチェーン米国株'],
     description: ['Tokenized US equities by issuer: legal wrapper, custody, proof of reserve, redemption terms and real order-book depth.', '按发行方拆解链上美股：法律包装、托管与储备证明、赎回条款与真实订单簿深度。', '発行体別のトークン化米国株：法的ラッパー、保管と準備金証明、償還条件、実際の板の厚み。'],

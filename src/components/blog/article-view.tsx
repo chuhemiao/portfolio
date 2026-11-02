@@ -18,6 +18,7 @@ import ScrollToTop from "@/components/blog/scroll-to-top";
 import TableOfContents from "@/components/blog/table-of-contents";
 import Mermaid from "@/components/mermaid";
 import { ArrowUpRightIcon, RssIcon, ArrowRightIcon } from "lucide-react";
+import { LibraryArticleReading } from "@/components/library/related-reading";
 
 const CATEGORY_KEYWORDS: Record<string, string[]> = {
   thoughts: ["Web3", "Blockchain", "Crypto Thoughts", "Opinion"],
@@ -263,6 +264,8 @@ export async function renderPage(locale: Locale, slug: string) {
               className="article-prose prose max-w-none break-words dark:prose-invert"
               dangerouslySetInnerHTML={{ __html: post.source }}
             ></article>
+
+            <LibraryArticleReading translationKey={post.metadata.translationKey} locale={locale} />
 
             {/* Related Topics */}
             {relatedTopics.length > 0 && (

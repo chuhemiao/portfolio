@@ -96,7 +96,7 @@ export function createLibrarySearch(snapshot: { items: LibraryPublicItem[]; rank
   return {
     version: LIBRARY_SEARCH_VERSION,
     size: entries.length,
-    search(input: URLSearchParams | Record<string, string | undefined>, { locale = 'en', asOf = new Date().toISOString() }: { locale?: LibraryLocale; asOf?: string } = {}) {
+    search(input: URLSearchParams | Record<string, string | undefined>, { locale = 'en', asOf = new Date().toISOString(), itemIds }: { locale?: LibraryLocale; asOf?: string; itemIds?: ReadonlySet<string> } = {}) {
       if (!['zh-CN', 'en', 'ja'].includes(locale) || !Number.isFinite(Date.parse(asOf))) throw new LibrarySearchError('Unsupported UI locale or invalid clock.');
       if (manifest.valid_until && Date.parse(asOf) >= Date.parse(manifest.valid_until)) throw new LibrarySearchError('The current snapshot has expired.', 'SNAPSHOT_EXPIRED');
       const query = parseLibraryQuery(input); const terms = libraryQueryTerms(query.q); const normalized = normalizeLibraryText(query.q);
@@ -105,6 +105,7 @@ export function createLibrarySearch(snapshot: { items: LibraryPublicItem[]; rank
       let hits: SearchHit[] = [];
       for (const entry of entries) {
         const item = entry.item;
+        if (itemIds && !itemIds.has(item.id)) continue;
         if ((query.topic && !item.topic_slugs.includes(query.topic)) || (query.type && item.kind !== query.type) || (query.language && item.original_language !== query.language) || (query.level && item.level !== query.level) || (query.year && (query.year === 'unknown' ? item.original_published_at !== null : !item.original_published_at?.startsWith(query.year + '-'))) || (query.sort === 'recently-recommended' && !recommended.has(item.id))) continue;
         if (query.recommendedFrom || query.recommendedTo) {
           if (!recommended.has(item.id) || !item.evidence.some(e => e.kind === 'recommendation' && (!query.recommendedFrom || e.observed_at.slice(0, 10) >= query.recommendedFrom) && (!query.recommendedTo || e.observed_at.slice(0, 10) <= query.recommendedTo))) continue;

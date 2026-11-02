@@ -10,15 +10,19 @@ import { assets } from '../src/data/fund.ts';
 // Not .generated/ directly: on Vercel the index lives under .next/cache/content
 // so it survives between builds (see resolveGeneratedDir).
 import { BLOG_INDEX_FILE } from './lib/content/paths.mjs';
+import { readCurrentLibrary } from './library/public-reader.mjs';
 
 const root = process.cwd();
 const index = JSON.parse(fs.readFileSync(BLOG_INDEX_FILE, 'utf8'));
 const { TOPICS } = await import('../src/data/topics.ts');
 const { instrumentRouteParams, issuerSlugsWithInstruments } = await import('../src/data/instruments.ts');
+const library = await readCurrentLibrary(root);
+const libraryDetails = library.items.filter(item => item.detail_enabled);
 // /stocks was never in this list, which is why nothing caught that localizeHref
 // did not recognise routes below it.
 const pages = [
-  '', 'blog', 'research', 'topics', 'thoughts', 'watch', 'pulse', 'fear', 'fund', 'oscillator', 'stack', 'stocks',
+  '', 'blog', 'research', 'topics', 'thoughts', 'watch', 'pulse', 'fear', 'fund', 'oscillator', 'stack', 'stocks', 'library',
+  ...libraryDetails.map(item => `library/items/${item.slug}`),
   ...TOPICS.map((topic) => `topics/${topic.slug}`),
   ...issuerSlugsWithInstruments().map((issuer) => `stocks/${issuer}`),
   ...instrumentRouteParams().map(({ issuer, ticker }) => `stocks/${issuer}/${ticker}`),
@@ -44,6 +48,12 @@ for (const locale of LOCALES) {
     }
     // Check rendered links rather than RSC JSON embedded in script tags.
     const markup = html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/g, '');
+    if (page === 'library' || page.startsWith('library/items/')) {
+      assert.ok(html.includes('<meta name="referrer" content="no-referrer"'), `missing Library referrer policy: ${route}`);
+      assert.ok(html.includes(`<meta name="robots" content="${page === 'library' ? 'noindex' : 'index'}, follow"`), `wrong Library robots: ${route}`);
+      assert.equal((markup.match(/<select\b[^>]*aria-label="(?:Site language|网站语言|サイトの言語)"/g) ?? []).length, 1, `Library needs one top language menu: ${route}`);
+      assert.ok(!/googletagmanager\.com|gtag\('config'/u.test(html), `Library HTML initializes analytics: ${route}`);
+    }
     if (page === 'fund') {
       for (const asset of assets) {
         const symbol = asset.ticker ?? asset.handle;
@@ -60,6 +70,13 @@ for (const locale of LOCALES) {
   assert.ok(feed.includes(`<language>${locale}</language>`), `wrong feed language ${locale}`);
   assert.equal((feed.match(/<item>/g) ?? []).length, index.posts.filter((post) => post.language === locale).length);
 }
+
+for (const page of ['library', ...libraryDetails.map(item => `library/items/${item.slug}`)]) {
+  checkDocument(readRoute(`/${page}`), 'en', `${site}/en/${page}`);
+}
+const librarySitemapNames = fs.readdirSync(path.join(root, 'public/sitemaps')).filter(name => /^library-\d{4}\.xml$/u.test(name));
+const libraryUrls = librarySitemapNames.flatMap(name => [...fs.readFileSync(path.join(root, 'public/sitemaps', name), 'utf8').matchAll(/<loc>([^<]+)<\/loc>/g)].map(([, url]) => url));
+assert.deepEqual(libraryUrls.sort(), libraryDetails.flatMap(item => LOCALES.map(locale => `${site}/${locale}/library/items/${item.slug}`)).sort(), 'Library sitemap must contain exactly the eligible canonical details');
 
 for (const post of index.posts) {
   const route = articleHref(post.slug, post.language);

@@ -1,10 +1,17 @@
 'use client';
 
 import Script from 'next/script';
-import { useEffect } from 'react';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { libraryPathScope, librarySafeReferrer } from '@/lib/library/navigation';
 
 export function Analytics() {
+  const pathname = usePathname();
+  const [ready, setReady] = useState(false);
+  const [referrer, setReferrer] = useState<string | undefined>();
   useEffect(() => {
+    setReferrer(librarySafeReferrer(document.referrer));
+    setReady(true);
     // Suppress gtag errors caused by ad blockers
     const handleError = (event: ErrorEvent) => {
       if (
@@ -19,6 +26,8 @@ export function Analytics() {
     window.addEventListener('error', handleError);
     return () => window.removeEventListener('error', handleError);
   }, []);
+
+  if (!ready || libraryPathScope(pathname) !== 'other') return null;
 
   return (
     <>
@@ -35,9 +44,7 @@ export function Analytics() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-3VBJPZ1BBY', {
-            'debug_mode': false
-          });
+          gtag('config', 'G-3VBJPZ1BBY', ${JSON.stringify({ debug_mode: false, ...(referrer === undefined ? {} : { page_referrer: referrer }) })});
         `}
       </Script>
     </>

@@ -8,6 +8,7 @@ import { ArrowRightIcon, ArrowUpRightIcon, BookOpenIcon, SearchIcon } from 'luci
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { LibraryTopicReading } from '@/components/library/related-reading';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -155,6 +156,8 @@ export async function renderPage(locale: Locale, slug: string) {
             </BlurFade>
           )}
         </section>
+
+        <LibraryTopicReading slug={topic.slug} locale={locale} />
 
         {/* CTA to Research */}
         <BlurFade delay={BLUR_FADE_DELAY * 5}>
