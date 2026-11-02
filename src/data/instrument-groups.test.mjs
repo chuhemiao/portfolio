@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 
 import { INSTRUMENT_GROUPS, groupForTicker } from './instrument-groups.ts';
 import {
@@ -127,5 +128,20 @@ test('sector labels are short and unique within each locale', () => {
       seen.set(label, group.slug);
       assert.ok(!label.endsWith('?') && !label.endsWith('\uff1f'), `${group.slug} label[${i}] is a question, not a sector`);
     }
+  }
+});
+
+// articleSlugs sat on every group while the issuer page rendered the group
+// cards without ever reading it, and the table rendered the link in the same
+// muted grey as the text beside it. A field that nothing displays is the same
+// as no field, so assert the pages that list groups actually reach the report.
+test('the pages that list groups link to the reports', () => {
+  const read = (p) => fs.readFileSync(new URL(p, import.meta.url), 'utf8');
+  for (const file of ['../components/stocks/issuer-view.tsx', '../components/stocks/instrument-table.tsx']) {
+    const src = read(file);
+    assert.match(src, /articleHref\(/, `${file} never builds an article href`);
+    assert.match(src, /articleSlugs/, `${file} never reads articleSlugs`);
+    // and the link has to be visibly a link, not muted body text
+    assert.match(src, /text-brand/, `${file} renders the report link with no accent`);
   }
 });

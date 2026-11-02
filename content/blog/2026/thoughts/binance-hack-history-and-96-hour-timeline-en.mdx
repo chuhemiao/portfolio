@@ -1,0 +1,147 @@
+---
+title: 'Every Binance breach, from $41M to $6.3B: eight years, five incidents, and these 96 hours'
+publishedAt: '2026-11-02'
+summary: 'The $6.3B taken on 2026-10-29 is the largest single theft in crypto history and about 154 times the $41M lost in 2019. Lining up eight years of incidents shows one consistent pattern: the cold wallets were never breached, and every attack came in at the layer closest to withdrawal — API credentials, hot wallets, a bridge, the signing service. This piece gives the full timeline through 2026-11-02 05:30 UTC, the fund flows and the replenishment status, and explains why two percentages in the source material were recomputed.'
+slug: 'binance-hack-history-and-96-hour-timeline-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'binance-hack-history-and-96-hour-timeline'
+sourceSlug: 'binance-hack-history-and-96-hour-timeline'
+---
+
+## TL;DR
+
+- **On 2026-10-29 at 21:18 UTC, CZ confirmed Binance had been robbed of about `$6.3B`**, the largest single theft in crypto history and about **`154x`** the 2019 incident (`$41M`).
+- **As of 2026-11-02 05:30 UTC**: withdrawals resumed in stages on 11-01 (`15` networks, `$BTC` first), **`90–95%`** of the stolen assets have been replaced from the firm's own balance sheet, and about **`$3B`** is frozen.
+- **The problem was not a leaked private key** but a compromised internal signing and approval chain, then EIP-7702 delegation used to sweep the hot wallets in bulk. The FBI, TRM Labs and Chainalysis all point to North Korea's **TraderTraitor (Lazarus)**.
+- **User losses on paper are zero; the cost moved onto the exchange balance sheet and its credibility.** Net outflow in the 24 hours after withdrawals reopened was `$3.64B–6.33B` depending on the method, roughly `2–4%` of its `$171B` in customer assets.
+- **The thing to watch is not whether the coins come back**, but whether the 11-02 proof of reserves and the 11-03 ZK verification turn "fully backed 1:1" from a verbal promise into a verifiable fact.
+
+> Data as of 2026-11-02 05:30 UTC. Prices are Binance spot `$BTC/USDT` and `$BNB/USDT`. The timeline is built from the publication timestamps of public reporting and official announcements; the exact second-level ordering of on-chain actions follows the transactions themselves. Two percentages in the source material disagree with the prices it gives and were recomputed; see section 6.
+
+---
+
+## 1. The long view: eight years, five incidents, a widening attack surface
+
+Binance's security history has one clear through-line: **every incident happened at the hot edge — hot wallets, APIs, a cross-chain bridge, the signing service. The cold wallets were never breached head-on.** The scale went from tens of millions to billions.
+
+| Date (UTC) | Incident | Scale | Method | Handling and outcome |
+|---|---|---|---|---|
+| 2018-03-07 | API keys abused, unauthorized sell orders on thin pairs | **No coins stolen** | Phished API credentials used to manipulate trading | Withdrawals paused, abnormal fills rolled back, user funds intact [TechCrunch](https://techcrunch.com/2018/03/07/bitcoin-price-drops-10-as-hackers-exploit-binances-api-keys/) |
+| 2019-05-07 | Hot wallet drained of `7,000` `$BTC` | About `$41M` at the time | Virus, phishing and API data combined into one withdrawal | SAFU covered it in full, withdrawals halted for days [BBC](https://www.bbc.com/news/technology-48199375) |
+| 2019-08 | KYC documents leaked and used for extortion | No direct loss of funds | Suspected third-party vendor | Ransom refused, public bounty opened [CoinDesk](https://www.coindesk.com/markets/2019/08/07/binance-customer-data-has-leaked-what-we-know-and-what-we-dont) |
+| 2022-10-06 | BNB Chain **BSC Token Hub bridge** | `2M` `$BNB` minted out of nothing (`$570M`), about `$100M+` actually moved off-chain | Forged cross-chain proof tricked the bridge contract into paying out | Validators halted block production, hard fork upgrade; Binance put the unrecovered amount near `$100M` [CNBC](https://www.cnbc.com/2022/10/07/more-than-100-million-worth-of-binances-bnb-token-stolen-in-another-major-crypto-hack.html) |
+| **2026-10-29** | **Multiple hot wallets plus the signing chain** | **About `$6.3B`** | Internal network intrusion plus abuse of EIP-7702 delegation | `$6.34B` provisioned, about `$3B` frozen, withdrawals resumed in stages from 11-01 |
+
+Two things deserve to be called out separately.
+
+First, **those `7,000` `$BTC` from 2019 are worth about `$548M` at today's `$78,336`** — the same coins, up `13x` in seven years. That is why `$41M` sounds small in its own era and belongs to a different order of magnitude on today's balance sheet.
+
+Second, 2022 was strictly a **BNB Chain ecosystem** bridge exploit rather than exchange accounts being drained, though the market habitually files it under Binance.
+
+Phished APIs in 2018, stolen credentials in 2019, a contract verification flaw in 2022, compromised signing infrastructure in 2026 — **every time, the attacker went around the cold wallets and came in at the layer closest to withdrawal.**
+
+## 2. 2026-10-29: the 96-hour timeline
+
+It took `5` minutes from the first on-chain anomaly to official confirmation, about `10` hours from confirmation to attribution as a state-level attack, and nearly `60` hours from the withdrawal freeze to withdrawals actually reopening. All times UTC.
+
+| Time | Development |
+|---|---|
+| **10-29 ~21:10** | On-chain researcher Spreek warns that a Binance-linked Ethereum wallet is moving assets to new addresses through a contract call funded from Tornado Cash, then selling `$USDT` on DEXes [Cointelegraph](https://cointelegraph.com/news/binance-linked-wallet-faces-possible-exploit-blockchain-researcher-warns) |
+| 10-29 21:18 | **CZ confirms the theft** and says user funds are safe; Tether freezes about `$971M` and Circle about `$823M` [Reuters](https://www.reuters.com/legal/transactional/tether-circle-freeze-238-billion-after-binance-reports-security-incident-2026-10-29/) |
+| 10-29 21:24 | Tracking shows the theft spans multiple chains; analysts warn the attack may still be running |
+| 10-29 22:18 | Glassnode's first quantified estimate: `$5.3B`, of which `$USDT` `$1.66B`, `$BTC` `$1.45B`, `$USDC` `$767M` |
+| 10-30 00:10 | The drained hot wallet **Binance 14** revokes its EIP-7702 authorization |
+| 10-30 02:08 | Binance suspends deposits and withdrawals, repeats that it will cover everything |
+| 10-30 05:51 | **TRM Labs, Chainalysis and ZachXBT attribute the attack to North Korea's TraderTraitor**; funds from Binance and Bitget converge on one address through THORChain [Cointelegraph](https://cointelegraph.com/news/north-korea-linked-to-63b-binance-hack-by-crypto-investigators) |
+| 10-30 09:31 | Binance discloses that the attack involved **an infected DevOps laptop** and additional points of breach, puts the loss at `$6.3B` and says `$3B` is frozen [Decrypt](https://decrypt.co/382203/binance-finds-additional-points-of-breach-in-6-3b-hack) |
+| 10-30 11:00 | Blockaid: **no private key leak**, the signing infrastructure was tricked; EIP-7702 did not cause it but amplified the loss [Cointelegraph](https://cointelegraph.com/news/binance-hack-security-ethereum-eip-7702-role) |
+| 10-30 12:00 | Binance formally confirms `$6.3B` and says SAFU plus corporate funds will cover it |
+| 10-30 15:03 | Market reaction: `$BTC` quoted at `$76,771`, total crypto market cap `−3.9%` |
+| 10-30 16:34 | The CEO gives a schedule: **withdrawals on 11-01, proof of reserves on 11-02**; announces a `$6.34B` provision of which `$5B` is already in the matching assets [Cointelegraph](https://cointelegraph.com/news/binance-5-billion-replacement-crypto-in-custody) |
+| 10-30 19:56 | Binance confirms the second intrusion path: EIP-7702 delegation used to **bypass hot wallet approvals** |
+| 10-30 23:13 | Trump says he is following it; the FBI and the US Secret Service get involved |
+| 10-31 15:36 | Binance says **`90%` has been replenished** and `10` assets are back to `100%` reserves; SAFU moves `7,500` `$BTC` to refill [Cointelegraph](https://cointelegraph.com/news/binance-hack-90-percent-replenished) |
+| **11-01 07:44** | **The FBI formally names North Korea's TraderTraitor** and asks the private sector to help block laundering [Cointelegraph](https://cointelegraph.com/news/fbi-blames-north-korea-for-record-63b-binance-hack) |
+| 11-01 07:02 | Binance updates its proof-of-reserves address list with **new wallets, and routes all subsequent withdrawals through them**; a `2,000` `$BTC` whale transfer is confirmed by He Yi as its own new wallet |
+| **11-01 08:01** | **The first withdrawals reopen, `$BTC` network first**, covering `15` networks, with `95%` said to be replenished [crypto.news](https://crypto.news/binance-reopens-bitcoin-withdrawals-after-hack/) |
+| 11-01 all day | Withdrawals clear in bulk; tracked net outflow is reported anywhere from `$3.64B` to `$6.33B` depending on method (see section 4) |
+| **11-02 01:51** | **THORChain halts swaps on `10` chains over a block-reorg refund bug**, incidentally slowing the laundering [Cointelegraph](https://cointelegraph.com/news/thorchain-halts-swaps-after-block-reorg-bug-slowing-binance-hackers) |
+| 11-02 ~03:00 | The Secret Service says the investigation is ongoing and that most funds have been frozen with partner agencies |
+| 11-02 05:30 | `$BTC` `$78,336`, `$BNB` `$710`, still `3.8%` and `6.5%` below their pre-incident highs |
+
+## 3. Method: how one laptop opened nine hot wallets
+
+Three pieces on this site already take this layer apart, so this is the skeleton; the detail is in those.
+
+- **The entry point was a person's device, not a key.** Binance accepts the attacker may have entered its internal infrastructure through a compromised DevOps laptop. The BBC quotes a Binance co-CEO describing how one laptop opens one internal system, then another, until it reaches a service trusted to issue withdrawals — withdrawals that travel the legitimate path and look routine [BBC](https://www.bbc.com/news/articles/cwg7xp8kx4v5o). Blockaid put it more bluntly: **the signing infrastructure was compromised, and they do not believe keys leaked.** The full root-cause breakdown is in [Binance names the root cause: what broke was a signing-capable service identity, not EIP-7702](/en/blog/binance-root-cause-is-service-identity-not-7702-en).
+- **Execution was amplified by EIP-7702.** The attacker packed `50` EIP-7702 authorizations into one transaction; one of them had a nonce matching the target account and was accepted, delegating Binance 14 to an unverified sweeper contract. Bonanza Factory estimates the abused internal signing authority touched `9` hot wallets, and TRM traces funds from `10` chains. The preparation and the on-chain evidence are in [The EIP-7702 attack chain: 18 hours of preparation, one signature, one bot](/en/blog/eip-7702-delegation-one-signature-drains-everything-en), and how the signed payload becomes account code is in [The EIP-7702 signing flow: from a hash to rewritten account code](/en/blog/eip-7702-signing-flow-from-hash-to-code-en).
+- **The first cut was `$XRP`.** TRM's reconstruction shows the attacker emptied `233.46M` `$XRP` (about `$296M`) first, in `4` minutes [Bloomingbit](https://en.bloomingbit.io/feed/news/123377). That was not arbitrary: `$XRP` is deep and has many cross-chain routes, which makes it the best thing to move before anything can be frozen.
+
+**This is why replacing the coins matters more than recovering them.** About `$1.45B` of the stolen assets is `$BTC`, which cannot be frozen at the protocol layer; the stablecoins are the interceptable part. So Binance covered the customer shortfall from its own assets while working with issuers to freeze what could be frozen — two legs at once.
+
+## 4. Fund flows, replenishment and current status
+
+The freezes landed fast, and that is the biggest operational difference from 2019: **in 2019 almost nothing was recovered; in 2026 nearly half was frozen within `24` hours.**
+
+| Item | Amount / status |
+|---|---|
+| Total stolen | `$6.3B` (TRM counts `$6.36B`; Arkham tracked `$5.84B` early; Glassnode first estimated `$5.3B`) |
+| Frozen or located | About `$3B`: Tether `$1.567B` + Circle `$800M+` + Ripple about `$200M` + project-level freezes |
+| Own funds provisioned | `$6.34B`, of which `$5B` is in the matching assets and already in custody |
+| Replenishment | `90%` (10-31) to `95%` (11-01) |
+| Sources drawn on | SAFU, the excess of the futures insurance fund, and the corporate treasury; about `$1.85B` of trackable insurance-type funds remained afterwards [crypto.news](https://crypto.news/binance-tapped-its-insurance-fund-after-the-hack-whats-left/) |
+| Attacker holdings | Reported at `18,270` `$BTC`, more `$BTC` than the Coinbase corporate treasury holds |
+| Laundering | About `$242M` moved through bridges in two days (about `$140M` across `4` bridges); single transfers of `485,300` `$SOL` (`$46.35M`) and `2.57M` `$LINK` (`$27.95M`) |
+| Withdrawals | Reopened in stages from 11-01 08:01, `15` networks, `$BTC` first; all withdrawals now processed from new wallet addresses |
+| Proof of reserves | Full PoR scheduled for 11-02, ZK verification for 11-03; **not published as of this cutoff** |
+| Investigation | The FBI has attributed it to North Korea; the Secret Service says the investigation is ongoing; Korea's FSC held an emergency meeting and is pushing for higher cold-wallet ratios |
+
+**The outflow numbers differ by method and have to be read separately.** The Block counts `$3.64B` in net outflow after withdrawals reopened. Cointelegraph cites `$5.8B` and stresses it is a small share of roughly `$171B` in customer assets. DefiLlama reads `$6.33B` over 24 hours (`$5.86B` at another cut). The spread comes from whether the window starts when withdrawals reopened or spans a fixed 24 hours, and whether internal transfers are netted out. **They agree on direction: the outflow is large, and it did not become a bank run.**
+
+One more figure from CZ is worth noting: `98%` of users chose to stay. That is a PR line, but it is the same order of magnitude as outflows being only `2–4%` of customer assets.
+
+One gap in the disclosure is still open. The missing items listed in [Binance still has not published the signing logs](/en/blog/binance-has-not-disclosed-signing-logs-en) — the signing-side logs and a post-mortem — have not been filled in as of this cutoff.
+
+## 5. The market and credibility cost
+
+The price reaction was violent but contained, and structurally unlike the panic of 2019.
+
+| Asset | Pre-incident high (10-28) | Lowest reading during the event | 11-02 05:30 | Drawdown from the high |
+|---|---|---|---|---|
+| `$BTC` | `$81,400` | `$76,771` (10-30 15:03) | `$78,336` | `−5.7%` at the low, `−3.8%` now |
+| `$BNB` | `$759` | `$702` (10-30) | `$710` | `−7.5%` at the low, `−6.5%` now |
+
+- `$BTC` finished October `−7.32%`, its worst October in `12` years.
+- `$BNB`, which trades as a proxy for exchange equity, fell more than `$BTC` — consistent with an event aimed at the exchange itself.
+- **Leverage flush**: `$1.53–1.6B` liquidated across the market, a mid-sized washout rather than systemic deleveraging.
+- **Transmission into traditional finance**: spot `$BTC` ETFs saw `$643.2M` of net outflow, and crypto-linked equities fell with it — Coinbase down over `13%` (compounded by a Q3 revenue decline), Circle over `9%`, Strategy about `8%`, IREN over `10%`.
+- **Narrative**: Standard Chartered expects this to accelerate flow toward DEXes, while Bitwise's Matt Hougan says a theft this size would have sunk Binance and `$BTC` a decade ago and will not now.
+
+Set against 2019: `$41M` then raised an existential question about whether the exchange would survive. `$6.3B` now raises an operational one about whether reserves are sufficient and whether withdrawals will clog. **The market now treats Binance as a financial institution to be stress-tested, not a website that might disappear.**
+
+## 6. What this method cannot tell you
+
+**Two percentages in the source material disagree with the prices in the same material and were recomputed.**
+
+- **The `$BNB` figure of `6.2%` below the pre-incident high became `6.5%`.** Using the two prices the material itself gives, `$710 ÷ $759 − 1 = −6.46%`. For `6.2%` to hold, the pre-incident high would have to be `$757`, not `$759`. Only one of the two can stay, and this piece keeps the price and recomputes the percentage.
+- **The `$BTC` claim of a `$77,331` low on 10-31 and a `−5.0%` drawdown was not used.** The same material's own timeline quotes `$76,771` at 10-30 15:03, below that supposed low. So this piece records `$76,771` as the lowest reading, which is `−5.7%` from `$81,400`, and timestamps every reading rather than asserting which was the true low of the window — the material never gives intraday lows.
+
+**Four more limits belong to the method itself:**
+
+- **The timeline is reporting time, not chain time.** The timestamps come from when announcements and articles were published; the actual on-chain ordering follows the transactions, and the two can differ by minutes to tens of minutes.
+- **The roughly `$3B` frozen does not add up from its parts.** Tether `$1.567B` plus Circle `$800M+` plus Ripple about `$200M` is `$2.567B`, with the remainder filed under project-level freezes and no breakdown. The number is a stitch-up of separate disclosures, not a reconciliation.
+- **The total itself has four versions** (`$6.3B` / `$6.36B` / `$5.84B` / `$5.3B`), differing by cutoff time and pricing method. This piece uses the Binance figure of `$6.3B`, but every ratio built on it carries that uncertainty.
+- **Proof of reserves has not been published, so "fully backed" is not verifiable today.** All that can be said is that Binance claims `90–95%` replenishment, not that it has been replenished — which is exactly why the first watch item exists.
+
+---
+
+**Conclusion.** Across eight years, the Binance security model has worked, but it defended the wrong thing. The cold wallets were never breached, SAFU never defaulted, and compensation was never partial — **on the axis of coins being stolen, the system succeeded.** What 2026 proves is that when the attacker switches targets from the vault to the pen that signs withdrawals, hot-cold separation, multisig and the insurance fund all stop mattering, because the transactions look entirely legitimate to the system.
+
+Three things actually changed. **First, the scale crossed the threshold of what a company absorbs and a market ignores**: `$6.3B` is `3.7%` of customer assets, covered only by stacking SAFU, the futures insurance excess and the treasury. That is not a reusable buffer. **Second, the adversary is now a state-level APT** — Lazarus has taken `$11.87B` cumulatively — so the thing being defended against is patient, funded and capable of supply-chain intrusion. **Third, trust is priced differently**: the market no longer asks whether you will pay, it asks what proof you have that you can. That is why the 11-02 proof of reserves matters more than any statement.
+
+**Bottom line.** This will not end Binance, but it ends the old frame of an exchange hack as a black swan. From here, **an exchange is anchored on verifiable reserves and withdrawal resilience, not on volume.**
+
+**Three things to watch over the next 72 hours:** first, whether the full 11-02 PoR covers every stolen asset and includes the `$6.34B` provision — majors only counts as incomplete; second, whether the 11-03 ZK verification lets users check for themselves, which is the line between "trust me" and "verify me"; third, whether withdrawals slip again or pick up new limits — one more delay turns that `$3.64B` outflow into the start of a second run.
+
+*The first record of this event is [Binance hot wallet compromise: one legitimate signature, 8 minutes, $5.64B](/en/blog/binance-suspected-hack-outflows-custody-risk-en). Research notes, not investment advice. DYOR.*

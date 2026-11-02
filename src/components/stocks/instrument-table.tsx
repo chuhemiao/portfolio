@@ -229,7 +229,7 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
                 {t('Type', '类型', '種類')}
               </th>
               <th scope='col' className={TH}>
-                {t('Sector', '板块', 'セクター')}
+                {t('Sector · report', '板块 · 研报', 'セクター・レポート')}
               </th>
               <th scope='col' className={`${TH} text-right`}>
                 {t('Price', '价格', '価格')}
@@ -291,7 +291,9 @@ export default function InstrumentTable({ issuerSlug }: { issuerSlug?: string })
                     ) : articleSlug === undefined ? (
                       pick(group.label, locale)
                     ) : (
-                      <Link href={articleHref(articleSlug, locale)}>{pick(group.label, locale)}</Link>
+                      <Link href={articleHref(articleSlug, locale)} className='text-brand'>
+                        {pick(group.label, locale)}
+                      </Link>
                     )}
                   </td>
                   <td className='tnum px-3.5 py-2.5 text-right font-mono text-[11.5px]'>

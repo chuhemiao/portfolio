@@ -16,6 +16,12 @@ const locales = ['zh-CN', 'en', 'ja'];
 test('every source message has a source-bound full translation in each locale', () => {
   assert.ok(originals.length > 0, 'no source messages loaded');
   for (const thought of originals) {
+    // A photo posted with no caption has nothing to translate. It still has to
+    // carry an image, or the sync produced an empty message.
+    if (!thought.text.trim()) {
+      assert.ok(thought.images?.length, `${thought.id} has neither text nor images`);
+      continue;
+    }
     assert.equal(translations[thought.id]?.source, thought.text, thought.id);
     for (const locale of locales) {
       const selected = localizeThought(thought, locale, translations);
@@ -55,6 +61,30 @@ test('blank or absent translation cannot hide the source or mutate messages', ()
 test('full translations preserve every message URL', () => {
   const urls = (value) => (value.match(/https?:\/\/[^\s)]+/g) ?? []).sort();
   for (const thought of originals) {
+    if (!thought.text.trim()) continue;
     for (const locale of locales) assert.deepEqual(urls(translations[thought.id][locale]), urls(thought.text), `${thought.id}: ${locale}`);
   }
+});
+
+// Photo messages carry `caption`, not `text`, so the sync used to drop them
+// whole. Now they arrive with images, and a caption-less one has nothing to
+// translate — it must not be labelled as awaiting a translation.
+test('a photo with no caption is not waiting for a translation', () => {
+  const photo = { id: 'photo-only', text: '', date: '2026-11-02', timestamp: 1, images: [{ src: '/thoughts/1.jpg', width: 1200, height: 800 }] };
+  for (const locale of locales) {
+    const selected = localizeThought(photo, locale, translations);
+    assert.equal(selected.fallbackOriginal, false, locale);
+    assert.equal(selected.language, locale, locale);
+    assert.deepEqual(selected.images, photo.images, locale);
+  }
+});
+
+test('a captioned photo is translated like any other message, images intact', () => {
+  const images = [{ src: '/thoughts/2-1.jpg', width: 900, height: 600 }, { src: '/thoughts/2-2.jpg', width: 900, height: 600 }];
+  const captioned = { id: 'captioned', text: 'A caption\nhttps://example.com', date: '2026-11-02', timestamp: 2, images };
+  const entry = { captioned: { source: captioned.text, en: captioned.text, ja: '\u30ad\u30e3\u30d7\u30b7\u30e7\u30f3\nhttps://example.com', 'zh-CN': '\u914d\u6587\nhttps://example.com' } };
+  const selected = localizeThought(captioned, 'ja', entry);
+  assert.equal(selected.text, entry.captioned.ja);
+  assert.equal(selected.fallbackOriginal, false);
+  assert.deepEqual(selected.images, images);
 });

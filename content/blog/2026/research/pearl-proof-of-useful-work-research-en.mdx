@@ -1,0 +1,144 @@
+---
+title: 'Pearl (PEARL / PRL): proof-of-useful-work shipped, and the token is racing its own inflation'
+publishedAt: '2026-11-02'
+summary: 'Pearl turns matrix multiplication itself into PoW consensus, verified with zkSNARKs, with mainnet live and a paying AI inference customer. The price of having no premine is annual emission near 100 percent of float, and inference revenue accrues to equity rather than to the token. At 556M market cap against 3.19B FDV, the technology premium and the token premium have to be priced separately.'
+slug: 'pearl-proof-of-useful-work-research-en'
+category: 'research'
+language: 'en'
+translationKey: 'pearl-proof-of-useful-work-research'
+sourceSlug: 'pearl-proof-of-useful-work-research'
+---
+
+## TL;DR
+
+**Pearl proved something that was widely held to be impossible, and its token structure is among the least favourable to holders this cycle. Both sentences are true, and they have to be priced separately.**
+
+- **The technology is real.** Noisy matrix multiplication becomes the consensus lottery, verified on chain with Plonky2 zkSNARKs. Mainnet has been live since 2026-04-27, blocks about `194` seconds apart.
+- **There is one real landing.** On 15 May a `Gemma-4-31B-it-Pearl` endpoint went live with Together AI at more than `25%` below standard pricing, the discount funded by PRL mined in the same forward pass.
+- **The price of that is emission.** No premine and no VC allocation, but current issuance runs about `973,000` tokens a day, roughly `355M` a year, which is **97% of the float**.
+- **The token does not share the business.** No fee burn, buyback or staking dividend appears in public documentation, and the inference revenue behind the `$55M` equity raise accrues to shareholders.
+- **Valuation already reflects the story.** `$556M` market cap against `$3.19B` FDV, so **FDV is 5.7x market cap**, and emission closes that gap on its own in roughly twelve months.
+- **Demand is thin.** `$5.76M` of 24h volume, `1.0%` turnover, and RTX 5090 daily revenue down from `$33.80` in May to `$17.19`.
+
+---
+
+## 1. What it is: GEMM as consensus
+
+The core claim compresses to one sentence: **the same GPU forward pass produces both intelligence and money**. It is a direct answer to the line from Vitalik in 2019 that useful proof of work was probably not feasible.
+
+Technically there is no new chain. Pearl forks btcd and keeps UTXOs, longest-chain, Taproot scripts and a hard supply cap, replacing only the work function: SHA-256 gives way to noisy matrix multiplication (NoisyGEMM / cuPOW). Miners run GEMM on `A'=A+E` and `B'=B+F`, where E and F are low-rank noise, hash intermediate tiles as the consensus lottery, then compress the computation into a Plonky2 zkSNARK for on-chain verification. The noise strips out in `O(n²r)`, recovering the `A·B` the model actually needed. The site puts the overhead at `1+o(1)` and highlights the post-quantum properties of BLAKE3 plus hash commitments.
+
+The theory comes from Komargodski, Schen and Weinstein, Proofs of Useful Work from Arbitrary Matrix Multiplication (arXiv 2504.09971, April 2025). The economic model comes from The Economics of Proof-of-Useful-Work (arXiv 2606.06700): in competitive equilibrium, duplex mining drives the inference price down to roughly the block reward, so **the cost of a 51% attack stays anchored to the block reward and does not get cheaper because the work is useful**. That point is worth keeping on its own, because it kills the common misreading that useful work buys security at a discount.
+
+The team is where the credibility comes from. CEO **Omri Weinstein** holds a Princeton CS doctorate, teaches at the Hebrew University, and was previously at NVIDIA and Vast Data. CTO **Ilan Komargodski** comes from the Weizmann Institute and NTT Research. Both are authors of the papers above. Mainnet launched 2026-04-27 with a supply cap of **2.1 billion, a hundred times that of bitcoin**, no premine and no private sale.
+
+The product is past the whitepaper stage: OpenAI-compatible serverless inference, managed inference and local deployment, covering DeepSeek V4 Pro/Flash, Qwen3.8 and GLM-5.3 among others, with NVIDIA Inception membership.
+
+On capital, the Israeli outlet TheMarker reported on 25 October that the company had raised about **$130M** in stealth: `$55M` of equity plus a `$75M` GPU infrastructure fund, with Lightspeed, Ribbit Capital and Square Peg participating. **No official channel has confirmed this, so it stands as reported but unverified.**
+
+## 2. Token economics: racing its own inflation
+
+The fair launch is genuine. The unlock schedule carries exactly one allocation, Mining Rewards, with no team, investor or foundation share at all. The price of that fairness is a very steep supply curve.
+
+| Metric | Value (2026-11-02 05:00 UTC) |
+|---|---:|
+| Price | **$1.52** |
+| Market cap / FDV | **$556M / $3.19B** |
+| Float / total | **365.8M / 2.1B (17.4%)** |
+| 24h volume | **$5.76M** (1.0% turnover) |
+| All-time high / low | **$2.44 (10-22) / $0.14 (7-23)** |
+| Daily emission (current) | **about 973,000** |
+| Annual emission / float | **about 355M, roughly 97%** |
+
+Pulling the timeline out: along the smooth decay curve, daily issuance is now about `973,000`, falling to roughly `910,000` by January 2027 and `630,000` by January 2028, reaching a cumulative **1.456 billion by 2035, 69% of the cap**.
+
+Two things follow.
+
+**First, this has to be valued on FDV rather than market cap.** FDV over market cap is `5.7x`, and emission closes that gap within about twelve months, so **if the price simply holds, market cap drifts up to meet FDV on its own**. Grayscale made exactly this point in its 23 October note.
+
+**Second, the multiple on the security budget is abnormally low.** Miner output is currently worth about `$1.48M` a day, roughly `$540M` a year, which is very nearly the entire market cap, about `0.97x`. For comparison, bitcoin issues about `$12.9B` a year against a `$1.57T` market cap, roughly `122x`. This is not cheapness. It is the market applying a very low multiple to a rapidly diluting asset, which is mathematically the same statement as: **holding market cap flat requires the price to halve every year.**
+
+No fee burn, buyback or staking dividend appears in public documentation, so token value rests entirely on monetary premium and mining collateral demand, while the inference revenue behind the equity accrues to shareholders. **This is the value mismatch the fair-launch story hides most easily** — no VC unlock does not mean no structural selling, because miners covering electricity sell continuously.
+
+### Price outran inflation, and inflation never stopped
+
+| Point | Price | Cumulative unlocked |
+|---|---:|---:|
+| Window start (about late June) | about $0.55 | `213.69` million |
+| 2026-07-23 | **$0.14** (cycle low) | — |
+| 2026-10-01 | $1.22 | — |
+| 2026-10-22 | **$2.44** (all-time high) | — |
+| 2026-11-02 05:00 UTC | $1.52 | 365.8 million (float basis) |
+| Window end (about 11-01) | — | `370.22` million |
+
+The endpoints `213.69` and `370.22` are the axis labels printed on the source chart, and `365.8` is the **float** figure from the same source. **These are not the same measure, so do not subtract one from the other.** What is confirmable is the shape: the cumulative curve rises monotonically across the whole window without a single pause, while the price ran up about `10.9x` from the July low.
+
+The vertical move in mid-October, `$1.22` on 10-01 to `$2.44` on 10-22, an exact double, was a narrative repricing. Even with the Grayscale mention and the $130M funding report that followed, the price has since fallen back to `$1.52`.
+
+## 3. Market performance and liquidity
+
+Relative strength is the brightest thing here right now. Over 90 days PEARL is up about `375%`, far ahead of its AI-sector peers: NEAR `+141%`, TAO `+21%`, WLD `+19%`, RENDER `+15%`, FET `+11%`. Thirty days is still `+46.5%`, but seven days is **`-12.8%`** and the drawdown from the high is **`-37.7%`**, so momentum has turned.
+
+Liquidity is the obvious weak point. `$5.76M` of 24h volume and `1.0%` turnover is thin against a `$556M` market cap. Depth concentrates on **Upbit and Bithumb**, which listed KRW/BTC/USDT markets on 2026-04-27, plus offshore venues such as MEXC and SafeTrade, with no confirmation of Binance or Coinbase spot. Korean retail flow therefore has outsized marginal influence on this price — the two Korean listings drove a `+70%` single-day move on 27 April.
+
+A separate practical risk is the **ticker collision**: the site and whitepaper use **PRL** while aggregators use **PEARL**, and several unrelated PRL tokens exist. Hashrate Index warns explicitly that the top result for PRL on major aggregators is a different coin and that on-chain data should come from the Pearl explorer. **This is why some exchange listing records are not used here** — the Coinbase and Binance PRL records that turn up predate mainnet and belong to another asset.
+
+## 4. How useful the useful work actually is
+
+This is where the real disagreement sits, and the answer today is: **the mechanism is real, the demand is thin.**
+
+The Together AI endpoint proves that paid inference and simultaneous mining can run on the same pass, and it is the most concrete PoUW landing of the past year. But what drives this GPU rush is RTX 4090/5090 miners renting from RunPod and Vast.ai to run **inference nobody ordered** — output that no one receives and no one pays for. By Pearl's own definition that part is just AI-shaped PoW.
+
+The collapse in miner revenue confirms it: RTX 5090 daily revenue fell from `$33.80` in May to `$17.19`, halving in a matter of weeks, because network difficulty rose quickly with incoming hashrate while the block reward only falls.
+
+There are security caveats too. The site sells `1+o(1)` overhead, but the open-problem list published by Pearl Polymath still contains **a security proof for the self-cancelling noise scheme**, Pearl-GEMM under FP4 and quantisation, extending cuPOW to training, collision-resistant hashing, and zero-overhead inference proofs. Mainnet works, but nearly free security remains an asymptotic result the engineering is still catching up to.
+
+One more entry for the record: on 30 October an attacker planted poisoned repositories on Hugging Face that quietly installed a PRL miner. This does not touch consensus security, but it shows PRL mining is now economically attractive enough to be a malware payload, which is a negative for the project's reputation.
+
+## 5. Risks and scenarios
+
+| Risk | Weight | Transmission |
+|---|---|---|
+| Dilution | **High** | About 97% of float a year; miners sell to cover electricity, creating structural pressure |
+| Unproven paid demand | **High** | If real inference revenue does not arrive, useful work degrades to narrative and valuation converges on plain PoW |
+| Transparency and governance | Med-high | Upbit and Bithumb delayed listing in April over the float definition; the $130M raise is unannounced; a fair launch alongside equity funding raises a value-accrual dispute |
+| Concentrated liquidity | Medium | Thin volume dependent on Korea, where one exchange policy change can cause a double-digit move |
+| Technical assumptions | Medium | Noise-scheme security and overhead under quantisation and training remain open problems |
+| Hashrate concentration | Medium | If the $75M GPU fund builds owned capacity it raises both the company mining share and centralisation concerns |
+
+Twelve-month scenarios:
+
+- **Bull (low probability).** The owned platform and the Together endpoint build real paid token volume, the discount becomes a moat, and institutional allocation follows. Market cap clears `$1.2B` — note this requires **the price to hold above `$1.7` while the float doubles**.
+- **Base.** Inference revenue grows linearly but does not catch inflation. Market cap oscillates in **`$400M`–`$700M`** and the price drifts down as float rises, trading **`$1.0`–`$1.6`**.
+- **Bear.** AI-sector rotation ends, difficulty keeps rising, smaller miners switch off, and daily emission value grows further relative to market cap. Price returns to **`$0.6`–`$0.8`** and market cap contracts toward `$300M`, with `$1.5B` of paper FDV still capping any rebound.
+
+## 6. What this method cannot tell you
+
+- **Market and unlock data are as of 2026-11-02 05:00 UTC**, from Surf market and unlock data, not a live quote. This sector moves day to day.
+- **The first-day emission figure is internally inconsistent.** The source gives `44.1M` cumulative unlocked on 2026-04-28, yet the `321.7M` added from that point to 11-02 across 188 days averages `1.71M` a day — meaning **the first day alone equals about 26 times the subsequent daily average**. That cannot be reconciled with no premine plus smooth decay, and public material does not explain it. The figure is reproduced here but nothing is inferred from it.
+- **Neither arXiv entry was verified.** 2504.09971 and 2606.06700 are cited as the source gives them, with no independent check that they exist or say this.
+- **The $130M raise is unconfirmed by the company**, resting on a single media report.
+- **There is no on-chain holder concentration data here**, so miner selling pressure is a structural inference from emission and yield, not something observed in address distribution.
+
+## 7. References
+
+These are cited as the source gives them. **None was independently verified here**, the two arXiv entries least of all.
+
+- [Pearl — Network](https://pearlresearch.ai/network)
+- [Proofs of Useful Work from Arbitrary Matrix Multiplication (arXiv 2504.09971)](https://arxiv.org/abs/2504.09971)
+- [The Economics of Proof-of-Useful-Work (arXiv 2606.06700)](https://arxiv.org/abs/2606.06700)
+- [Pearl Polymath — open problems](https://pearlpolymath.com)
+- [Coverage of the $130M raise](https://www.tokenpost.com/news/business/40849)
+- [Grayscale names AI-linked cryptocurrencies](https://www.tradingview.com/news/binance_news:7bd06cc8d094b:0-grayscale-names-3-cryptocurrencies-that-could-benefit-from-ai-growth/)
+- [Bithumb listing notice](https://en.bloomingbit.io/feed/news/110804)
+- [Reporting on miner revenue and the GPU rush](https://finance.yahoo.com/markets/crypto/articles/ai-compute-cryptocurrency-pearl-sparks-124000702.html)
+
+---
+
+**Conclusion.** Pearl deserves to be taken seriously, but not for the reason most people give. Its value is in **proving that a thing can be done** — PoUW tore an opening in what was thought to be an impossible triangle, and did it with reproducible mathematics, open source and one real inference customer. In a sector full of AI concepts attached to empty whitepapers, that is scarce.
+
+It is also one of the assets this cycle whose **token structure is least favourable to holders**: no VC unlock to dump, but emission near 100% of float a year; a real AI business whose revenue goes to equity; an institutional mention, alongside `5.7x` FDV and `1.0%` turnover. **The technology premium and the token premium must be priced separately.**
+
+Treat PEARL as an option on whether PoUW works, not as a value holding in AI infrastructure. Track three verifiable things: **paid inference token consumption, whether daily emission value over market cap falls back from `1x`, and whether spot depth opens beyond Upbit and Bithumb.** Until those improve, any narrative-driven rally suits trimming better than chasing.
+
+*Sources: Surf market and unlock data as of 2026-11-02 05:00 UTC; technical description from the project site and published papers. Research notes, not investment advice. DYOR.*

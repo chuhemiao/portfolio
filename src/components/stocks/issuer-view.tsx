@@ -22,7 +22,7 @@ import {
   type Issuer,
 } from '@/data/tokenized-equities';
 import { DATA } from '@/data/resume';
-import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
+import { articleHref, getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import { localizedDynamicMetadata } from '@/lib/localized-metadata';
 import { formatTurnover, formatUsd } from '@/lib/instrument-format';
 
@@ -234,8 +234,28 @@ export function renderIssuerPage(slug: string, locale: Locale) {
                   <div className='font-mono text-[10px] uppercase tracking-[0.08em] text-subtle'>
                     {String(group.index).padStart(2, '0')}
                   </div>
-                  <div className='mt-1 text-[13px] font-medium'>{L(group.title)}</div>
-                  <div className='mt-1.5 font-mono text-[10.5px] text-subtle'>{group.tickers.join(' · ')}</div>
+                  <div className='mt-1 text-[13px] font-medium'>
+                    {group.articleSlugs ? (
+                      <Link href={articleHref(group.articleSlugs[locale], locale)} className='text-brand'>
+                        {L(group.title)}
+                      </Link>
+                    ) : (
+                      L(group.title)
+                    )}
+                  </div>
+                  <div className='mt-1.5 font-mono text-[10.5px] text-subtle'>
+                    {group.tickers.map((ticker, i) => (
+                      <span key={ticker}>
+                        {i > 0 && ' · '}
+                        <Link href={href(`/stocks/${slug}/${ticker}`)}>{ticker}</Link>
+                      </span>
+                    ))}
+                  </div>
+                  <div className='mono-label mt-2'>
+                    {group.articleSlugs
+                      ? t('Report published', '研报已发布', 'レポート公開済')
+                      : t('Report pending', '研报未发布', 'レポート未公開')}
+                  </div>
                 </li>
               ))}
             </ul>

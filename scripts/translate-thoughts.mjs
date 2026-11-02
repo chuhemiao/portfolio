@@ -51,15 +51,18 @@ async function main() {
   const { thoughts } = JSON.parse(await fs.readFile(THOUGHTS, 'utf8'));
   const translations = JSON.parse(await fs.readFile(TRANSLATIONS, 'utf8'));
 
+  // A photo posted with no caption has nothing to translate.
+  const translatable = thoughts.filter((thought) => thought.text.trim());
+
   // Missing, or translated from text that has since been edited.
-  const pending = thoughts.filter((thought) => translations[thought.id]?.source !== thought.text);
+  const pending = translatable.filter((thought) => translations[thought.id]?.source !== thought.text);
 
   if (pending.length === 0) {
-    console.log(`translate-thoughts: all ${thoughts.length} messages are translated.`);
+    console.log(`translate-thoughts: all ${translatable.length} messages are translated.`);
     return;
   }
 
-  console.log(`translate-thoughts: ${pending.length} of ${thoughts.length} need translating.`);
+  console.log(`translate-thoughts: ${pending.length} of ${translatable.length} need translating.`);
   for (const thought of pending) {
     console.log(`  ${thought.id}  ${thought.date?.slice(0, 10) ?? ''}  ${thought.text.slice(0, 60).replace(/\n/g, ' ')}`);
   }

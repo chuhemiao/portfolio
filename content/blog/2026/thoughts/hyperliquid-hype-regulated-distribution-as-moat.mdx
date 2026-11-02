@@ -1,0 +1,160 @@
+---
+title: 'Hyperliquid（$HYPE）：合规分销能否变成生态护城河'
+publishedAt: '2026-11-02'
+summary: 'ICE 与 Trade[XYZ] 把美国受监管的交易与清算层接到 Hyperliquid 的 HIP-3 上，这给了 Hyperliquid 一条它自己拿不到的美国分销通道。但护城河的性质要分开看：Trade[XYZ] 已经贡献了约三成的永续成交，却只带来不到 5% 的费用收入。标准与分销的护城河已经成立，流动性与现金流的护城河还没有。这篇把交易结构、费用拆分、灵活性的代价和未来 6-12 个月的观察信号一条条摆开，并说明原稿里三处对不上的数字是怎么处理的。'
+slug: 'hyperliquid-hype-regulated-distribution-as-moat'
+category: 'thoughts'
+language: 'zh-CN'
+translationKey: 'hyperliquid-hype-regulated-distribution-as-moat'
+sourceSlug: 'hyperliquid-hype-regulated-distribution-as-moat'
+---
+
+## TL;DR
+
+**有条件可以，但护城河的性质会变。** ICE[XYZ] 把美国受监管的交易与清算层接入 Hyperliquid 的 HIP-3 基础设施，为 Hyperliquid 开通了一条合规通道，同时保留离岸无许可市场。
+
+- **这扩大了触达范围和合规合法性**，但短期内更像「标准与分销」型护城河，而「流动性、现金流」型护城河尚未形成。
+- **Trade[XYZ] 约占 Hyperliquid 永续成交的 `30%`，却只贡献不到 `5%` 的费用收入。** 这是整笔交易最容易被忽略、也最关键的缺口。
+- **美国流量是否真正回到链上结算、`$HYPE` 能否捕获费用**，是决定成败的两道关口。
+- **加密原生市场的灵活性大概率能保住**，因为许可市场是可选的、部署者级别的隔离层。
+- **真正的风险是「监管引力」**：合规通道逐渐成为经济重心，长期稀释无许可创新的权重。
+
+> 数据截至 2026-11-02 05:40 UTC；价格为快照，30 日指标为滚动窗口。本文的数字来自公司披露与第三方聚合器，不是链上重算，口径与局限见第六节。
+
+---
+
+## 一、交易结构
+
+这笔交易的关键，是监管层被作为外挂**接入** Hyperliquid，而非「Hyperliquid 被美国监管收编」。根据 ICE 公告，ICE 是 Trade[XYZ] 受监管市场的**独家运营方**，将建立一套新的、专门的受监管零售市场与清算结构；ICE 负责交易所与清算，Trade[XYZ] 负责产品设计与市场部署，Hyperliquid 提供底层 HIP-3 基础设施。现有 Trade[XYZ] 的离岸 HIP-3 市场保持不变。[ICE 公告](https://ir.theice.com/press/news-details/2026/Intercontinental-Exchange-and-TradeXYZ-to-Bring-Hyperliquid-Based-Perpetual-Markets-Onshore/default.aspx) [Hyperliquid 公告](https://x.com/HyperliquidX/status/2115782848192118861)
+
+这解决了三个实际问题：
+
+- **分销**：美国零售用户通过 ICE 的合作经纪商与平台接入，包括 ICE 与 OKX 的合资公司；该合资公司自身仍在申请美国经纪自营商（broker-dealer）与期货佣金商（FCM）牌照。
+- **合法性**：ICE 运营 NYSE 与多家清算所，能为 CFTC 审批、KYC/AML、市场监察提供现成的合规框架。
+- **隔离**：新业务与 ICE 的机构期货、清算业务分开，ICE 的机构客户不承担零售对手方风险；ICE 称其当前业务参与度超过 `99%` 为机构，零售是增量。
+
+ICE 还对 Trade[XYZ] 做了战略投资，Druckenmiller 参与跟投，金额未披露。[crypto.news](https://crypto.news/nyse-owner-ice-partners-with-tradexyz-for-us-perpetual-futures/) 这说明 ICE 是在把 Trade[XYZ] 的产品能力与自己的分销和清算能力绑定，并非简单租用技术。
+
+从 Hyperliquid 的角度看，这也是一次**角色确认**：它不做受监管经纪商，也不做清算所，而是做中立的基础设施层。这个定位是后面判断护城河的前提。
+
+## 二、护城河
+
+ICE 看重的是 Trade[XYZ] 已经跑通的 RWA 永续生产线，而不是一家交易所。Trade[XYZ] 在 Hyperliquid 上部署了 `141` 个市场，覆盖股票、指数、商品、FX 与 Pre-IPO，累计成交超过 `$650B`（公司口径）；2026 年 Q2 成交 `$202.36B`，环比 `+79.2%`，其中股票永续 `$58.9B`。[trade.xyz 文档](https://docs.trade.xyz/)
+
+Hyperliquid 得到三样东西：
+
+1. **美国零售的分销入口。** 这是 Hyperliquid 自己很难拿到的：它没有美国经纪商网络，也没有 FCM 与清算牌照。
+2. **监管合法性。** NYSE 母公司的背书，加上 Druckenmiller 的投资，会降低 `$HYPE` 的监管风险溢价；这对 ETF、DAT 等传统 wrapper 也是利好。
+3. **标准制定权。** 如果 ICE[XYZ] 用 HIP-3 部署，Kraken 与 Bitnomial 也用 HIP-3 部署，Hyperliquid 就可能成为「受监管链上永续」的默认结算层。这是平台级护城河，比单一产品的护城河更持久。
+
+但护城河的强度要分维度看：
+
+| 护城河维度 | 当前证据 | 判断 |
+|---|---|---|
+| 网络效应 | HL 30 日永续成交 `$215B`；Trade[XYZ] 占约 `30%`；但 HIP-3 各 DEX 订单簿独立 | **中等**：链级网络效应强，订单簿级弱 |
+| 转换成本 | 每个 HIP-3 dex 需质押 `500k HYPE`（约 `$43.9M`）；API、保证金、清算流程深度集成 | **高**：对 deployer 与 broker 都有锁定 |
+| 规模经济 | 11 人团队、定制 L1、累计永续成交 `$5.65T`、24/7 RWA 价格发现 | **高**：技术与成本优势明显 |
+| 无形资产 | ICE/NYSE 品牌、Druckenmiller、CFTC 先例 | **中高**：合法性提升，但非独占 |
+| 反定位 | TradFi 无法提供周末、24/7 的股票、商品、FX 价格发现 | **高**：真实的产品差异化 |
+| 经济捕获 | Trade[XYZ] 约 `30%` 成交，但只贡献不到 `5%` 的费用收入；`$HYPE` FDV `$83.4B` | **低**：护城河尚未转化为现金流 |
+
+市场对公告的第一反应是「先信后疑」：
+
+| 时点 | 价格 | 当日 `$HYPE` 永续成交额 |
+|---|---|---|
+| 10-28 收盘（公告前一日） | `$80.59` | 约 `$0.33B` |
+| 10-29 盘中最高 | `$97.11`（较前收 `+20.5%`） | — |
+| 10-29 收盘（ICE/Trade[XYZ] 公告当日） | `$88.97`（`+10.4%`） | `$2.63B`，前一日的 `8` 倍 |
+| 11-02 05:40 UTC 快照 | `$87.70`（较 10-29 盘中高点 `−9.7%`） | — |
+
+*原始披露给出的是 `$97.11`、`+20.5%`、`+10.4%`、`$2.63B`、`8` 倍与「回落至 `$87.7`、低 `9.7%`」；表中的 `$80.59`、`$88.97`、`$0.33B` 由这些比例反推，与所附日线图的收盘线和成交柱一致。*
+
+价格行为说明，市场把它当成「战略背书」，而非「现金流重估」：如果是后者，`$HYPE` 应该在公告后站稳，而不是冲高回落。这个反应与下面的费用数据是一致的。
+
+## 三、经济捕获
+
+整笔交易最关键的缺口是费用捕获。按 DefiLlama 的 30 日口径：
+
+- Hyperliquid 永续成交 `$214.99B`，用户费用 `$82.98M`，协议收入 `$65.11M`；
+- Trade[XYZ] 永续成交 `$67.3B`，用户费用 `$7.14M`；其中流向 Hyperliquid `$3.81M`，留给 deployer `$2.48M`。[DefiLlama Hyperliquid](https://defillama.com/protocol/hyperliquid) [DefiLlama tradeXYZ](https://defillama.com/protocol/tradexyz)
+
+也就是说，Trade[XYZ] 贡献了约 `31%` 的成交，却只给 Hyperliquid 带来约 `4.6%` 的费用收入。粗略有效费率：Trade[XYZ] 约 `1.1bp`，Hyperliquid 整体约 `3.9bp`，前者只有后者的四分之一左右。
+
+原因不难理解：RWA 永续的费率更低，Trade[XYZ] 可能使用了增长模式（growth mode）、返佣或更低的费率档位；受监管场所还要叠加清算、经纪、合规成本，Hyperliquid 的抽成率很难向上走。
+
+这个缺口不是这次才出现的。[一个月前那篇](/zh-CN/blog/hyperliquid-hype-infrastructure-narrative-execution-test)把同一件事写成「用户增长尚未转化为同口径收入加速」—— ICE[XYZ] 真正要检验的，是换一条更大的渠道能不能改变这个比例，而不是渠道本身有多大。
+
+| 参与方 | 角色 | 主要收益（结构性推断） | 主要风险 |
+|---|---|---|---|
+| **ICE** | 受监管交易所 + 清算运营商 | 清算费、分销、数据、零售流量 | CFTC/SEC 审批、产品范围受限、CME 诉讼 |
+| **Trade[XYZ]** | 产品设计与 HIP-3 deployer | deployer 费用分成（最高 `50%`）、战略投资、美国增量 | 离岸与在岸业务隔离、合规成本、对 ICE 的依赖 |
+| **Hyperliquid** | 中立基础设施层 | 协议费用分成、`$HYPE` 质押与回购、标准制定权 | 费用捕获不足、流动性碎片化、监管引力 |
+| **美国零售** | 用户 | 24/7 RWA 敞口 | 杠杆与产品限制、KYC、清算中介 |
+
+`$HYPE` 的价值捕获机制本身是清晰的：协议费用中流向 Assistance Fund 的部分自动买入 `$HYPE` 并销毁；HIP-3 deployer 最多保留 `50%` 的费用；从 10 月 3 日起，AQAv2 还把约 `90%` 的 `$USDC` 储备利息导入 Assistance Fund，增加了一个非交易收入来源。[Hyperliquid 费用文档](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/fees) [Datawallet](https://www.datawallet.com/crypto/hyperliquid-statistics)
+
+但估值已经把「护城河」定价得很满：`$HYPE` 市值 `$21.0B`、FDV `$83.4B`，流通量仅 `25.2%`；按过去 12 个月协议收入约 `$694M` 计算，市值与收入之比约 `30x`，FDV 与收入之比约 `120x`。
+
+这意味着，美国合规流量必须带来可观的费用增量，才能支撑当前估值；如果费用留在 ICE 与 Trade[XYZ] 的资产负债表上，`$HYPE` 的「合规溢价」就缺乏基本面。
+
+## 四、灵活性的边界
+
+从技术设计看，Hyperliquid 已经为「既要合规、又要灵活」准备了工具。2026 年 9 月，HIP-3 测试网引入**可选的、部署者管理的链上许可名单**：deployer 可以决定是否限制访问、谁可以进入，现有无许可市场不受影响。[crypto.news](https://crypto.news/hyperliquid-expands-hip-3-with-permissioned-markets/)
+
+这意味着，美国合规场所可以是一个独立的、KYC 门控的 HIP-3 dex，而离岸的 XYZ 市场继续无许可运行。Hyperliquid 的公告也明确说，现有 Trade[XYZ] HIP-3 市场「保持不变」。
+
+这条路径已经被复制：Kraken 母公司 Payward 的方案是，Bitnomial 创建、管理、清算和结算市场，NinjaTrader Clearing 持有客户账户，只有完成 onboarding 并出现在许可名单上的客户才能交易。[The Defiant](https://thedefiant.io/news/defi/kraken-parent-plans-permissioned-hyperliquid-perps-for-us-traders)
+
+如果 ICE[XYZ] 与 Kraken、Bitnomial 都走这条路，Hyperliquid 就成为一个「多 venue、单结算层」的联邦式架构。这是目前看来最有可能兼顾灵活性与合规性的设计。
+
+但「灵活」不等于「没有代价」：
+
+- **流动性是分割的。** HIP-3 的每个 dex 有独立的订单簿、保证金和 deployer 设置；美国合规 dex 大概率是又一个独立订单簿。美国流量会带来费用，但大概率不会直接加深离岸主订单簿的流动性。护城河是「标准」，并非「同一个池子」。[HIP-3 文档](https://hyperliquid.gitbook.io/hyperliquid-docs/hyperliquid-improvement-proposals-hips/hip-3-builder-deployed-perpetuals)
+- **产品范围会收窄。** CFTC 已经批准了 Kalshi 的比特币永续，Coinbase、Kraken 也推出了美国受监管的加密永续；但个股永续涉及 SEC 与 CFTC 的共同管辖，争议仍在。10 月 29 日，Healthy Markets Association 还向 SEC 与 CFTC 提交了对股票永续的反对意见；Nadex 则在 9 月提交了现金结算单票证券期货的规则变更。[The Block](https://www.theblock.co/post/403040/cftc-opens-door-for-crypto-perpetual-future-contracts-in-us-as-coinbase-kalshi-move-forward) [Cointelegraph](https://cointelegraph.com/news/cftc-dismiss-cme-lawsuit-crypto-perpetual-futures) [HMA 反对意见](https://healthymarkets.org/wp-content/uploads/2026/10/HMA-Objection-to-Perpetual-Futures-in-Stocks-10-29-2026-1.pdf) [Federal Register](https://www.federalregister.gov/documents/2026/10/02/2026-20194/self-regulatory-organizations-north-american-derivatives-exchange-inc-notice-of-filing-and-immediate)
+- **杠杆与上市速度会被压缩。** 离岸 HL 的最高杠杆可达 40-50x；美国版本的杠杆上限、保证金规则、可交易合约清单，都要由 CFTC 批准结构决定，大概率更低、更窄。HIP-3 的「`500k` `$HYPE` + 拍卖」上市流程，在美国还要叠加逐产品审批，创新速度会慢下来。[CoinStats 对比](https://coinstats.app/news/6b439dcc1ba32c52edde31f766f81074dbc8d0d743a51d8569ee480a783aeca1_Hyperliquid-vs-Aster-vs-Lighter-2026-Perp-DEX-Compared/)
+- **「无许可」在实践上已经向头部集中。** `10` 个已注册的 HIP-3 dex 中，只有 `4` 个有非零 24h 成交；Trade[XYZ] 占 HIP-3 成交的 `97.8%`。`500k` `$HYPE` 的质押门槛（约 `$43.9M`）加上合规成本，会进一步抬高长尾 deployer 的门槛。代码仍然无许可，但经济上是寡头。
+
+所以，真正的风险在于**监管引力**，而非「Hyperliquid 被迫放弃加密原生灵活性」：随着美国合规通道的流量和收入占比上升，验证者的标准、预言机规则、上市规范会逐渐围绕合规场所的需求演化，长尾创新的相对经济权重下降。核心仍然是开放的，但重心会移动。
+
+## 五、情景与信号
+
+**牛市情景。** ICE[XYZ] 拿到 CFTC 批准，产品覆盖加密、指数、商品、FX，个股永续也拿到 SEC 与 CFTC 的路径；美国流量在 Hyperliquid 上结算，费用按链上协议费分成；Kraken、Bitnomial 等更多受监管 venue 采用 HIP-3。Hyperliquid 成为「受监管链上永续」的默认结算层，`$HYPE` 的回购随费用增长。护城河从「标准」升级为「标准 + 现金流」。
+
+**基准情景。** ICE[XYZ] 先以加密、指数、商品为主，个股永续延后；美国流量可观但独立订单簿，Hyperliquid 捕获的费用有限；`$HYPE` 在「合规溢价」和「费用不足」之间震荡，FDV overhang 压制估值。护城河是战略性的，但不是现金牛。
+
+**熊市情景。** CFTC 与 SEC 审批拖延，CME 诉讼或股票永续的监管争议导致产品范围大幅收窄；ICE 与 OKX 合资公司的经纪自营商、FCM 牌照迟迟不批；美国 venue 只把 Hyperliquid 当价格参考或技术供应商，交易与清算在链下完成。Hyperliquid 得到品牌背书，但没有费用流；同时 Aster、Lighter 继续分流，HL 的 perp DEX 份额从 `34.6%` 继续下滑。
+
+**未来 6-12 个月的观察信号：**
+
+1. ICE[XYZ] 是否使用**许可制 HIP-3 dex**，以及交易是否在 Hyperliquid 上结算；
+2. 费用拆分：美国流量带来的协议费有多少进入 Assistance Fund，多少留在 ICE 与 Trade[XYZ]；
+3. CFTC 批准的产品清单与杠杆上限；个股永续是否拿到 SEC 与 CFTC 的共同路径；
+4. 是否有第二、第三个受监管 venue 采用 HIP-3（Kraken、Bitnomial 之外）；
+5. Trade[XYZ] 占 HL 成交的比例能否维持在 `30%` 左右，费用贡献能否从 `5%` 往上走；
+6. `$HYPE` 的回购与销毁速度是否随美国流量上升，以及 FDV 解锁的消化情况；
+7. Hyperliquid 的 perp DEX 份额能否守住 `30%` 以上（对手：Aster、Lighter、CME、Coinbase、Kalshi）。
+
+## 六、这篇算不出什么
+
+**原始材料里有三处数字彼此对不上，逐条说明处理方式。**
+
+- **「10 月 23 日的历史高点 `$97.96`」没有采用。** 同批提供的日线图纵轴上限是 `$90`，10-23 的收盘线在 `$79` 附近 —— 一个收在 `$79` 的交易日不可能盘中到过 `$97.96`。所以本文只写「未能站稳」，不引用那个历史高点。`$97.11` 保留了，因为它能被同批的两个比例独立验算出来（较前收 `+20.5%`、以及回落到 `$87.7` 时的 `−9.7%`），两次都对得上。
+- **「股票永续 `$58.9B` 占 HIP-3 成交的 `95.1%`」没有采用。** 如果 Trade[XYZ] 的 Q2 成交是 `$202.36B` 且它占 HIP-3 的 `97.8%`，HIP-3 总额约 `$206.9B`，`$58.9B` 只能占 `28.5%`。`95.1%` 的分母没有说明，所以本文只保留 `$58.9B` 这个绝对值。
+- **Trade[XYZ] 的费用拆分不闭合。** 用户费用 `$7.14M`，流向 Hyperliquid `$3.81M`，留给 deployer `$2.48M`，两者相加 `$6.29M`，少 `$0.85M`。本文照样给出三个数并指出这个缺口，不去编一个解释。核心结论（`4.6%` 的费用占比）用的是 `$3.81M ÷ $82.98M`，不受这个缺口影响。
+
+**另外四条是这个方法本身的边界：**
+
+- **这些是公司与第三方聚合器口径，不是链上重算。** DefiLlama 的 30 日成交与费用、Trade[XYZ] 的累计 `$650B` 与 `141` 个市场，都来自对方披露，本文没有独立复核。
+- **「主要收益」一列全是结构性推断，不是披露。** ICE 对 Trade[XYZ] 的投资金额未披露，ICE[XYZ] 的费用分成条款也没有公开，所以没有一个数字可以放进那一列。
+- **估值倍数用的是过去 12 个月收入。** 如果美国通道要到 2027 年才产生费用，用 TTM 收入做分母会系统性高估当下的贵 —— 这个方法对「尚未发生的收入」是盲的，所以 `30x` 与 `120x` 只能当作「按现状定价」的参照，不能当作目标价的依据。
+- **算不出美国通道的费率。** 受监管场所的清算费、经纪分润、合规成本都不公开，所以「Hyperliquid 能从每笔美国交易里抽到多少」在今天没有任何可计算的答案 —— 这正是第 2 条观察信号存在的原因。
+
+---
+
+**结论。** 这笔交易更像一次**角色确认**，并非一次**护城河兑现**。它确认了 Hyperliquid 可以做一个中立的基础设施层：ICE 负责监管与分销，Trade[XYZ] 负责产品，Hyperliquid 负责链上结算与流动性底座。这个分工在架构上是聪明的，因为它把合规要求隔离在边缘，把无许可创新留在核心，理论上可以兼得。
+
+但护城河的现金流归属还没有解决。Trade[XYZ] 贡献了约 `30%` 的成交，却只带来不到 `5%` 的费用收入；`$HYPE` 的 FDV 已经按「合规分销会带来费用增长」定价。如果美国流量只是在另一个独立订单簿上交易、费用留在 ICE 与 Trade[XYZ]，Hyperliquid 得到的是品牌背书和标准制定权，而非可捕获的费用流。那时它的护城河是「成为所有受监管 venue 的中立结算层」—— 这个角色属于 Hyperliquid 本身，而「拥有美国分销」属于 ICE。
+
+**底线判断。** 短期看，这笔交易更可能扩展 Hyperliquid 的护城河，而非削弱它的灵活性；但护城河的质量取决于费用路由，不取决于新闻标题。未来 6-12 个月盯住三件事：美国流量是否在 Hyperliquid 上结算、ICE[XYZ] 的费用如何拆分、个股永续能否拿到 SEC 与 CFTC 的通行证。三者都朝有利方向落地，`$HYPE` 的合规溢价才有基本面；否则，Hyperliquid 只是给 ICE 做了一层白标基础设施。
+
+*数据来源：ICE 与 Hyperliquid 公告、Trade[XYZ] 文档、DefiLlama（30 日滚动窗口）、Hyperliquid 费用文档；快照时间 2026-11-02 05:40 UTC。本文为研究整理，不构成投资建议。DYOR。*
