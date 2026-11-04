@@ -1,0 +1,23 @@
+const fs=require('node:fs');
+const cp=require('node:child_process');
+const crypto=require('node:crypto');
+const root='/vercel/portfolio', ev='/vercel/nist-evidence';
+const sha=b=>crypto.createHash('sha256').update(b).digest('hex');
+const manifest=JSON.parse(process.argv[1]);
+const entries=manifest.files.map(f=>({...f,remote_sha256:sha(fs.readFileSync(root+'/'+f.path))}));
+if(entries.some(f=>f.sha256!==f.remote_sha256))throw new Error('Input SHA mismatch');
+fs.writeFileSync(ev+'/input-manifest.json',JSON.stringify({...manifest,files:entries},null,2));
+const cg='/sys/fs/cgroup/';
+const read=p=>{try{return fs.readFileSync(cg+p,'utf8').trim()}catch{return null}};
+const before={current:read('memory.current'),peak:read('memory.peak'),events:read('memory.events')};
+const fd=fs.openSync(ev+'/build.log','w');
+const startedAt=new Date().toISOString(), started=performance.now();
+let sampledPeak=Number(read('memory.current'));
+const child=cp.spawn('pnpm',['build'],{cwd:root,stdio:['ignore',fd,fd]});
+const timer=setInterval(()=>{sampledPeak=Math.max(sampledPeak,Number(read('memory.current')))},200);timer.unref();
+child.on('error',e=>{fs.writeFileSync(ev+'/spawn-error.json',JSON.stringify({message:e.message}));});
+child.on('close',(exit,signal)=>{
+ clearInterval(timer);fs.closeSync(fd);
+ const result={command:['pnpm','build'],cwd:root,startedAt,finishedAt:new Date().toISOString(),exit,signal,seconds:(performance.now()-started)/1000,sampled_cgroup_peak_bytes:sampledPeak,cgroup_before:before,cgroup_after:{current:read('memory.current'),peak:read('memory.peak'),events:read('memory.events')},source_manifest_sha256:sha(fs.readFileSync(ev+'/input-manifest.json')),build_log_sha256:sha(fs.readFileSync(ev+'/build.log')),input_after:manifest.files.map(f=>({path:f.path,sha256:sha(fs.readFileSync(root+'/'+f.path))}))};
+ fs.writeFileSync(ev+'/build.json',JSON.stringify(result,null,2));console.log(JSON.stringify(result));process.exit(exit??1);
+});

@@ -1,0 +1,95 @@
+---
+title: "Cybersecurity for a One-Person Business, Part 3: Backups, Incident Planning and Recovery"
+publishedAt: "2026-11-03"
+summary: "Turn NIST backup, response and recovery guidance into a scoped restore test, offline contacts and an incident timeline, with checks before returning to work."
+slug: "nist-solopreneur-cybersecurity-backup-incident-recovery-en"
+category: "thoughts"
+language: "en"
+translationKey: "nist-solopreneur-cybersecurity-backup-incident-recovery"
+sourceSlug: "nist-solopreneur-cybersecurity-backup-incident-recovery"
+---
+
+Being able to sign in to cloud storage does not demonstrate that a business can recover. Test whether backups can be retrieved, who remains reachable and what must be checked before returning to work.
+
+This article uses the [final NIST CSWP 50](https://csrc.nist.gov/pubs/cswp/50/small-business-cybersecurity-non-employer-firms/final), dated November 2, 2026, mainly pages 12, 15, 17 and 19–20. The records, test method and completion criteria are the author's adaptations, not NIST worksheets or universal incident-remediation commands. For an active incident whose scope is unclear, contact appropriate specialists in the response plan. Do not rely on this article for forensics or system cleanup.
+
+## 1. Define the delivery that needs to recover
+
+Select an important delivery from the Part 1 inventory and complete this adapted recovery record:
+
+| Item | What to enter |
+| --- | --- |
+| Business activity | Interrupted delivery and its data, accounts and devices |
+| Acceptable impact | How many updates the business could lose and how long it could stop; the owner decides |
+| Copies and protection | Backup contents, locations, and who can read, change or delete them |
+| Alternative recovery route | Provider procedures for access when the normal device or primary account is unavailable |
+| Verification | How to confirm completeness, the expected version and fitness for delivery |
+| Help and communication | Providers, specialists and others who may need to be contacted |
+
+These questions establish business needs. They do not justify promising a recovery time that has not been tested. NIST does not prescribe one backup interval, acceptable data-loss amount or restoration deadline for every one-person business here.
+
+## 2. Protect the copies and test a restore
+
+The publication recommends regular backups and considering multiple copies, with at least one on a medium not connected to the everyday device. It gives external drives and cloud storage as examples. It also calls for protecting and testing backups and researching cloud providers' backup policies. Ransomware can affect cloud accounts and SaaS, so the existence of a cloud copy alone does not establish isolation or recoverability. [Pages 15 and 17](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.50.pdf#page=19)
+
+Check included data, available versions, access permissions, deletion rights and recovery procedures. Confirm the actual scope of synchronization, version retention, backup and restoration under the provider's policies. Do not rule out cloud services categorically or automatically describe cloud synchronization as a protected backup.
+
+This is the author's suggested low-risk exercise:
+
+1. Select a non-sensitive sample with known contents and record its expected version.
+2. Save it through the verified backup process, recording the location and access conditions.
+3. Restore it to a test location that will not overwrite working data.
+4. Open it and compare contents and version with expectations, checking its intended use.
+5. Record results and limitations. Assign actions for missing or failed parts and test again.
+
+Record the date, sample, backup location, recovery entry point, expected and actual results, problems and next action. A successful sample only demonstrates that test's scope. It does not establish recovery for every system, constitute forensics or prove the absence of malicious content.
+
+## 3. Keep contacts and continuity options available offline
+
+NIST recommends preparing and periodically practicing a response plan and retaining printed or offline critical contacts. Check whether those details remain accessible without the primary email account or computer. [Pages 2 and 12](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.50.pdf#page=16)
+
+The adapted contact record should cover:
+
+- **Providers:** verified support or account-recovery routes and what they can help with.
+- **Specialist support:** incident-response, legal and other contacts suitable for the business. If insurance exists, check requirements, coverage and contact procedures.
+- **Business communication:** relevant customers or partners, alternative channels and where applicable notification obligations are recorded.
+
+Do not store passwords, tokens or recovery codes in the contact list. Record alternative communication and temporary delivery methods, then verify that they work. NIST gives manual workarounds, temporary services and backup channels as continuity examples. Do not promise an untested alternative will be available. [Page 19](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.50.pdf#page=23)
+
+## 4. Limit spread and record facts when compromise is suspected
+
+Basic containment measures in the publication include disconnecting devices from the network, isolating affected devices or systems, revoking sessions, and avoiding suspected compromised devices or accounts for recovery. The order depends on the incident and plan; this is not a universal cleanup command to copy. [Page 19](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.50.pdf#page=23)
+
+While contacting a provider or specialist under the plan, prepare a timeline:
+
+```text
+First detection time and time zone: ____
+Observed symptoms: ____
+Confirmed account, device or business impact: ____
+Scope still being investigated: ____
+Available logs, relevant screenshots and controlled storage location: ____
+Actions already taken, by whom and when: ____
+Contacts reached and next action: ____
+```
+
+This adapted record separates observations, confirmed facts and assumptions. A suspicious-login notice alone does not establish that all customer data was exposed. Use an unaffected device and verified provider recovery procedures to regain access. Do not treat a possibly compromised primary email account as a reliable backup communication channel.
+
+Notification recipients, content and deadlines depend on applicable law, regulation, contracts or policies. This article specifies no universal deadline. Check obligations under the plan and seek legal assistance where needed. The following adapted message organizes known information; it does not replace required formal notices:
+
+> At “time and time zone,” we detected “symptoms.” We have confirmed “impact” and are still investigating “scope.” We are taking “actions” and will communicate through “trusted channel.”
+
+## 5. Check integrity and account settings before resuming
+
+NIST calls for verifying the integrity of backups and other assets before returning them to use, and reviewing MFA, user accounts, file-sharing settings, active sessions and forwarding rules. This reduces the risk of renewed compromise. [Page 20](https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.50.pdf#page=24)
+
+Record two checks separately: whether restored information is correct and usable for business, and whether account and system settings have been verified. A password change or a file that opens does not complete both. If integrity remains uncertain, unexpected sessions remain or unfamiliar forwarding rules appear, seek appropriate specialist confirmation rather than marking the system recovered.
+
+Coordinate restoration with customers and partners as required. Afterwards, document the incident, response and recovery actions, and improvements needed. Update the inventory, settings and plan accordingly.
+
+## Completion criteria and limits
+
+Preparedness should leave an accessible offline contact list, a restore test with a defined scope and result, and next actions for failures. Ending incident recovery also depends on asset integrity, account settings, business verification and applicable communication obligations, with specialist judgment where needed.
+
+There is no universal promise of absolute safety after following these steps. This article has not tested any particular cloud service, backup product or real incident, and does not reproduce NIST Appendix I from the separate spreadsheet. Keep the plan current as the business and its dependencies change.
+
+Return to [Part 1: assets and risks](/en/blog/nist-solopreneur-cybersecurity-asset-risk-inventory-en), or use [Part 2: account and device protection](/en/blog/nist-solopreneur-cybersecurity-accounts-devices-en) to address settings identified during recovery.
