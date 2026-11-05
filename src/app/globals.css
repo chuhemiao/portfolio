@@ -311,6 +311,22 @@ code[data-line-numbers-max-digits="2"] > [data-line]::before {
     border: 1px solid hsl(var(--border));
   }
 
+  /* Charts and screenshots exported on a white canvas. Dark is the default
+     theme, so frame them as a light figure card and take the glare off. The
+     pixels are never inverted: these are financial charts, and flipping the
+     colours would change what a red or green line means.
+     The set comes from scripts/classify-article-images.mjs. */
+  .article-prose img[data-tone='light'] {
+    background: #fff;
+    padding: 0.75rem;
+    border-radius: 4px;
+    filter: brightness(0.9);
+  }
+
+  .light .article-prose img[data-tone='light'] {
+    filter: none;
+  }
+
   .article-prose hr {
     border-color: hsl(var(--border));
   }

@@ -1,4 +1,6 @@
 import fs from 'node:fs/promises';
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 
 import matter from 'gray-matter';
 import rehypePrettyCode from 'rehype-pretty-code';
@@ -30,6 +32,38 @@ function rehypeMermaid() {
           walk(child);
         }
       }
+    }
+    walk(tree);
+  };
+}
+
+// Which images carry a light background, from scripts/classify-article-images.mjs.
+// Absent (or stale) the set is empty and images render untouched.
+function loadLightImages() {
+  try {
+    const file = path.resolve(import.meta.dirname, '../../../src/data/article-image-tone.json');
+    return new Set(JSON.parse(readFileSync(file, 'utf8')).light ?? []);
+  } catch {
+    return new Set();
+  }
+}
+
+const LIGHT_IMAGES = loadLightImages();
+
+// A white chart on a near-black page reads as an unframed slab, so mark the
+// light ones and let the stylesheet frame them. The pixels are never touched:
+// these are financial charts and inverting them would change what the colours
+// mean.
+function rehypeImageTone() {
+  return (tree) => {
+    function walk(node) {
+      if (node.type === 'element' && node.tagName === 'img') {
+        const src = String(node.properties?.src ?? '').split('?')[0];
+        if (LIGHT_IMAGES.has(src)) {
+          node.properties = { ...node.properties, 'data-tone': 'light' };
+        }
+      }
+      for (const child of node.children ?? []) walk(child);
     }
     walk(tree);
   };
@@ -85,6 +119,7 @@ function getProcessor() {
       .use(remarkRehype)
       .use(rehypeHeadingIds)
       .use(rehypeMermaid)
+      .use(rehypeImageTone)
       .use(rehypePrettyCode, {
         // https://rehype-pretty.pages.dev/#usage
         theme: {
