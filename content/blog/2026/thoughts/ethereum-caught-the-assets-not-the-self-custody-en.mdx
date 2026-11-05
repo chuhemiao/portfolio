@@ -1,0 +1,143 @@
+---
+title: 'After the Binance Signing Breach, Ethereum Caught the Assets and Not the Self-Custody'
+publishedAt: '2026-11-05'
+summary: 'Roughly 5.6 billion dollars left Binance after the incident, and it went to OKX, Coinbase and Kraken — a change of custodian, not a move to holding your own keys. On-chain there was a single settlement pulse at 8.17 gwei, while active sending addresses actually fell from 663K to 447K. DeFi TVL dropped 3.1 percent in dollars and only 0.7 percent denominated in ETH, with Lido flat. The source draft applies that change the denominator discipline to DeFi but not to its own first table, where Binance assets fall 14 billion against 5.6 billion of net outflow.'
+slug: 'ethereum-caught-the-assets-not-the-self-custody-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'ethereum-caught-the-assets-not-the-self-custody'
+sourceSlug: 'ethereum-caught-the-assets-not-the-self-custody'
+---
+
+## TL;DR
+
+- **It can attract assets. It cannot attract self-custody.** About `$5.6B` left Binance, and as its spot share fell from `48%` to `42%`, OKX went `11%→14%`, Coinbase `9%→9.6%` and Kraken rose too. The money changed custodian.
+- **On-chain there was one settlement pulse.** Average gas on 10-29 jumped from a normal `0.6`–`0.9` gwei to `8.17`, yet that day carried `1.76M` transactions against `2.00M` the day before, and active sending addresses fell from `663K` to `447K`. **Gas up nearly tenfold while transaction count fell means a few large wallets moving, not retail opening accounts.**
+- **The contract layer was the side losing liquidity, not the side receiving it.** Chain-wide TVL fell `-3.1%` in dollars and only `-0.7%` denominated in ETH; Lido was `+0.1%`, so stakers did not redeem at all.
+- **The draft never applies its own best method to its own first table.** It splits DeFi into dollar and coin-denominated terms, and still prints Binance total assets at `$171B → $157B`, a `$14B` fall, beside `$5.6B` of net outflow — the `$8.4B` in between is price, not people taking money out.
+- **The run receded within 72 hours.** By 11-03, ETH, USDT and USDC had turned to net inflow.
+- **This is a repricing of custody quality, not a migration of the custody model.**
+
+> This piece works from an external draft. I rechecked all 12 calculations in its DeFi section and they are self-consistent, with the right method. One reconciliation in section 2 is mine, and section 1 corrects the draft description of the attack against [the on-chain record I verified earlier](/en/blog/eip-7702-delegation-one-signature-drains-everything-en). Section 6 lists what cannot be computed.
+
+---
+
+## 1. What broke was the signing authorization layer, not a key
+
+The draft has the direction right and the structure wrong. The on-chain record reads as follows.
+
+The root cause in the Binance Security Incident Update is **a DevOps engineer laptop being compromised, from which the attacker reached a service container and submitted unauthorized withdrawals**, with no evidence of private key leakage ([preliminary report](https://www.odaily.news/en/post/5213741), [root cause piece](/en/blog/binance-root-cause-is-service-identity-not-7702-en)). In other words, **what broke was a service identity that held signing capability**, not the key itself.
+
+The Ethereum leg used EIP-7702, and the draft line about `50` signed transactions manipulating the account nonce is wrong. It was **one** Type-4 transaction whose `authorization_list` carried `50` authorization tuples, with nonces descending from `18,914,824` to `18,914,775`, all naming the same hot wallet as authority, pointing at the same contract, all with `chain_id` `1`. **Exactly one took effect**; the other `49` were `invalid_nonce` decoys.
+
+The descending order was deliberate. The rule is that a tuple nonce must equal the current account nonce to take effect, and is skipped rather than reverted otherwise. Submitted in ascending order, every tuple after the hit would have taken effect in turn, pushing the account nonce up a dozen times and instantly desynchronizing the hot wallet own transaction queue. **Descending guarantees at most one hit.**
+
+That transaction used `1,258,562` gas, and the figure reconciles exactly:
+
+```text
+50 × 25,000  = 1,250,000   each tuple pre-charged at PER_EMPTY_ACCOUNT_COST
+− 12,500                   the one valid tuple hit an existing account, refunding the PER_AUTH_BASE_COST difference
++ 21,000                   transaction base cost
++ 62                       calldata
+= 1,258,562
+```
+
+Exact to the gas — which also shows the `49` decoys each burned a real `25,000`.
+
+**The part worth remembering is what that transaction looks like.** Its `to` is the hot wallet itself, `value` is `0`, `data` is empty, and the substance sits entirely in the `authorization_list`. **A withdrawal policy engine that only parses calldata sees a self-transfer of zero** — once signed, withdrawal limits stop applying entirely. Code delegation and transfers cannot share one signing policy, and that is the protocol-level lesson of the incident ([mechanism](/en/blog/binance-suspected-hack-outflows-custody-risk-en), [96-hour timeline](/en/blog/binance-hack-history-and-96-hour-timeline-en)).
+
+Containment was drawn out by the same structure: the last `2,961.9` ETH moved at `23:56` UTC, and the delegation code was only cleared at `00:10` the next day by sending a fresh authorization to the zero address.
+
+**This answers half the question outright.** Risk moving into smart contracts is not hypothetical — EIP-7702 is itself an authorization contract on chain. A plain self-custodied EOA has no such surface, but the moment you use 7702, a multisig or account abstraction, the risk returns to the contract layer. The failure point of a CEX is operations and signing authority; the failure point of self-custody is key management and authorization templates. **Risk does not disappear. It changes notation.**
+
+## 2. Where the money went: a new custodian, not self-custody
+
+The `$5.6B` net outflow is real, but where it went marks this as a repricing of custody quality.
+
+| Metric | Before | Latest (7d) | Reading |
+|---|---|---|---|
+| Binance spot share | ~`48%` | `42%` | lowest in at least 12 weeks |
+| OKX | ~`11%` | ~`14%` | largest recipient |
+| Coinbase | ~`9%` | `9.6%` | up slightly |
+| Kraken | — | up | also taking flow |
+| Binance total assets | `$171B` | `$157B` | see the reconciliation below |
+
+**There is one thing in this table the draft never reconciles, and it already owns the method.** Total assets fell `$14B` while net outflow was `$5.6B` — the `$8.4B` in between is not money anyone took out, it is the assets being marked lower over the same window. The draft does a dollar-versus-coin split in the DeFi section precisely to avoid that misreading, and then does not hold the same ruler to its own first table. **Reading this run as a $14 billion withdrawal overstates it by about two and a half times.**
+
+Net outflow is about `3.5%` of total assets. The first nine and a half hours after withdrawals reopened on 11-01 carried `$3.64B` out; across 11-01 and 11-02 users withdrew `25,793` BTC, **more than the `18,270` BTC the attacker took**, and exchange BTC reserves fell from `2.85M` to `2.83M` ([CryptoPotato](https://cryptopotato.com/binances-spot-market-share-drops-to-42-after-6-3b-hack-as-okx-gains/), [Coinpedia](https://coinpedia.org/news/binance-btc-outflows-exceed-reported-hack-losses-as-reserves-fall/)).
+
+Where it landed says more. Coinbase immediately turned `99%` of client assets in cold storage, distributed key protection and 1:1 custody into marketing — users wanted a more credible custodian, not to hold their own keys. The same goes for OKX, which took the most: [it has no record of being hacked, and that was never where its risk sat](/en/blog/okx-safety-record-and-the-real-risk-en).
+
+The run also receded fast: by 11-03 ETH, USDT and USDC had turned to net inflow, and Binance recorded about `$2.5B` of net inflow within 24 hours. **The money was redistributed among custodians, not taken out of custody.**
+
+## 3. The on-chain read: a settlement pulse, not a migration
+
+Self-custody movement did appear on chain, but as an event-driven settlement rather than a change in behavior.
+
+On 10-29 average Ethereum gas went from a normal `0.6`–`0.9` gwei to `8.17`, and was still `3.45` on 10-30. Yet that day carried `1.76M` transactions, **below** the `2.00M` of 10-28, and active sending addresses fell from `663K` to `447K`. Against that normal band gas rose `9`–`14` times while transaction count fell — which can only be a few large wallets moving, not retail opening accounts in bulk.
+
+Native ETH transfer volume on 10-29 and 10-30 was `2.58M` and `2.74M` ETH, about `2` times the `1.29M` average of the prior nine days. By 11-01 gas was back to `0.595` gwei with `403K` active senders, **below the pre-incident level**.
+
+The L2s did not receive it either: Arbitrum daily transactions fell from `1.96M` on 10-29 to `1.10M` on 11-01 (`-44%`), and Base from `10.92M` to `5.89M` (`-46%`).
+
+The irony is that the attacker also used Ethereum as a rotation route: selling SOL piecewise into USDC, bridging to Ethereum to buy ETH, then swapping to BTC through THORChain ([ChainCatcher](https://www.chaincatcher.com/en/article/2301852)). **Which is exactly the point — in a crisis Ethereum acts as a liquidity settlement layer, not a custody destination.**
+
+## 4. The contract layer was losing liquidity
+
+Money moving into smart contracts did not happen in those five days, because the contract side froze first. Aave guardians froze `175` V3 and `117` V4 reserves after the incident, utilization on some large reserves was pushed to `92%`–`100%`, and USDT, USDC and USDT0 collateral borrowing power went to zero in affected configurations; reserves reopened on 10-31 and rate curves only normalized on 11-01 ([CryptoSlate](https://cryptoslate.com/aave-and-lido-lose-1-7b-in-massive-defi-capital-drop-after-the-binance-hack/)).
+
+Change the denominator, though, and the conclusion inverts.
+
+| Basis | 10/27 | 11/3 | Change |
+|---|---|---|---|
+| Chain-wide TVL (USD) | `$99.96B` | `$96.84B` | `-3.1%` |
+| Chain-wide TVL (in ETH) | `42.58M` ETH | `42.27M` ETH | **`-0.7%`** |
+| Aave (USD) | `$13.67B` | `$12.90B` | `-5.6%` |
+| Aave (in ETH) | `5.82M` ETH | `5.63M` ETH | `-3.3%` |
+| Lido (USD) | `$22.70B` | `$22.17B` | `-2.3%` |
+| Lido (in ETH) | `9.67M` ETH | `9.68M` ETH | **`+0.1%`** |
+
+![Ethereum DeFi TVL indexed to October 27, priced in dollars against priced in ETH](/article/eth-defi-tvl-usd-vs-eth-denominated.png)
+
+The pink line in the chart, priced in dollars, falls to about `94.9` after the Binance incident, while the blue line priced in ETH hugs `100` throughout. The two diverge after 10-29, and the width of that divergence is the price contribution.
+
+From 10-28 to 10-30 chain-wide dollar TVL fell `5.15%` while ETH fell `5.24%` over the same window; dividing one by the other leaves the coin-denominated figure essentially flat. **The dollar decline is almost entirely price, not depositors leaving.** Of the Aave `-5.6%`, about `2.4` points come from the ETH price and about `3.3` points are genuine net outflow, consistent with the mechanical effect of frozen reserves blocking new deposits; Lido flat in ETH terms means stakers did not redeem.
+
+**What got repriced was liquidity risk in lending markets, not credit risk in staking contracts.** Over the same window total stablecoin market cap fell to `$293.8B`, down `$10.8B` in 30 days, and that contraction had begun before the Binance incident — the dollar leg of on-chain activity was thinning too.
+
+## 5. The asset and the network diverge
+
+The ETH rebound is macro beta, not a self-custody premium. As of `2026-11-05 04:00 UTC` ETH is `$2,419`, `+7.6%` over 24 hours but still `-10.5%` over 30 days against `-6.1%` for BTC — **ETH underperforms** — and it is stuck below `$2,439` resistance with support at `$2,200`. The move came after risk appetite recovered broadly; ETH is a high-beta asset here, not a haven.
+
+The demand side is weaker still. US spot ETH ETFs have had no net inflow day since `9-29`, running `23` consecutive trading days of outflow through 10-30 and `$1.61B` of net outflow in October, the largest month since launch; a small `$42.6M` inflow only appeared on 11-04 ([BeInCrypto](https://beincrypto.com/ethereum-price-etf-outflows-active-addresses/)). On-chain activity is receding in parallel: the 14-day moving average of active addresses fell to about `365K` on 10-17, the lowest since December 2025, and has recovered only to `375K`, `25%`–`32%` below the `500K`–`550K` band of the spring. Gas is back at `0.6` gwei, **so the network collected no fees for the self-custody narrative**.
+
+If self-custody demand were really driving this, ETH would outperform BTC, ETF outflows would be absorbed on chain, and gas and address counts would rise together. All three run the other way.
+
+## 6. What this piece cannot tell you
+
+- **Share, TVL, ETF and on-chain figures come from different sources over different windows.** Share is a 7-day basis, the TVL table is 10/27–11/3, active addresses are a 14-day moving average, and the ETF series is in trading days. Read each on its own; do not divide one by another.
+- **The split between `$5.6B` of outflow and the `$14B` asset decline is my inference from price, not a disclosure.** I attribute the `$8.4B` to marks, but there is no per-asset holdings breakdown to verify that attribution.
+- **A new custodian rather than self-custody is inferred from share and exchange reserves, not observed directly.** Nothing on chain distinguishes a withdrawal to your own cold wallet from one to another exchange deposit address, so the true self-custody proportion is unmeasurable; the absence of address growth is what argues it was small.
+- **Within the Aave `3.3` points of genuine outflow, freezing and voluntary exit cannot be separated.** A frozen reserve cannot take new deposits anyway, and the mechanical effect has the same shape in the data as panic exit.
+- **The four thresholds are judgement, not a model.** The numbers in the table below are watch lines I set against current levels, not statistically derived breakpoints.
+- **The chart is a snapshot the site owner supplied, not something I recomputed.** I only checked that its direction agrees with the two endpoints in the TVL table.
+- **I have no usable source for the Coinbase marketing line.** The citation the draft attaches to it points at a report about Circle and stablecoin freeze tools, which does not support the claim, so the line is kept without a reference.
+
+---
+
+**Conclusion.** Split the question into a three-stage funnel and it resolves. **The asset layer passes** — ETH is one of the few assets that can settle a billion-dollar flight from custody within 48 hours. **The self-custody layer is weak** — the first stop was OKX, Coinbase and Kraken, the second was a cold wallet waiting it out, there was no address growth, and the run reversed within 72 hours. **The contract layer ran the other way** — flat coin-denominated TVL, `3.3%` of genuine Aave outflow, and contracting stablecoin supply.
+
+So what Ethereum attracted was **settlement demand** and **collateral demand**, not **self-custody demand**. For self-custody to become a destination rather than a waypoint, three things have to improve at once: yield available while self-custodied that does not depend on rehypothecation (only solo staking comes close, and the `32` ETH threshold deters most people); good enough security defaults for account abstraction and multisig (EIP-7702 widened the authorization surface instead); and continued erosion of trust in alternative custodians (which did not happen — Coinbase strengthened its cold storage brand on the back of it). **None of the three currently holds.**
+
+Four signals to watch:
+
+| Signal | Now | What to look for |
+|---|---|---|
+| DeFi TVL in ETH | `42.27M` ETH | breaking above `43.5M` |
+| ETH ETF net inflow | `$42.6M` on 11-04 | five consecutive days of inflow |
+| 14-day active addresses | `375K` | back above `470K` |
+| Average gas | `0.6` gwei | holding above `3` gwei for a week |
+
+If the Binance spot share stabilizes and recovers around `42%`, this whole episode was only a rotation of risk among custodians, and Ethereum remains the settlement layer **everyone passes through and nobody stays on**.
+
+*Research notes, not investment advice. DYOR.*
