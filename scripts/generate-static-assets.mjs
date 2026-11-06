@@ -4,12 +4,26 @@ import path from 'node:path';
 import { LOCALES, articleHref, localizeHref } from '../src/lib/i18n.ts';
 import { instrumentRouteParams, issuerSlugsWithInstruments } from '../src/data/instruments.ts';
 import { loadTopics } from './lib/content/indexes.mjs';
-import { BLOG_INDEX_FILE, ROOT } from './lib/content/paths.mjs';
+import { BLOG_INDEX_FILE, ROOT, TOPIC_INDEX_FILE } from './lib/content/paths.mjs';
+import { QUOTES_AS_OF } from '../src/data/instruments.ts';
 import { readCurrentLibrary } from './library/public-reader.mjs';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const SITEMAP_DIR = path.join(PUBLIC_DIR, 'sitemaps');
 const SITEMAP_SHARD_SIZE = 5000;
+const CRAWL_DELAY_SECONDS = 10;
+const RSS_ITEM_LIMIT = 50;
+
+// Legacy /blog/<slug> URLs are redirect stubs kept for links indexed before the
+// move to /<locale>/blog/<slug>. They hold no content yet doubled the crawlable
+// surface, so they stay out of it; the localized URLs are matched by neither
+// pattern and keep their place in the sitemap.
+const DISALLOWED_PATHS = ['/api/', '/private/', '/blog/'];
+
+// Backlink crawlers that send no readers. Across ~15k URLs each full pass is
+// paid for in Edge Requests, and these three honour robots.txt. Scrapers that
+// ignore it have to be stopped at the firewall instead.
+const BLOCKED_BOTS = ['AhrefsBot', 'SemrushBot', 'MJ12bot', 'DotBot', 'DataForSeoBot'];
 
 const SITE = {
   name: 'kkdemian',
@@ -69,6 +83,14 @@ async function loadPosts() {
   }));
 }
 
+async function loadTopicIndex() {
+  try {
+    return JSON.parse(await fs.readFile(TOPIC_INDEX_FILE, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
 function renderRss(posts, locale) {
   const title = locale === 'zh-CN' ? '博客' : locale === 'ja' ? 'ブログ' : 'Blog';
   const latestPost = posts[0];
@@ -76,7 +98,12 @@ function renderRss(posts, locale) {
     ? new Date(latestPost.metadata.publishedAt).toUTCString()
     : new Date().toUTCString();
 
+  // A feed is a change notification, not an archive: shipping all 7k posts made
+  // rss.xml 5.5 MB and grew it with every article, for readers that only ever
+  // consume the newest entries. <guid> keeps its legacy /blog/<slug> form so
+  // subscribers do not re-surface the whole history as unread.
   const items = posts
+    .slice(0, RSS_ITEM_LIMIT)
     .map((post) => {
       const postUrl = escapeXml(`${SITE.url}${articleHref(post.slug, post.metadata.language)}`);
       return `<item>
@@ -178,8 +205,7 @@ function renderUrlSet(items) {
   const body = items
     .map(
       (item) => `  <url>
-    <loc>${escapeXml(item.loc)}</loc>
-    <lastmod>${escapeXml(item.lastmod)}</lastmod>
+    <loc>${escapeXml(item.loc)}</loc>${item.lastmod ? `\n    <lastmod>${escapeXml(item.lastmod)}</lastmod>` : ''}
     <changefreq>${item.changefreq}</changefreq>
     <priority>${item.priority}</priority>
     ${(item.alternates ?? []).map(([locale, href]) => `<xhtml:link rel="alternate" hreflang="${escapeXml(locale)}" href="${escapeXml(href)}" />`).join('\n    ')}
@@ -214,23 +240,38 @@ ${body}
 // /sitemap.xml stays the single entry point but is now an index over shards of
 // at most SITEMAP_SHARD_SIZE URLs, so the blog can keep growing past the 50k
 // URL / 50MB per-file sitemap limits.
-function buildSitemapShards(posts, topics, libraryItems) {
+function buildSitemapShards(posts, topics, topicIndex, libraryItems) {
   const now = new Date().toISOString();
+
+  // lastmod has to stay stable between deploys. Stamping build time on every
+  // page URL told each crawler that all 375 of them had changed on every push.
+  // A route now dates itself from the content it renders, and a route whose
+  // data is fetched at view time carries no lastmod at all — the tag is
+  // optional, and a wrong one is worse than a missing one.
+  const publishedAt = new Map(posts.map((post) => [post.slug, post.metadata.publishedAt]));
+  const newest = (values) => {
+    const latest = values.filter(Boolean).sort().at(-1);
+    return latest ? new Date(latest).toISOString() : undefined;
+  };
+  const newestPost = newest([...publishedAt.values()]);
+  const quotesAsOf = newest([QUOTES_AS_OF]);
+  const topicLastmod = (slug) => newest((topicIndex[slug] ?? []).map((s) => publishedAt.get(s)));
+
   const routes = [
-    '',
-    '/blog',
-    '/research',
-    '/stocks',
-    '/oscillator',
-    '/fund',
-    '/thoughts',
-    '/stack',
-    '/fear',
-    '/watch',
-    '/pulse',
-    '/topics',
-    ...topics.map((topic) => `/topics/${topic.slug}`),
-    ...issuerSlugsWithInstruments().map((issuer) => `/stocks/${issuer}`),
+    { route: '', lastmod: newestPost, priority: '1.0' },
+    { route: '/blog', lastmod: newestPost },
+    { route: '/research', lastmod: newestPost, priority: '0.95' },
+    { route: '/stocks', lastmod: quotesAsOf },
+    { route: '/oscillator', priority: '0.95' },
+    { route: '/fund' },
+    { route: '/thoughts', lastmod: newestPost },
+    { route: '/stack' },
+    { route: '/fear' },
+    { route: '/watch' },
+    { route: '/pulse' },
+    { route: '/topics', lastmod: newestPost },
+    ...topics.map((topic) => ({ route: `/topics/${topic.slug}`, lastmod: topicLastmod(topic.slug) })),
+    ...issuerSlugsWithInstruments().map((issuer) => ({ route: `/stocks/${issuer}`, lastmod: quotesAsOf })),
   ];
 
   // Instrument pages are reference data rather than reading, so they go in at a
@@ -239,28 +280,30 @@ function buildSitemapShards(posts, topics, libraryItems) {
     ({ issuer, ticker }) => `/stocks/${issuer}/${ticker}`
   );
 
+  const pageItems = routes
+    .flatMap(({ route, lastmod, priority }) => LOCALES.map((locale) => ({
+      loc: `${SITE.url}${localizeHref(route || '/', locale)}`,
+      alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route || '/', language)}`]),
+      lastmod,
+      changefreq: 'weekly',
+      priority: priority ?? '0.85',
+    })))
+    .concat(
+      instrumentRoutes.flatMap((route) => LOCALES.map((locale) => ({
+        loc: `${SITE.url}${localizeHref(route, locale)}`,
+        alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route, language)}`]),
+        lastmod: quotesAsOf,
+        // These change when the quote snapshot is refreshed, not daily.
+        changefreq: 'weekly',
+        priority: '0.6',
+      })))
+    );
+
   const shards = [
     {
       name: 'pages.xml',
-      lastmod: now,
-      body: renderUrlSet(
-        routes.flatMap((route) => LOCALES.map((locale) => ({
-          loc: `${SITE.url}${localizeHref(route || '/', locale)}`,
-          alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route || '/', language)}`]),
-          lastmod: now,
-          changefreq: 'weekly',
-          priority:
-            route === '' ? '1.0' : route === '/research' || route === '/oscillator' ? '0.95' : '0.85',
-        }))).concat(
-          instrumentRoutes.flatMap((route) => LOCALES.map((locale) => ({
-            loc: `${SITE.url}${localizeHref(route, locale)}`,
-            alternates: LOCALES.map((language) => [language, `${SITE.url}${localizeHref(route, language)}`]),
-            lastmod: now,
-            changefreq: 'daily',
-            priority: '0.6',
-          })))
-        )
-      ),
+      lastmod: newest(pageItems.map((item) => item.lastmod)) ?? now,
+      body: renderUrlSet(pageItems),
     },
   ];
 
@@ -295,8 +338,8 @@ function buildSitemapShards(posts, topics, libraryItems) {
   return shards;
 }
 
-async function writeSitemaps(posts, topics, libraryItems) {
-  const shards = buildSitemapShards(posts, topics, libraryItems);
+async function writeSitemaps(posts, topics, topicIndex, libraryItems) {
+  const shards = buildSitemapShards(posts, topics, topicIndex, libraryItems);
   const expected = new Set(shards.map((shard) => shard.name));
 
   await fs.mkdir(SITEMAP_DIR, { recursive: true });
@@ -321,6 +364,10 @@ async function writeSitemaps(posts, topics, libraryItems) {
 }
 
 function renderRobotsTxt() {
+  // A named user-agent group replaces the `*` group rather than extending it:
+  // a crawler obeys only its most specific match, so every bot with its own
+  // block needs its own Crawl-delay. Googlebot ignores Crawl-delay outright —
+  // its rate is set in Search Console, not here.
   const allowedBots = [
     'GPTBot',
     'ChatGPT-User',
@@ -332,13 +379,17 @@ function renderRobotsTxt() {
     'Amazonbot',
     'cohere-ai',
   ];
+  const disallow = DISALLOWED_PATHS.map((prefix) => `Disallow: ${prefix}`).join('\n');
+  const group = (bot) => `User-agent: ${bot}\nAllow: /\n${disallow}\nCrawl-delay: ${CRAWL_DELAY_SECONDS}`;
 
   return `User-agent: *
 Allow: /
-Disallow: /api/
-Disallow: /private/
+${disallow}
+Crawl-delay: ${CRAWL_DELAY_SECONDS}
 
-${allowedBots.map((bot) => `User-agent: ${bot}\nAllow: /`).join('\n\n')}
+${allowedBots.map(group).join('\n\n')}
+
+${BLOCKED_BOTS.map((bot) => `User-agent: ${bot}\nDisallow: /`).join('\n\n')}
 
 Sitemap: ${SITE.url}/sitemap.xml
 Host: ${SITE.url}
@@ -388,11 +439,16 @@ function renderOgSvg() {
 
 async function main() {
   const started = Date.now();
-  const [posts, topics, library] = await Promise.all([loadPosts(), loadTopics(), readCurrentLibrary(ROOT)]);
+  const [posts, topics, topicIndex, library] = await Promise.all([
+    loadPosts(),
+    loadTopics(),
+    loadTopicIndex(),
+    readCurrentLibrary(ROOT),
+  ]);
   await fs.mkdir(PUBLIC_DIR, { recursive: true });
 
   const [shardCount] = await Promise.all([
-    writeSitemaps(posts, topics, library.items),
+    writeSitemaps(posts, topics, topicIndex, library.items),
     ...LOCALES.map((locale) => fs.writeFile(path.join(PUBLIC_DIR, `rss-${locale}.xml`), renderRss(posts.filter((post) => post.metadata.language === locale), locale), 'utf8')),
     fs.writeFile(path.join(PUBLIC_DIR, 'rss.xml'), renderRss(posts), 'utf8'),
     fs.writeFile(path.join(PUBLIC_DIR, 'llms.txt'), renderLlmsTxt(posts), 'utf8'),

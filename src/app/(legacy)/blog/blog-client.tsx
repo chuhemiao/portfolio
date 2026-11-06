@@ -40,7 +40,17 @@ const CHIP_OFF = 'border-border text-muted-foreground hover:border-border-strong
 const VALID_CATEGORIES = new Set(CATEGORIES.map((category) => category.key));
 const validTopic = (slug: string | null) => TOPICS.some((topic) => topic.slug === slug) ? slug : null;
 
-export default function BlogClient({ posts, topicPostSlugs }: { posts: PostListItem[]; topicPostSlugs: Record<string, string[]> }) {
+// The list page ships one of these per post to the browser, so the shape states
+// exactly what this component reads rather than re-using the whole index entry.
+type BlogListPost = {
+  slug: string;
+  metadata: Pick<
+    PostListItem['metadata'],
+    'title' | 'summary' | 'publishedAt' | 'language' | 'category' | 'translationKey' | 'sourceSlug' | 'translations'
+  >;
+};
+
+export default function BlogClient({ posts, topicPostSlugs }: { posts: BlogListPost[]; topicPostSlugs: Record<string, string[]> }) {
   const { locale, t } = useI18n();
   const searchParams = useSearchParams();
   const router = useRouter();

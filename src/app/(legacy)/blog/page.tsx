@@ -38,11 +38,30 @@ export const metadata: Metadata = localizedPageMetadata('/blog', 'en', {
   }
 });
 
+const JSON_LD_ITEM_LIMIT = 100;
+
 export async function renderPage(locale: Locale) {
   const t = getTranslator(locale);
   // blog-index.json is already sorted newest-first by the content compiler.
   const posts = await getBlogPosts();
   const sortedPosts = getLocalizedPosts(posts, locale);
+  // Only the fields BlogClient filters and renders on cross the wire. The index
+  // also carries build-internal ones (artifact, contentHash, sourcePath,
+  // translationSlug) that added ~2 MB to every render of this page and put the
+  // repository layout in the payload.
+  const listPosts = posts.map((post) => ({
+    slug: post.slug,
+    metadata: {
+      title: post.metadata.title,
+      summary: post.metadata.summary,
+      publishedAt: post.metadata.publishedAt,
+      language: post.metadata.language,
+      category: post.metadata.category,
+      translationKey: post.metadata.translationKey,
+      sourceSlug: post.metadata.sourceSlug,
+      translations: post.metadata.translations,
+    },
+  }));
   const topicPostSlugs = Object.fromEntries(TOPICS.map((topic) => [topic.slug, getPostsForTopic(topic.slug).map((post) => post.slug)]));
 
   const blogJsonLd = {
@@ -65,7 +84,10 @@ export async function renderPage(locale: Locale) {
     name: `${DATA.name} ${t('Blog Posts', '博客文章', 'ブログ記事')}`,
     description: t('Articles on Web3, DeFi, crypto investing, and blockchain technology.', '关于 Web3、DeFi、加密资产投资和区块链技术的文章。', 'Web3、DeFi、暗号資産投資、ブロックチェーン技術に関する記事。'),
     url: `${DATA.url}/${locale}/blog`,
-    itemListElement: sortedPosts.map((post, index) => ({
+    // A carousel sample, not a mirror of the archive: every entry here is inline
+    // in the HTML of all three locales, and the sitemap already carries the
+    // full set for discovery.
+    itemListElement: sortedPosts.slice(0, JSON_LD_ITEM_LIMIT).map((post, index) => ({
       '@type': 'ListItem',
       position: index + 1,
       url: `${DATA.url}${getPostHref(post, post.metadata.language)}`,
@@ -87,7 +109,7 @@ export async function renderPage(locale: Locale) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListJsonLd) }}
         />
         <Suspense>
-          <BlogClient posts={posts} topicPostSlugs={topicPostSlugs} />
+          <BlogClient posts={listPosts} topicPostSlugs={topicPostSlugs} />
         </Suspense>
       </div>
     </div>
