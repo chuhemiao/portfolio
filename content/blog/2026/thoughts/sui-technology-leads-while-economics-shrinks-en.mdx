@@ -1,0 +1,161 @@
+---
+title: 'Sui: the technology keeps leading, the economics keep shrinking'
+publishedAt: '2026-11-06'
+summary: 'The object model, Mysticeti, Walrus and the post-quantum roadmap all shipped, but TVL fell from $2.64B to $440M, L1 fees run $2.67M a year, and the token captures none of them. I rechecked every computable figure in the source and four do not line up: the ten listed protocols sum to $530.4M, or 120.5% of the stated chain TVL of $440M, so the lending share has a numerator and a denominator from different books; the four lenders come to $327M by the table rather than $335M; the last 30 days of application fees annualize to 64.3% of the yearly figure given; and capital turnover of about 2x is 30-day volume over TVL, not annual volume.'
+slug: 'sui-technology-leads-while-economics-shrinks-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'sui-technology-leads-while-economics-shrinks'
+sourceSlug: 'sui-technology-leads-while-economics-shrinks'
+---
+
+## TL;DR
+
+- **The technology sets the floor, distribution sets the ceiling.** Among non-EVM chains Sui has a first-tier architecture, but 2026 is the combination of a technology that keeps leading and an economy that keeps shrinking.
+- **Name the size of the contraction.** TVL fell from `$2.64B` on 2025-10-09 to `$440M` (`-83.3%`), $SUI is `-84%` from its all-time high, and L1 fees across the whole chain run `$2.67M` a year — `1,330x` the market cap.
+- **The real change is in distribution, not revenue.** Samsung Wallet is taking USDC on Sui (roughly `82M` eligible US Galaxy devices, gas-free), CCTP v2 connects `29` chains, and Hashi launched with over `$500M` of committed BTC. Those are entrances, not cash flow.
+- **Four things do not line up.** The ten listed protocols sum to `120.5%` of the stated chain TVL; the four lenders come to `$327M` by the table rather than `$335M`; the last 30 days of application fees annualize to `64.3%` of the yearly figure; and capital turnover of about `2x` is 30-day volume, not annual.
+- **The cheapness is an artifact of a small float.** Market cap to TVL of `8.07x` really is below Solana, but on a fully diluted basis it snaps back to `19.48x` — because only `41.4%` of $SUI circulates and `5.86B` tokens have not reached the market.
+- **Only two or three numbers can settle this.** hBTC balances, stablecoin supply, annualized fees. Until they turn, $SUI is an event-driven high-beta option, not an allocation.
+
+> This piece is built on an external draft. The price and on-chain snapshot is `2026-11-06`. I rechecked everything computable; the four findings in section 3 and the limits in section 8 are mine.
+
+---
+
+## 1. The base layer: the object model is the real difference
+
+The moat is not that Sui is faster but **how state is organised**. State is modelled as objects with an identity, a type and an owner; a transaction declares which objects it will touch before it executes, so conflicts can be decided statically and work can be scheduled in parallel. The linear types in Move mean an asset cannot be copied or implicitly dropped.
+
+Two consequences follow. Complex operations compose atomically inside one transaction — borrow, swap, re-collateralise — and that is where Sui DeFi composability comes from. But the mental model is nothing like the EVM, the tooling and audit ecosystem are thinner, and migration is expensive.
+
+Consensus is the second pillar. Mysticeti drops the certification round of classic DAG-BFT by running an **uncertified DAG**; the official figure is `300ms` to consensus, and the published measurement against Bullshark is a fall from about `1.9` seconds to about `400ms` (`-78.9%`) with `40%` less consensus CPU. [Sui](https://www.sui.io/mysticeti) [Decentralized Thoughts](https://decentralizedthoughts.github.io/2026-03-06-mysticeti-revolutionizing-consensus-on-sui/)
+
+| Module | Mechanism | Status | What it means |
+|---|---|---|---|
+| Object model + Move | State sharded by object, linear types keep assets unique | Stable on mainnet | The basis for parallel execution and atomic composition, at a high cost to learn |
+| Mysticeti | Uncertified DAG BFT, about `300ms` | Live, V2 in progress | Latency leads, but rivals have closed in |
+| Account abstraction | zkLogin, passkeys, sponsored transactions, address aliases | Live | What makes the gas-free Samsung flow and multi-chain wallets possible |
+| Sui Stack | Walrus storage, Seal encryption, DeepBook order book, SuiNS, Kiosk | Mostly live | The chain turning itself into a component vendor |
+| Post-quantum signatures | ML-DSA-65 (FIPS 204) and SLH-DSA (FIPS 205) | First native devnet transaction done, mainnet target 2027 Q1 | A long-horizon security story with no near-term revenue |
+| Data access | Public full-node JSON-RPC deprecated, moving to gRPC and GraphQL | In progress | Modernisation, with developer friction during the move |
+
+The post-quantum line deserves its own note: it and [the route that makes post-quantum the reason for a chain to exist](/en/blog/quantus-qtc-post-quantum-payment-l1-research-en) are two ways of placing the same bet — one treats it as an upgrade to an existing chain, the other as the entire premise of a new one.
+
+**Discount the performance story.** The `40.6M` TPS announced at Basecamp is throughput inside a programmable tunnel that settles back to Sui in batches; it is **not** mainnet L1 throughput. [BeInCrypto](https://beincrypto.com/sui-developments-outlook-2027/) For real load, look at the other number: `$36.4M` of DEX volume across the chain in 24 hours. Two to three orders of magnitude separate the ceiling from the demand.
+
+## 2. Ecosystem shape: lending dominates, liquidity is thin
+
+Sui sits `15th` by chain TVL at `$440M`, behind Base (`$5.81B`), Solana (`$5.28B`) and Arbitrum (`$1.44B`), and now behind Monad (`$934M`) too. That is `-83.3%` from the October 2025 peak, but it has held a `$410M`–`$550M` range for four months since July 2026, which suggests the worst of the selling is behind it.
+
+| Protocol | Category | TVL on Sui | 7-day |
+|---|---|---:|---:|
+| Suilend | Lending | `$138.8M` | `-2.9%` |
+| NAVI Lending | Lending | `$125.0M` | `-11.6%` |
+| SpringSui | Liquid staking | `$57.2M` | `-0.3%` |
+| Current | Lending | `$54.2M` | `-0.5%` |
+| Ember | RWA | `$35.3M` | `-1.1%` |
+| Haedal Protocol | Liquid staking | `$31.4M` | `-11.6%` |
+| Bucket Protocol V2 | CDP | `$26.2M` | `-3.6%` |
+| Cetus CLMM | DEX | `$25.5M` | `+5.0%` |
+| Volo LST | Liquid staking | `$24.3M` | `+6.0%` |
+| DeepBook V3 | DEX | `$12.5M` | `-2.3%` |
+
+Trading is the bright spot. **DeepBook V3** did `$180M` over 30 days, `+101%` on the prior period, the only core protocol visibly gaining share in a shrinking market ([its token side has its own study](/en/blog/deepbook-deep-dex-liquidity-infrastructure-token-value-capture-risk)). Cetus did `$364M`, Bluefin `$164M`, Turbos `$150M`; the chain as a whole did `$902M` over 30 days, still `-41.7%` year on year. The fully on-chain order book is being pushed on other chains too ([the CLOB and risk structure at PopDEX](/en/blog/popdex-btcusdt-perpetual-clob-megapop-risk-research-en)).
+
+Stablecoins are the rare line that grew: `$499M` in supply on the chain, now **above** DeFi TVL (TVL over stablecoins = `0.88`), including a record `$80M` of USDsui, the native coin issued by Stripe-owned Bridge, up `20.5%` over 90 days. [AMBCrypto](https://ambcrypto.com/is-suis-record-80m-usdsui-stablecoin-supply-a-sign-of-wider-adoption/) **The money is on the chain but has not moved into DeFi** — a problem and a space at the same time.
+
+The token layer is concentrated: WAL at `$76.5M`, DEEP at `$36.8M`, CETUS at `$19.1M`, SEND at `$3.8M`. The largest is `2.15%` of the $SUI market cap and all four together are `3.84%`. Value settles almost entirely on the L1 token; the application layer has no independent market yet.
+
+## 3. Four things that do not line up
+
+**First, the ten listed protocols sum to `$530.4M`, or `120.5%` of the stated chain TVL of `$440M`.** That is not a data error: DefiLlama nets liquid staking and double counting out of chain TVL, and an LST deposited into a lender is counted twice. But it creates a real problem — **the draft divides protocol TVL by chain TVL, and those are two different books**, so the ratio behind the claim that lending is about three quarters of TVL does not mean what it says.
+
+**Second, the four lenders do not add up to what the draft claims.** By its own table, Suilend `$138.8M` + NAVI `$125.0M` + Current `$54.2M` + Scallop `$9M` is `$327M`, not `$335M`, and the share is `74.3%` rather than the `76%` stated later in the text.
+
+| Basis | Lending total | Share of stated TVL | Share of the ten listed |
+|---|---:|---:|---:|
+| As the draft states it | `$335M` | `76.1%` | `63.2%` |
+| From the table itself | `$327M` | `74.3%` | `61.6%` |
+
+The gap is only `$8M` and the direction holds — lending really is the biggest block. **But the third column is the one to use**: on a self-consistent denominator, lending is about six tenths, not three quarters, and the leverage story is less extreme than the draft sounds.
+
+**Third, annualized application fees are `35.7%` below the yearly figure given.** The draft puts ecosystem-wide application fees at `$62.6M` a year and `$3.31M` over the last 30 days. But `$3.31M` scaled by 365/30 is `$40.3M`, **only `64.3%` of that yearly number**. The two do not contradict each other; together they say application fees are shrinking. On the current run rate, market cap to application fees is `88x`, not the `56.7x` the draft prints.
+
+**Fourth, the label on capital turnover of about `2x`, given as annual volume over TVL, is wrong.** `$902M` ÷ `$440M` = `2.05`, which is **30-day volume over TVL**; annualized it is `24.9x`. The number is right and its unit is not.
+
+One smaller one: market cap to annual L1 fees is `1,330x`, not `1,331x`.
+
+**A cross-check that goes the other way.** The peer table puts Solana at `$52.88B` market cap on `$5.28B` of TVL. Using the SOL price of `$95.97` I recorded in [the 11-05 narrative map](/en/blog/crypto-narratives-2026-11-cash-flow-sits-with-the-issuers-en), that implies about `551M` tokens in circulation — the right order of magnitude against public figures. Those peer rows are at least internally consistent.
+
+## 4. Growth engines: payments, BTCFi, AI
+
+**Payments are closest to landing.** Samsung Wallet opens USDC on Sui to eligible US Galaxy users in November 2026, with no need to hold $SUI for gas, across roughly `82M` devices; in the same week Circle CCTP v2 went live on Sui, so native USDC moves directly between Sui and `29` chains. [crypto.news](https://crypto.news/sui-says-usdc-support-is-coming-to-samsung-wallet-in-november/) But note what gas-free means: **the transfer itself creates no demand for $SUI**. Demand has to arrive through later DeFi activity, payment fees, or a sponsor buying the token.
+
+**BTCFi is the most realistic handle on TVL.** Hashi leaves BTC on the Bitcoin network and mints 1:1 hBTC on Sui as collateral. A phased mainnet started in October with over `$500M` of committed capital and more than `20` institutions, with Anchorage Digital as a custody partner. [TradingView](https://www.tradingview.com/news/newsbtc:f7500dc3a094b:0-sui-s-hashi-bitcoin-finance-network-launches-with-more-than-500-million-committed/) If that money actually lands on chain it more than doubles Sui TVL — the most quantifiable catalyst here, and the one to track.
+
+**AI and the agent economy carry the imagination.** A design document dated October 28 puts enforced spending limits at the centre of agent payments: permissions enforced by the system rather than by prompt wording. Mysten and Google Cloud are building a verifiable agent arbiter that writes agent behaviour and cryptographic proofs to Walrus and Sui. The Sui Foundation put `$30M` into Data Network, formerly Story, becoming its largest holder, migrating DATA 1:1, shutting the old chain down and making Walrus its storage layer. [TradingView](https://www.tradingview.com/news/bloomingbit:a72ac03ba094b:0-sui-invests-30-million-in-data-network-becomes-largest-holder/) The direction is right and **there is no attributable revenue yet**.
+
+Of the three lines, only two numbers can be settled in the next 12 months: **hBTC balances**, and **stablecoin supply and transfer volume**.
+
+## 5. Valuation: cheap on float, not cheap fully diluted
+
+$SUI trades at `$0.857` (`2026-11-06 07:55 UTC`) for a market cap of `$3.55B` (`30th` overall) and an FDV of `$8.57B`, down `-7.0%` on the day, `-24.8%` over 30 days, `-56.4%` over the year, and `-84%` from the `$5.35` high of 2025-01-04. Over the same year BTC is `-25%`, ETH `-33%`, SOL `-42%` — Sui fell further, but this is beta, not its own story.
+
+| Metric | Sui | Aptos | Sei | Solana |
+|---|---:|---:|---:|---:|
+| Market cap | `$3.55B` | `$532M` | `$307M` | `$52.88B` |
+| FDV | `$8.57B` | `$729M` | `$457M` | `$57.07B` |
+| Chain TVL | `$440M` | `$40M` | `$24M` | `$5.28B` |
+| Market cap / TVL | `8.07x` | `13.3x` | `12.8x` | `10.0x` |
+| FDV / TVL | `19.48x` | `18.2x` | `19.0x` | `10.8x` |
+| FDV / market cap | `2.41x` | `1.37x` | `1.49x` | `1.08x` |
+
+**The market is not paying a technology premium.** On circulating market cap `8.07x` really is below Solana and Aptos; fully diluted, `19.48x` lands right back among the peers. The reason is the last row: only `41.4%` of $SUI circulates (`4.14B` of `10B`), so **`5.86B` tokens have not reached the market**. The cheapness is a statistical artifact of a small float.
+
+Fees are blunter. Sui tokenomics has **no burn**: compute fees go to validators and staking rewards, storage fees go to the Storage Fund and rebate when objects are deleted, and the `10B` cap does not decline. [Sui Docs](https://docs.sui.io/develop/sui-architecture/tokenomics-overview) The result is `$2.67M` of L1 fees a year against a `1,330x` market cap, while the `$62.6M` of application fees — `$40.3M` on the current run rate — belongs to the applications, not to $SUI holders. Third-party staking yield of about `1.5%` says the same thing about how thin the fee pool is. This is [the same thing I kept running into in the 11-05 narrative map](/en/blog/crypto-narratives-2026-11-cash-flow-sits-with-the-issuers-en): protocol revenue and token revenue are different objects.
+
+The foundation started buying $SUI with stablecoin treasury yield in July 2026, which is a positive signal, but the size is undisclosed and it is a posture more than a bid. [Bitcoinworld](https://bitcoinworld.co.in/sui-buyback-stablecoin-management-returns/)
+
+Supply is a standing pressure: `13.15M` tokens unlocked on 2026-11-01 (about `$11.27M`, `0.32%` of float) and the next large step is 2027-01-31 at about `0.91%` of total supply (`91M` tokens, about `$78.0M`, equal to `2.2%` of float). In derivatives, $SUI perpetual open interest is about `$561M`, `15.8%` of market cap, with funding at `+0.003%/8h` — neutral-to-long positioning, which amplifies moves when an event lands.
+
+## 6. Risk: reliability is the weak point of the payments story
+
+**Downtime.** Mainnet was down for over `6` hours in January 2026; in May a gas metering bug in version `1.72` took it down for `5` hours `55` minutes, and by one count there were three interruptions inside 48 hours totalling more than `15` hours. There was a full halt in November 2024 as well. [Coinpaper](https://coinpaper.com/17344/sui-network-recovers-after-nearly-six-hour-blockchain-outage) [CryptoPotato](https://cryptopotato.com/sui-demand-explodes-as-us-etfs-rack-up-five-straight-weeks-of-inflows/) For a chain putting USDC inside Samsung Wallet and taking BTC collateral from institutions, this is the hardest thing to defend: payments and custody tolerate almost no downtime.
+
+**Security.** Cetus lost `$223M` to an attack in May 2025 and Sui followed with a `$10M` security program; Volo lost `$3.5M` in April 2026 and froze its vault. Lending is six tenths of the ten listed protocols, so a bug in one protocol travels easily along the collateral chain.
+
+**Competition.** The rival is not Aptos at `$40M` of TVL, already marginal, but Solana, Base and Monad: the first two have liquidity and developers, the last is buying new capital with a more aggressive performance story. A differentiator like the object model has to be learned on purpose, which is a headwind in a bear market.
+
+**The gap between narrative and execution.** `40.6M` TPS is a tunnel test, `82M` devices is potential reach, `$500M` is committed capital — none of the three has become an on-chain fee. Ecosystem capital spending (a `$30M` acquisition, buybacks, incentives) also depends on the foundation rather than on internal cash flow.
+
+## 7. Scenarios
+
+Worked backwards from an observed band of `7`–`9x` circulating market cap to TVL. Not a forecast.
+
+| Scenario | Trigger | TVL | Multiple | Market cap | Price |
+|---|---|---:|---:|---:|---:|
+| Bear continues | Hashi lands below expectations, the January unlock is sold | `$350M` | `7x` | `$2.45B` | `~$0.59` |
+| Base | TVL holds `$500M`–`$600M`, stablecoins pass `$800M` | `$550M` | `8x` | `$4.4B` | `~$1.06` |
+| Bull | Hashi and Samsung take TVL past `$1B`, fees double | `$900M` | `8.5x` | `$7.65B` | `~$1.85` |
+
+The three multiples are `7`, `8` and `8.5`, all inside that band, so **every bit of the range comes from the TVL column** and none from multiple expansion. The table asks what happens if usage changes, not how much more the market might be willing to pay.
+
+## 8. What this piece cannot settle
+
+- **I cannot independently verify the three peers.** The market caps and TVL for Aptos, Sei and Solana come from the snapshot in the draft. I can check that they are consistent with each other — every multiple reconciles, and the implied Solana float is plausible — not that they are correct.
+- **TVL composition only reaches the ten listed protocols.** They sum to `120.5%` of chain TVL, and I have no detail on the remaining protocols or on what gets netted out, so any claim that a category is some percentage can only be made against the denominator inside that table.
+- **`82M` devices, `$500M` and `40.6M` TPS are all promise-basis figures.** Reach is not use, a commitment is not a deposit, and a tunnel test is not mainnet throughput. None of the three has a fee attached to it yet.
+- **The buyback size is undisclosed**, so its effect on the float cannot be estimated.
+- **The outage counts are third-party tallies.** I did not check each against the official incident reports, and the draft does not reconcile three interruptions inside 48 hours totalling more than `15` hours with the single `5` hour `55` minute event.
+- **Staking yield of `1.5%` is a number from a service provider**, and providers differ in fees and in the window they measure.
+- **The scenario table is not a probability.** It says what follows if TVL reaches a level and the market still pays that multiple. Either condition may fail.
+
+---
+
+**In conclusion.** Sui is one of the few chains this cycle with a clear technical line that **actually shipped**: the object model, Mysticeti, Walrus, DeepBook and a post-quantum roadmap together sketch a financial operating system. The 2026 reality is that none of it converted into economics: TVL down `83.3%`, L1 fees in the single-digit millions, a token that captures no fees, and `5.86B` tokens still to come.
+
+So read the valuation in two layers: **on float, `8.07x` TVL is no longer expensive; fully diluted, `19.48x` TVL and `1,330x` L1 fees leave no margin of safety.** The discount is rational, and a re-rating needs usage rather than a story.
+
+Four signals are worth watching: **whether TVL holds `$600M`, whether stablecoin supply passes `$800M`, whether annualized fees double, and whether the January 2027 unlock is absorbed cleanly.** Until those turn, treat $SUI as an event-driven trade, not an allocation.
+
+*This is research, not investment advice. DYOR.*
