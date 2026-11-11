@@ -21,32 +21,22 @@ jobs:
           node-version: '20'
 
       - name: Sync Telegram messages
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHANNEL_ID: ${{ secrets.TELEGRAM_CHANNEL_ID }}
         run: node scripts/sync-telegram.js
 
-      # Syncing used to stop here, so new messages arrived untranslated and
-      # only got filled in when somebody noticed. Translating before the commit
-      # keeps every message trilingual the way the rest of the site is.
-      - name: Install Anthropic SDK
-        run: |
-          if ! node -e "require('@anthropic-ai/sdk')" 2>/dev/null; then
-            npm install --no-save @anthropic-ai/sdk
-          fi
-
-      - name: Translate new messages
-        env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: node scripts/translate-thoughts.mjs
-
+      # Translations are written locally, in the next session that touches
+      # content (`pnpm translate:thoughts` lists what is pending); until then
+      # the page shows the original. Translating here once made the commit
+      # depend on an API key that was never set, and from 10-30 to 11-07 nine
+      # fetched messages were dropped because of it.
       - name: Commit changes
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add content/thoughts.json content/thought-translations.json
+          git add content/thoughts.json
           # public/thoughts only exists once a message with a photo has synced,
           # and `git add` on a missing path exits 128, which would kill the step.
           if [ -d public/thoughts ]; then git add public/thoughts; fi
           git diff --quiet && git diff --staged --quiet || git commit -m "chore: sync telegram thoughts"
+          # main moves while this runs; on 11-05 the push was rejected for that.
+          git pull --rebase
           git push

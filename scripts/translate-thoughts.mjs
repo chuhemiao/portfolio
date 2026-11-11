@@ -1,13 +1,12 @@
-// Fills content/thought-translations.json for any Telegram message that has no
-// translation yet, or whose source text changed since it was translated.
+// Translations for the Telegram messages are written locally, by whoever next
+// works on content, not by an API call in CI.
 //
-// The sync workflow used to add messages and stop there, so translations were
-// only ever filled in by hand and drifted: six messages sat untranslated for
-// ten days, and nothing surfaced it because CI ran one test file out of
-// sixteen. This runs right after the sync, before the commit.
+//   pnpm translate:thoughts                      list messages without a current translation
+//   pnpm translate:thoughts -- --apply new.json  merge { "<id>": { "en": "...", "ja": "..." } }
 //
-//   node scripts/translate-thoughts.mjs            fill the gaps
-//   node scripts/translate-thoughts.mjs --dry-run  list them, call nothing
+// "zh-CN" may be left out when the source is already Simplified Chinese.
+// Entries are bound to the exact source text, so an edited message shows up
+// as pending again.
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -15,27 +14,14 @@ const ROOT = process.cwd();
 const THOUGHTS = path.join(ROOT, 'content/thoughts.json');
 const TRANSLATIONS = path.join(ROOT, 'content/thought-translations.json');
 const LOCALES = ['zh-CN', 'en', 'ja'];
-const MODEL = 'claude-sonnet-5-5';
 
 const urlsIn = (value) => (value.match(/https?:\/\/[^\s)]+/g) ?? []).sort();
+const hasKana = (value) => /[぀-ヿ]/.test(value);
+const hasHan = (value) => /[一-鿿]/.test(value);
 
-const SYSTEM = `You translate short personal posts from a crypto and indie-hacker Telegram channel.
-
-Return ONLY a JSON object with exactly the keys "zh-CN", "en" and "ja". No prose, no code fence.
-
-Rules:
-- Translate the meaning, not word by word. These are casual personal notes; keep that register rather than making them formal.
-- Every URL must appear in every translation exactly as written in the source, character for character. Never add, drop, shorten or reword a URL.
-- Keep line breaks, bullet markers and emoji as they are in the source.
-- Markdown links stay as [text](url): translate the text, leave the url untouched.
-- Leave tickers, protocol names, company names and code identifiers in their original form.
-- For "zh-CN": if the source is already Simplified Chinese, return it unchanged. If it is Traditional Chinese, convert it to Simplified. Otherwise translate into Simplified Chinese.
-- Do not explain, annotate or add anything the source does not say.`;
-
-function validate(result, source) {
-  if (!result || typeof result !== 'object') return 'not an object';
+function validate(entry, source) {
   for (const locale of LOCALES) {
-    const text = result[locale];
+    const text = entry[locale];
     if (typeof text !== 'string' || !text.trim()) return `${locale} is empty`;
     const got = urlsIn(text);
     const want = urlsIn(source);
@@ -47,90 +33,49 @@ function validate(result, source) {
 }
 
 async function main() {
-  const dryRun = process.argv.includes('--dry-run');
   const { thoughts } = JSON.parse(await fs.readFile(THOUGHTS, 'utf8'));
   const translations = JSON.parse(await fs.readFile(TRANSLATIONS, 'utf8'));
+  const byId = new Map(thoughts.map((thought) => [thought.id, thought]));
 
-  // A photo posted with no caption has nothing to translate.
-  const translatable = thoughts.filter((thought) => thought.text.trim());
-
-  // Missing, or translated from text that has since been edited.
-  const pending = translatable.filter((thought) => translations[thought.id]?.source !== thought.text);
-
-  if (pending.length === 0) {
-    console.log(`translate-thoughts: all ${translatable.length} messages are translated.`);
-    return;
-  }
-
-  console.log(`translate-thoughts: ${pending.length} of ${translatable.length} need translating.`);
-  for (const thought of pending) {
-    console.log(`  ${thought.id}  ${thought.date?.slice(0, 10) ?? ''}  ${thought.text.slice(0, 60).replace(/\n/g, ' ')}`);
-  }
-
-  if (dryRun) return;
-
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error('translate-thoughts: ANTHROPIC_API_KEY is not set, so these would stay untranslated.');
-    process.exit(1);
-  }
-
-  let Anthropic;
-  try {
-    ({ default: Anthropic } = await import('@anthropic-ai/sdk'));
-  } catch {
-    console.error('translate-thoughts: @anthropic-ai/sdk is not installed.');
-    process.exit(1);
-  }
-
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
-  const failures = [];
-  let written = 0;
-
-  for (const thought of pending) {
-    let parsed;
-    try {
-      const message = await client.messages.create({
-        model: MODEL,
-        max_tokens: 2048,
-        system: SYSTEM,
-        messages: [{ role: 'user', content: thought.text }],
-      });
-      const text = message.content.find((block) => block.type === 'text')?.text ?? '';
-      parsed = JSON.parse(text.replace(/^```(?:json)?\n?|\n?```$/g, '').trim());
-    } catch (error) {
-      failures.push(`${thought.id}: ${String(error).slice(0, 120)}`);
-      continue;
+  const applyAt = process.argv.indexOf('--apply');
+  if (applyAt !== -1) {
+    const incoming = JSON.parse(await fs.readFile(process.argv[applyAt + 1], 'utf8'));
+    const problems = [];
+    for (const [id, given] of Object.entries(incoming)) {
+      const source = byId.get(id)?.text;
+      if (!source?.trim()) {
+        problems.push(`${id}: no message with text`);
+        continue;
+      }
+      const zh = given['zh-CN'] ?? (hasHan(source) && !hasKana(source) ? source : undefined);
+      const entry = { source, 'zh-CN': zh, en: given.en, ja: given.ja };
+      const problem = validate(entry, source);
+      if (problem) problems.push(`${id}: ${problem}`);
+      else translations[id] = entry;
     }
-
-    // The same invariant the test asserts, checked before anything is written:
-    // a bad translation should not land in the file at all.
-    const problem = validate(parsed, thought.text);
-    if (problem) {
-      failures.push(`${thought.id}: ${problem}`);
-      continue;
+    if (problems.length) {
+      console.error(`translate-thoughts: nothing written.\n  ${problems.join('\n  ')}`);
+      process.exit(1);
     }
-
-    translations[thought.id] = {
-      source: thought.text,
-      'zh-CN': parsed['zh-CN'],
-      en: parsed.en,
-      ja: parsed.ja,
-    };
-    written += 1;
-  }
-
-  if (written > 0) {
     const ordered = Object.fromEntries(
       Object.keys(translations)
         .sort((a, b) => Number(a) - Number(b))
         .map((key) => [key, translations[key]])
     );
     await fs.writeFile(TRANSLATIONS, `${JSON.stringify(ordered, null, 2)}\n`);
+    console.log(`translate-thoughts: wrote ${Object.keys(incoming).length}.`);
   }
 
-  console.log(`translate-thoughts: wrote ${written}, failed ${failures.length}.`);
-  for (const failure of failures) console.error(`  ${failure}`);
-  if (failures.length > 0) process.exit(1);
+  // A photo posted with no caption has nothing to translate.
+  const pending = thoughts.filter((thought) => thought.text.trim() && translations[thought.id]?.source !== thought.text);
+  if (pending.length === 0) {
+    console.log('translate-thoughts: every message is translated.');
+    return;
+  }
+  console.log(`translate-thoughts: ${pending.length} pending.`);
+  for (const thought of pending) {
+    console.log(`\n#${thought.id}  ${thought.date.slice(0, 10)}${translations[thought.id] ? '  (source edited)' : ''}\n${thought.text}`);
+  }
 }
 
 main().catch((error) => {

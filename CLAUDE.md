@@ -45,7 +45,8 @@
   pnpm content:check # 检查内容格式
   pnpm sync:research # 同步 Research Map / registry
   pnpm status:research:run # 查看研究长任务进度
-  pnpm sync:telegram # 手动同步 Telegram 消息
+  pnpm sync:telegram # 手动同步 Telegram 消息（读公开频道页 t.me/s/kkdemian2050）
+  pnpm translate:thoughts # 列出待翻译的 Telegram 消息；加 -- --apply x.json 校验后写入
   pnpm typecheck     # TypeScript 检查
   pnpm start         # 本地预览 out/ 静态产物
   ```
@@ -82,6 +83,7 @@
 - **代码**：不要加不必要的注释、docstring、type annotation；不要过度封装
 - **包管理**：使用 pnpm，不要用 npm 或 yarn
 - **提交**：需要我确认才提交，不要自动 commit
+- **Thoughts 翻译**：不走 API。本地更新研报或文章时，先跑 `pnpm translate:thoughts`，有新消息就顺手翻成 en/ja 一起提交
 - **Crypto 数据源**：涉及 watch、oscillator、market、listing、price、wallet、DeFi、on-chain、research 数据刷新时，优先直接使用 Surf skill/API，文档为 `https://agents.asksurf.ai/docs`；先按 Surf skill 查询 `surf list-operations` 与具体命令 `--help`；仅在 Surf 无数据、报错或用户指定其他来源时再使用 CoinGecko、CMC、交易所 API 或普通网页搜索。
 
 ---
