@@ -7,12 +7,12 @@ import { loadTopics } from './lib/content/indexes.mjs';
 import { BLOG_INDEX_FILE, ROOT, TOPIC_INDEX_FILE } from './lib/content/paths.mjs';
 import { QUOTES_AS_OF } from '../src/data/instruments.ts';
 import { readCurrentLibrary } from './library/public-reader.mjs';
+import { RSS_ITEM_LIMIT } from './lib/feeds.mjs';
 
 const PUBLIC_DIR = path.join(ROOT, 'public');
 const SITEMAP_DIR = path.join(PUBLIC_DIR, 'sitemaps');
 const SITEMAP_SHARD_SIZE = 5000;
 const CRAWL_DELAY_SECONDS = 10;
-const RSS_ITEM_LIMIT = 50;
 
 // Legacy /blog/<slug> URLs are redirect stubs kept for links indexed before the
 // move to /<locale>/blog/<slug>. They hold no content yet doubled the crawlable

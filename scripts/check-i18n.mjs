@@ -12,6 +12,7 @@ import { assets } from '../src/data/fund.ts';
 import { BLOG_INDEX_FILE } from './lib/content/paths.mjs';
 import { readCurrentLibrary } from './library/public-reader.mjs';
 import { countInitialHeaderLanguageMenus } from './lib/export-html.mjs';
+import { RSS_ITEM_LIMIT, feedSlugs, newestFeedSlugs } from './lib/feeds.mjs';
 
 const root = process.cwd();
 const index = JSON.parse(fs.readFileSync(BLOG_INDEX_FILE, 'utf8'));
@@ -69,7 +70,7 @@ for (const locale of LOCALES) {
   }
   const feed = fs.readFileSync(path.join(root, 'public', `rss-${locale}.xml`), 'utf8');
   assert.ok(feed.includes(`<language>${locale}</language>`), `wrong feed language ${locale}`);
-  assert.equal((feed.match(/<item>/g) ?? []).length, index.posts.filter((post) => post.language === locale).length);
+  assert.deepEqual(feedSlugs(feed), newestFeedSlugs(index.posts, locale), `${locale} feed must carry its newest ${RSS_ITEM_LIMIT} posts, newest first`);
 }
 
 for (const page of ['library', ...libraryDetails.map(item => `library/items/${item.slug}`)]) {
