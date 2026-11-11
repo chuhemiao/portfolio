@@ -1,0 +1,160 @@
+---
+title: 'Jupiter (JUP): buybacks hold the floor, the fee structure caps the ceiling'
+publishedAt: '2026-11-11'
+summary: 'Jupiter shipped Baskets, Vaults, Portfolio V3 and Pulse at once, but all four are aggregation and interface products and only Vaults takes a real fee. What holds JUP down is not a missing perp product: perps are 46.2% of gross fees, 75% of that goes to JLP, and holders see only $76K a month; the aggregator is what actually funds buybacks. Rechecking the draft, the fee table total is not the sum of its rows, and the stated $2.56M monthly buyback does not match its own $1.65M holder revenue, which puts annual buybacks at 2.3% of market cap rather than 3.5%. Fees are down 84.6% from Q3 2025 while protocol revenue is down only 66.6%.'
+slug: 'jupiter-buybacks-floor-fee-structure-ceiling-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'jupiter-buybacks-floor-fee-structure-ceiling'
+sourceSlug: 'jupiter-buybacks-floor-fee-structure-ceiling'
+---
+
+## TL;DR
+
+**The gap between narrative and revenue does weigh on JUP, but what mainly holds it down is the perp fee structure plus shrinking fees overall, not a missing perp product. Buybacks hold the floor, the narrative gap caps the ceiling, and in the near term JUP remains a high-beta SOL proxy.**
+
+- **Of the four new products, only Vaults takes a real fee.** Baskets charges a `0%` basket fee, Portfolio V3 and Pulse are pure interface; Vaults opened its private beta today.
+- **Perps are a JLP return product, not a JUP cash-flow product.** Perps are `46.2%` of gross fees, `75%` of which goes to JLP; the protocol keeps `$2.04M` a month and holders get only `$76K`. The aggregator is only `9.0%` of gross fees but `75.2%` of holder revenue.
+- **Fees are down `84.6%`, protocol revenue only `66.6%`.** Monthly gross fees went from about `$115M` to `$17.68M`, protocol revenue from about `$15.33M` to `$5.12M` — the take rate rose from `13.3%` to `29.0%`. The draft merged these two into one sentence.
+- **The buyback rate is `2.3%` to `3.5%`, not one number.** At "50% of protocol revenue" it is `$2.56M` a month, `3.5%` of market cap; at the holder revenue in the draft's own fee table it is `$1.65M` a month, `2.3%` — and the latter is exactly the Litterbox purchase for the month of May.
+- **Vaults cannot take over from perps.** Matching perp protocol revenue takes `$490M` of TVL at a `5%` net take for Jupiter, and `$2.45B` at `1%`.
+- **Cards are a distribution play, not a revenue line.** `$209M` is Collector Crypt volume; by the estimate in an earlier piece on this site, Collector Crypt's own true gross margin is only about `5.9%`.
+
+> This piece is built on an external draft. Prices and fees are as of `2026-11-11`, with fees on a 30-day basis. Every computable figure was rechecked; the last row of the section 2 table, the split in section 3, the two buyback bases in section 4, the `1%` case in section 6 and the four findings in section 8 are mine.
+
+---
+
+## 1. Four new products: extending aggregation from trading to the balance sheet
+
+The four are the same logic copied sideways, not a new revenue engine.
+
+| Product | What it is | How it earns | Day-one size |
+|---|---|---|---|
+| Baskets | One deposit buys a basket of tokens, rebalanced by market cap or fixed weights | `0%` basket fee; routing fees only on rebalancing trades | About `$25.5K` deposited into the Crypto 6 basket |
+| Vaults | Yield vaults run by outside curators (six from Hivemind, Bitwise and RE7 Labs) | Management fee up to `10%` a year plus performance fee up to `50%` of gains, shared between Jupiter and curators | Private beta on November 11 for `19K` waitlisted users and staked-JUP holders |
+| Portfolio V3 | Holdings dashboard across `190`-plus protocols, with shortcuts into perps, prediction markets and borrowing | No direct fee; feeds other products | Live |
+| Pulse plus rebuilt token pages | Research interface with tokenized stock and ETF quotes, tokenomics and a comparison sidebar | No direct fee | Rolling out this week |
+
+Only Vaults takes a real fee, and it only opened its private beta today. [Decrypt](https://decrypt.co/382836/solanas-jupiter-expands-beyond-trading-with-token-baskets-yield-vaults-and-new-portfolio) · [Solana Compass](https://solanacompass.com/news/jupiter-rolls-out-baskets-curated-vaults-and-portfolio-v3-in-push-beyond-trading)
+
+The market treated it as a one-day event: on November 10 JUP ran from `0.2321` to `0.2558` (`+10.2%`), yet it is still down `28.6%` over 30 days. A narrative can light the fire; revenue has to keep it going.
+
+## 2. Fee structure: 46% is gross fees, not value capture
+
+| Business line | 30-day gross fees | 30-day protocol revenue | 30-day holder revenue |
+|---|---:|---:|---:|
+| Perps | `$8.17M` | `$2.04M` | `$76K` |
+| Lend | `$4.60M` | `$231K` | — |
+| Staked SOL | `$2.32M` | `$170K` | — |
+| Aggregator | `$1.59M` | `$1.24M` | `$1.24M` |
+| Not listed (total minus rows) | `$1.00M` | `$1.439M` | `$334K` |
+| **Total** | **`$17.68M`** | **`$5.12M`** | **`$1.65M`** |
+
+The last row is not in the draft; it is the total minus the sum of the four rows, see section 8.
+
+Three points:
+
+1. **Perps are `46.2%` of gross fees and `39.8%` of protocol revenue, but only `4.6%` of holder revenue.** `75%` of perp fees go to JLP as real return and Jupiter keeps `25%`: `$8.17M × 25% = $2.0425M`, matching the table's `$2.04M`. [Eco](https://eco.com/support/en/articles/15083164-jupiter-perps-fees-leverage-how-jlp-works)
+2. **The aggregator is only `9.0%` of gross fees but `75.2%` of holder revenue** (`1.24 / 1.65`). What actually funds buybacks is the least glamorous-looking business, routing.
+3. **Of the `$2.04M` perps leave the protocol, only `$76K` (`3.7%`) reaches holders.**
+
+So "missing perps" is not a valuation gap: perps are a JLP return product, not a JUP cash-flow product. What the four new products lack is not perps but a fee layer that improves retention.
+
+## 3. Fee scale: fees down 85%, revenue down 67%
+
+| | Q3 2025 (monthly average) | November 2026 (30 days) | Change |
+|---|---:|---:|---:|
+| Gross fees | about `$115M` (`$1.38B` annualized ÷ 12) | `$17.68M` | `-84.6%` |
+| Protocol revenue | about `$15.33M` (`$46M` for the quarter ÷ 3) | `$5.12M` | `-66.6%` |
+| Take rate (revenue ÷ fees) | `13.3%` | `29.0%` | More than doubled |
+| Aggregator spot monthly volume | about `$59B` | `$14.7B` (10/10–11/9) | `-75.1%` |
+
+[Phemex/Coinotag](https://phemex.com/news/article/jupiter-reports-46m-q3-revenue-amid-jup-token-decline-29368) · [DefiLlama](https://defillama.com/protocol/jupiter)
+
+The draft says "now `$5.12M` a month, about `$212M` annualized, down about 85% year over year" — `$5.12M` is protocol revenue, `$212M` is gross fees annualized (`$17.68M × 12`), and `85%` is the fall in fees. Split apart, one more fact shows up: **revenue fell less than fees, and the take rate more than doubled.** That may be the fee mix shifting toward lines where Jupiter keeps more, or partly a difference in basis between the two dates — the draft gives nothing that separates the two.
+
+## 4. Valuation support: the buyback is real, but its rate has two numbers
+
+| Metric | Value |
+|---|---|
+| Price | `$0.2623` |
+| Market cap / FDV | `$870M` / `$1.798B` |
+| On annualized protocol revenue (`$5.12M × 12 = $61.44M`) | `14.2x` / `29.3x` |
+| Unlocked | `3.46B` / `6.86B` JUP (`50.4%`) |
+| Burned | `130M` JUP |
+
+One cross-check that holds: market cap over price gives about `3.317B` circulating, and `3.46B` unlocked minus `130M` burned is `3.33B`, less than `20M` apart.
+
+The buyback policy is `50%` of protocol revenue. [CryptoSlate](https://cryptoslate.com/jupiter-to-buyback-jup-tokens-with-50-of-fees-starting-next-week/) But the draft actually carries two bases for the buyback amount:
+
+| Basis | Monthly | Annualized | Of market cap | Of FDV |
+|---|---:|---:|---:|---:|
+| Policy: `$5.12M` × `50%` | `$2.56M` | `$30.72M` | `3.5%` | `1.7%` |
+| Holder revenue in the fee table | `$1.65M` | `$19.8M` | `2.3%` | `1.1%` |
+
+Holder revenue is `32.2%` of protocol revenue, not `50%`. The draft cites Litterbox as support: `113.5M` JUP / `$24.45M` accumulated through May 18, 2026, with `8.39M` JUP, about `$1.65M`, added that month, and says this "roughly matches the estimate above" — **but what it matches is `$1.65M`, not `$2.56M`.** [Coinness](https://coinness.com/en/news/1157538) The draft does not explain the gap: the buyback base may not be all protocol revenue, or the data source may classify holder revenue more narrowly. This piece lists both and states conclusions as a range.
+
+Supply discipline is real: `130M` JUP burned, net emissions cut to zero, the Jupuary airdrop postponed indefinitely. The remaining `3.4B` has been postponed, not removed. [BlockBeats](https://en.theblockbeats.news/flash/333126) · [TradingView](https://www.tradingview.com/news/coinmarketcal:d8cfcb63f094b:0-jupiter-jup-253-47mm-token-unlock-date-28-february-2026/)
+
+## 5. Price: over 30 days it is SOL beta
+
+| | JUP | SOL |
+|---|---:|---:|
+| 7 days | `+7.1%` | `-9.9%` |
+| 30 days | `-28.6%` | `-26.5%` |
+
+"JUP has no bid" holds over 30 days and not over 7. Over 30 days the two move almost together, so the price is mostly SOL beta — the narrative gap explains why it does not rise, not why it falls. It is still `86.9%` below the February 2024 high of `$2.00`, and `93.2%` above the February 2026 low of `$0.1358`.
+
+## 6. Vaults cannot take over
+
+The fee caps are a management fee of up to `10%` a year plus a performance fee of up to `50%` of gains, shared between Jupiter and the curators. Perp protocol revenue is about `$24.48M` a year; for Vaults to match it:
+
+| Jupiter net take (of AUM) | TVL required |
+|---|---:|
+| `5%` | about `$490M` |
+| `2.5%` | about `$980M` |
+| `1%` | about `$2.45B` |
+
+`5%` is an aggressive assumption: it has Jupiter alone netting `5%` of AUM, already half the management-fee cap before the curators take their share. `1%` is closer to what yield vaults commonly charge, and then it takes `$2.45B`.
+
+The draft estimates early beta TVL at `$50M` to `$150M` and Jupiter revenue at `$1M`–`$4M` a year — figures that imply a net take of `2.0%`–`2.7%`, not the `5%` used above, and come to `1.6%`–`6.5%` of current annualized protocol revenue. This is an inference from the product design, not disclosed data.
+
+So the value of Vaults is not on the 2026 income statement but in three things: **staking JUP is the ticket into the beta** (which creates demand to hold it), keeping capital circulating inside Lend and the aggregator, and staking out the future curator economy. The risks are plain: no loss coverage, standard redemptions take up to 30 days, curators can pause deposits and withdrawals; on October 30 Lend already queued USDC withdrawals over tight liquidity. [Solana Compass](https://solanacompass.com/news/jupiter-rolls-out-baskets-curated-vaults-and-portfolio-v3-in-push-beyond-trading)
+
+**The checkpoint is Solana Breakpoint on November 15–17**: a public launch schedule, each curator's actual fees, and the first TVL figures.
+
+## 7. Cards: a distribution play, not a revenue line
+
+The category is growing: onchain card gacha spending reached `$324M` in June 2026, a fourth straight monthly record; Collector Crypt alone did `$209M`, or `64.5%`; Solana carries `64%` of global onchain card volume. [Bankless](https://www.bankless.com/read/news/jupiter-partners-with-collector-crypt-on-new-pokemon-card-gacha)
+
+The product is live: Jupiter Gacha entered beta on July 13 with Collector Crypt, every pull a PSA-graded, slabbed physical card, tokenized and tradable on Jupiter. [The Block](https://www.theblock.co/post/408059/onchain-pokemon-cards-come-to-solana-based-dex-jupiter) Offerbook accepts graded cards as collateral at fixed rates and fixed terms with no price liquidation; within hours of launch `$120K` of cards backed about `$75K` USDC in loans (`62.5%` loan-to-value), and loan fees go straight into JUP buybacks. [Solana Compass](https://solanacompass.com/news/jupiter-offerbook-enters-public-beta-with-fixed-rate-lending-against-tokens-nfts-and-tcg-cards)
+
+The business logic has four parts: **acquisition** (Pokémon and One Piece bring in collectors who are not crypto-native), **frequency** (opening packs is high-frequency), **a closed loop** (opening, secondary trading through the aggregator, and collateral in Offerbook, three fees on one asset), and **differentiation** (rivals attack on trading; Jupiter defends with asset breadth). It is the same distribution playbook as bringing in tokenized stocks through Securitize.
+
+Two layers of froth need taking off, though. The draft already removes the first: `$209M` is Collector Crypt volume, not Jupiter revenue. The second comes from an [October card study on this site](/en/blog/onchain-card-gacha-revenue-not-gmv-en): `93.91%` of card gacha volume flows back to users as buybacks, and Collector Crypt's own true gross margin is about `5.9%`. At that scale, `$209M` of volume corresponds to roughly `$12.33M` of gross profit — and that is Collector Crypt's, of which Jupiter takes a distribution cut.
+
+## 8. Four places the draft does not reconcile
+
+**1. The fee table total is not the sum of its rows.** The four rows of gross fees sum to `$16.68M` against a stated total of `$17.68M`, `$1.00M` apart; protocol revenue `$3.681M` against `$5.12M`, `$1.439M` apart; holder revenue `$1.316M` against `$1.65M`, `$334K` apart. In the gap, protocol revenue (`$1.439M`) exceeds gross fees (`$1.00M`) — a business line cannot earn more revenue than fees, so the total and the rows are not on the same basis. The draft's shares (`46.2%`, `39.8%`, `4.6%`, `9.0%`, `75.2%`) are all divided by the total; the arithmetic is right, but part of the denominator is not listed. Section 2 here shows the gap as its own row.
+
+**2. The buyback has two numbers.** `$2.56M` is the policy basis; `$1.65M` is the holder revenue in the fee table and also the Litterbox pace in May. The draft says Litterbox "roughly matches the estimate above", but what it matches is `$1.65M`. So "buybacks at about `3.5%` of market cap a year" in its conclusion should read `2.3%`–`3.5%`.
+
+**3. Revenue and fees share one sentence.** "`$5.12M` a month, about `$212M` annualized" — the first is protocol revenue, the second gross fees annualized; "down about 85% year over year" is the fall in fees, while revenue fell `66.6%`.
+
+**4. The two Vaults estimates use different take rates.** Matching perps uses `5%`; the early beta revenue of `$1M`–`$4M` implies `2.0%`–`2.7%`.
+
+## 9. What this piece cannot compute
+
+- **Which products make up the fee table gap.** DCA, limit orders, Launchpad, Offerbook and Gacha could all be in it; the draft does not break it out.
+- **The real buyback base.** The draft gives no formula for which revenue the `50%` applies to.
+- **Actual Vaults fees and the Jupiter share.** Those wait for Breakpoint.
+- **Whether Q3 2025 and now share a data source and basis.** Part of the doubled take rate may come from a basis difference.
+- **The Litterbox pace after May.** The draft's data ends on May 18.
+
+---
+
+**Conclusion.** The valuation floor has support; the ceiling is capped for now. Buybacks at `2.3%`–`3.5%` of market cap a year, zero net emissions and a postponed Jupuary make a floor that does not fall far; but monthly gross fees `84.6%` below Q3 2025, perp revenue that depends heavily on SOL volatility, and four new products that add no near-term revenue mean the multiple cannot expand. JUP is priced more like "SOL beta plus a `2.3%`–`3.5%` buyback" than the next Hyperliquid.
+
+Until Vaults launches publicly and reaches more than `$300M` of TVL (which even at a `5%` net take equals only `24.4%` of current annualized protocol revenue), or monthly gross fees return to `$20M`, the gap between narrative and revenue will keep holding back multiple expansion. Four things to watch: monthly gross fees, perp protocol revenue, Vaults TVL and fee disclosures, and the weekly Litterbox purchase pace.
+
+*Data: DefiLlama and the links in the text; prices and fees as of 2026-11-11, fees on a 30-day basis. Research notes only, not investment advice. DYOR.*

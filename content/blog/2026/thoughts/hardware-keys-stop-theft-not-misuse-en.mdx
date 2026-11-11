@@ -1,0 +1,168 @@
+---
+title: 'Hardware stops theft, not misuse: from SSH keys to private key security'
+publishedAt: '2026-11-11'
+summary: 'A blog post documents deleting every on-disk SSH private key in favor of a YubiKey, a TPM and the Apple Secure Enclave. Following it further: hardware solves only non-exportability, while user presence, user verification and seeing what you sign are three separate gates. SSH can live with the remaining risk because one misuse is capped at one login; a wallet cannot. For redundancy SSH registers several independent keys, while a single-signature wallet can only copy one key as a seed phrase. And once quantum attacks are practical, a key whose public half is already published does not need to be stolen at all, so non-exportability stops being a moat.'
+slug: 'hardware-keys-stop-theft-not-misuse-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'hardware-keys-stop-theft-not-misuse'
+sourceSlug: 'hardware-keys-stop-theft-not-misuse'
+---
+
+## TL;DR
+
+**Putting a private key in hardware stops it from being stolen, not from being borrowed. An attacker who controls your machine cannot pull the key out of a YubiKey; but while the key is plugged in and no touch is required, the attacker can sign anything with it. SSH can tolerate that leftover risk because one misuse is capped at one login. A wallet cannot, because one signature is final.**
+
+- **Four gates, not one.** Non-exportability, user presence, user verification, and seeing what you sign. Hardware gives you the first by default; the second and third are choices; the fourth SSH never needs and a wallet cannot do without.
+- **Device-bound is not device-resident.** A YubiKey `ed25519-sk` private key never leaves the device. In the TPM setup the private key actually sits on disk, encrypted by the TPM, and the TPM does not check system state.
+- **A no-touch hardware key has the shape of an exchange hot wallet.** The key never leaks from the hardware, but whoever controls the service that requests signatures can sign. The preliminary root cause of the Binance incident in October was exactly this.
+- **There are two ways to do redundancy.** SSH registers several independent keys, so losing one means deleting one line. A single-signature wallet has one key, and the only backup is a copy of it — a seed phrase is a complete, exportable private key.
+- **Against a quantum computer, non-exportability is no longer a moat.** A key whose public half is already published does not need to be stolen: GitHub serves every user's SSH public keys at `github.com/<username>.keys`, and an Ethereum account's public key can be recovered from its signatures after its first outgoing transaction. The post-quantum defaults in OpenSSH protect the session key agreement, not the signatures.
+- **Future private key security is a set of replaceable keys, not one harder-to-steal key.** Replaceable requires an authorization layer you can change: `authorized_keys` is built that way, a single-signature address is not, and multisig and smart accounts put it back.
+
+> This piece starts from a 2026-11-04 post on infected.systems in which the author deleted every on-disk SSH private key and moved to three hardware approaches: a YubiKey, a TPM, and the Apple Secure Enclave. Operational detail follows the original post and each tool's documentation; the four-gate framework, the wallet comparison and the quantum section are mine. I did not test the three approaches myself.
+
+---
+
+## 1. What hardware actually changes
+
+The traditional setup is a passphrase-protected private key file on disk. OpenSSH encrypts it with a key derived through bcrypt, so the file leaking on its own is not much of a problem; but once `ssh-agent` decrypts it, the private key sits in memory in the clear until the session ends. An attacker with root can lift it from memory — and from then on it works **offline, indefinitely, from anywhere**.
+
+That is precisely what hardware changes. The private key is generated inside a secure chip that offers a "sign with it" interface and no "read it out" interface. An attacker with root can still call that interface, but only for as long as **the attacker controls the machine and the device is plugged into it**.
+
+So hardware shrinks the risk from permanent theft to borrowing while online. That is real progress, but it also says what hardware does **not** do: it does not decide whether to sign, and it does not know what it is signing.
+
+## 2. Four gates that are often blurred into one
+
+| Gate | What it stops | What it does not stop | Default for SSH hardware keys |
+|---|---|---|---|
+| Non-exportable | Copying the key, offline use | An attacker calling it while online | Yes |
+| User presence (a touch) | Silent use after the machine is taken over | A user tricked into touching | Yes; `no-touch-required` turns it off |
+| User verification (PIN / fingerprint) | Use by whoever ends up holding the device | The owner being misled | No; `verify-required` turns it on |
+| Seeing what you sign | Signing something other than what you think | — | Not needed, not present |
+
+The first two answer "is someone there", the third answers "is it the owner", the fourth answers "what is this for". An SSH signature only answers a login challenge; the signed content means nothing, so the fourth gate does not exist. A wallet is different: the signature is the transfer, the approval or the code delegation, and the content is everything.
+
+## 3. How many gates each approach provides
+
+| | YubiKey (`ed25519-sk`) | TPM (`ssh-tpm-agent`) | Apple Secure Enclave (`sc_auth`) |
+|---|---|---|---|
+| Where the private key lives | In the device, never leaves | **On disk**, wrapped by the TPM | In the Secure Enclave, marked non-exportable |
+| What the file on disk is | Just a handle | The encrypted private key | Just a handle |
+| Curve | Ed25519 (P-256 also possible) | ECDSA P-256 or RSA | P-256 only |
+| Extra software | None, native OpenSSH | Needs `ssh-tpm-agent` | None, but `SSH_SK_PROVIDER` must be set |
+| User presence | Touch by default; can be turned off, and the server must explicitly allow it | No physical presence, PIN optional | `-t bio` requires Touch ID |
+| Bound to system state | n/a | Does not check PCRs; a firmware or OS change still unseals | n/a |
+| Catch | Hardware to buy | The machine needs a TPM | In clamshell mode Touch ID is unavailable, so creation and use both fail |
+
+The generation commands are all short:
+
+```sh
+ssh-keygen -t ed25519-sk -O resident -O verify-required
+ssh-tpm-keygen -N "<PIN>"
+sc_auth create-ctk-identity -l "<label>" -k p-256-ne -t bio
+```
+
+The column most easily missed is the TPM one: **device-bound and device-resident are different things.** The `.tpm` file on disk is useless away from that TPM, but the key material really is on disk; and since PCRs are not checked, booting a different OS on the same machine still works without a PIN. Use the TPM if you have one, but set the PIN.
+
+## 4. A no-touch hardware key has the shape of a hot wallet
+
+The original post describes a case that needs to run unattended: mounting a remote directory at boot with nobody there to touch a YubiKey. The answer is a `no-touch-required` key, plus the option of the same name added explicitly at the front of the matching line in the server's `authorized_keys` — without it OpenSSH rejects the key by default.
+
+At that point only the first of the four gates is left. The key still cannot be stolen, but anyone who takes control of that host can call it silently.
+
+**An exchange hot wallet's signing service has this shape.** The private key lives in an HSM or MPC setup and is never exported; but signing requests come from a service, and nobody confirms each one. The attacker does not need to steal the key, only to become the identity that is allowed to request signatures.
+
+An October piece on this site covered [the preliminary root cause Binance gave](/en/blog/binance-root-cause-is-service-identity-not-7702-en): a DevOps engineer's laptop was compromised, the attacker used it to reach a service container and submit unauthorized withdrawals, and the announcement said no private key leak had been found. There is no contradiction there — the private key never needed to leak.
+
+The lesson for individuals: if one key really must be no-touch, make it **its own key with its own limits**. Every line in `authorized_keys` can carry restrictions:
+
+```text
+no-touch-required,restrict,from="10.0.0.5" sk-ssh-ed25519@openssh.com AAAA... nas-mount
+```
+
+`from=` pins the source address and `restrict` turns off port forwarding, agent forwarding and terminal allocation; add `command=` if you need to lock it to a single command. Even if it is used silently, there is little it can do. The hot-wallet equivalents are limits, allowlists and delays, on the same principle: **accept that this key will be used when nobody is watching, then limit what it can be used for.**
+
+## 5. Redundancy: several keys, or copies of one key
+
+The most practical problem with hardware keys is losing them. If the device breaks, goes missing or gets replaced, the private key is gone, because it could never be exported in the first place.
+
+SSH solves this cleanly: `authorized_keys` takes as many lines as you like. A YubiKey for daily use, a spare YubiKey locked in a drawer, a Mac's Secure Enclave — three independent keys, all registered. Lose one, delete its line, and the rest carry on. **At no point in the process was any private key copied.**
+
+A single-signature wallet does not have this structure. One address maps to one key, and the only way to back it up is to copy that key — which is what a seed phrase is. A hardware wallet keeps the private key inside the device during daily use, but the sheet of paper next to it with 24 words is a complete, exportable private key. **The real security boundary is that sheet of paper, not the device.** Structurally, a hardware wallet with a seed phrase is closer to the TPM approach (key material exists outside the device, protected by something else) than to the YubiKey approach.
+
+The [Coldcard seed-risk piece](/zh-CN/blog/bitgo-coldcard-seed-risk-custody-repricing) on this site (in Chinese) is about what happens when that boundary fails: seed generation, entropy sources, single-signature failure points.
+
+Multisig and smart accounts restore the SSH structure: several independent keys, authorized by threshold, and losing one means replacing that one. The Secure Enclave and most passkeys use the P-256 curve — RIP-7212 gives several L2s native P-256 signature verification, and the corresponding Ethereum mainnet proposal is EIP-7951. The kind of key the original post keeps on a Mac for SSH can directly serve as one of a smart account's signers.
+
+Synced passkeys (iCloud Keychain, Google Password Manager) take another path: the private key is synced, encrypted, to your other devices, so losing one device does not lose the key. That trades non-exportability for recoverability, and it is not free — the boundary you trust grows from one chip to the whole sync system.
+
+## 6. The fourth gate: SSH does not need it, a wallet cannot do without it
+
+When an SSH key is misused, the worst case is an attacker getting a session. Bad, but it is logged, revocable, and can be contained.
+
+When a wallet key is misused, one signature can move the assets out, irreversibly. So a wallet has to face the fourth gate: **when you confirm, do you know what you are signing?**
+
+The Bybit incident of February 2025 is the example of that gate falling: the Safe front end was tampered with, starting from a compromised Safe developer's computer, and the multisig signers approved, on hardware wallets, a transaction entirely different from what the interface showed. Hardware present, confirmation pressed, verification passed — the first three gates all held, the fourth did not.
+
+This gate is not only about people, either. The Binance pieces on this site discussed EIP-7702 Type-4 transactions: `to` is the wallet itself, value 0, data empty, and a policy engine that only parses calldata sees a harmless self-transfer. **Even what a machine "sees" can be wrong.**
+
+The two incidents share one more thing: both started on an engineer's computer. SSH private keys, cloud credentials, and tokens that can call a signing service on a development machine are links on the same attack path. Deleting on-disk private keys is not only about SSH.
+
+## 7. Quantum: non-exportability guards against physical extraction, not mathematics
+
+All three approaches in the original post use elliptic curves: Ed25519 and P-256. So does the secp256k1 used by Bitcoin and Ethereum. A large enough quantum computer running Shor's algorithm can compute the private key directly from the public key.
+
+At that point non-exportability fails — the attacker does not need to touch your device, only your public key. So the real question becomes: **how public is your public key already?**
+
+| Case | Public key already exposed? |
+|---|---|
+| SSH keys registered on GitHub | Yes, anyone can read them at `github.com/<username>.keys` |
+| `authorized_keys` on a server | Readable by anyone who gets the server |
+| Ethereum externally owned account | After the first outgoing transaction, recoverable from the signature |
+| Bitcoin P2PKH / P2WPKH address | Only a hash before spending, exposed when spent; exposed long-term if the address is reused |
+| Bitcoin Taproot (P2TR) | The output is the (tweaked) public key itself |
+
+Since 9.0 OpenSSH defaults to a hybrid post-quantum algorithm for key agreement, and since 10.0 to an ML-KEM-based hybrid. That defends against recording traffic now and decrypting it later; it protects session content. **The signing keys used to log in have not changed; they are still elliptic curve.** Mainstream FIDO2 hardware does not support post-quantum signatures yet either.
+
+This piece does not predict when quantum arrives. [An April piece](/zh-CN/blog/coinbase-q-day-ryan-babbush-bitcoin) on this site (in Chinese) covered a Google Quantum AI estimate: fewer than 500,000 qubits, an attack completed within minutes; on that basis Google moved its own post-quantum migration timeline forward to 2029.
+
+Whatever the timeline, the two sides are in very different positions:
+
+- **SSH migration is almost free.** Keys can be swapped any time, and `authorized_keys` is just a list. Once post-quantum signatures reach hardware: generate, register, delete the old ones, an afternoon's work. A GitHub public key harvested today is only useful if that key is still trusted when the time comes.
+- **Migrating a single-signature address means moving house.** A new key means moving the assets to a new address; an old address whose public key is already exposed is a target until it moves. And as far as this piece knows, protocol-level post-quantum signatures are still at the proposal and research stage on both Bitcoin and Ethereum mainnet.
+- **Smart accounts sit in between.** The signature-verification logic is code, so changing the signature algorithm is an authorization-layer upgrade, not a move of assets.
+
+## 8. So what does future private key security look like
+
+Put the sections together and they point the same way: **not one harder-to-steal key, but a set of keys you can replace at any time, plus an authorization layer you can change.**
+
+- Non-exportability: leave it to hardware;
+- User presence and user verification: on by default, and the one key that must have them off gets its own limits;
+- Seeing what you sign: see the decoded content on the device screen before signing, and refuse to blind-sign;
+- Redundancy: several independent keys, not copies of one;
+- A changeable authorization layer, so that changing algorithms, changing devices or replacing the compromised key never means starting over.
+
+SSH's `authorized_keys` has had this structure for many years; few people treat it as a model for security design. Multisig, smart accounts and passkey signers are wallets catching up on the same lesson.
+
+## 9. What an individual can do right away
+
+- **SSH**: register at least two hardware keys on every server (one for daily use, one kept offline); add `verify-required` when generating; generate the one key that must be no-touch separately and limit it with `from=` and `restrict`.
+- **Linux machines with a TPM**: fine to use, but know that the private key is stored encrypted on disk and not bound to system state; always set a PIN.
+- **A Mac used in clamshell mode**: the Secure Enclave fingerprint option simply fails; use an external keyboard with Touch ID, or plug in a YubiKey 5C Nano.
+- **GitHub**: your public keys are public; that does not matter until post-quantum signatures are available, and after that, rotate promptly.
+- **Wallets**: hold large amounts in multisig or smart accounts with signers spread across different hardware; do not let a seed phrase be your only redundancy; never sign anything you cannot read on the hardware screen.
+- **Development machines**: they are where the attack path starts. Keep no plaintext private keys on disk, and treat cloud credentials and signing-service tokens the same way.
+
+## 10. What this piece cannot tell you
+
+- **Nothing was tested.** Commands and behavior for the three approaches follow the original post and each tool's documentation, and may differ across system versions.
+- **Hardware has vulnerabilities too.** EUCLEAK, a side channel made public in 2024, affects YubiKey 5 series devices with firmware before 5.7, and exploiting it needs physical access and specialized equipment. This piece does not assess any particular chip.
+- **No quantum timeline prediction.** The estimate cited comes from an earlier piece on this site, not from this one.
+- **Not a security audit.** The right setup depends on your threat model; the original author also says a passphrase-protected on-disk key is enough for most people.
+
+---
+
+**Conclusion.** The blog post is titled "I deleted all my SSH keys"; more precisely, the author replaced every key with one that cannot be stolen. That is the right first step. The second is to accept that a key that cannot be stolen can still be borrowed — hence presence, verification and limits. The third is to accept that keys get lost and algorithms go out of date — hence several keys, replaceable, behind a changeable authorization layer. SSH does the last two with a text file; wallets took many years to put them back with multisig and smart accounts.
+
+*Sources: [I deleted all my SSH keys](https://blog.infected.systems/posts/2026-11-03-i-deleted-all-my-ssh-keys/) (infected.systems, 2026-11-04); [ssh-tpm-agent](https://github.com/Foxboron/ssh-tpm-agent). Internal links are in the text. Technical notes only, not a security audit.*
