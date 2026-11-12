@@ -1,0 +1,97 @@
+---
+title: 'Binance blocks MEXC on its own: who pays the compliance cost, and where it leaves Binance competitively'
+publishedAt: '2026-11-12'
+summary: 'The FinCEN section 9714 special measure only binds US financial institutions, yet on November 10 Binance extended its MEXC block to the global exchange. The cost will not reach depositors as fees: a compliance budget of about $300M a year spread over 335M users is under $1 each, and it is fixed overhead. The real cost is friction, meaning held deposits, price risk while funds are held, and offboarding, concentrated on cross-exchange arbitrageurs and market makers. The market charged the loss to MEXC, but of the 17 points MX lost against BNB over 30 days, about 10 came before the order. The real risks are rivals not following and voluntary enforcement hardening into a baseline that cannot be walked back.'
+slug: 'binance-blocks-mexc-compliance-cost-competition-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'binance-blocks-mexc-compliance-cost-competition'
+sourceSlug: 'binance-blocks-mexc-compliance-cost-competition'
+---
+
+## TL;DR
+
+**This cost will not reach ordinary depositors as a fee. Binance is buying regulatory credit, and paying for it with friction for a small group of cross-exchange users and with flow that rivals may pick up.**
+
+- **No fee pass-through.** The November 10 notice came with no change to fees or thresholds. Binance's disclosed compliance budget of about `$300M a year`, spread over `335M` registered users, is under `$1 per user per year`, and it is fixed overhead that does not move with volume, so there is no per-trade way to pass it on.
+- **The real cost is friction.** Held deposits, price risk while funds are held, and offboarding fall on a small group of cross-exchange arbitrageurs and market makers; everyone else only bears thinner liquidity on overlapping pairs.
+- **The market charged the loss to MEXC.** With October 13 = 100, after 30 days MX stands at `74.1` (`−25.9%`), BNB at `91.1` (`−8.9%`) and BTC at `88.4` (`−11.6%`).
+- **But not all of those 30 days are this event.** MX already had a one-day collapse on October 21 and sat around `83` before the order; after the November 6 order, reading the chart, MX is about `−11%`, BNB about `−2%` and BTC about `−3%`.
+- **The real risk is not pass-through** but the flow lost by moving first on compliance, and the ratchet once voluntary enforcement becomes the industry baseline.
+
+> **Check notes**: three changes from the draft. The FinCEN penalty in the 2023 settlement was **$3.4 billion**; the draft said $340 million. The draft attributed the whole 30-day drop to this event, but about half of the gap opened before the order, so the two are now separated. The draft body put BTC at 88.5 while the TL;DR said it fell 11.6%; these disagree, so the end value is 88.4, which also agrees with BNB beating BTC by 2.7 points.
+
+---
+
+## Scope of the event: Binance is filling a gap it was not asked to fill
+
+On November 6, FinCEN issued a special measure against MEXC under section 9714(a) of the Combating Russian Money Laundering Act, barring US financial institutions from any dealings with it and alleging that from May 2021 to May 2026 it facilitated at least **$16 billion** in sanctions evasion and cybercrime transactions linked to Iran, North Korea and Russia. [Chaincatcher](https://www.chaincatcher.com/en/article/2302524) The order takes effect **30 days after** publication in the Federal Register and was not yet in force as of November 9. [Chaincatcher](https://www.chaincatcher.com/en/article/2302670)
+
+The key is jurisdiction. Section 9714 binds "US financial institutions", and **Binance.com is not one**; the directly bound entity is a US affiliate like Binance.US. Yet in its November 10 notice Binance extended the scope to the global exchange: it refuses transfers out to MEXC Global, MEXC Estonia OÜ, MEXC Singapore and affiliated entities; deposits from them are "temporarily held pending compliance review"; and the accounts involved may face further restrictions up to offboarding. [CoinMarketCap](https://coinmarketcap.com/academy/article/binance-stops-mexc-transfers-fincen-order) · [Binance announcement](https://www.binance.com/en/support/announcement/detail/9ef6e347da924cdc90f53577ab483b1f)
+
+This is not simple moral initiative. It is a rational choice under three constraints:
+
+- **The five-year monitorship from the 2023 FinCEN settlement.** A $3.4 billion penalty, a five-year monitorship and an exit from the US market, running until 2028. The monitor assesses exactly the sanctions and AML controls, so a FinCEN "primary money laundering concern" finding reaches Binance through the monitorship. [FinCEN](https://www.fincen.gov/news/news-releases/fincen-announces-largest-settlement-us-treasury-department-history-virtual-asset)
+- **Dependence on dollar and stablecoin rails.** Banking partners and stablecoin issuers screen counterparties to US standards, and a named entity is a hard break.
+- **Self-defense after the October 29 theft of $6.3 billion.** The stolen funds are being laundered through THORChain, Chainflip and meme coins; clients pulled **$4.7 billion** after the incident and withdrawals were paused for a time. [Reuters](https://www.reuters.com/business/finance/binance-sees-outflows-stabilising-exchange-returns-online-after-63-billion-heist-2026-11-02/) In that state, reviewing every deposit from an exchange named a "primary money laundering concern" is itself asset recovery and reputational defense, not just a compliance posture. For the root cause of the theft itself, see [Binance names the root cause: what was compromised was a service identity that could sign, not EIP-7702](/en/blog/binance-root-cause-is-service-identity-not-7702-en).
+
+## Where the cost goes: no fee pass-through, only a friction tax and a liquidity tax
+
+Start with what pass-through means in accounting terms. A compliance cost can only be passed into prices if it **varies per trade**. What Binance changed is one blocklist entry in a rules engine, with near-zero marginal cost; behind it is an existing compliance operation of about $300M a year and roughly 1,500 people (about a quarter of global staff, per Binance). [Binance](https://www.binance.com/en/square/post/329404459880194) In a competitive market a fixed cost is absorbed by the platform; it does not become a line on a depositor statement.
+
+Where the cost actually lands, by group:
+
+| Group | Direct fee change | Main form of cost | Relative size |
+|---|---|---|---|
+| Ordinary Binance spot users | None | Slightly wider spreads and thinner depth on overlapping pairs | The vast majority |
+| Cross-exchange arbitrageurs / market makers | No fee, but the channel is cut | Deposits held for days, price risk during refunds, account limits | Few, high-frequency, disproportionate share of volume |
+| Accounts with MEXC withdrawal history | None | Extra review, restrictions, up to offboarding | A very small long tail |
+| MEXC-side users | Funds sent to Binance are held | Migration and time cost | The active cross-exchange users among 40M |
+| BNB holders / shareholders | Carry the compliance budget | Fixed overhead, not per trade | Everyone |
+
+The most overlooked piece is **price risk while funds are held**. BTC fell **8.4%** over the past 7 days; for a deposit held for three days, the opportunity cost far exceeds any fee. Binance is not charging depositors this; it is a loss carried passively by funds under review during volatility, **paid by MEXC-side users and cross-exchange arbitrageurs, not by ordinary Binance depositors**.
+
+The indirect cost for everyone is liquidity: once MEXC-linked market makers leave, spreads widen on the small- and mid-cap pairs both venues list. But the overlap is limited. Binance lists **350+** assets and MEXC over **3,000**; their core products are close to two separate markets, and what really overlaps is the arbitrage channel, not the spot listings. [CoinMarketCap](https://coinmarketcap.com/exchanges/mexc/)
+
+## Competitive position: the market has voted, but not only on this
+
+Price is the most direct evidence. With October 13 = 100:
+
+| | 10-13 | Around the 11-06 order (chart read, approx.) | 11-12 | 30-day change | Change after the order (approx.) |
+|---|---|---|---|---|---|
+| MX | 100 | 83 | 74.1 | −25.9% | −11% |
+| BNB | 100 | 93 | 91.1 | −8.9% | −2% |
+| BTC | 100 | 91 | 88.4 | −11.6% | −3% |
+
+*Source: Surf, MX / BNB / BTC 30-day relative performance. The 11-06 column and the after-order change are read off the chart, to whole numbers only.*
+
+After 30 days MX trails BNB by about **17 percentage points**, and BNB beats BTC by about **2.7 points**. The market charged the loss to MEXC, not Binance.
+
+**But it has to be split.** MX had already dropped more than ten points in one day on October 21, and before the order it sat around 83, roughly 10 points below BNB. So of the 17-point gap, **about 10 points opened before the FinCEN order** and cannot be charged to this event. After the order MX fell another 11% or so while BNB fell about 2%; that stretch is the pricing of the event itself. The direction holds; the size is smaller than the 30-day figure.
+
+Scale supports the same reading. MEXC self-reports about **$4.3 billion** in average daily spot volume and over **$16.7 billion** in futures; Binance averages about **$95 billion** a day across all products, with **335M** registered users. [MEXC](https://www.mexc.com/learn/article/top-10-crypto-exchanges-by-trading-volume-2026-18-7-trillion-traded-and-four-rankings-that-disagree/1) · [Reuters](https://www.reuters.com/business/finance/binance-sees-outflows-stabilising-exchange-returns-online-after-63-billion-heist-2026-11-02/) Even on the widest measure (spot plus futures) MEXC is only about a fifth of Binance; on spot alone it is under 5%. Third-party data also disagree wildly: on the same day MEXC spot volume ranges from $350 million to $4.3 billion across sources, so "market share" is noisy in itself and not fit for a precise estimate of losses.
+
+There are two real competitive costs, though:
+
+1. **Arbitrage flow leaks out.** As of November 10, OKX and Gate only review MEXC withdrawals case by case, and Bitget Wallet has only paused card top-ups for MEXC; none has hard-rejected them the way Binance did. [Chaincatcher](https://www.chaincatcher.com/en/article/2302670) Fee-sensitive arbitrage capital goes first to venues it can get into. Binance has traded its own strictness for its rivals' flow.
+2. **It cut off its own migration path.** A MEXC user who wants to leave would most naturally land on Binance. The hard block closes that road, and users are more likely to go to Bybit, OKX or Bitget. That is lost acquisition, and it appears in no compliance report.
+
+What comes back is regulatory credit: a record of "active cooperation" during the five-year monitorship, credibility with banking and stablecoin partners, and the bar for institutional custody. The compliance infrastructure itself ($300M a year, 1,500 people) is also a barrier to entry that small offshore exchanges cannot copy. **Here compliance turns from a cost center into a moat.**
+
+## The reverse case: when this calculation goes wrong
+
+Three situations would turn "doing more than required" from a good deal into a burden.
+
+**Rivals free-ride.** If OKX, Bybit and Gate stay at case-by-case review, Binance carries the cost of an industry public good (cutting off MEXC connectivity) while rivals take the overflowing arbitrage flow. That is the classic first-mover disadvantage in compliance. The window to watch is the next 30 days, around when the order takes effect: do rivals move from "review" to "block".
+
+**Regulatory preference reverses.** If US enforcement against offshore exchanges eases after 2027, neither the fixed compliance cost Binance has paid nor the flow it gave up can be recovered. Being the "voluntary enforcer" also leaves it with less leverage in talks with regulators: once you already meet the strictest standard, it is hard to ask for an exemption.
+
+**The ratchet.** Every unrequested voluntary spillover becomes the new baseline the monitor and the market hold it to. The next time an exchange is designated, Binance will be expected to follow first. That raises certainty and locks in rigidity. The real long-term risk is not this particular cost but that **it cannot be walked back**.
+
+---
+
+**Conclusion.** At heart this trade **swaps friction for a few cross-exchange users for regulatory credit**; it is not a charge on all depositors. Ordinary depositors bear almost no direct fee, only a slight liquidity discount on overlapping pairs; the cost is concentrated on arbitrageurs, market makers and accounts with MEXC history, small in size but sharp. Competitively it is a net gain in the short run: MEXC is isolated, MX kept falling after the order, and BNB beat the market. But a good part of the 30-day drop predates the order and cannot all be scored as this round. The medium term depends on whether rivals follow and where MEXC's departing users end up.
+
+**Bottom line:** a trade that pays off in the short run and cannot be reversed in the long run. What to watch is not Binance's fee schedule (it has not changed) but three indicators: whether OKX and Bybit move from review to block; whether Binance holds its 38%–43% spot share; and which platform MEXC withdrawals mainly flow to. If rivals do not follow and the flow goes to Bybit, "doing more" turns from a moat into a one-sided subsidy.
+
+*Price data from Surf's MX / BNB / BTC 30-day relative performance (10-13 = 100). Event and compliance facts from the links in the text, as of 2026-11-10. Personal notes, not investment advice. DYOR.*
