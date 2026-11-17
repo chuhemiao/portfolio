@@ -129,6 +129,8 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-11-17**：新增 Agent 工程面试专题五篇思考，覆盖 Harness、Runtime、工具与多 Agent、上下文与 RAG、生产工程，共 15 篇三语 MDX。保留 DevPilot 预发布及单条查询合成负载口径、Veloxis 原稿归属、RRF 与面试题。中文检测前后对比、三语差异与独立复核见 docs/reviews/2026-11-17-agent-engineering-interview/。7488 篇内容检查、8294 个静态页面完整构建、五组语言对应、60 个同语系列链接及 RSS 通过。
+
 - **2026-11-17**：新增 OKB 与 OKX 信任红利三语思考。按原表纠正事件窗口跑赢/跑输范围，归一化图表占位改为原稿三个节点表。核对 OKB 第28轮与最终销毁累计、BNB独立Auto-Burn、ICE 2亿美元优先股协议及事故前250亿美元估值，保留原稿历史行情和生态快照边界。独立三语复核、检测及逐行差异见 docs/reviews/2026-11-17-okb-okx-trust/。7473篇内容检查、8279页完整构建及三语静态对应与RSS通过。
 
 - **2026-11-16**：新增 Collector Crypt 卡牌周转思考三语 MDX。核实 Q3 4.335 亿美元为开包与费用合计、纯开包 4.331 亿美元，3,530 万美元是回购后净额近似口径，约 12 倍与四个估值情景保留。按复核区分自有平台和 Coinbase Collect、回购流动性第三方与托管边界。三语逐行差异、来源及中文复测见 docs/reviews/2026-11-16-collector-crypt-turnover/。7470 篇内容检查、8276 页完整构建和三语导出通过。无预览、提交或推送。
@@ -146,5 +148,3 @@
 - **2026-11-02**：完成Library M1数据与工具：真实300候选、100已审三语编辑精选（五类各20）、300完整locale、100editorial selections、0社区推荐；138 Topic建议79批59拒，覆盖5既有Topic。20规范绑定实际commit/文件hash与已读章节，ERC8004保留Draft；其他80仅metadata_only，原创阅读问题不冒充未读结论/作者背书。原metadata及9源投影hash保全，实际Codex字段/编辑身份和1275事件链；独立读完100×3后窄修2处JA（客户反馈主体、暗号プリミティブ），两item/六locale版本与批准重绑。真实快照111文件/587431原始字节/逐文件gzip合计231044，显式currentCatalog/context读回及同输入/asOf字节复建通过；首轮并行检查中2.19s、单独复建0.64s，与虚构300基准分列。fresh Library89/全局243/typecheck/7428content/定向ESLint通过；只跑library:build，未全站pnpm build/预览/push/部署。交付在docs/library/m1-editorial-delivery.md及reviews/2026-11-02-editorial/。用户本次明确授权M1–M4每阶段commit、常规取舍默认选择；仅本Library任务，不改通用提交确认偏好。后续采用PRD允许的编辑精选+B1，未验证自动抽取/B3关闭；≥120人类双盲样本与20–30人用户实验not-run，不冒称G2/G4通过，M4远端export仍须做。
 
 - **2026-11-02**：按用户要求先提供Library首页效果图，已生成docs/library/design/library-home-desktop-v1.png（2880×3106）和library-home-mobile-v1.png（860×3610）；独立HTML/CSS源稿、README与render-checks.json同目录。沿用现站深色/琥珀/IBM Plex/细边框，桌面列表+主题/原创研究侧栏、手机单栏，顶部单一语言下拉；突出类型/原文语言/为什么读，示例内容和100条数量已明确为设计占位，不代表来源批准或真实入库。仅离线文件渲染，外网请求被阻断，字体加载/两尺寸零横向溢出/零脚本错误通过，目视修复手机标题孤字与筛选布局。未开始M1或M3业务实现，未启动网站/全量build/提交/部署，保留前轮四份审计计划。
-
-- **2026-11-02**：按新版Library Phase0 Prompt与PRD v1.1完成源码审计和M1–M4实施规划，四文档在docs/library/；本轮仅文档、未业务开发。当前HEAD62ea8ba、7428MDX、3082文章组、2822项目/12主题；100精选含legacy及三语新增404页，候选300与公开100分开。已核真实article-view渲染、slug/translationKey关联、sitemap统一expected及静态query noindex限制，拆22任务/4阶段Gate。用户补充无需考虑Vercel/CloudflareWorker工作模式、记得Worker已移除；按纯静态、不新增或依赖Worker、不改部署配置收窄，M4只保留远程构建和静态产物验收。只读已见Vercel当前HEAD生产READY及Cloudflare前置响应，未延伸平台调查。来源逐字段deny、YouTube API补全默认禁用、三语原创编辑说明完整且不复制外部全文；真实来源/人工审批及双评/用户实验不能由agent假冒。typecheck、154测试、7428内容检查通过；未全量build、启动预览、采集、提交或部署。

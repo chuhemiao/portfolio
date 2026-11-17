@@ -1,0 +1,25 @@
+--- 优化前/baseline.en.md
++++ 正文/agent-engineering-interview-03-tools-en.mdx
+@@ -56,7 +56,7 @@
+ 4. Authenticate and authorize independently on the tool side.
+ 5. Default to read access and require approval for high-risk writes.
+ 6. Restrict directories, network destinations, and access to sensitive data.
+-7. Test denials of unauthorized access and data transfer and handling of malicious documents in isolation.
++7. Use isolated security regression tests to verify that unauthorized access, data transfers, and instructions embedded in malicious documents are blocked.
+ 
+ The DevPilot example uses private working copies, authorized directories, IPC allowlists, constrained Docker commands, and approval to write back to source. These controls take effect at execution.
+ 
+@@ -64,11 +64,11 @@
+ 
+ Distinguish reads of files, knowledge bases, and project data from reversible writes to private copies, drafts, and temporary files. A third group carries external or irreversible consequences, including payments, external messages, live orders, and production writes.
+ 
+-Show the actual action, target, key arguments, diff, evidence, potential impact, and expiration when seeking approval. Revalidate before execution and preserve the actual receipt afterward. Messages, payments, or submissions may already be irreversible. Record that outcome accurately.
++Show the actual action, target, key arguments, diff, evidence, potential impact, and expiration when seeking approval. Set authorization and approval requirements by risk tier. Check authorization again before execution and save the execution receipt afterward. Messages, payments, or submissions may already be irreversible. Record that outcome accurately.
+ 
+ ## 9. When do multiple agents help?
+ 
+-A single agent is usually cheaper and easier to control when tooling and context are simple. Multiple agents can help when roles need different permissions, steps can run in parallel, contexts need isolation, independent verification reduces shared bias, or one agent’s context is overloaded.
++A single agent is usually cheaper and easier to control when tooling and context are simple. Multiple agents can help when roles need different tools or permissions, steps can run in parallel, contexts need isolation, independent verification reduces shared bias, or one agent’s context is overloaded.
+ 
+ - **Planner** interprets requirements and plans.
+ - **Executor** calls tools and performs the work.

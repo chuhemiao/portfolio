@@ -1,0 +1,103 @@
+---
+title: "Agent 工程面试 2/5｜Agent Runtime：从 ReAct 到 LangGraph"
+publishedAt: "2026-11-17"
+summary: "围绕 Agent Loop、持久化审批、幂等、取消和 Replay，准备有关可靠执行与恢复的面试问题。"
+slug: "agent-engineering-interview-02-runtime"
+category: "thoughts"
+language: "zh-CN"
+translationKey: "agent-engineering-interview-02-runtime"
+sourceSlug: "agent-engineering-interview-02-runtime"
+---
+
+## 一、用 Agent Loop 持续推进任务
+
+用户要求修复登录 Bug 并运行测试时，Coding Agent 可能要读项目、搜代码、分析、规划、改文件、运行测试、核验、再修改并交付。一次模型调用无法覆盖完整过程。Agent Loop 在每一步获得新结果，再推进到预先定义的完成条件。
+
+## 二、ReAct 与 Plan-and-Execute
+
+ReAct（Reasoning and Acting）交替使用观察、判断与工具动作，再用返回结果更新观察。它适用于需要边探索边决定的问题，易于调整方向，但调用量可能增加，也可能重复调用或陷入局部最优。 [ReAct 论文](https://arxiv.org/abs/2210.03629)
+
+Plan-and-Execute 先提出可审阅计划，再执行。登录示例可分为检查项目结构、定位登录模块、分析原因、修改文件、运行测试和验证结果六步。这适合依赖清楚且需要管理进度或审批的任务。初始信息不足时要能重规划。可以先做整体计划，每步里使用有界 ReAct。
+
+## 三、八步执行循环与完成条件
+
+1. 读取当前任务状态。
+2. 按预算组装上下文。
+3. 调用模型生成结构化决策。
+4. 校验决策及工具权限。
+5. 执行工具或等待审批。
+6. 保存工具观察结果。
+7. 判断是否满足完成条件。
+8. 尚未完成时继续或重规划。
+
+用可回查的产物和执行记录核验完成状态。模型说 Bug 已修复时，仍要查文件是否变更、测试是否执行且通过、修改是否写回用户项目。
+
+## 四、避免循环停滞的五种机制
+
+1. **预算**。同时限制轮数、Token、费用、耗时和单工具调用次数。
+2. **重复检测**。用 `tool_name + canonical_args + relevant_state` 生成指纹。相同指纹连续出现，期间无观察或状态变化，提示重复执行。
+3. **进展检测**。观察新证据、Diff、测试结果或状态变化。无进展时复查、重规划、降级或人工介入。
+4. **错误分类**。参数错误、权限错误、临时网络错误分别处理。
+5. **安全终止**。预算耗尽、用户取消、拒批和不可恢复错误各有明确终止状态。
+
+## 五、LangGraph 的 State、Node、Edge 和 Checkpointer
+
+- **State** 保存消息、计划、工具结果、审批、错误和预算等运行状态。
+- **Node** 执行一次可测试的状态变换，例如上下文组装、模型调用、工具准备与执行、结果核验。
+- **Edge** 决定节点如何流转。条件边可继续、等审批、进入失败分支或结束。
+- **Checkpointer** 保存图的运行位置及恢复所需状态，供重启或人工中断后恢复。 [LangGraph 持久化](https://docs.langchain.com/oss/python/langgraph/persistence)
+
+## 六、Checkpoint、业务数据库与执行 Journal
+
+流程状态回答图走到哪里，业务状态由 PostgreSQL 保存任务、审批、工具调用和业务事件，执行器或外部工具的 Journal 记录文件操作、命令及副作用回执。
+
+若本地命令已改文件，但网络中断导致回执没到，Checkpoint 可能仍显示节点未完成，业务表只记录已开始，Journal 却已有真实结果。恢复前先对照执行状态，直接重跑可能产生重复副作用。
+
+## 七、把人工审批保存为业务状态
+
+进程内 Promise 无法跨重启保留审批。持久化流程可以这样设计。
+
+1. Agent 提出高风险操作。
+2. 保存操作类型、目标、参数、Diff、证据及策略版本。
+3. 将任务写入 `waiting_approval`。
+4. Worker 释放执行资源。
+5. 用户批准、驳回或修改提案。
+6. 保存审批事件。
+7. Worker 重新认领任务。
+8. 执行前重验授权、文件版本、参数哈希和策略版本。
+
+许可只覆盖该提案。文件或提案版本变化时应重新审批。LangGraph 还会在恢复中断时从所在节点开头重跑节点函数，中断前的副作用需要相应保护。 [LangGraph 中断](https://docs.langchain.com/oss/python/langgraph/interrupts)
+
+## 八、幂等、重试与 Exactly Once
+
+支付完成但响应超时，是状态未知的典型例子，直接重试可能重复扣款。请求幂等避免重复提交，节点幂等避免节点重复产生结果，外部副作用幂等避免业务操作重复执行。
+
+用 `request_id`、`run_id`、`step_id` 和 `command_id` 给操作稳定标识。回执缺失时先查询外部状态或执行 Journal，仍无法确认就进入 `outcome_unknown`。跨模型、数据库、文件系统和外部服务，工程上更可行的是至少一次调度、业务幂等、执行回执和未知结果核验。
+
+## 九、取消与 Replay
+
+取消的流程是 `running` → `cancelling` → 停止创建新步骤 → 请求取消在途任务 → 核验副作用 → `cancelled`。发生过的副作用需要单独处理，无法确认时保留 `outcome_unknown`。
+
+Replay 用保存的工具参数和结果重跑模型或策略节点，排查差异来自模型版本、Prompt、工具 Schema、检索结果还是策略。真实工具可能再次扣费、提交或覆盖文件。
+
+## 十、面试题
+
+1. ReAct 和 Plan-and-Execute 各适合什么？
+2. 怎样防止 Agent Loop 陷入死循环？
+3. State、Node、Edge、Checkpointer 分别有什么用？
+4. 为什么 Checkpoint 无法替代业务库？
+5. 服务重启以后如何恢复？
+6. HITL 审批如何持久化？
+7. 执行成功但回执丢失怎么办？
+8. 为什么跨系统不承诺全局 Exactly Once？
+9. 取消后怎样处理副作用？
+10. Replay 为什么要冻结工具结果？
+
+回答时交代每次运行的状态、执行边界、失败语义和恢复路径。
+
+## 系列文章
+
+- [1. 从 LLM 应用到 Agent Harness](/zh-CN/blog/agent-engineering-interview-01-harness)
+- [3. Agent 工具工程：MCP、权限与多 Agent](/zh-CN/blog/agent-engineering-interview-03-tools)
+- [4. Context Engineering：Memory、混合检索与 GraphRAG](/zh-CN/blog/agent-engineering-interview-04-context)
+- [5. Production-Grade Agent：评测、可观测性、成本与分布式工程](/zh-CN/blog/agent-engineering-interview-05-production)

@@ -1,0 +1,82 @@
+---
+title: "Agent Engineering Interview 1/5: From LLM Applications to Agent Harnesses"
+publishedAt: "2026-11-17"
+summary: "Prepare for an agent architecture interview with five system forms, seven layers, and the DevPilot example. Learn when to use a workflow, how to choose a framework, and how to verify completion."
+slug: "agent-engineering-interview-01-harness-en"
+category: "thoughts"
+language: "en"
+translationKey: "agent-engineering-interview-01-harness"
+sourceSlug: "agent-engineering-interview-01-harness"
+---
+
+## 1. What comes after calling a model?
+
+AI applications moved from text generation, summarization, and Q&A to RAG over company documents, business data, and knowledge bases. Function calling, MCP, and agent frameworks then made it possible to query databases and carry out multistep tasks. A tool call is only one part of running that system in production.
+
+- When should execution continue or stop?
+- Who authorizes a tool call?
+- How should the system recover from a crash halfway through a call?
+- What happens to side effects when the user cancels?
+- How can a team trace and reproduce a faulty decision?
+- How can concurrent agents avoid state conflicts?
+- What proves that the task is complete?
+
+Those are responsibilities of the agent harness.
+
+## 2. Distinguish conversations, chains, workflows, agents, and harnesses
+
+1. **LLM conversation.** The user provides text, the model returns text, and the application manages the API call and presentation.
+2. **Chain.** The developer fixes the order, such as retrieval → context assembly → model call → response.
+3. **Workflow.** The developer designs the main paths, including branches, parallel steps, approvals, and exceptions.
+4. **Agent.** It picks an action, a tool, and whether to continue based on the goal, current state, and observations.
+5. **Agent harness.** The runtime and governance around the model handle calls, loops, state, context, the tool registry, permissions, budgets, recovery, audit, evaluation, and fallback behavior.
+
+The model proposes the next action. The harness checks whether it can proceed, arranges execution, records the result, and stops at a completion criterion or a limit.
+
+## 3. How can the system be layered?
+
+1. **Interaction.** Web, Electron, or mobile UI for streamed messages, progress, approvals, file diffs, and task status.
+2. **Access.** Authentication, tenant isolation, API quotas, request idempotency, session management, and a common API.
+3. **Orchestration.** The agent loop, state machine, LangGraph, checkpoints, human interrupts, recovery, and scheduling.
+4. **Model services.** Model gateway, prompt management, structured output, context assembly, model routing, and token budgets.
+5. **Tools.** Registry, MCP integration, argument validation, execution, result adaptation, and executor isolation.
+6. **Data.** PostgreSQL, Redis, Elasticsearch, Milvus, and object storage serve task and knowledge data where needed.
+7. **Governance.** Permissions, audit, evaluation, tracing, cost monitoring, alerts, and service degradation.
+
+Governance crosses layers. Execution checks permissions, resumption revalidates authorization, retrieval isolates tenants, and outputs need evaluation and verification.
+
+## 4. When should you use an agent or a workflow?
+
+Use code or a workflow when steps are stable, rules are clear, errors are expensive, and the output can be computed. That covers amounts, database transactions, account balance checks, access decisions, fixed approvals, and order transitions.
+
+Enterprise knowledge discovery, coding assistance, research across sources, dynamic business processes, and cross-system tasks can require tool choices based on intermediate results. Those paths are hard to enumerate upfront. Production systems often combine approaches. Code owns the deterministic rules, and the agent makes bounded decisions within them.
+
+## 5. LangGraph or a custom loop?
+
+Compare six questions.
+
+1. Does it solve a problem you already have?
+2. Is the state model clear?
+3. Can it persist state, interrupt, and resume?
+4. Does it support the approval flow and tool ecosystem you need?
+5. Is it observable and testable?
+6. What are the migration costs and risks of lock-in?
+
+Functions and an explicit state machine can suffice for single-turn extraction or fixed tool calls. LangGraph is worth considering for complex branching, loops, human interruption, checkpoints, and recovery. It provides orchestration, while the application still owns business state, permissions, side effects, and audit. [LangGraph persistence](https://docs.langchain.com/oss/python/langgraph/persistence)
+
+## 6. What does DevPilot demonstrate?
+
+DevPilot illustrates how the components of a harness fit together. Electron handles the desktop UI, FastAPI the service entry point, LangGraph the orchestration, and PostgreSQL the business state and checkpoints. A local executor handles controlled file and command operations. Human approval gates high-risk operations, audit and execution logs document them, and diffs, exit codes, and tests provide evidence of the result.
+
+In an interview, explain what problem each component solves. Distinguish implemented capabilities, controlled validation, and work still in design. The DevPilot example comes from a controlled prerelease, which defines the scope of the evidence.
+
+## 7. How would you answer a platform design question?
+
+Start with the system boundary and layers. Define task and state models, then explain authority and execution boundaries. Show how failures, recovery, and audit work, when a framework earns its place, and how to verify the business result. LangGraph, LangChain, MCP, and vector databases matter when they solve a particular problem. The model supplies decisions inside a larger execution system.
+
+## In this series
+
+- [2. Agent Runtime: From ReAct to LangGraph](/en/blog/agent-engineering-interview-02-runtime-en)
+- [3. Agent Tool Engineering: MCP, Permissions, and Multi-Agent Systems](/en/blog/agent-engineering-interview-03-tools-en)
+- [4. Context Engineering: Memory, Hybrid Retrieval, and GraphRAG](/en/blog/agent-engineering-interview-04-context-en)
+- [5. Production-Grade Agents: Evaluation, Observability, Cost, and Distributed Systems](/en/blog/agent-engineering-interview-05-production-en)

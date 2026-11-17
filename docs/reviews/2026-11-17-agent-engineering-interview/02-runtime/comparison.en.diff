@@ -1,0 +1,11 @@
+--- 优化前/baseline.en.md
++++ 正文/agent-engineering-interview-02-runtime-en.mdx
+@@ -71,7 +71,7 @@
+ 
+ Cancellation follows `running` → `cancelling` → stop creating steps → request cancellation of in-flight work → reconcile side effects → `cancelled`. Existing effects need separate handling. Use `outcome_unknown` if they cannot be verified.
+ 
+-Replay uses recorded tool arguments and results and re-executes model or policy nodes. This isolates changes in the model, prompt, tool schema, retrieval results, or policy. Calling live tools again can repeat charges, submissions, or file overwrites.
++Replay uses recorded tool arguments and results and re-executes model or policy nodes. This helps identify whether a difference comes from the model, prompt, tool schema, retrieval results, or policy. Calling live tools again can repeat charges, submissions, or file overwrites.
+ 
+ ## 10. Interview questions
+ 

@@ -1,0 +1,771 @@
+{
+  "meta": {
+    "n_candidates": 76,
+    "n_rename": 17,
+    "n_cohesion": 48,
+    "n_colon": 11,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "para": "生产环境面对的是持续运行、并发请求、外部服务故障、模型升级、任务中断和数据一致性问题。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于生产环境的运行要求，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 23,
+      "para": "例如 Coding Agent 即使给出一段看起来合理的解释，如果代码没有真正修改成功，仍然应该判定为任务失败。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于评测与交付的主题，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 83,
+      "para": "例如，某个 Agent 的平均任务成功率很高，但出现了越权访问，也不能因此判定它可以上线。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于权限违规和平均分，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 87,
+      "para": "如果一个 Agent 最终返回了错误结果，仅仅保存用户输入和最终回答是不够的。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于输入与最终回答，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 104,
+      "para": "traceid、userid、tenantid、sessionid、taskid、runid、模型版本、Prompt 版本、工具版本、检索候选、Token 用量、工具参数摘要、审批记录、状态迁移、结果引用、错误类型、耗时和成本。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于Trace 标识、版本与指标，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 125,
+      "para": "如果重新执行时再次调用真实工具，外部数据可能已经发生变化，甚至产生新的副作用。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于外部数据变化和新副作用，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 145,
+      "para": "如果检索找到了正确文档，但最终 Prompt 没有包含它，需要检查上下文预算和候选选择。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于上下文预算和证据选择，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 147,
+      "para": "如果正确证据已经进入上下文，但答案依然错误，就需要检查模型行为、证据冲突和生成约束。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于错误来源和生成约束，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 155,
+      "para": "不要只看单次模型调用成本，而应该看完成一个有效业务任务的总成本。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于单次调用与任务总成本，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 237,
+      "para": "如果直接在 HTTP 请求中等待模型、文档解析或外部工具执行，容易导致连接超时和服务资源占用。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于HTTP 等待与资源占用，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 253,
+      "para": "消息通常只能保证至少一次投递，因此消费者必须通过事件 ID 或任务步骤 ID 实现幂等。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于消息、事件和幂等，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 257,
+      "para": "在同一个数据库事务中写入业务任务和待发布事件，再由独立发布器投递消息。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于事务写入与独立发布，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 282,
+      "para": "模型输出的临时 Token 可以重新构建，但已确认的任务状态和工具执行结果必须以服务端事实为准。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于临时输出和权威状态，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 313,
+      "para": "还必须设置连接超时、读取超时和整体任务超时，并正确处理协程取消和资源释放。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于各类超时与资源释放，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 323,
+      "para": "API 排队、Worker 等待、文档解析、检索、模型首 Token、模型总耗时、工具执行、人工等待、数据库查询和前端订阅。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于延迟阶段，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 340,
+      "para": "通过限定 tenant 与已授权运行范围并增加索引，在合成负载中将相关查询从约 0.6 秒优化到约 3 毫秒。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于单查询范围与索引结果，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 400,
+      "para": "系统发生了什么、为什么发生、如何复现、如何修复，以及如何防止再次发生。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于事故归因与复现步骤，没有用不同实义名称重复指同一项。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "prev_tail": "一个 Agent 在本地成功运行一次，并不能证明它已经具备生产能力",
+      "next_head": "生产环境面对的是持续运行、并发请求、外部服务故障、模型升级、任务中断和数据一致性问题",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 11,
+      "prev_tail": "生产环境面对的是持续运行、并发请求、外部服务故障、模型升级、任务中断和数据一致性问题",
+      "next_head": "任务执行 → 状态记录 → 结果验证 → 质量评测 → 问题归因 → 系统优化",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 13,
+      "prev_tail": "任务执行 → 状态记录 → 结果验证 → 质量评测 → 问题归因 → 系统优化",
+      "next_head": "本文重点讨论 Agent 从开发环境走向生产环境需要解决的五个问题：",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 23,
+      "prev_tail": "本文重点讨论 Agent 从开发环境走向生产环境需要解决的五个问题：",
+      "next_head": "例如 Coding Agent 即使给出一段看起来合理的解释，如果代码没有真正修改成功，仍然应该判定为任务失败",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 29,
+      "prev_tail": "例如 Coding Agent 即使给出一段看起来合理的解释，如果代码没有真正修改成功，仍然应该判定为任务失败",
+      "next_head": "判断模型的理解、推理和结构化输出是否符合预期",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 33,
+      "prev_tail": "判断模型的理解、推理和结构化输出是否符合预期",
+      "next_head": "判断工具选择、参数生成、执行权限和异常处理是否正确",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 83,
+      "prev_tail": "判断工具选择、参数生成、执行权限和异常处理是否正确",
+      "next_head": "例如，某个 Agent 的平均任务成功率很高，但出现了越权访问，也不能因此判定它可以上线",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 87,
+      "prev_tail": "例如，某个 Agent 的平均任务成功率很高，但出现了越权访问，也不能因此判定它可以上线",
+      "next_head": "如果一个 Agent 最终返回了错误结果，仅仅保存用户输入和最终回答是不够的",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 104,
+      "prev_tail": "如果一个 Agent 最终返回了错误结果，仅仅保存用户输入和最终回答是不够的",
+      "next_head": "traceid、userid、tenantid、sessionid、taskid、runid、模型版本、Prompt 版本、工具版本、检索候选、Token 用量、工具参数摘要、审批记录、状态迁移、结果引用、错误类型、耗时和成本",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 106,
+      "prev_tail": "traceid、userid、tenantid、sessionid、taskid、runid、模型版本、Prompt 版本、工具版本、检索候选、Token 用量、工具参数摘要、审批记录、状态迁移、结果引用、错误类型、耗时和成本",
+      "next_head": "但是，不应该无差别记录密钥、完整敏感文档和所有内部推理内容",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 108,
+      "prev_tail": "但是，不应该无差别记录密钥、完整敏感文档和所有内部推理内容",
+      "next_head": "敏感数据应该脱敏，必要正文保存到受控对象存储",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 125,
+      "prev_tail": "敏感数据应该脱敏，必要正文保存到受控对象存储",
+      "next_head": "如果重新执行时再次调用真实工具，外部数据可能已经发生变化，甚至产生新的副作用",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 127,
+      "prev_tail": "如果重新执行时再次调用真实工具，外部数据可能已经发生变化，甚至产生新的副作用",
+      "next_head": "因此，普通 Replay 应冻结当时的工具结果，只重新执行模型和策略节点",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 129,
+      "prev_tail": "因此，普通 Replay 应冻结当时的工具结果，只重新执行模型和策略节点",
+      "next_head": "需要进行完整执行测试时，则应该使用独立沙箱和固定数据快照",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 137,
+      "prev_tail": "需要进行完整执行测试时，则应该使用独立沙箱和固定数据快照",
+      "next_head": "用户输入 → 检索 → 上下文 → 模型决策 → 工具执行 → 状态变化 → 最终展示",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 143,
+      "prev_tail": "用户输入 → 检索 → 上下文 → 模型决策 → 工具执行 → 状态变化 → 最终展示",
+      "next_head": "如果检索没有找到正确文档，需要检查解析、Chunk、Query 和索引",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 145,
+      "prev_tail": "如果检索没有找到正确文档，需要检查解析、Chunk、Query 和索引",
+      "next_head": "如果检索找到了正确文档，但最终 Prompt 没有包含它，需要检查上下文预算和候选选择",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 147,
+      "prev_tail": "如果检索找到了正确文档，但最终 Prompt 没有包含它，需要检查上下文预算和候选选择",
+      "next_head": "如果正确证据已经进入上下文，但答案依然错误，就需要检查模型行为、证据冲突和生成约束",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 155,
+      "prev_tail": "如果正确证据已经进入上下文，但答案依然错误，就需要检查模型行为、证据冲突和生成约束",
+      "next_head": "不要只看单次模型调用成本，而应该看完成一个有效业务任务的总成本",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 157,
+      "prev_tail": "不要只看单次模型调用成本，而应该看完成一个有效业务任务的总成本",
+      "next_head": "一个 Agent 可能调用模型十次才完成任务，也可能一次调用就成功",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 185,
+      "prev_tail": "一个 Agent 可能调用模型十次才完成任务，也可能一次调用就成功",
+      "next_head": "简单分类和改写任务使用低成本模型，复杂任务再使用高能力模型",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "同属本篇工程主题，但前句讲的机制与后句的关注点不同。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 199,
+      "prev_tail": "简单分类和改写任务使用低成本模型，复杂任务再使用高能力模型",
+      "next_head": "最终应比较单位成功任务成本，而不是单纯追求 Token 数量下降",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 207,
+      "prev_tail": "最终应比较单位成功任务成本，而不是单纯追求 Token 数量下降",
+      "next_head": "保存用户、租户、会话、任务、审批、工具调用、规则和审计等强一致业务事实",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 211,
+      "prev_tail": "保存用户、租户、会话、任务、审批、工具调用、规则和审计等强一致业务事实",
+      "next_head": "保存短期缓存、滑动窗口、限流计数、临时通知、短租约和去重标记",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 215,
+      "prev_tail": "保存短期缓存、滑动窗口、限流计数、临时通知、短租约和去重标记",
+      "next_head": "保存全文倒排索引，负责关键词检索、精确术语和过滤",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 223,
+      "prev_tail": "保存全文倒排索引，负责关键词检索、精确术语和过滤",
+      "next_head": "保存原始附件、解析结果、大型工具输出、报告和不可变快照",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 231,
+      "prev_tail": "保存原始附件、解析结果、大型工具输出、报告和不可变快照",
+      "next_head": "所有存储都应该通过租户、用户、文档版本和任务 ID 建立关联",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 237,
+      "prev_tail": "所有存储都应该通过租户、用户、文档版本和任务 ID 建立关联",
+      "next_head": "如果直接在 HTTP 请求中等待模型、文档解析或外部工具执行，容易导致连接超时和服务资源占用",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 241,
+      "prev_tail": "如果直接在 HTTP 请求中等待模型、文档解析或外部工具执行，容易导致连接超时和服务资源占用",
+      "next_head": "API 接收请求 → PostgreSQL 保存任务 → 投递消息 → Worker 消费 → 更新任务状态 → SSE 推送进度",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 253,
+      "prev_tail": "API 接收请求 → PostgreSQL 保存任务 → 投递消息 → Worker 消费 → 更新任务状态 → SSE 推送进度",
+      "next_head": "消息通常只能保证至少一次投递，因此消费者必须通过事件 ID 或任务步骤 ID 实现幂等",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 255,
+      "prev_tail": "消息通常只能保证至少一次投递，因此消费者必须通过事件 ID 或任务步骤 ID 实现幂等",
+      "next_head": "如果需要数据库与消息发布的一致性，可以使用 Transactional Outbox：",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 257,
+      "prev_tail": "如果需要数据库与消息发布的一致性，可以使用 Transactional Outbox：",
+      "next_head": "在同一个数据库事务中写入业务任务和待发布事件，再由独立发布器投递消息",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 280,
+      "prev_tail": "在同一个数据库事务中写入业务任务和待发布事件，再由独立发布器投递消息",
+      "next_head": "服务端先返回必要的权威状态快照，再补发后续事件",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 282,
+      "prev_tail": "服务端先返回必要的权威状态快照，再补发后续事件",
+      "next_head": "模型输出的临时 Token 可以重新构建，但已确认的任务状态和工具执行结果必须以服务端事实为准",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 303,
+      "prev_tail": "模型输出的临时 Token 可以重新构建，但已确认的任务状态和工具执行结果必须以服务端事实为准",
+      "next_head": "还需要通过 Semaphore 或有界 Worker Queue 控制并发，防止创建无限任务",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 313,
+      "prev_tail": "还需要通过 Semaphore 或有界 Worker Queue 控制并发，防止创建无限任务",
+      "next_head": "还必须设置连接超时、读取超时和整体任务超时，并正确处理协程取消和资源释放",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 315,
+      "prev_tail": "还必须设置连接超时、读取超时和整体任务超时，并正确处理协程取消和资源释放",
+      "next_head": "取消本地协程并不意味着外部副作用已经撤销",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 319,
+      "prev_tail": "取消本地协程并不意味着外部副作用已经撤销",
+      "next_head": "当线上长任务耗时从 5 分钟增加到 20 分钟时，不应该直接认为模型变慢了",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 323,
+      "prev_tail": "当线上长任务耗时从 5 分钟增加到 20 分钟时，不应该直接认为模型变慢了",
+      "next_head": "API 排队、Worker 等待、文档解析、检索、模型首 Token、模型总耗时、工具执行、人工等待、数据库查询和前端订阅",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 338,
+      "prev_tail": "API 排队、Worker 等待、文档解析、检索、模型首 Token、模型总耗时、工具执行、人工等待、数据库查询和前端订阅",
+      "next_head": "DevPilot 在 RLS 场景下，曾定位命令历史查询扫描大量无关记录的问题",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 340,
+      "prev_tail": "DevPilot 在 RLS 场景下，曾定位命令历史查询扫描大量无关记录的问题",
+      "next_head": "通过限定 tenant 与已授权运行范围并增加索引，在合成负载中将相关查询从约 0.6 秒优化到约 3 毫秒",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 342,
+      "prev_tail": "通过限定 tenant 与已授权运行范围并增加索引，在合成负载中将相关查询从约 0.6 秒优化到约 3 毫秒",
+      "next_head": "这个结果只代表特定查询场景，不能直接包装成整个 Agent 平台的 P95 性能",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 365,
+      "prev_tail": "这个结果只代表特定查询场景，不能直接包装成整个 Agent 平台的 P95 性能",
+      "next_head": "然后选取 20～50 个具有代表性的案例，定义必须满足、允许差异和拒答条件",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 396,
+      "prev_tail": "然后选取 20～50 个具有代表性的案例，定义必须满足、允许差异和拒答条件",
+      "next_head": "只会介绍 Prompt、LangChain 或 LangGraph API 的候选人，通常还没有真正理解生产 Agent 的复杂性",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 400,
+      "prev_tail": "只会介绍 Prompt、LangChain 或 LangGraph API 的候选人，通常还没有真正理解生产 Agent 的复杂性",
+      "next_head": "系统发生了什么、为什么发生、如何复现、如何修复，以及如何防止再次发生",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 404,
+      "prev_tail": "系统发生了什么、为什么发生、如何复现、如何修复，以及如何防止再次发生",
+      "next_head": "Agent 技术正在从模型调用层面，逐步转向完整的执行系统工程",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 406,
+      "prev_tail": "Agent 技术正在从模型调用层面，逐步转向完整的执行系统工程",
+      "next_head": "未来真正有价值的 Agent 工程师，不仅需要理解模型和 Prompt，还需要掌握：",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 422,
+      "prev_tail": "未来真正有价值的 Agent 工程师，不仅需要理解模型和 Prompt，还需要掌握：",
+      "next_head": "工程基础设施决定这些执行能否持续、稳定、可验证地交付",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    }
+  ],
+  "colon": [
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 27,
+      "colon_before": "第一层",
+      "colon_after": "模型输出质量。",
+      "sentence": "第一层：模型输出质量。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 31,
+      "colon_before": "第二层",
+      "colon_after": "工具行为质量。",
+      "sentence": "第二层：工具行为质量。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 35,
+      "colon_before": "第三层",
+      "colon_after": "流程状态质量。",
+      "sentence": "第三层：流程状态质量。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 39,
+      "colon_before": "第四层",
+      "colon_after": "业务结果质量。",
+      "sentence": "第四层：业务结果质量。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 307,
+      "colon_before": "I/O 密集型",
+      "colon_after": "asyncio。",
+      "sentence": "I/O 密集型：asyncio。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "任务类别和技术方案以标签配对，用于版式导航。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 309,
+      "colon_before": "阻塞 I/O",
+      "colon_after": "受控线程池。",
+      "sentence": "阻塞 I/O：受控线程池。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "任务类别和技术方案以标签配对，用于版式导航。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 311,
+      "colon_before": "CPU 密集型",
+      "colon_after": "进程池或独立计算服务。",
+      "sentence": "CPU 密集型：进程池或独立计算服务。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "任务类别和技术方案以标签配对，用于版式导航。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 371,
+      "colon_before": "第一阶段",
+      "colon_after": "正确检索资料并给出引用。",
+      "sentence": "第一阶段：正确检索资料并给出引用。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 373,
+      "colon_before": "第二阶段",
+      "colon_after": "增加受控工具调用。",
+      "sentence": "第二阶段：增加受控工具调用。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 375,
+      "colon_before": "第三阶段",
+      "colon_after": "增加人工审批和任务恢复。",
+      "sentence": "第三阶段：增加人工审批和任务恢复。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 377,
+      "colon_before": "第四阶段",
+      "colon_after": "增加多 Agent 和复杂任务编排。",
+      "sentence": "第四阶段：增加多 Agent 和复杂任务编排。",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "编号与简短内容配对，承担评测层级或交付阶段的标签。"
+    }
+  ],
+  "iso3": []
+}

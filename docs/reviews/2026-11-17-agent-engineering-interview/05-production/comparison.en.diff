@@ -1,0 +1,77 @@
+--- 优化前/baseline.en.md
++++ 正文/agent-engineering-interview-05-production-en.mdx
+@@ -17,15 +17,15 @@
+ 
+ ## 3. Build a golden set for expected paths and failures
+ 
+-- **Coding agent**: Pin the repository commit and record the original task, edit scope, prohibited actions, tests, grants, and expected result.
+-- **RAG**: Pin the questions, reference evidence, document versions, access rules, citations, and conditions for abstention.
++- **Coding agent**: Pin the repository commit and record the original task, edit scope, prohibited actions, required tests, permissions granted, and expected result.
++- **RAG**: Pin the questions, reference evidence, document versions, access rules, expected citations, and conditions for abstention.
+ - **Failures**: Include timeouts, permission denials, empty results, data conflicts, revocation, interruption, prompt injection, and model drift.
+ 
+ A security violation remains a failure even if the average score is high.
+ 
+ ## 4. Which questions should a trace answer?
+ 
+-What context was used? What did retrieval return? Why did the model choose this tool? Did the arguments pass validation? Was the action authorized? Did it succeed? How did state change, and how was the outcome verified? A trace should connect the answers.
++What context was used? What did retrieval return? Was the tool choice appropriate? Did the arguments pass validation? Was the action authorized? Did it succeed? How did state change? How was the final result produced and verified? A trace should connect the answers.
+ 
+ Record `trace_id`, `user_id`, `tenant_id`, `session_id`, `task_id`, and `run_id`, plus model, prompt, and tool versions, retrieval candidates, token counts, argument summaries, approval events, state transitions, result references, errors, latency, and cost. Redact logs and keep secrets, whole sensitive documents, and internal model reasoning out. Store necessary large artifacts in access-controlled object storage and put references in the trace. [OpenTelemetry traces](https://opentelemetry.io/docs/concepts/signals/traces/)
+ 
+@@ -39,12 +39,12 @@
+ 
+ ## 7. Measure cost per successful task
+ 
+-Compare ten model calls with one by measuring **what each successful business task actually costs**. Track input and output tokens, calls, cache hits, tool usage, retries, success, human takeover, and total cost. Break it down by task, model, and step.
++Compare ten model calls with one by measuring **what each successful business task actually costs**. Track input and output tokens, calls, cache hit rate, tool calls, retries, success rate, human takeover rate, and total cost. Break it down by task, model, and step.
+ 
+ 1. Deduplicate context and replace repeated input with summaries or on-demand loading.
+ 2. Load tool schemas as needed.
+-3. Route simple work to cheaper models and complex work to stronger ones.
+-4. Cache embeddings, parsed artifacts, and deterministic computations.
++3. Route simple classification and rewriting to cheaper models and complex work to stronger ones.
++4. Cache embeddings, parsed artifacts, and deterministic tool results.
+ 5. Cap steps, output, and retries.
+ 6. Batch work without real-time requirements.
+ 
+@@ -62,13 +62,13 @@
+ 
+ ## 9. Schedule long-running tasks
+ 
+-An agent run can last several minutes or longer. In a typical flow, the API stores the task in PostgreSQL, a queue notifies a worker, and the worker updates state for the client to receive through SSE. The queue handles asynchronous work, load smoothing, scheduling, retries, and multiple workers. A separate state machine owns task state.
++An agent run can last several minutes or longer. Waiting for models, document parsing, or external tools within the HTTP request can time out and tie up resources. In a typical flow, the API stores the task in PostgreSQL, a queue notifies a worker, and the worker updates state for the client to receive through SSE. The queue handles asynchronous work, load smoothing, scheduling, retries, and multiple workers. A separate state machine owns task state.
+ 
+ With at-least-once delivery, consumers deduplicate by event ID or step ID. A transactional outbox writes the task and pending event in a single transaction. A separate publisher delivers the event. [AWS transactional outbox guidance](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html)
+ 
+ ## 10. Resume frontend progress with SSE
+ 
+-SSE can push tokens, tool start and finish events, approvals, progress, and results. Connect each event to a session, run, and event ID, with an increasing sequence number. After a disconnect, resume after the last sequence confirmed by the client. Fetch an authoritative snapshot first if needed, then apply newer events. Tokens can be transient. The server's task state and tool receipts are authoritative. [WHATWG SSE specification](https://html.spec.whatwg.org/multipage/server-sent-events.html)
++SSE can push tokens, tool start and finish events, pending approvals, progress, and results. Connect each event to a session, run, and event ID, with an increasing sequence number. After a disconnect, resume after the last sequence confirmed by the client. Fetch an authoritative snapshot first if needed, then apply newer events. Tokens can be transient. The server's task state and tool receipts are authoritative. [WHATWG SSE specification](https://html.spec.whatwg.org/multipage/server-sent-events.html)
+ 
+ ## 11. Where asyncio fits
+ 
+@@ -86,19 +86,19 @@
+ 
+ Identify users, tasks, available data and tools, completion criteria, prohibited actions, the cost of mistakes, and latency and cost limits. Use **20–50 representative cases** to agree on required outcomes, acceptable variation, and when to abstain.
+ 
+-Roll out retrieval with citations, then bounded tools, then approval and resumption, and finally evaluate multiple agents or more complex orchestration. Keep adding real failures to the evaluation set.
++Start with the smallest end-to-end deliverable, retrieval with citations. Follow it with bounded tools and then approval and resumption. Finally, evaluate whether multiple agents or more complex orchestration are warranted. Keep adding real failures to the evaluation set.
+ 
+ ## 14. Ten production interview questions
+ 
+-1. Who uses the system and what is the workload?
++1. How many real users and tasks does the system handle?
+ 2. Where does task state live?
+ 3. What happens if a tool loses connectivity halfway through?
+-4. What happens when a user revokes permission?
++4. What happens to in-flight tasks when a user revokes permission?
+ 5. How do you avoid duplicate charges or execution?
+ 6. How do you replay a run?
+ 7. How is the golden set constructed?
+ 8. How do you trace and diagnose a failure?
+-9. How do you calculate the cost of a successful task?
++9. How do you measure and reduce cost per successful task?
+ 10. How do you handle behavior drift after a model upgrade?
+ 
+ Explain what happened, why, how to reproduce it, what fixed it, and how to catch it again.

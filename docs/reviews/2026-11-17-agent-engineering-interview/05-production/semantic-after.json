@@ -1,0 +1,311 @@
+{
+  "meta": {
+    "n_candidates": 31,
+    "n_rename": 15,
+    "n_cohesion": 16,
+    "n_colon": 0,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 7,
+      "para": "本地跑通一次，只能说明这次执行成功。上线前还要回答系统能否长期运行、承受并发、应对上游故障与模型升级，以及在运行中断后恢复并保持状态一致。每次运行应能执行、记录、验证、评测、归因，再据此优化。本篇围绕评测、可观测性、成本、基础设施和需求交付展开。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于导语中的工程主题，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 28,
+      "para": "Trace 从上下文与检索候选开始，记录选了什么工具，便于检查选择是否合适。沿记录继续看参数校验、执行授权、工具结果与状态变化，找到最终结果如何生成及验证。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于生产风险与运行链路，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 30,
+      "para": "记录 traceid、userid、tenantid、sessionid、taskid、runid，以及模型、提示词和工具版本、检索候选、Token 数、参数摘要、审批事件、状态迁移、结果引用、错误、耗时和成本。日志应脱敏，避免写入密钥、整份敏感文档和模型内部推理。必要的大型产物存入受控对象存储，Trace 只保留引用。OpenTelemetry Trace 文档",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于Trace 阶段与最终结果，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 34,
+      "para": "要判断行为变化来自模型、提示词、检索、工具 Schema、策略还是状态，先固定工具输出，再重跑模型或策略节点。直接重调真实工具可能读到变化后的数据，也可能重复产生副作用。全流程回放应在控制环境中使用沙箱和固定数据。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于Trace 标识、字段和存储，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 38,
+      "para": "按输入、检索、上下文、模型、工具、状态到展示逐步排查，每一段保留对应指标。找不到文档时先查解析、切块、查询和索引；检索命中但没进入上下文时，查选择策略与预算；证据已进入上下文还答错时，查模型、事实冲突与约束。修完后把故障样例加入 Golden Set。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于回放可控变量，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 42,
+      "para": "十次模型调用与一次调用的比较，要落到每个成功业务任务的实际成本。记录输入和输出 Token、模型调用数、缓存命中率、工具调用次数、重试次数、成功率、人工接管率和总费用，再按任务、模型和步骤拆账。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于定位坏例的检查项，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 61,
+      "para": "业务事实留在权威数据库，最终授权由业务系统核验。各类记录关联租户、用户、版本和任务。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于调用量、成功成本和观测项，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 65,
+      "para": "任务可能持续几分钟甚至更久。在 HTTP 请求内等待模型、文档解析或外部工具，容易超时并长期占用服务资源。典型链路是 API 保存任务到 PostgreSQL，队列通知 Worker，Worker 更新任务状态，再通过 SSE 推送给客户端。队列提供异步处理、削峰、调度、重试与多 Worker 消费，任务状态由独立状态机管理。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于数据库、权限与记录关联，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 75,
+      "para": "调用模型 API、数据库、HTTP、对象存储、队列和工具通常涉及 I/O。async def 函数调用返回协程，需要 await 或调度为 Task 才会运行。异步 I/O 不会自动带来并行或并发上限，使用信号量、有界队列等显式限流。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于请求、队列、状态机和 Worker，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 81,
+      "para": "分解 API 排队、Worker 排队、文档解析、检索、首 Token、模型总耗时、工具耗时、人工等待、数据库和前端订阅。对照 P50、P95 与积压、并发、下游限流、重试放大、慢 SQL、锁等待、Token 增长和重复工具调用。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于Outbox 与消息去重，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 83,
+      "para": "原稿的 DevPilot 案例中，RLS 下的命令历史查询扫描范围过大。限定租户及获授权的运行范围后调整索引，单条查询在合成负载下由约 0.6 秒降至约 3 毫秒。这个数字只描述原稿报告的单条查询，不能当作平台 P95。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于SSE 事件和重连数据，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 87,
+      "para": "先问清用户是谁、任务是什么、可用数据和工具、什么算完成、哪些动作禁止、错误代价，以及延迟和成本上限。用 20–50 个代表性案例约定结果要求、允许的差异和拒答条件。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于I/O、协程与并发控制，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 89,
+      "para": "先交付最小的端到端流程，即带引用的检索。随后开放受限工具、引入审批与恢复，再评估是否需要多 Agent 或复杂编排。实际失败案例持续补入评测集。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于分段耗时和并发信号，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 104,
+      "para": "回答时说清发生了什么、为什么发生、如何复现、怎么修复，以及如何防止再次出现。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于单查询基准与平台 P95，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 108,
+      "para": "Agent 工程涵盖架构、状态、工具治理、权限与安全、上下文、检索、分布式工程、评测与可观测性、成本与性能。模型提出行动，Harness 校验授权并安排执行，基础设施让结果可以持久化、恢复和验证。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于需求范围和验收用例，没有用不同实义名称重复指同一项。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 7,
+      "prev_tail": "从 Golden Set、Trace 和 Replay 讲到异步队列、SSE 和延迟排查，最后用 10 道问题检验生产级 Agent 的工程能力",
+      "next_head": "本地跑通一次，只能说明这次执行成功",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 16,
+      "prev_tail": "本篇围绕评测、可观测性、成本、基础设施和需求交付展开",
+      "next_head": "Coding Agent 即使生成了流畅的说明，只要代码仍未修改，就没有完成修复任务",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 28,
+      "prev_tail": "Coding Agent 即使生成了流畅的说明，只要代码仍未修改，就没有完成修复任务",
+      "next_head": "Trace 从上下文与检索候选开始，记录选了什么工具，便于检查选择是否合适",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 30,
+      "prev_tail": "沿记录继续看参数校验、执行授权、工具结果与状态变化，找到最终结果如何生成及验证",
+      "next_head": "记录 traceid、userid、tenantid、sessionid、taskid、runid，以及模型、提示词和工具版本、检索候选、Token 数、参数摘要、审批事件、状态迁移、结果引用、错误、耗时和成本",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 34,
+      "prev_tail": "OpenTelemetry Trace 文档",
+      "next_head": "要判断行为变化来自模型、提示词、检索、工具 Schema、策略还是状态，先固定工具输出，再重跑模型或策略节点",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 38,
+      "prev_tail": "全流程回放应在控制环境中使用沙箱和固定数据",
+      "next_head": "按输入、检索、上下文、模型、工具、状态到展示逐步排查，每一段保留对应指标",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 42,
+      "prev_tail": "修完后把故障样例加入 Golden Set",
+      "next_head": "十次模型调用与一次调用的比较，要落到每个成功业务任务的实际成本",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 61,
+      "prev_tail": "记录输入和输出 Token、模型调用数、缓存命中率、工具调用次数、重试次数、成功率、人工接管率和总费用，再按任务、模型和步骤拆账",
+      "next_head": "业务事实留在权威数据库，最终授权由业务系统核验",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 65,
+      "prev_tail": "各类记录关联租户、用户、版本和任务",
+      "next_head": "任务可能持续几分钟甚至更久",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 75,
+      "prev_tail": "队列提供异步处理、削峰、调度、重试与多 Worker 消费，任务状态由独立状态机管理",
+      "next_head": "调用模型 API、数据库、HTTP、对象存储、队列和工具通常涉及 I/O",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 81,
+      "prev_tail": "异步 I/O 不会自动带来并行或并发上限，使用信号量、有界队列等显式限流",
+      "next_head": "分解 API 排队、Worker 排队、文档解析、检索、首 Token、模型总耗时、工具耗时、人工等待、数据库和前端订阅",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 83,
+      "prev_tail": "对照 P50、P95 与积压、并发、下游限流、重试放大、慢 SQL、锁等待、Token 增长和重复工具调用",
+      "next_head": "原稿的 DevPilot 案例中，RLS 下的命令历史查询扫描范围过大",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 87,
+      "prev_tail": "这个数字只描述原稿报告的单条查询，不能当作平台 P95",
+      "next_head": "先问清用户是谁、任务是什么、可用数据和工具、什么算完成、哪些动作禁止、错误代价，以及延迟和成本上限",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 89,
+      "prev_tail": "用 20–50 个代表性案例约定结果要求、允许的差异和拒答条件",
+      "next_head": "先交付最小的端到端流程，即带引用的检索",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 104,
+      "prev_tail": "实际失败案例持续补入评测集",
+      "next_head": "回答时说清发生了什么、为什么发生、如何复现、怎么修复，以及如何防止再次出现",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 108,
+      "prev_tail": "回答时说清发生了什么、为什么发生、如何复现、怎么修复，以及如何防止再次出现",
+      "next_head": "Agent 工程涵盖架构、状态、工具治理、权限与安全、上下文、检索、分布式工程、评测与可观测性、成本与性能",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    }
+  ],
+  "colon": [],
+  "iso3": []
+}

@@ -1,0 +1,245 @@
+{
+  "meta": {
+    "n_candidates": 24,
+    "n_rename": 11,
+    "n_cohesion": 13,
+    "n_colon": 0,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 7,
+      "para": "模型要查询企业数据库、改文件、提交代码或发起支付，都需要工具层。后端要解决注册与发现、工具选择、参数和权限校验、异常、重复调用、Prompt Injection 防护，以及多个 Agent 怎样共享工具。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于多种工具和治理问题，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 19,
+      "para": "把几十或数百个工具的说明和 Schema 一次放入上下文，会增加 Token 成本、选择难度和暴露面。可以先按任务和用户权限过滤，再通过目录路由，只加载需要的工具说明与 Schema，执行时重验权限和参数。高频、低风险工具可直接注册，低频工具按需发现。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于上下文成本、选择与权限，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 23,
+      "para": "每项工具至少记录 toolid、版本、描述、输入和输出 Schema、读写级别、资源范围、权限策略、审批策略、超时、重试策略、幂等支持、并发限制、负责人和健康状态。调用时固定版本，避免运行中协议漂移。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于注册中心字段，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 25,
+      "para": "跨 Agent 客户端复用可选 MCP。高频且与业务权限紧密绑定的内部工具可以保留类型安全的内部协议。两者可接同一个权限、审计和评测体系。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于客户端复用与内部协议，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 51,
+      "para": "例如，外部文档可能夹带把本地文件发往外部地址的要求。上传文件、网页、检索结果和工具返回文本应按不可信数据处理。仅靠 System Prompt 无法保证模型每次都能识别边界。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于非信任内容的来源，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 61,
+      "para": "原稿用 DevPilot 的私有工作副本、目录授权、IPC 白名单、Docker 受限命令及写回审批作例子。它们在执行端约束权限。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于DevPilot 的各项控制，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 65,
+      "para": "区分读取文件、查知识库和项目等只读操作，编辑私有副本、草稿和临时文件等可逆写入，以及支付、发外部消息、提交正式订单和写生产资源等外部高风险或不可逆操作。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于三档工具操作，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 67,
+      "para": "审批界面展示实际操作、目标、关键参数、Diff、依据、可能影响和有效期。按风险级别设置权限和审批。执行前重验授权，执行后保存真实回执。消息、支付和外部提交可能已不可撤销，状态应如实反映。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于审批信息和执行记录，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 71,
+      "para": "工具和上下文都简单时，单 Agent 通常更便宜，也更容易控制。角色需要不同工具或权限、子任务可并行、上下文须隔离、需要独立验证降低同源偏差或单一上下文过载时，多 Agent 才有价值。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于多 Agent 的选用条件，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 80,
+      "para": "共享结构化任务对象，含目标、约束、依赖、确认事实、产物引用和全局预算。局部草稿、临时检索、角色内部执行细节和中间状态由各角色维护。交接至少带 taskid、输入版本、输出 Schema、证据引用、完成状态、错误类型及剩余风险。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于共享、私有与交接对象，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "optimized.zh-CN.md",
+      "line": 82,
+      "para": "用 Git commit、文档版本和规则版本固定业务快照。并行编辑优先用独立 worktree 或私有副本，以共同基线做三方合并、冲突检测、测试和审阅。若必须共享锁，用租约和超时限制锁的生命周期，存储端用 fencing token 拒绝过期持有者的写入。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于版本、工作副本和锁，没有用不同实义名称重复指同一项。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 7,
+      "prev_tail": "从 Function Calling、MCP 和 Skill 的分工出发，准备工具注册、执行校验、Prompt Injection 防护和多 Agent 协作的面试题",
+      "next_head": "模型要查询企业数据库、改文件、提交代码或发起支付，都需要工具层",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 19,
+      "prev_tail": "后端要解决注册与发现、工具选择、参数和权限校验、异常、重复调用、Prompt Injection 防护，以及多个 Agent 怎样共享工具",
+      "next_head": "把几十或数百个工具的说明和 Schema 一次放入上下文，会增加 Token 成本、选择难度和暴露面",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 23,
+      "prev_tail": "高频、低风险工具可直接注册，低频工具按需发现",
+      "next_head": "每项工具至少记录 toolid、版本、描述、输入和输出 Schema、读写级别、资源范围、权限策略、审批策略、超时、重试策略、幂等支持、并发限制、负责人和健康状态",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 25,
+      "prev_tail": "调用时固定版本，避免运行中协议漂移",
+      "next_head": "跨 Agent 客户端复用可选 MCP",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 47,
+      "prev_tail": "两者可接同一个权限、审计和评测体系",
+      "next_head": "重试受总任务预算约束，使用指数退避和随机抖动",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 51,
+      "prev_tail": "重试受总任务预算约束，使用指数退避和随机抖动",
+      "next_head": "例如，外部文档可能夹带把本地文件发往外部地址的要求",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 61,
+      "prev_tail": "仅靠 System Prompt 无法保证模型每次都能识别边界",
+      "next_head": "原稿用 DevPilot 的私有工作副本、目录授权、IPC 白名单、Docker 受限命令及写回审批作例子",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 65,
+      "prev_tail": "它们在执行端约束权限",
+      "next_head": "区分读取文件、查知识库和项目等只读操作，编辑私有副本、草稿和临时文件等可逆写入，以及支付、发外部消息、提交正式订单和写生产资源等外部高风险或不可逆操作",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 67,
+      "prev_tail": "区分读取文件、查知识库和项目等只读操作，编辑私有副本、草稿和临时文件等可逆写入，以及支付、发外部消息、提交正式订单和写生产资源等外部高风险或不可逆操作",
+      "next_head": "审批界面展示实际操作、目标、关键参数、Diff、依据、可能影响和有效期",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 71,
+      "prev_tail": "消息、支付和外部提交可能已不可撤销，状态应如实反映",
+      "next_head": "工具和上下文都简单时，单 Agent 通常更便宜，也更容易控制",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 80,
+      "prev_tail": "角色需要不同工具或权限、子任务可并行、上下文须隔离、需要独立验证降低同源偏差或单一上下文过载时，多 Agent 才有价值",
+      "next_head": "共享结构化任务对象，含目标、约束、依赖、确认事实、产物引用和全局预算",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 82,
+      "prev_tail": "交接至少带 taskid、输入版本、输出 Schema、证据引用、完成状态、错误类型及剩余风险",
+      "next_head": "用 Git commit、文档版本和规则版本固定业务快照",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "optimized.zh-CN.md",
+      "line": 99,
+      "prev_tail": "若必须共享锁，用租约和超时限制锁的生命周期，存储端用 fencing token 拒绝过期持有者的写入",
+      "next_head": "回答要落到权限、异常、并发和不可信输入下的执行行为",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    }
+  ],
+  "colon": [],
+  "iso3": []
+}

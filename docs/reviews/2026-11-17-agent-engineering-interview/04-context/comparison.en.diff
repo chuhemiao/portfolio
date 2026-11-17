@@ -1,0 +1,11 @@
+--- 优化前/baseline.en.md
++++ 正文/agent-engineering-interview-04-context-en.mdx
+@@ -58,7 +58,7 @@
+ 
+ BM25 works well for error codes, function names, model numbers, clause numbers, and proper nouns. Its matches are interpretable, but synonyms can slip through. Vector retrieval uses embeddings to find semantic similarity between queries and documents. It suits natural language, can miss exact identifiers, and depends on the embedding model and domain.
+ 
+-Use RRF to combine the rankings after both methods retrieve candidates. For retrievers that return document `d`, sum `RRF(d) = Σ 1 / (k + rank_i(d))`. Here `rank_i(d)` is its one-based rank in that result list and `k` is a smoothing constant. The raw scores never need to be compared. Rerank only the top N candidates to bound the cost of finer relevance scoring. [Elasticsearch RRF documentation](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)
++Use RRF to combine the rankings after both methods retrieve candidates. For document `d`, sum over the retrievers that returned it: `RRF(d) = Σ 1 / (k + rank_i(d))`. Here `rank_i(d)` is its one-based rank in that result list and `k` is a smoothing constant. The raw scores never need to be compared. Rerank only the top N candidates to bound the cost of finer relevance scoring. [Elasticsearch RRF documentation](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)
+ 
+ ## 9. When GraphRAG earns its cost
+ 

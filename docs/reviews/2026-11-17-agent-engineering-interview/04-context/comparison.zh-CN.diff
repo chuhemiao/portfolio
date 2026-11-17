@@ -1,0 +1,11 @@
+--- 优化前/baseline.zh-CN.md
++++ 正文/agent-engineering-interview-04-context.mdx
+@@ -56,7 +56,7 @@
+ 
+ ## 八、BM25、向量检索、RRF 和重排
+ 
+-BM25 擅长错误码、函数名、型号、条款编号和专名，精确且易解释，但难处理同义表述。向量检索按 Embedding 找语义近似的查询和文档，适合自然语言；它可能漏掉精确标识，表现也受模型和领域影响。
++BM25 擅长错误码、函数名、型号、条款编号和专名，精确且易解释，但难处理同义表述。向量检索用 Embedding 查找与查询语义相近的文档，适合自然语言；它可能漏掉精确标识，表现也受模型和领域影响。
+ 
+ 两路召回后，可用 RRF 按排名融合。对召回了文档 `d` 的检索链路求和，`RRF(d) = Σ 1 / (k + rank_i(d))`，其中 `rank_i(d)` 是该链路中从 1 起算的排名，`k` 是平滑常数。这样无需直接比较原始分数。再对排名靠前的 Top N 候选做细粒度重排，把较高的计算成本限制在小范围。[Elasticsearch 的 RRF 文档](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)
+ 

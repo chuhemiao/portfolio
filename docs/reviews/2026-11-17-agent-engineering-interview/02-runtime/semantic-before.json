@@ -1,0 +1,207 @@
+{
+  "meta": {
+    "n_candidates": 20,
+    "n_rename": 9,
+    "n_cohesion": 11,
+    "n_colon": 0,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "para": "用户要求修复登录 Bug 并运行测试时，Coding Agent 可能要读项目、搜代码、分析、规划、改文件、运行测试、核验、再修改并交付。一次模型调用无法覆盖完整过程。Agent Loop 在每一步获得新结果，再推进到预先定义的完成条件。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于修复任务的步骤，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 13,
+      "para": "Plan-and-Execute 先提出可审阅计划，再执行。登录示例可分为检查项目结构、定位登录模块、分析原因、修改文件、运行测试和验证结果六步。这适合依赖清楚且需要管理进度或审批的任务。初始信息不足时要能重规划。可以先做整体计划，每步里使用有界 ReAct。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于计划与有界执行，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 26,
+      "para": "核验要落在可观察状态上。模型说 Bug 已修复时，仍要查文件是否变更、测试是否执行且通过、修改是否写回用户项目。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于代码变更、测试、写回等不同证据，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 45,
+      "para": "流程状态回答图走到哪里，业务状态由 PostgreSQL 保存任务、审批、工具调用和业务事件，执行器或外部工具的 Journal 记录文件操作、命令及副作用回执。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于流程、业务与执行状态，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 47,
+      "para": "若本地命令已改文件，但网络中断导致回执没到，Checkpoint 可能仍显示节点未完成，业务表只记录已开始，Journal 却已有真实结果。恢复前先对照执行状态，直接重跑可能产生重复副作用。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于命令执行和回执丢失，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 66,
+      "para": "支付完成但响应超时，是状态未知的典型例子，直接重试可能重复扣款。请求幂等避免重复提交，节点幂等避免节点重复产生结果，外部副作用幂等避免业务操作重复执行。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于超时、扣款和不同幂等层，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 68,
+      "para": "用 requestid、runid、stepid 和 commandid 给操作稳定标识。回执缺失时先查询外部状态或执行 Journal，仍无法确认就进入 outcomeunknown。跨模型、数据库、文件系统和外部服务，工程上更可行的是至少一次调度、业务幂等、执行回执和未知结果核验。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于稳定标识与回执核验，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 72,
+      "para": "取消的流程是 running → cancelling → 停止创建新步骤 → 请求取消在途任务 → 核验副作用 → cancelled。发生过的副作用需要单独处理，无法确认时保留 outcomeunknown。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于取消的状态迁移，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 74,
+      "para": "Replay 用保存的工具参数和结果重跑模型或策略节点，排查差异来自模型版本、Prompt、工具 Schema、检索结果还是策略。真实工具可能再次扣费、提交或覆盖文件。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于回放数据和差异来源，没有用不同实义名称重复指同一项。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "prev_tail": "围绕 Agent Loop、持久化审批、幂等、取消和 Replay，准备有关可靠执行与恢复的面试问题",
+      "next_head": "用户要求修复登录 Bug 并运行测试时，Coding Agent 可能要读项目、搜代码、分析、规划、改文件、运行测试、核验、再修改并交付",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 13,
+      "prev_tail": "Agent Loop 在每一步获得新结果，再推进到预先定义的完成条件",
+      "next_head": "Plan-and-Execute 先提出可审阅计划，再执行",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 26,
+      "prev_tail": "可以先做整体计划，每步里使用有界 ReAct",
+      "next_head": "核验要落在可观察状态上",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 45,
+      "prev_tail": "模型说 Bug 已修复时，仍要查文件是否变更、测试是否执行且通过、修改是否写回用户项目",
+      "next_head": "流程状态回答图走到哪里，业务状态由 PostgreSQL 保存任务、审批、工具调用和业务事件，执行器或外部工具的 Journal 记录文件操作、命令及副作用回执",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 47,
+      "prev_tail": "流程状态回答图走到哪里，业务状态由 PostgreSQL 保存任务、审批、工具调用和业务事件，执行器或外部工具的 Journal 记录文件操作、命令及副作用回执",
+      "next_head": "若本地命令已改文件，但网络中断导致回执没到，Checkpoint 可能仍显示节点未完成，业务表只记录已开始，Journal 却已有真实结果",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 51,
+      "prev_tail": "恢复前先对照执行状态，直接重跑可能产生重复副作用",
+      "next_head": "进程内 Promise 无法跨重启保留审批",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 66,
+      "prev_tail": "持久化流程可以这样设计",
+      "next_head": "支付完成但响应超时，是状态未知的典型例子，直接重试可能重复扣款",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 68,
+      "prev_tail": "请求幂等避免重复提交，节点幂等避免节点重复产生结果，外部副作用幂等避免业务操作重复执行",
+      "next_head": "用 requestid、runid、stepid 和 commandid 给操作稳定标识",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 72,
+      "prev_tail": "跨模型、数据库、文件系统和外部服务，工程上更可行的是至少一次调度、业务幂等、执行回执和未知结果核验",
+      "next_head": "取消的流程是 running → cancelling → 停止创建新步骤 → 请求取消在途任务 → 核验副作用 → cancelled",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 74,
+      "prev_tail": "发生过的副作用需要单独处理，无法确认时保留 outcomeunknown",
+      "next_head": "Replay 用保存的工具参数和结果重跑模型或策略节点，排查差异来自模型版本、Prompt、工具 Schema、检索结果还是策略",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 89,
+      "prev_tail": "真实工具可能再次扣费、提交或覆盖文件",
+      "next_head": "回答时交代每次运行的状态、执行边界、失败语义和恢复路径",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    }
+  ],
+  "colon": [],
+  "iso3": []
+}

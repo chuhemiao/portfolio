@@ -1,0 +1,263 @@
+{
+  "meta": {
+    "n_candidates": 26,
+    "n_rename": 13,
+    "n_cohesion": 13,
+    "n_colon": 0,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 3,
+      "para": "从上下文分层、压缩和记忆治理讲到混合检索、GraphRAG 与评测，给出定位 RAG 答非所问的逐层检查方法和 12 道面试题。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于文章的分层、治理和检索主题，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "para": "执行任务时，Agent 可能同时接触系统规则、用户目标、对话历史、任务状态、工具结果、企业知识库、外部网页和用户长期偏好。把它们都放进系统提示，会增加 Token 成本，也容易让关键信息淹没在冗余或相互冲突的内容里。Context Engineering 要决定每一步提供什么，并保证信息正确、完整、可信且可追溯。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于多种上下文输入和质量要求，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 22,
+      "para": "滑动窗口保留最近几轮的原文，近期指代和工具结果比较完整，但可能丢失更早的事实和限制。摘要能维持更长的连续性，也可能遗漏限制或写错事实。可以同时使用近期原文、结构化摘要和可以回查的原始记录。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于窗口、摘要与原始记录，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 24,
+      "para": "摘要应记下目标、已确认事实、用户约束、完成和待办事项、错误、产物引用、来源范围、生成时间和版本。审批、禁止动作、外部执行回执与当前工具协议要在压缩后保留。工具输出很大时，保存完整产物，只把摘要、关键统计和引用放入上下文。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于摘要字段与保留要求，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 32,
+      "para": "三个月前的偏好与今天的明确要求冲突时，按今天的要求执行。长期记录需要来源、置信度、所有者、创建时间、有效期和删除方式。模型提出的记忆候选应先判定是否值得长期保存。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于偏好冲突与记录元数据，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 36,
+      "para": "文档全量加载仍受窗口、费用、延迟、注意力、权限隔离和版本治理约束。RAG 让检索、权限过滤、来源追踪和知识更新可以复用。代码仓库中找精确符号可以用 grep 或直接读文件；大规模企业知识库的反复查询适合用 RAG，两类工具可以配合。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于全量加载的约束与 RAG 用途，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 51,
+      "para": "PDF 表头丢失或标题层级解析错误时，Embedding 和重排都很难补回信息。排查效果时，把文档质量、切块、元数据和权限一起纳入检查。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于文档解析与后续模型，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 55,
+      "para": "纯字符数切分容易打断标题、段落、列表、代码、表格和章节关系。优先沿这些边界切分，并让每块继承上级标题、文档版本和权限。表格应保留表头、行列、单位和合并单元格关系。没有标题时，可结合段落、空行、长度与主题转折定位候选边界。需要兼顾精确命中与上下文完整时，用小块检索、返回父块；块大小用实际评测确定。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于结构边界和继承字段，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 59,
+      "para": "BM25 擅长错误码、函数名、型号、条款编号和专名，精确且易解释，但难处理同义表述。向量检索按 Embedding 找语义近似的查询和文档，适合自然语言；它可能漏掉精确标识，表现也受模型和领域影响。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于词法与向量检索的属性，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 65,
+      "para": "如果问题要沿设备、产品线、相关故障继续找维修规程，就可能需要多跳关系。知识图谱将实体、关系和属性显式存储，能补充普通语义检索难以直接找到的线索。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于排名融合和重排，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 80,
+      "para": "保留各阶段候选与指标，先定位哪一步丢了证据，再决定是否要改提示词。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于设备关联与图谱用途，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 84,
+      "para": "利用 Recall@K 判断前 K 个结果覆盖了多少标准证据。用 MRR 与 nDCG 衡量正确证据的排序。答案层看事实正确性、完整性、引用支持度、拒答合理性和业务任务完成率。错误可分为无证据事实、引用错配、旧版当新版、错误推导和虚构工具结果。证据不足时拒答或请求补充。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于Veloxis 查询与证据出处，没有用不同实义名称重复指同一项。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 101,
+      "para": "每一步给模型的证据是否及时、必要、可信且能回查，决定了它据什么作出判断。",
+      "label": "0组",
+      "confidence": "中",
+      "reason": "此段的关键表述分别用于召回、排序与答案指标，没有用不同实义名称重复指同一项。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 7,
+      "prev_tail": "从上下文分层、压缩和记忆治理讲到混合检索、GraphRAG 与评测，给出定位 RAG 答非所问的逐层检查方法和 12 道面试题",
+      "next_head": "执行任务时，Agent 可能同时接触系统规则、用户目标、对话历史、任务状态、工具结果、企业知识库、外部网页和用户长期偏好",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 18,
+      "prev_tail": "Context Engineering 要决定每一步提供什么，并保证信息正确、完整、可信且可追溯",
+      "next_head": "系统提示放稳定规则",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 22,
+      "prev_tail": "动态项目资料随任务加载",
+      "next_head": "滑动窗口保留最近几轮的原文，近期指代和工具结果比较完整，但可能丢失更早的事实和限制",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 24,
+      "prev_tail": "可以同时使用近期原文、结构化摘要和可以回查的原始记录",
+      "next_head": "摘要应记下目标、已确认事实、用户约束、完成和待办事项、错误、产物引用、来源范围、生成时间和版本",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 32,
+      "prev_tail": "工具输出很大时，保存完整产物，只把摘要、关键统计和引用放入上下文",
+      "next_head": "三个月前的偏好与今天的明确要求冲突时，按今天的要求执行",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 36,
+      "prev_tail": "模型提出的记忆候选应先判定是否值得长期保存",
+      "next_head": "文档全量加载仍受窗口、费用、延迟、注意力、权限隔离和版本治理约束",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 51,
+      "prev_tail": "大规模企业知识库的反复查询适合用 RAG，两类工具可以配合",
+      "next_head": "PDF 表头丢失或标题层级解析错误时，Embedding 和重排都很难补回信息",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 55,
+      "prev_tail": "排查效果时，把文档质量、切块、元数据和权限一起纳入检查",
+      "next_head": "纯字符数切分容易打断标题、段落、列表、代码、表格和章节关系",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 59,
+      "prev_tail": "块大小用实际评测确定",
+      "next_head": "BM25 擅长错误码、函数名、型号、条款编号和专名，精确且易解释，但难处理同义表述",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 65,
+      "prev_tail": "它可能漏掉精确标识，表现也受模型和领域影响",
+      "next_head": "如果问题要沿设备、产品线、相关故障继续找维修规程，就可能需要多跳关系",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 80,
+      "prev_tail": "知识图谱将实体、关系和属性显式存储，能补充普通语义检索难以直接找到的线索",
+      "next_head": "保留各阶段候选与指标，先定位哪一步丢了证据，再决定是否要改提示词",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "候选跳过小标题或清单，摘取的前后句不能作为真实相邻段接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 84,
+      "prev_tail": "保留各阶段候选与指标，先定位哪一步丢了证据，再决定是否要改提示词",
+      "next_head": "利用 Recall@K 判断前 K 个结果覆盖了多少标准证据",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 101,
+      "prev_tail": "证据不足时拒答或请求补充",
+      "next_head": "每一步给模型的证据是否及时、必要、可信且能回查，决定了它据什么作出判断",
+      "label": "明确承接",
+      "confidence": "中",
+      "reason": "后句沿相邻论述展开条件、方法、对照或实例。"
+    }
+  ],
+  "colon": [],
+  "iso3": []
+}

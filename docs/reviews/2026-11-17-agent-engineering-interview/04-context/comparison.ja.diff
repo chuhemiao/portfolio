@@ -1,0 +1,11 @@
+--- 优化前/baseline.ja.md
++++ 正文/agent-engineering-interview-04-context-ja.mdx
+@@ -58,7 +58,7 @@
+ 
+ BM25 はエラーコード、関数名、型番、条項番号、固有名詞の検索に向く。根拠を説明しやすい一方、同義表現には弱い。ベクトル検索は埋め込みを使い、クエリと文書の意味の近さを調べる。自然言語に強いが厳密な識別子を取りこぼすことがあり、埋め込みモデルや分野にも左右される。
+ 
+-両方で候補を取った後、RRF で順位を統合する。文書 `d` が返った検索経路について `RRF(d) = Σ 1 / (k + rank_i(d))` を計算する。`rank_i(d)` は各経路の1始まりの順位で、`k` は平滑化定数。検索器の生スコアを直接比較せずに済む。計算費用を抑えるため、細かな関連度の再順位付けは上位 N 件に絞る。[Elasticsearch の RRF 仕様](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)
++両方で候補を取った後、RRF で順位を統合する。文書 `d` を返した経路について項を足し合わせ、 `RRF(d) = Σ 1 / (k + rank_i(d))` を計算する。`rank_i(d)` は各経路の1始まりの順位で、`k` は平滑化定数。検索器の生スコアを直接比較せずに済む。計算費用を抑えるため、細かな関連度の再順位付けは上位 N 件に絞る。[Elasticsearch の RRF 仕様](https://www.elastic.co/docs/reference/elasticsearch/rest-apis/reciprocal-rank-fusion)
+ 
+ ## 9. GraphRAG が必要になる場面
+ 
