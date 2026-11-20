@@ -272,6 +272,33 @@ export async function renderPage(locale: Locale) {
         </main>
 
         <aside className='flex min-w-0 flex-[1_1_320px] flex-col gap-8'>
+          <section aria-labelledby='advertising-title' className='flex min-h-80 flex-col justify-between gap-8 rounded border border-dashed border-border-strong bg-surface p-6 text-center'>
+            <div>
+              <p className='mb-3 font-mono text-xs tracking-wide text-subtle'>
+                {t('Advertisement', '广告位', '広告枠')}
+              </p>
+              <h2 id='advertising-title' className='text-balance text-xl font-semibold'>
+                {t('Showcase your product here', '在这里展示您的产品', 'ここで製品を紹介しませんか')}
+              </h2>
+            </div>
+            <div>
+              <p className='mb-6 text-pretty text-sm leading-6 text-muted-foreground'>
+                {t('Support this site by booking this advertising space.', '预订这个广告位，支持本站持续创作。', '広告の掲載で、このサイトの運営を応援できます。')}
+              </p>
+              <p className='mb-6'>
+                <span className='font-mono text-3xl font-medium'>US$300</span>
+                <span className='ml-2 text-sm text-muted-foreground'>{t('/ month', '/ 月', '/ 月')}</span>
+              </p>
+              <a
+                href={`mailto:chuhemiao@gmail.com?subject=${encodeURIComponent(t('Homepage advertising inquiry', '首页广告位咨询', 'トップページ広告掲載のお問い合わせ'))}`}
+                className='inline-flex min-h-11 w-full items-center justify-center rounded bg-brand px-3 py-2 text-base font-semibold text-brand-foreground transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface active:opacity-80'
+              >
+                {t('Contact to advertise', '联系投放', '掲載について問い合わせる')}
+              </a>
+              <p className='mt-3 break-all text-xs text-muted-foreground'>chuhemiao@gmail.com</p>
+            </div>
+          </section>
+
           {weeklyBrief && (
             <section className='rounded border border-border bg-surface p-5'>
               <div className='mono-label mb-3.5'>

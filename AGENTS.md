@@ -129,6 +129,10 @@
 
 > 记录每次重要对话的结论，保持最近 10 条，旧的删除。
 
+- **2026-11-20**：首页侧栏顶部新增三语广告招租位，明示US$300/月及chuhemiao@gmail.com。按钮通过mailto打开本地化主题的咨询邮件草稿，沿用现有主题和移动端侧栏排版。typecheck、定向ESLint（仅原有img警告）、8297页完整构建及默认/中英日四个首页静态广告内容和邮件链接核验通过，文章页未增加广告位。未启动预览或提交。
+
+- **2026-11-18**：新增TON（GRAM）三语思考，嵌入作者四张原图并逐字节核验。修正615.7万频道订阅、Q3单季4.09%与年化约16%的期间混用、市值/销毁额标签及熊市场景7.0–9.3倍计算，保留原行情快照和主要判断。按原稿与官方来源区分域名申请、治理主导权与法律主体，三语独立复核、中文前后检测及差异报告见docs/reviews/2026-11-18-ton-gram/。7491篇内容检查、8297页完整构建、三语正文/对应链接/四图/三份RSS核验通过。
+
 - **2026-11-17**：新增 Agent 工程面试专题五篇思考，覆盖 Harness、Runtime、工具与多 Agent、上下文与 RAG、生产工程，共 15 篇三语 MDX。保留 DevPilot 预发布及单条查询合成负载口径、Veloxis 原稿归属、RRF 与面试题。中文检测前后对比、三语差异与独立复核见 docs/reviews/2026-11-17-agent-engineering-interview/。7488 篇内容检查、8294 个静态页面完整构建、五组语言对应、60 个同语系列链接及 RSS 通过。
 
 - **2026-11-17**：新增 OKB 与 OKX 信任红利三语思考。按原表纠正事件窗口跑赢/跑输范围，归一化图表占位改为原稿三个节点表。核对 OKB 第28轮与最终销毁累计、BNB独立Auto-Burn、ICE 2亿美元优先股协议及事故前250亿美元估值，保留原稿历史行情和生态快照边界。独立三语复核、检测及逐行差异见 docs/reviews/2026-11-17-okb-okx-trust/。7473篇内容检查、8279页完整构建及三语静态对应与RSS通过。
@@ -144,7 +148,3 @@
 - **2026-11-02**：完成Library M3本地实现：legacy+三语列表/100共享slug详情（源码404新页），B1搜索/筛选/排序/分页/URL恢复、本地保存/稍后/已读/隐藏/清空；实际key kkdemian:library:v1仅ID/状态，损坏整份拒绝、失败清空不冒报持久成功。10真实文章组20次Codex editor审批/10approved，5Topic各≤6；原100item/300正文与其余catalog文件SHA同M2。Library文档不挂GA、跨边界整页导航、no-referrer及离开referrer清根；列表整体noindex，实际sitemap仅300canonical详情。真实并发reader RED1成功3锁拒→有界等待全过，持续锁耗尽不破锁；rejected promise修复后可显式重读，事务/hash拒读保留。数据owner修7428全投影超限为精确目标+before/replacement并集。全局292/292（并发窄修前）、最后定向34/34、fresh typecheck/ESLint、7428内容、i18n59、library validate/build/assets通过；111文件590072raw/逐文件gzip231660，不代表UI bundle/浏览器性能。报告docs/library/m3-delivery.md与docs/reviews/2026-11-02-m3/；实际Next全export、浏览器网络/layout/history/focus/存储时序与完整G3验收留M4，本机未全站build/preview/开页/push/部署；M3阶段提交已获用户授权，通用提交确认偏好不变。自动抽取/B2/B3及人类实验仍关闭/not-run。
 
 - **2026-11-02**：完成Library M2本地软件：review/revise/publish/takedown/restore CLI默认dry-run，实际actor/role声明、三重hash/revision冲突、幂等、目录锁与显式事务恢复；reader防半状态/快速提交混读，build与撤稿同锁。B1纯公开v1消费者和108组三语功能题324/324通过；120真实候选协议无真人标签，F1/precision/κ/NDCG/Recall保持null/not-run，自动抽取/B2/B3关闭。独立复核所见staging中断恢复用精确receipt闭合，长中日query尾部ID丢失以真实70/64误返RED→0修复，保留q≤200；已知ERC7702仍命中。M1全部catalog字节及300三语正文/理由不变，100资源/111公开文件587431raw字节、逐文件gzip230723；实际library:build约3.42s（与阶段检查并行），Node本地搜索p95约0.234ms不代表浏览器/真人效果。Library115/全局269、7428content通过；最后搜索窄修后consumer10、typecheck、ESLint与实际eval通过。报告docs/library/m2-delivery.md、m2-workflow.md与reviews/2026-11-02-m2/；M3/M4及人类实验未完成，未全站build/预览/push/部署。用户已授权本Library逐阶段commit和常规默认取舍；通用提交确认偏好不变。
-
-- **2026-11-02**：完成Library M1数据与工具：真实300候选、100已审三语编辑精选（五类各20）、300完整locale、100editorial selections、0社区推荐；138 Topic建议79批59拒，覆盖5既有Topic。20规范绑定实际commit/文件hash与已读章节，ERC8004保留Draft；其他80仅metadata_only，原创阅读问题不冒充未读结论/作者背书。原metadata及9源投影hash保全，实际Codex字段/编辑身份和1275事件链；独立读完100×3后窄修2处JA（客户反馈主体、暗号プリミティブ），两item/六locale版本与批准重绑。真实快照111文件/587431原始字节/逐文件gzip合计231044，显式currentCatalog/context读回及同输入/asOf字节复建通过；首轮并行检查中2.19s、单独复建0.64s，与虚构300基准分列。fresh Library89/全局243/typecheck/7428content/定向ESLint通过；只跑library:build，未全站pnpm build/预览/push/部署。交付在docs/library/m1-editorial-delivery.md及reviews/2026-11-02-editorial/。用户本次明确授权M1–M4每阶段commit、常规取舍默认选择；仅本Library任务，不改通用提交确认偏好。后续采用PRD允许的编辑精选+B1，未验证自动抽取/B3关闭；≥120人类双盲样本与20–30人用户实验not-run，不冒称G2/G4通过，M4远端export仍须做。
-
-- **2026-11-02**：按用户要求先提供Library首页效果图，已生成docs/library/design/library-home-desktop-v1.png（2880×3106）和library-home-mobile-v1.png（860×3610）；独立HTML/CSS源稿、README与render-checks.json同目录。沿用现站深色/琥珀/IBM Plex/细边框，桌面列表+主题/原创研究侧栏、手机单栏，顶部单一语言下拉；突出类型/原文语言/为什么读，示例内容和100条数量已明确为设计占位，不代表来源批准或真实入库。仅离线文件渲染，外网请求被阻断，字体加载/两尺寸零横向溢出/零脚本错误通过，目视修复手机标题孤字与筛选布局。未开始M1或M3业务实现，未启动网站/全量build/提交/部署，保留前轮四份审计计划。
