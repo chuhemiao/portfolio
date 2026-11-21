@@ -32,12 +32,13 @@ export const OSCILLATOR_COINS: CoinConfig[] = [
   { id: 'arbitrum', symbol: 'ARB', name: 'Arbitrum', category: 'single-cycle' },
   { id: 'optimism', symbol: 'OP', name: 'Optimism', category: 'single-cycle' },
   { id: 'celestia', symbol: 'TIA', name: 'Celestia', category: 'single-cycle' },
-  { id: 'jupiter', symbol: 'JUP', name: 'Jupiter', category: 'single-cycle', researchSlug: 'jupiter_ag_defi_solana', researchType: 'DEX' },
+  { id: 'jupiter-exchange-solana', symbol: 'JUP', name: 'Jupiter', category: 'single-cycle', researchSlug: 'jupiter_ag_defi_solana', researchType: 'DEX' },
   { id: 'starknet', symbol: 'STRK', name: 'Starknet', category: 'single-cycle' },
 ];
 
 export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
   {
+    id: 'hyperliquid',
     symbol: 'HYPE',
     name: 'Hyperliquid',
     category: 'single-cycle',
@@ -45,6 +46,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'Perp DEX',
   },
   {
+    id: 'gatechain-token',
     symbol: 'GT',
     name: 'GateToken',
     category: 'veteran',
@@ -52,6 +54,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'CEX',
   },
   {
+    id: 'mx-token',
     symbol: 'MX',
     name: 'MX Token',
     category: 'veteran',
@@ -59,6 +62,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'CEX',
   },
   {
+    id: 'okb',
     symbol: 'OKB',
     name: 'OKB',
     category: 'veteran',
@@ -66,6 +70,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'CEX',
   },
   {
+    id: 'bitcoin-cash',
     symbol: 'BCH',
     name: 'Bitcoin Cash',
     category: 'veteran',
@@ -73,6 +78,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'PayFi',
   },
   {
+    id: 'monero',
     symbol: 'XMR',
     name: 'Monero',
     category: 'veteran',
@@ -80,6 +86,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'Privacy',
   },
   {
+    id: 'the-open-network',
     symbol: 'TON',
     name: 'Toncoin',
     category: 'veteran',
@@ -87,6 +94,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'L1',
   },
   {
+    id: 'tron',
     symbol: 'TRX',
     name: 'TRON',
     category: 'veteran',
@@ -94,6 +102,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'L1',
   },
   {
+    id: 'bittensor',
     symbol: 'TAO',
     name: 'Bittensor',
     category: 'single-cycle',
@@ -102,6 +111,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'AI/DePIN',
   },
   {
+    id: 'kaspa',
     symbol: 'KAS',
     name: 'Kaspa',
     category: 'veteran',
@@ -110,6 +120,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'L1',
   },
   {
+    id: 'nexo',
     symbol: 'NEXO',
     name: 'Nexo',
     category: 'veteran',
@@ -117,6 +128,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'CeFi',
   },
   {
+    id: 'zcash',
     symbol: 'ZEC',
     name: 'Zcash',
     category: 'veteran',
@@ -124,6 +136,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'Privacy',
   },
   {
+    id: 'quant-network',
     symbol: 'QNT',
     name: 'Quant',
     category: 'veteran',
@@ -132,6 +145,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'Infra',
   },
   {
+    id: 'dash',
     symbol: 'DASH',
     name: 'Dash',
     category: 'veteran',
@@ -139,6 +153,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'Payments',
   },
   {
+    id: 'dexe',
     symbol: 'DEXE',
     name: 'DeXe',
     category: 'single-cycle',
@@ -147,6 +162,7 @@ export const OSCILLATOR_RESEARCH_FOCUS: CoinConfig[] = [
     researchType: 'DAO',
   },
   {
+    id: 'pepe',
     symbol: 'PEPE',
     name: 'Pepe',
     category: 'single-cycle',

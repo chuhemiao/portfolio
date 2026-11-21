@@ -640,7 +640,7 @@ function OpsCard({ label, body }: { label: string; body: string }) {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function PulseClient({ data }: { data: PulseData }) {
+export default function PulseClient({ data, children }: { data: PulseData; children: React.ReactNode }) {
   const { locale, d } = useDashboardI18n();
   return (
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
@@ -665,6 +665,8 @@ export default function PulseClient({ data }: { data: PulseData }) {
             })}
           </p>
         </div>
+
+        {children}
 
         {/* Part 1 */}
         <WorldCupBlock data={data.worldCup} />

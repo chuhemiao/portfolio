@@ -51,9 +51,57 @@ fear	市场情绪	市場心理
 DYOR, this dashboard is meant to be a comprehensive data reference for Bitcoin market conditions, not a trading signal generator. Always cross-check with your own research and risk management.	请独立研究。本看板提供比特币市场状况的综合数据参考，请结合自己的研究与风险管理进行核对。	独自に調査してください。このダッシュボードはビットコイン市場の総合的なデータ参考資料です。独自の調査とリスク管理と照合してください。
 Use the playbook below to observe regime shifts, leverage resets, liquidity migration, market rotation, and macro spillovers across crypto.	使用下方观察框架，跟踪加密市场状态变化、杠杆重置、流动性迁移、板块轮动和宏观影响。	以下の観察フレームワークで、市場局面の変化、レバレッジの解消、流動性の移動、セクター循環、マクロ環境の影響を追跡します。
 Last refresh:	最近刷新：	最終更新：
+BTC quote observed	BTC 报价时间	BTC 価格の観測日時
+Fear & Greed observation	恐慌与贪婪指数日期	恐怖・強欲指数の観測日
+200 closed Binance BTC/USDT weeks	币安 BTC/USDT 已收盘的 200 根周线	Binance BTC/USDT の確定済み週足 200 本
 Composite Bottom Model	综合底部模型	総合底値モデル
-Combine all indicators into a single bottom probability score.	将各项指标合成为底部概率评分。	各指標を統合し、底値の可能性をスコア化します。
+The bottom score summarizes the available signals.	底部评分汇总当前可用信号。	底値スコアは取得できたシグナルを集計します。
+Signals with data	数据可用	取得済みシグナル
 Bottom Score	底部评分	底値スコア
+Base score	基础分	基本点
+Contribution	贡献分	加減点
+Score limited to 0–100	分数限制在 0 至 100	スコアの範囲は 0〜100
+High rule score	规则评分高位	ルールスコア上位
+80 - 100 High rule score	80 - 100 规则评分高位	80 - 100 ルールスコア上位
+Historical trigger chart	历史触发图	過去のトリガー推移
+Historical cycle notes	历史周期观察	過去のサイクルの記録
+Daily observations unavailable	暂无日度观测数据	日次観測データがありません
+Daily scores are reconstructed from observations for each closed UTC day. Missing price or score and date gaps break a streak.	历史评分根据各个已收盘 UTC 日的观测重建。价格或分数缺失、日期断档都会中断连续达标。	過去のスコアは確定した各 UTC 日の観測値から再構成します。価格・スコアの欠損や日付の空白は連続日数を中断します。
+Score threshold	评分阈值	スコアの閾値
+Minimum consecutive days	最少连续天数	最小連続日数
+BTC/USDT daily close	BTC/USDT 日收盘价	BTC/USDT の日足終値
+Days with a confirmed streak	连续达标确认后的天数	連続条件の確定後の日数
+Daily score and BTC/USDT close with confirmed trigger periods	每日评分、BTC/USDT 收盘价和已确认的触发区间	日次スコア、BTC/USDT 終値、確定したトリガー期間
+Days with price and score	价格和评分均可用的天数	価格とスコアがそろった日数
+Trigger periods	触发区间数	トリガー期間数
+Trigger details	触发明细	トリガーの詳細
+Streak start	连续达标起点	連続達成の開始日
+Trigger confirmed	确认触发日	トリガー確定日
+Last qualifying day	最后达标日	条件を満たした最終日
+Qualifying days	达标天数	達成日数
+Peak score	区间最高分	期間内の最高点
+Signal coverage	信号覆盖	シグナルの取得範囲
+Historical source refresh status	历史来源刷新状态	履歴ソースの更新状況
+Archive refresh complete	已完成历史刷新	履歴更新が完了
+Partial archive refresh	历史刷新不完整	履歴を一部更新
+No fresh archive windows	暂无新取得的历史窗口	新規取得できた履歴期間なし
+Refreshed days	新取天数	更新日数
+Retained days	保留天数	保持日数
+Retained from snapshot	保留自快照	保持元のスナップショット
+Trigger close	触发日收盘价	確定日の終値
+Signals on trigger day	触发日的信号	確定日のシグナル
+No periods meet the current settings.	当前设置下没有触发区间。	現在の設定に該当するトリガー期間はありません。
+Binance closed spot candles	Binance 已收盘现货日线	Binance の確定済み現物日足
+Alternative.me Fear & Greed	Alternative.me 恐慌与贪婪指数	Alternative.me の恐怖・強欲指数
+Blockchain.com unique addresses used	Blockchain.com 去重使用地址数	Blockchain.com の使用ユニークアドレス数
+Hyperliquid settled BTC funding	Hyperliquid 已结算 BTC 资金费率	Hyperliquid の確定済み BTC 資金調達率
+Bitview BTC valuation	Bitview BTC 估值	Bitview の BTC 評価データ
+Bitview inputs for calculated MVRV Z-score	计算 MVRV Z 分数的 Bitview 数据	MVRV Z スコア算出用の Bitview データ
+Unique addresses used	去重使用地址数	使用ユニークアドレス数
+Unique addresses used rising	去重使用地址数增加	使用ユニークアドレス数が増加
+Need 14 consecutive daily address counts	需要 14 个连续 UTC 日的地址数	連続する UTC 14日分のアドレス数が必要です
+Need 8 consecutive hourly funding observations	需要连续 8 小时的资金费率观测	連続する8時間分の資金調達率が必要です
+Need a matched BTC close and realized price for the last closed UTC day	需要最近一个已收盘 UTC 日的同源 BTC 收盘价和已实现价格	直近の UTC 確定日について、同じデータ元の BTC 終値と実現価格が必要です
 Current band:	当前区间：	現在の区分：
 Score range	评分区间	スコア区分
 Bottom Alert Engine	底部预警引擎	底値アラート
@@ -66,6 +114,11 @@ Bitcoin Price (real-time)	比特币价格（实时）	ビットコイン価格�
 Market Cap	市值	時価総額
 Realized Cap	已实现市值	実現時価総額
 Realized Price	已实现价格	実現価格
+Valuation observation	估值观测日期	評価データの観測日
+Source data collected	数据采集时间	データ取得日時
+Bitview BTC/USD daily close	Bitview BTC/USD 日收盘价	Bitview の BTC/USD 日足終値
+MVRV is calculated as Bitview market cap divided by realized cap.	MVRV 由 Bitview 市值除以已实现市值得出。	MVRV は Bitview の時価総額を実現時価総額で割って算出しています。
+Daily BTC valuation (CC BY 4.0)	BTC 日度估值数据（CC BY 4.0）	BTC の日次評価データ（CC BY 4.0）
 MVRV Ratio	MVRV 比率	MVRV 比率
 MVRV Z-Score	MVRV Z 分数	MVRV Z スコア
 Optional Glassnode fallback	可选 Glassnode 备用来源	任意の Glassnode 代替ソース
@@ -74,9 +127,13 @@ Bottom Zone Rules	底部区间规则	底値ゾーンのルール
 Historical bottom highlighting enabled	已启用历史底部高亮	過去の底値の強調表示を有効化
 Price vs Realized Price	价格与已实现价格	価格と実現価格
 Price vs 200W MA	价格与 200 周均线	価格と200週移動平均
+Bitview 200-week MA	Bitview 200 周均线	Bitview の200週移動平均
+Each daily value averages the latest 200 Sunday UTC closes.	均线按当日可用的最近 200 个 UTC 周日收盘价计算。	各日の移動平均は、その日までの直近200回の UTC 日曜終値から算出します。
 MVRV Ratio historical	MVRV 比率历史	MVRV 比率の履歴
 Waiting for CryptoQuant series	等待 CryptoQuant 时间序列	CryptoQuant の時系列を待機中
 MVRV Z-score cycle	MVRV Z 分数周期	MVRV Z スコアのサイクル
+Z-score uses the difference between market cap and realized cap, divided by the population standard deviation of market cap through that day.	Z 分数以市值减去已实现市值，再除以截至该日的市值总体标准差。	Z スコアは時価総額と実現時価総額の差を、その日までの時価総額の母標準偏差で割って算出します。
+Calculated here using Bitview's published method	本站按 Bitview 公布的方法计算	Bitview の公開手法を用いて当サイトで算出
 Waiting for Glassnode series	等待 Glassnode 时间序列	Glassnode の時系列を待機中
 Layer 2: On-chain Activity and OG Holder Behavior	第二层：链上活动与长期持有者行为	第2層：オンチェーン活動と長期保有者の行動
 Measure network usage and long-term holder conviction.	衡量网络使用情况与长期持有者信心。	ネットワークの利用状況と長期保有者の確信度を測定します。
@@ -95,6 +152,7 @@ Add sentiment and behavioral metrics.	补充市场情绪与行为指标。	市�
 Crypto Fear and Greed Index	加密恐惧与贪婪指数	暗号資産の恐怖・強欲指数
 Funding Rate (perpetual futures)	资金费率（永续合约）	資金調達率（無期限先物）
 Open Interest	未平仓量	建玉残高
+BTC perpetual open interest (USD)	BTC 永续未平仓名义金额（美元）	BTC 無期限先物の建玉総額（米ドル）
 Long/Short Ratio	多空比	ロング・ショート比率
 Fear and Greed timeline	恐惧与贪婪时间线	恐怖・強欲の推移
 Funding rate heatmap	资金费率热力图	資金調達率のヒートマップ
@@ -1071,6 +1129,8 @@ export function translateDashboard<T>(value: T, locale: Locale): T {
   if (current) return (locale === 'zh-CN' ? `当前 ${translateDashboard(current[1], locale)}` : locale === 'ja' ? `現在 ${translateDashboard(current[1], locale)}` : value) as T;
   const lastFunding = value.match(/^Last 8h min=(.+)$/);
   if (lastFunding) return (locale === 'zh-CN' ? `最近 8 小时最低值=${lastFunding[1]}` : locale === 'ja' ? `直近8時間の最小値=${lastFunding[1]}` : value) as T;
+  const fundingHigh = value.match(/^Last 8h max=(.+)$/);
+  if (fundingHigh) return (locale === 'zh-CN' ? `最近 8 小时最高值=${fundingHigh[1]}` : locale === 'ja' ? `直近8時間の最大値=${fundingHigh[1]}` : value) as T;
   const sentimentValue = value.match(/^(\d+) \((.+)\)$/);
   if (sentimentValue) return `${sentimentValue[1]} (${translateDashboard(sentimentValue[2], locale)})` as T;
   const positive = value.match(/^(\d+) names are positive over (7|30) days, which helps gauge (short-term alt breadth|medium-term breadth expansion)\.$/);

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { QUOTES_AS_OF, QUOTES_SOURCE, getInstrument, getQuote } from '@/data/instruments';
+import { BSTOCKS_REGISTER, QUOTES_AS_OF, QUOTES_SOURCE, getInstrument, getQuote } from '@/data/instruments';
 import { groupForTicker } from '@/data/instrument-groups';
 import {
   DIVIDEND_LABEL,
@@ -25,6 +25,7 @@ import {
   turnoverTone,
 } from '@/lib/instrument-format';
 import { findIssuer } from '@/components/stocks/issuer-view';
+import { BstocksStudyView } from '@/components/stocks/bstocks-study-view';
 
 export function instrumentPageMetadata(issuerSlug: string, ticker: string, locale: Locale) {
   const instrument = getInstrument(issuerSlug, ticker);
@@ -61,6 +62,7 @@ export function renderInstrumentPage(issuerSlug: string, ticker: string, locale:
   const siblings = group?.tickers.filter((other) => other !== ticker) ?? [];
   const article = group?.articleSlugs;
   const { symbol, name, kind, leverage } = instrument.underlying;
+  const listing = instrument.listing;
   const cmcUrl = instrument.cmcSlug ? `https://coinmarketcap.com/currencies/${instrument.cmcSlug}/` : undefined;
 
   const jsonLd = [
@@ -79,6 +81,7 @@ export function renderInstrumentPage(issuerSlug: string, ticker: string, locale:
       name: `${ticker} — ${name}`,
       category: L(UNDERLYING_KIND_LABEL[kind]),
       provider: { '@type': 'Organization', name: issuer.entity ?? issuer.name },
+      identifier: listing?.isin,
       url: `${DATA.url}${href(`/stocks/${issuerSlug}/${ticker}`)}`,
       // Deliberately no offers/price: this is a reference page, not a quote feed,
       // and the snapshot is hours old by the time anyone reads it.
@@ -101,15 +104,18 @@ export function renderInstrumentPage(issuerSlug: string, ticker: string, locale:
         </>
       ),
     },
-    { label: t('Listed', '上线日', '上場日'), value: <span className='font-mono'>{instrument.listedAt}</span> },
+    { label: t('Market listing', '交易市场上线', '市場での取引開始'), value: <span className='font-mono'>{listing?.marketAt ?? instrument.listedAt}</span> },
+    ...(listing ? [{ label: 'ISIN', value: <span className='font-mono'>{listing.isin}</span> }] : []),
     { label: t('Issuer', '发行方', '発行体'), value: <Link href={href(`/stocks/${issuerSlug}`)}>{issuer.name}</Link> },
     { label: t('Chain', '链', 'チェーン'), value: instrument.chains.join(' · ') },
     {
       label: t('Contract', '合约地址', 'コントラクト'),
       value: (
         <>
-          <span className='font-mono text-subtle'>{MISSING}</span>
-          {cmcUrl && (
+          {listing?.contractAddress ? (
+            <a href={`https://bscscan.com/address/${listing.contractAddress}`} rel='noopener noreferrer' target='_blank' className='break-all font-mono text-[11px] text-brand'>{listing.contractAddress} ↗</a>
+          ) : <span className='font-mono text-subtle'>{MISSING}</span>}
+          {!listing?.contractAddress && cmcUrl && (
             <a href={cmcUrl} rel='nofollow noopener' target='_blank' className='ml-2 text-[11px]'>
               CMC ↗
             </a>
@@ -214,26 +220,19 @@ export function renderInstrumentPage(issuerSlug: string, ticker: string, locale:
               </div>
             ))}
           </dl>
-          <p className='mt-3 max-w-[820px] text-[11.5px] leading-[1.7] text-subtle'>
-            {t(
-              'The contract address is not in the upstream payload, so it shows a dash and links out rather than being guessed.',
-              '合约地址不在上游数据里，所以显示破折号并外链，而不是编一个。',
-              'コントラクトアドレスは上流データに含まれないため、推測せずダッシュ表示と外部リンクにしています。'
-            )}
-            {instrument.nameSource === 'derived' &&
-              t(
-                ` The underlying name is not published upstream either; it was read off the token's own name.`,
-                ' 标的名上游也没有提供，是从代币名本身反推的。',
-                ' 原資産名も上流では未提供で、トークン名から読み取ったものです。'
-              )}
-          </p>
+          {listing && <p className='mt-3 max-w-[820px] text-[11.5px] leading-[1.7] text-subtle'>
+            <a href={BSTOCKS_REGISTER.source} className='text-brand' rel='noopener noreferrer' target='_blank'>ADGM ↗</a> · {listing.description} · {BSTOCKS_REGISTER.issuer} · {BSTOCKS_REGISTER.exchange} · {BSTOCKS_REGISTER.observedAt}
+            {listing.announcement && <> · <a href={listing.announcement} className='text-brand' rel='noopener noreferrer' target='_blank'>{t('Exchange notice', '交易所公告', '取引所の告知')} ↗</a></>}
+          </p>}
         </div>
       </section>
+
+      <BstocksStudyView instrument={instrument} locale={locale} />
 
       <section className='border-b border-border'>
         <div className='mx-auto max-w-[1240px] px-4 py-8 sm:px-8'>
           <div className='mb-5 flex flex-wrap items-baseline justify-between gap-3'>
-            <h2 className='mono-label'>{t('Two · Market', '二 · 行情', '二 · 市況')}</h2>
+            <h2 className='mono-label'>{t('Historical market-cap snapshot', '历史市值快照', '時価総額の過去スナップショット')}</h2>
             <span className='font-mono text-[10.5px] text-subtle'>
               {QUOTES_AS_OF} · {QUOTES_SOURCE}
             </span>
@@ -260,9 +259,9 @@ export function renderInstrumentPage(issuerSlug: string, ticker: string, locale:
 
           <p className='mt-4 max-w-[820px] text-[11.5px] leading-[1.75] text-subtle'>
             {t(
-              `"Since listing" rather than "all-time": this token began on ${instrument.listedAt}, so its extremes say nothing about ${name}'s own history. No premium or discount is shown — a token is not one share, and the multiple is not constant even within one issuer.`,
-              `写「上线以来」而不是「历史」：这个代币 ${instrument.listedAt} 才存在，它的高低点与 ${name} 本身的价格历史无关。本页不给溢价/折价 —— 一个代币不等于一股，倍数在同一家发行方内部都不一致。`,
-              `「上場来」であり「過去最高」ではありません。このトークンは ${instrument.listedAt} に始まったもので、その高低は ${name} 自身の値動きの歴史とは無関係です。プレミアム/ディスカウントは表示しません。1トークンは1株ではなく、倍率は同一発行体の中でも一定ではないからです。`
+              `CoinMarketCap measures these highs and lows from the token's listing date through its snapshot.`,
+              `CoinMarketCap 按代币上线至快照的期间统计这些高点和低点。`,
+              `高値・安値は CoinMarketCap がトークン上場から取得時点までを集計した値です。`
             )}
           </p>
         </div>

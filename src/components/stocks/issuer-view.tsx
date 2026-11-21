@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import InstrumentTable from '@/components/stocks/instrument-table';
 import {
   QUOTES_AS_OF,
-  QUOTES_REPORTED_TOTAL,
+  BSTOCKS_REGISTER,
   getInstruments,
   getIssuerTotals,
 } from '@/data/instruments';
@@ -71,7 +71,6 @@ export function renderIssuerPage(slug: string, locale: Locale) {
 
   const groups = INSTRUMENT_GROUPS.filter((group) => group.issuerSlug === slug);
   const unpriced = totals.instrumentCount - totals.quotedCount;
-  const missingFromPayload = QUOTES_REPORTED_TOTAL - totals.instrumentCount;
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -86,7 +85,7 @@ export function renderIssuerPage(slug: string, locale: Locale) {
     {
       label: t('Instruments', '标的数', '銘柄数'),
       value: String(totals.instrumentCount),
-      note: missingFromPayload > 0 ? t(`${QUOTES_REPORTED_TOTAL} listed upstream`, `上游列出 ${QUOTES_REPORTED_TOTAL} 个`, `上流では ${QUOTES_REPORTED_TOTAL} 銘柄`) : undefined,
+      note: slug === 'bstocks' ? `ADGM · ${BSTOCKS_REGISTER.observedAt.slice(0, 10)}` : undefined,
     },
     { label: t('Combined market cap', '合计市值', '時価総額合計'), value: formatUsd(totals.marketCapUsd) },
     { label: t('24h volume', '24h 成交', '24h 出来高'), value: formatUsd(totals.volume24hUsd) },
@@ -201,22 +200,17 @@ export function renderIssuerPage(slug: string, locale: Locale) {
           <InstrumentTable issuerSlug={slug} />
 
           <p className='mt-4 max-w-[820px] text-[11.5px] leading-[1.75] text-subtle'>
-            {missingFromPayload > 0 &&
-              t(
-                `The upstream source lists ${QUOTES_REPORTED_TOTAL} instruments and this page holds ${totals.instrumentCount}; the remaining ${missingFromPayload} are not here yet rather than being worth nothing. `,
-                `上游列出 ${QUOTES_REPORTED_TOTAL} 个标的，本页收录 ${totals.instrumentCount} 个；缺的 ${missingFromPayload} 个是还没收进来，不是值为零。`,
-                `上流は ${QUOTES_REPORTED_TOTAL} 銘柄を掲載し、このページは ${totals.instrumentCount} 銘柄。残る ${missingFromPayload} 銘柄は未収録であり、価値がゼロなのではありません。`
-              )}
+            {slug === 'bstocks' && <><a href={BSTOCKS_REGISTER.source} target='_blank' rel='noopener noreferrer' className='text-brand'>ADGM ↗</a> · {t('Verified list at', '登记名录核验于', '名簿の確認日時')} {BSTOCKS_REGISTER.observedAt}. </>}
             {unpriced > 0 &&
               t(
-                `${unpriced} of the instruments here carry no quote and show a dash. `,
-                `本页有 ${unpriced} 个标的没有行情，显示破折号。`,
-                `このページの ${unpriced} 銘柄には価格がなく、ダッシュで表示されます。`
+                `${totals.quotedCount}/${totals.instrumentCount} have CMC data in the dated aggregate snapshot. `,
+                `旧版 CMC 聚合快照覆盖 ${totals.quotedCount}/${totals.instrumentCount} 个标的。`,
+                `取得時点の CMC 集計は ${totals.quotedCount}/${totals.instrumentCount} 銘柄を収録しています。`
               )}
             {t(
-              'No premium or discount is shown: a token is not one share, and the multiple is not even constant within one issuer, so there is no single ratio to divide by.',
-              '本页不给溢价/折价：一个代币不等于一股，而且倍数在同一家发行方内部都不一致，没有一个可用的统一比例。',
-              'プレミアム/ディスカウントは表示しません。1トークンは1株ではなく、倍率は同一発行体の中でも一定ではないため、割るべき比率が存在しません。'
+              'Open an instrument for its underlying filings, market history and dated liquidity observations.',
+              '打开单个标的可查看底层披露、走势和带时间的流动性观测。',
+              '各銘柄の詳細で原資産の開示、価格推移、時点付きの流動性を確認できます。'
             )}
           </p>
         </div>

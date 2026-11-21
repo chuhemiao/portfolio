@@ -3,8 +3,9 @@
 import { getTranslator, type Locale } from '@/lib/i18n';
 import { getLocalizedWeeklyReport } from '@/lib/weekly-localization';
 import { useDashboardI18n } from '../fear/use-dashboard-i18n';
+import AltBtcHistory, { historySourceLabel } from './alt-btc-history';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type {
   Grade,
   MarketBreadthRow,
@@ -12,7 +13,7 @@ import type {
   OscillatorResult,
   OscillatorSummary,
 } from '@/lib/oscillator-data';
-import { formatAltBtcRatio, paginateCollection } from '@/lib/oscillator-helpers';
+import { formatAltBtcRatio, paginateCollection, usdBreadth } from '@/lib/oscillator-helpers';
 import { loadBtcScore, type BtcIndicator, type BtcScoreData } from '@/lib/btc-score-client-data';
 
 const GRADE_STYLES: Record<Grade, { bg: string; text: string; border: string; label: string }> = {
@@ -108,8 +109,9 @@ function StatCard({ label, value, hint }: { label: string; value: string; hint: 
   );
 }
 
-function SummaryGrid({ summary }: { summary: OscillatorSummary }) {
-  const { d } = useDashboardI18n();
+function SummaryGrid({ summary, universe }: { summary: OscillatorSummary; universe: MarketBreadthRow[] }) {
+  const { d, locale } = useDashboardI18n();
+  const t = getTranslator(locale);
   return (
     <div className='grid gap-3 sm:grid-cols-2 xl:grid-cols-3'>
       <StatCard
@@ -132,16 +134,23 @@ function SummaryGrid({ summary }: { summary: OscillatorSummary }) {
         value={summary.dualRankedCount.toString()}
         hint={d("Names that appear in both the CoinGecko and CoinMarketCap top-300 ranking sets.")}
       />
-      <StatCard
-        label={d("7D Breadth")}
-        value={summary.positive7dBreadth !== null ? `${summary.positive7dBreadth.toFixed(1)}%` : 'N/A'}
-        hint={d(`${summary.positive7dCount} names are positive over 7 days, which helps gauge short-term alt breadth.`)}
-      />
-      <StatCard
-        label={d("30D Breadth")}
-        value={summary.positive30dBreadth !== null ? `${summary.positive30dBreadth.toFixed(1)}%` : 'N/A'}
-        hint={d(`${summary.positive30dCount} names are positive over 30 days, which helps gauge medium-term breadth expansion.`)}
-      />
+      {([7, 30] as const).map((days) => {
+        const breadth = usdBreadth(universe, days === 7 ? 'change7d' : 'change30d');
+        const count = `${breadth.positive}/${breadth.valid}`;
+        const missing = universe.length - breadth.valid;
+        return (
+          <StatCard
+            key={days}
+            label={t(`${days}D USD Breadth`, `${days} 天美元广度`, `${days}日 USD 市場の広がり`)}
+            value={breadth.percent === null ? 'N/A' : `${breadth.percent.toFixed(1)}%`}
+            hint={t(
+              `${count} up among valid returns · ${missing} missing`,
+              `${count} 个有数据标的上涨 · ${missing} 个缺失`,
+              `有効な騰落率のうち ${count} が上昇 · ${missing} 件欠測`
+            )}
+          />
+        );
+      })}
     </div>
   );
 }
@@ -170,6 +179,7 @@ function RankBadges({
 
 function FocusCoinCard({ result }: { result: OscillatorResult }) {
   const { locale, d } = useDashboardI18n();
+  const t = getTranslator(locale);
   const style = GRADE_STYLES[result.grade];
   const actionStyle = ACTION_STYLES[result.action] ?? '';
 
@@ -216,9 +226,9 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
 
       <div className='grid gap-2 sm:grid-cols-3 xl:grid-cols-6'>
         <MetricCard label={d("Current ALT/BTC")} value={formatAltBtcRatio(result.currentRatio)} accent={result.currentRatioSource} />
-        <MetricCard label={d("24H")} value={formatPct(result.change24h)} tone={result.change24h} />
-        <MetricCard label={d("7D")} value={formatPct(result.change7d)} tone={result.change7d} />
-        <MetricCard label={d("30D")} value={formatPct(result.change30d)} tone={result.change30d} />
+        <MetricCard label={t('24H USD', '24 小时 USD', '24時間 USD')} value={formatPct(result.change24h)} tone={result.change24h} />
+        <MetricCard label={t('7D USD', '7 天 USD', '7日 USD')} value={formatPct(result.change7d)} tone={result.change7d} />
+        <MetricCard label={t('30D USD', '30 天 USD', '30日 USD')} value={formatPct(result.change30d)} tone={result.change30d} />
         <MetricCard label={d("Best Rank")} value={result.bestRank ? `#${result.bestRank}` : 'N/A'} />
         <MetricCard label={d("Vol / MCap")} value={formatVolumeRatio(result.volume24h && result.marketCap ? result.volume24h / result.marketCap : null)} />
       </div>
@@ -233,8 +243,9 @@ function FocusCoinCard({ result }: { result: OscillatorResult }) {
 
       <p className='text-[11px] leading-relaxed text-muted-foreground'>
         {d("Current ratio source:")} {d(result.currentRatioSource === 'usd-derived' ? 'USD-derived ALT/BTC' : result.currentRatioSource)}
-        {' · '}{d("Daily-close history:")} {d(result.historySource ?? 'none')}
+        {' · '}{d("Daily-close history:")} {historySourceLabel(result.historySource, locale)}
         {result.historyStart && result.historyAsOf ? ` · ${formatSnapshotTimestamp(result.historyStart, locale)} — ${formatSnapshotTimestamp(result.historyAsOf, locale)}` : null}
+        {result.historyRetained ? t(' · Previous observations retained', ' · 保留上次取得的观测', ' · 前回取得した観測を表示') : ''}
       </p>
       <p className='text-xs leading-relaxed text-muted-foreground'>{d(result.observation)}</p>
     </div>
@@ -277,7 +288,8 @@ function MetricCard({
 }
 
 function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
-  const { d } = useDashboardI18n();
+  const { d, locale } = useDashboardI18n();
+  const t = getTranslator(locale);
   return (
     <div className='overflow-hidden rounded-2xl border border-border bg-surface shadow-black/5'>
       <div className='overflow-x-auto'>
@@ -286,9 +298,9 @@ function UniverseTable({ rows }: { rows: MarketBreadthRow[] }) {
             <tr>
               <th className='px-4 py-3 font-medium'>{d("Rank")}</th>
               <th className='px-4 py-3 font-medium'>{d("Asset")}</th>
-              <th className='px-4 py-3 font-medium'>{d("24H")}</th>
-              <th className='px-4 py-3 font-medium'>{d("7D")}</th>
-              <th className='px-4 py-3 font-medium'>{d("30D")}</th>
+              <th className='px-4 py-3 font-medium'>{t('24H USD', '24 小时 USD', '24時間 USD')}</th>
+              <th className='px-4 py-3 font-medium'>{t('7D USD', '7 天 USD', '7日 USD')}</th>
+              <th className='px-4 py-3 font-medium'>{t('30D USD', '30 天 USD', '30日 USD')}</th>
               <th className='px-4 py-3 font-medium'>{d("ALT/BTC")}</th>
               <th className='px-4 py-3 font-medium'>{d("Vol / MCap")}</th>
               <th className='px-4 py-3 font-medium'>{d("Binance")}</th>
@@ -928,7 +940,7 @@ function TabPill({
 
 // ── Main export ───────────────────────────────────────────────────────────────
 
-export default function OscillatorClient({ data }: { data: OscillatorData }) {
+export default function OscillatorClient({ data, children }: { data: OscillatorData; children?: ReactNode }) {
   const { locale, d } = useDashboardI18n();
   const [activeTab, setActiveTab] = useState<MainTab>('focus');
   const [focusFilter, setFocusFilter] = useState<FocusFilterTab>('all');
@@ -947,7 +959,7 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
     if (universeFilter === 'research' && !row.researchFocus) return false;
     if (universeFilter === 'binance' && !row.binanceListed) return false;
     if (universeFilter === 'dual' && !row.dualTop300) return false;
-    if (universeFilter === 'positive7d' && (row.change7d ?? -Infinity) <= 0) return false;
+    if (universeFilter === 'positive7d' && !(Number.isFinite(row.change7d) && (row.change7d ?? 0) > 0)) return false;
     if (query) {
       const normalized = query.trim().toLowerCase();
       const haystack = `${row.symbol} ${row.name}`.toLowerCase();
@@ -985,7 +997,8 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
       </div>
 
       {/* Summary — always visible */}
-      <SummaryGrid summary={data.summary} />
+      <SummaryGrid summary={data.summary} universe={data.universe} />
+      {children}
 
       {/* Tab switcher */}
       <div className='flex flex-wrap gap-2'>
@@ -1002,6 +1015,8 @@ export default function OscillatorClient({ data }: { data: OscillatorData }) {
             <h2 className='text-xl font-semibold tracking-tight'>{d("Research Focus")}</h2>
             <p className='text-sm text-muted-foreground'> {d("The focus set keeps the oscillator logic front and center, so you can quickly separate structurally strong names from decaying or still-unproven ones.")} </p>
           </div>
+
+          <AltBtcHistory results={filteredFocus} asOf={data.snapshotAsOf ?? data.generatedAt} locale={locale} />
 
           <div className='flex flex-wrap gap-2'>
             {(['all', 'S', 'A', 'B', 'F'] as FocusFilterTab[]).map((tab) => (

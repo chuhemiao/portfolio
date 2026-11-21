@@ -16,9 +16,8 @@
  *   node scripts/sync-instruments.mjs --from <payload.json> [--issuer bstocks]
  *   node scripts/sync-instruments.mjs --from <payload.json> --metadata
  *
- * --metadata rewrites the issuer file. Reviewed fields (underlying.symbol, kind,
- * leverage) are never clobbered: they are merged from the existing file and from
- * an optional src/data/instruments/<issuer>.review.json.
+ * --metadata updates CMC-owned catalogs; ADGM-verified bStocks membership is
+ * maintained separately from CMC quotes.
  */
 
 import fs from 'node:fs';
@@ -148,8 +147,11 @@ fs.writeFileSync(
 /* ── metadata ───────────────────────────────────────────────────────────── */
 
 let metaCount = 0;
-if (has('metadata')) {
-  const previous = readJson(metaFile) ?? [];
+const previous = has('metadata') ? readJson(metaFile) ?? [] : [];
+const registryOwned = issuerSlug === 'bstocks' && previous.some((row) => row.listing?.isin);
+if (has('metadata') && registryOwned) {
+  process.stdout.write('sync-instruments: kept the ADGM-verified bStocks roster\n');
+} else if (has('metadata')) {
   const reviewed = readJson(reviewFile) ?? {};
   const byTicker = new Map(previous.map?.((i) => [i.ticker, i]) ?? []);
 
@@ -205,7 +207,7 @@ if (quoted < reportedTotal) {
     `sync-instruments: ${reportedTotal - quoted} instruments have no quote and will render as —\n`
   );
 }
-if (has('metadata')) {
+if (has('metadata') && !registryOwned) {
   process.stdout.write(`sync-instruments: wrote ${metaCount} instruments to ${path.relative(ROOT, metaFile)}\n`);
   const meta = readJson(metaFile) ?? [];
   const unknown = meta.filter((i) => i.underlying.kind === 'unknown');

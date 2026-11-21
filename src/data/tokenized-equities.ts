@@ -239,6 +239,7 @@ export type Instrument = {
   issuerSlug: string;
   underlying: {
     symbol: string | null;
+    exchange?: 'NASDAQ' | 'NYSE' | 'NYSE ARCA' | 'CBOE BZX';
     name: string;
     kind: UnderlyingKind;
     leverage?: number;
@@ -248,6 +249,15 @@ export type Instrument = {
   cmcId?: number;
   cmcSlug?: string;
   nameSource?: 'cmc' | 'derived';
+  listing?: {
+    isin: string;
+    description: string;
+    securityType: 'Certificates' | 'Certificates over Shares';
+    underlyingProvenance: 'prior-catalog' | 'announced-addition' | 'verified-primary';
+    marketAt?: string;
+    announcement?: string;
+    contractAddress?: string;
+  };
 };
 
 /** Five instruments sharing one argument; the unit a research article covers. */

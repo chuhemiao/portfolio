@@ -6,21 +6,15 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { DATA } from "@/data/resume";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
+import { preload } from "react-dom";
 import {
-  IBM_Plex_Sans as FontSans,
   IBM_Plex_Mono as FontMono,
   IBM_Plex_Serif as FontSerif,
 } from "next/font/google";
 import "@/app/globals.css";
+import "@/app/ibm-plex-sans.css";
 import { LocaleProvider } from "@/components/locale-provider";
 import { type Locale } from "@/lib/i18n";
-
-const fontSans = FontSans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-  variable: "--font-sans",
-  display: "swap",
-});
 
 const fontMono = FontMono({
   subsets: ["latin"],
@@ -132,12 +126,13 @@ export default function SiteDocument({
   children: React.ReactNode;
   locale: Locale;
 }>) {
+  preload("/fonts/ibm-plex-sans/latin.woff2", { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased overflow-x-hidden",
-          fontSans.variable,
           fontMono.variable,
           fontSerif.variable
         )}

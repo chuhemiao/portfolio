@@ -1,11 +1,46 @@
-import { FEAR_MANUAL_SNAPSHOT } from '@/data/fear-manual-snapshot';
+import { FEAR_MANUAL_SNAPSHOT, type FearManualSnapshot } from '@/data/fear-manual-snapshot';
+import {
+  DAY_MS,
+  FEAR_BITVIEW_TREND_DAYS,
+  FEAR_BITVIEW_Z_HISTORY_LIMIT,
+  FEAR_HISTORY_DAYS,
+  FEAR_SIGNAL_IDS,
+  FEAR_SIGNAL_LABELS,
+  HOUR_MS,
+  buildFearSignalHistory,
+  contiguousFundingWindow,
+  describeFearArchive,
+  evaluateFearSignals,
+  fearDay,
+  fearSourceNumber,
+  indexFearDays,
+  indexFearFunding,
+  readFearBitviewDays,
+  readFearBitviewTrend,
+  readFearBitviewZScores,
+  readClosedBtcDays,
+  retainFearBitviewDays,
+  summarizeFearScore,
+  uniqueAddressesRising,
+  utcBucket,
+  type FearBitviewDay,
+  type FearBitviewTrend,
+  type FearHistoryPoint,
+  type FearHistorySources,
+  type FearSignalId,
+  type SignalStatus,
+  type TimedNumber,
+} from './fear-signals';
 
-export type SignalStatus = 'on' | 'off' | 'unknown';
+export type { SignalStatus } from './fear-signals';
+
+type SignalObservation = { source: string; observedAt?: string };
 
 export interface BottomSignal {
   label: string;
   status: SignalStatus;
   detail: string;
+  observations?: SignalObservation[];
 }
 
 export interface SourceHealth {
@@ -16,6 +51,7 @@ export interface SourceHealth {
 
 export interface FearDashboardData {
   generatedAt: string;
+  observedAt: { btcPrice: string | null; fearGreed: string | null; ma200Week: string | null };
   sources: SourceHealth[];
   layer1: {
     btcPrice: number | null;
@@ -70,6 +106,10 @@ export interface FearDashboardData {
   };
   bottomSignals: BottomSignal[];
   compositeScore: number;
+  bitviewValuationHistory?: FearBitviewDay[];
+  bitviewTrend?: FearBitviewTrend;
+  signalHistory?: FearHistoryPoint[];
+  historySources?: FearHistorySources;
 }
 
 type CoinGeckoMarketChart = {
@@ -78,15 +118,17 @@ type CoinGeckoMarketChart = {
 };
 
 type CoinGeckoCoin = {
+  last_updated?: string;
   market_data?: {
+    last_updated?: string;
     current_price?: { usd?: number };
     market_cap?: { usd?: number };
   };
 };
 
 type BinanceTicker = {
-  symbol?: string;
-  price?: string;
+  lastPrice?: string;
+  closeTime?: number;
 };
 
 type BinanceKlineRow = unknown[];
@@ -179,6 +221,7 @@ type AltFearGreed = {
   data?: Array<{
     value?: string;
     value_classification?: string;
+    timestamp?: string;
   }>;
 };
 
@@ -198,10 +241,6 @@ function asNumber(value: unknown): number | null {
 function average(nums: number[]): number | null {
   if (nums.length === 0) return null;
   return nums.reduce((a, b) => a + b, 0) / nums.length;
-}
-
-function clamp(n: number, min: number, max: number): number {
-  return Math.min(max, Math.max(min, n));
 }
 
 function toDailyKey(timestampMs: number): string {
@@ -286,6 +325,32 @@ async function fetchText(
   }
 }
 
+async function fetchBitviewValuation(cutoff: number) {
+  const end = utcBucket(cutoff);
+  const start = fearDay(end - FEAR_HISTORY_DAYS * DAY_MS);
+  const payload = await fetchJson<unknown>(
+    `https://bitview.space/api/series/bulk?series=date,price_ohlc,market_cap,realized_cap,realized_price&index=day1&start=${start}&end=${fearDay(end)}&limit=${FEAR_HISTORY_DAYS}&format=json`
+  );
+  return readFearBitviewDays(payload, cutoff, new Date(Date.now()).toISOString());
+}
+
+export async function fetchFearBitviewTrend(cutoff = Date.now()) {
+  const end = utcBucket(cutoff);
+  const start = fearDay(end - FEAR_BITVIEW_TREND_DAYS * DAY_MS);
+  const payload = await fetchJson<unknown>(
+    `https://bitview.space/api/series/bulk?series=date,price_ohlc&index=day1&start=${start}&end=${fearDay(end)}&limit=${FEAR_BITVIEW_TREND_DAYS}&format=json`
+  );
+  return readFearBitviewTrend(payload, cutoff, new Date(Date.now()).toISOString());
+}
+
+async function fetchBitviewZInputs(cutoff: number) {
+  const end = fearDay(utcBucket(cutoff));
+  const payload = await fetchJson<unknown>(
+    `https://bitview.space/api/series/bulk?series=date,market_cap,realized_cap&index=day1&start=0&end=${end}&limit=${FEAR_BITVIEW_Z_HISTORY_LIMIT}&format=json`
+  );
+  return { payload, collectedAt: new Date(Date.now()).toISOString() };
+}
+
 function coingeckoConfig() {
   const apiKey = process.env.COINGECKO_API_KEY;
   const headers: Record<string, string> = {};
@@ -320,27 +385,41 @@ async function fetchCoinGeckoChart(days: number): Promise<CoinGeckoMarketChart |
 
 async function fetchBinanceBtcTicker(): Promise<BinanceTicker | null> {
   return fetchJson<BinanceTicker>(
-    'https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'
+    'https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'
   );
 }
 
 async function fetchBinanceBtcDailyClosePoints(
+  cutoff: number,
   limit = 1000
-): Promise<Array<[number, number]>> {
-  const rows = await fetchJson<BinanceKlineRow[]>(
+): Promise<TimedNumber[]> {
+  const rows = await fetchJson<unknown>(
     `https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=${limit}`
   );
-  if (!rows?.length) return [];
+  return readClosedBtcDays(rows, cutoff);
+}
 
-  const points: Array<[number, number]> = [];
-  for (const row of rows) {
-    if (!Array.isArray(row)) continue;
+async function fetchBinanceBtc200WeekMean(): Promise<{ value: number; asOf: string } | null> {
+  const rows = await fetchJson<BinanceKlineRow[]>(
+    'https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1w&limit=201'
+  );
+  if (!Array.isArray(rows)) return null;
+  const now = Date.now();
+  const closed = rows.flatMap(row => {
+    if (!Array.isArray(row)) return [];
     const openTime = asNumber(row[0]);
-    const close = asNumber(row[4]);
-    if (openTime === null || close === null) continue;
-    points.push([openTime, close]);
-  }
-  return points;
+    const closeTime = asNumber(row[6]);
+    const price = asNumber(row[4]);
+    return openTime !== null && closeTime !== null && closeTime <= now && price !== null && price > 0
+      ? [{ openTime, closeTime, price }]
+      : [];
+  }).sort((a, b) => a.closeTime - b.closeTime).slice(-200);
+  const last = closed.at(-1);
+  const weekMs = 7 * 24 * 60 * 60 * 1000;
+  if (!last || closed.length !== 200 || now - last.closeTime >= weekMs ||
+    closed.some((row, i) => row.closeTime - row.openTime + 1 !== weekMs ||
+      (i > 0 && row.openTime !== closed[i - 1].closeTime + 1))) return null;
+  return { value: closed.reduce((sum, row) => sum + row.price, 0) / closed.length, asOf: new Date(last.closeTime).toISOString() };
 }
 
 async function fetchBitboChartData(
@@ -480,15 +559,45 @@ async function fetchCboePutCallRatio(): Promise<number | null> {
 }
 
 async function fetchHyperliquidInfo<T>(
-  body: Record<string, unknown>
+  body: Record<string, unknown>,
+  signal?: AbortSignal
 ): Promise<T | null> {
   return fetchJson<T>('https://api.hyperliquid.xyz/info', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body)
+    body: JSON.stringify(body),
+    signal
   });
+}
+
+async function fetchHyperliquidBtcFundingHistory(cutoff: number) {
+  const points: TimedNumber[] = [];
+  const timeout = AbortSignal.timeout(40_000);
+  let cursor = utcBucket(cutoff) - FEAR_HISTORY_DAYS * DAY_MS;
+  const maxPages = Math.ceil((FEAR_HISTORY_DAYS + 1) * 24 / 500) + 1;
+  for (let page = 0; page < maxPages && cursor <= cutoff; page += 1) {
+    const rows = await fetchHyperliquidInfo<Array<{ coin?: string; time?: number; fundingRate?: string }>>(
+      { type: 'fundingHistory', coin: 'BTC', startTime: cursor, endTime: cutoff },
+      AbortSignal.any([timeout, AbortSignal.timeout(8000)])
+    );
+    if (!Array.isArray(rows) || rows.length > 500) break;
+    if (rows.length === 0) return { points, complete: true };
+    let lastTime = cursor - 1;
+    for (const row of rows) {
+      const time = row?.time;
+      const rate = fearSourceNumber(row?.fundingRate);
+      if (row?.coin !== 'BTC' || typeof time !== 'number' || !Number.isSafeInteger(time) ||
+          time < cursor || time > cutoff) continue;
+      lastTime = Math.max(lastTime, time);
+      if (rate !== null) points.push([time, rate]);
+    }
+    if (lastTime < cursor) break;
+    if (rows.length < 500) return { points, complete: true };
+    cursor = lastTime + 1;
+  }
+  return { points, complete: cursor > cutoff };
 }
 
 async function fetchHyperliquidBtcPerpMetrics(): Promise<{
@@ -555,8 +664,9 @@ async function fetchCoinalyzeOpenInterest(
 }
 
 async function fetchCoinalyzeFundingHistory(
-  symbol: string
-): Promise<number[]> {
+  symbol: string,
+  cutoff: number
+): Promise<TimedNumber[]> {
   const now = Math.floor(Date.now() / 1000);
   const from = now - 48 * 60 * 60;
   const rows = await fetchCoinalyzeJson<
@@ -567,10 +677,14 @@ async function fetchCoinalyzeFundingHistory(
     from: String(from),
     to: String(now)
   });
-  const history = rows?.[0]?.history ?? [];
-  return history
-    .map((item) => asNumber(item.c))
-    .filter((n): n is number => n !== null);
+  const history = Array.isArray(rows) ? rows.find(row => row?.symbol === symbol)?.history : null;
+  if (!Array.isArray(history)) return [];
+  return history.flatMap((item): TimedNumber[] => {
+    const start = typeof item?.t === 'number' ? item.t * 1000 : NaN;
+    const rate = fearSourceNumber(item?.c);
+    const end = start + HOUR_MS - 1;
+    return start > 0 && start % HOUR_MS === 0 && end <= cutoff && rate !== null ? [[end, rate]] : [];
+  });
 }
 
 async function fetchCoinalyzeLongShortRatio(
@@ -776,15 +890,6 @@ function metricStatus(n: number | null): SignalStatus {
   return Number.isFinite(n) ? 'on' : 'unknown';
 }
 
-function buildCompositeScore(signals: BottomSignal[]): number {
-  let score = 45;
-  for (const signal of signals) {
-    if (signal.status === 'on') score += 8;
-    if (signal.status === 'off') score -= 2;
-  }
-  return clamp(score, 0, 100);
-}
-
 function pickApiOrManual<T>(
   fieldKey: string,
   apiValue: T | null | undefined,
@@ -799,15 +904,29 @@ function pickApiOrManual<T>(
   return null;
 }
 
-export async function getFearDashboardData(): Promise<FearDashboardData> {
+function recentObservation(timestamp: number, maxAgeMs: number): string | null {
+  const age = Date.now() - timestamp;
+  return age >= -60_000 && age <= maxAgeMs ? new Date(timestamp).toISOString() : null;
+}
+
+export async function getFearDashboardData({ useManualFallback = true, previousBitviewDays = [] }: {
+  useManualFallback?: boolean;
+  previousBitviewDays?: FearBitviewDay[];
+} = {}): Promise<FearDashboardData> {
+  const cutoff = Date.now();
   const coinalyzeSymbol = await pickCoinalyzeBtcPerpSymbol();
 
   const [
     hyperliquidMetrics,
+    hyperliquidFunding,
     binanceTicker,
     coin,
     btcChart,
     btcBinanceDailyPoints,
+    btc200WeekMean,
+    freshBitviewDays,
+    bitviewZInputs,
+    bitviewTrend,
     fearGreedNow,
     fearGreedHistory,
     sp500Raw,
@@ -816,7 +935,7 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     crudeRaw,
     dxyRaw,
     vixRaw,
-    activeAddressesRaw,
+    uniqueAddressesRaw,
     txCountRaw,
     newAddressesRaw,
     mempoolRaw,
@@ -830,13 +949,12 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     fundingRate,
     openInterest,
     longShortRatio,
-    fundingHistory,
-    sp500FredSeries,
+    coinalyzeFunding,
     nasdaqFredSeries,
     goldFredSeries,
     oilFredSeries,
     dxyFredSeries,
-    vixFredSeries,
+    vixFredMap,
     moveFredSeries,
     yieldCurveSeries,
     sp500FredMap,
@@ -850,22 +968,26 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     bitbo200WeekMa
   ] = await Promise.all([
     fetchHyperliquidBtcPerpMetrics(),
+    fetchHyperliquidBtcFundingHistory(cutoff),
     fetchBinanceBtcTicker(),
     fetchCoinGeckoCoin(),
     fetchCoinGeckoChart(2000),
-    fetchBinanceBtcDailyClosePoints(),
+    fetchBinanceBtcDailyClosePoints(cutoff),
+    fetchBinanceBtc200WeekMean(),
+    fetchBitviewValuation(cutoff),
+    fetchBitviewZInputs(cutoff),
+    fetchFearBitviewTrend(cutoff),
     fetchFearGreed(1),
-    fetchFearGreed(180),
+    fetchFearGreed(FEAR_HISTORY_DAYS + 1),
     fetchYahooChart('^GSPC'),
     fetchYahooChart('^IXIC'),
     fetchYahooChart('GC=F'),
     fetchYahooChart('CL=F'),
     fetchYahooChart('DX-Y.NYB'),
     fetchYahooChart('^VIX'),
-    fetchBlockchainChartWithFallback([
-      'n-active-addresses',
-      'n-unique-addresses'
-    ]),
+    fetchJson<BlockchainChart>(
+      `https://api.blockchain.info/charts/n-unique-addresses?timespan=${FEAR_HISTORY_DAYS + 14}days&sampled=false&format=json`
+    ),
     fetchBlockchainChart('n-transactions'),
     fetchBlockchainChart('n-new-addresses'),
     fetchBlockchainChartWithFallback([
@@ -907,13 +1029,12 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     coinalyzeSymbol ? fetchCoinalyzeFundingRate(coinalyzeSymbol) : Promise.resolve(null),
     coinalyzeSymbol ? fetchCoinalyzeOpenInterest(coinalyzeSymbol) : Promise.resolve(null),
     coinalyzeSymbol ? fetchCoinalyzeLongShortRatio(coinalyzeSymbol) : Promise.resolve(null),
-    coinalyzeSymbol ? fetchCoinalyzeFundingHistory(coinalyzeSymbol) : Promise.resolve([]),
-    fetchFredSeriesValues('SP500'),
+    coinalyzeSymbol ? fetchCoinalyzeFundingHistory(coinalyzeSymbol, cutoff) : Promise.resolve([]),
     fetchFredSeriesValues('NASDAQCOM'),
     fetchFredSeriesValues('GOLDAMGBD228NLBM'),
     fetchFredSeriesValues('DCOILWTICO'),
     fetchFredSeriesValues('DTWEXBGS'),
-    fetchFredSeriesValues('VIXCLS'),
+    fetchFredSeriesMap('VIXCLS'),
     fetchFredSeriesValues('MOVEINDEX'),
     fetchFredSeriesValues('T10Y2Y'),
     fetchFredSeriesMap('SP500'),
@@ -933,13 +1054,22 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     ])
   ]);
 
-  const btcPriceFromBinance = asNumber(binanceTicker?.price);
-  const btcPriceFromCoinGecko = asNumber(coin?.market_data?.current_price?.usd);
+  const btcBinanceAsOf = recentObservation(binanceTicker?.closeTime ?? NaN, 600_000);
+  const coinGeckoAsOf = recentObservation(Date.parse(coin?.market_data?.last_updated ?? coin?.last_updated ?? ''), 600_000);
+  const btcPriceFromBinance = btcBinanceAsOf ? asNumber(binanceTicker?.lastPrice) : null;
+  const btcPriceFromCoinGecko = coinGeckoAsOf ? asNumber(coin?.market_data?.current_price?.usd) : null;
   const btcPrice = btcPriceFromBinance ?? btcPriceFromCoinGecko;
-  const marketCap = asNumber(coin?.market_data?.market_cap?.usd);
-  const mvrvUnified = mvrv ?? bitboMvrv;
-  const mvrvZUnified = mvrvZ ?? bitboMvrvZ;
-  const realizedPriceUnified = realizedPrice ?? bitboRealizedPrice;
+  const marketCap = coinGeckoAsOf ? asNumber(coin?.market_data?.market_cap?.usd) : null;
+  const bitviewDays = retainFearBitviewDays(freshBitviewDays, previousBitviewDays, cutoff);
+  const zScores = readFearBitviewZScores(bitviewZInputs.payload, bitviewDays, cutoff, bitviewZInputs.collectedAt);
+  const bitviewValuationHistory = bitviewDays.map(day => {
+    const mvrvZ = zScores.get(day.date);
+    return mvrvZ ? { ...day, mvrvZ } : day;
+  });
+  const latestBitview = bitviewValuationHistory.at(-1);
+  const currentBitview = latestBitview?.date === fearDay(utcBucket(cutoff) - DAY_MS) ? latestBitview : undefined;
+  const mvrvUnified = latestBitview ? latestBitview.marketCap / latestBitview.realizedCap : mvrv ?? bitboMvrv;
+  const realizedPriceUnified = latestBitview?.realizedPrice ?? realizedPrice ?? bitboRealizedPrice;
 
   const btcHistoryPoints =
     (btcChart?.prices?.length ?? 0) > 0 ? btcChart?.prices ?? [] : btcBinanceDailyPoints;
@@ -947,17 +1077,24 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
   const btcPrices = btcHistoryPoints
     .map((p) => asNumber(p[1]))
     .filter((v): v is number => v !== null);
-  const ma200WeekComputed =
-    btcPrices.length >= 1400 ? average(btcPrices.slice(-1400)) : null;
-  const ma200Week = ma200WeekComputed ?? bitbo200WeekMa;
+  const ma200Week = btc200WeekMean?.value ?? bitbo200WeekMa;
   const btcPriceSeries = btcPrices.slice(-180);
 
-  const fearGreed = asNumber(fearGreedNow?.data?.[0]?.value);
-  const fearGreedClass = fearGreedNow?.data?.[0]?.value_classification ?? null;
-  const fearGreedSeries = (fearGreedHistory?.data ?? [])
-    .map((d) => asNumber(d.value))
-    .filter((v): v is number => v !== null)
-    .reverse();
+  const fearGreedPoint = fearGreedNow?.data?.[0];
+  const fearGreedAsOf = recentObservation(Number(fearGreedPoint?.timestamp) * 1000, 36 * 3_600_000);
+  const latestFearGreed = fearSourceNumber(fearGreedPoint?.value);
+  const fearGreed = fearGreedAsOf && latestFearGreed !== null && latestFearGreed >= 0 && latestFearGreed <= 100
+    ? latestFearGreed
+    : null;
+  const fearGreedClass = fearGreedAsOf ? fearGreedPoint?.value_classification ?? null : null;
+  const fearGreedPoints = Array.isArray(fearGreedHistory?.data) ? fearGreedHistory.data.flatMap((point): TimedNumber[] => {
+    const seconds = fearSourceNumber(point?.timestamp);
+    const value = fearSourceNumber(point?.value);
+    return seconds !== null && Number.isSafeInteger(seconds) && value !== null && value >= 0 && value <= 100
+      ? [[seconds * 1000, value]] : [];
+  }) : [];
+  const fearGreedDays = indexFearDays(fearGreedPoints, cutoff);
+  const fearGreedSeries = fearGreedPoints.sort((a, b) => a[0] - b[0]).slice(-FEAR_HISTORY_DAYS).map(([, value]) => value);
 
   const sp500 = parseYahooSeries(sp500Raw);
   const nasdaq = parseYahooSeries(nasdaqRaw);
@@ -965,6 +1102,9 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
   const crude = parseYahooSeries(crudeRaw);
   const dxy = parseYahooSeries(dxyRaw);
   const vix = parseYahooSeries(vixRaw);
+  const sp500FredSeries = [...sp500FredMap.values()];
+  const latestSp500FredDay = [...sp500FredMap.keys()].at(-1);
+  const latestVixFred = [...vixFredMap.entries()].at(-1);
 
   const sp500Value = latestFromSeries(sp500FredSeries) ?? sp500.current;
   const nasdaqValue = latestFromSeries(nasdaqFredSeries) ?? nasdaq.current;
@@ -972,7 +1112,7 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
   const crudeValue = latestFromSeries(oilFredSeries) ?? crude.current;
   // Prefer ICE DXY (Yahoo: DX-Y.NYB). FRED DTWEXBGS is trade-weighted dollar index, not DXY.
   const dxyValue = dxy.current ?? latestFromSeries(dxyFredSeries);
-  const vixValue = latestFromSeries(vixFredSeries) ?? vix.current;
+  const vixValue = latestVixFred?.[1] ?? vix.current;
   const moveValue = latestFromSeries(moveFredSeries);
   const yieldCurve = latestFromSeries(yieldCurveSeries);
 
@@ -1026,17 +1166,21 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     return correlation(aFuzzy.slice(-90), bFuzzy.slice(-90));
   }
 
-  const activeSeries = (activeAddressesRaw?.values ?? [])
-    .map((v) => asNumber(v.y))
-    .filter((v): v is number => v !== null);
-  const activeAddresses =
-    activeSeries.length > 0 ? activeSeries[activeSeries.length - 1] : null;
-  const activeRecentAvg = average(activeSeries.slice(-7));
-  const activePrevAvg = average(activeSeries.slice(-14, -7));
-  const activeAddressesRising =
-    activeRecentAvg !== null && activePrevAvg !== null
-      ? activeRecentAvg > activePrevAvg
-      : null;
+  const addressPoints = Array.isArray(uniqueAddressesRaw?.values) ? uniqueAddressesRaw.values.flatMap((point): TimedNumber[] => {
+    const seconds = fearSourceNumber(point?.x);
+    const count = fearSourceNumber(point?.y);
+    return seconds !== null && Number.isSafeInteger(seconds) && count !== null && Number.isSafeInteger(count) && count >= 0
+      ? [[seconds * 1000, count]] : [];
+  }) : [];
+  const addressDays = indexFearDays(addressPoints, cutoff);
+  const latestAddressDay = [...addressDays.keys()].filter(day => addressDays.get(day) !== null).sort((a, b) => b - a)[0];
+  const activeAddresses = addressDays.get(latestAddressDay) ?? null;
+  const activeAddressesRising = latestAddressDay === undefined ? null : uniqueAddressesRising(addressDays, latestAddressDay);
+  const fundingBuckets = indexFearFunding(hyperliquidFunding.points);
+  const latestHyperliquidFunding = contiguousFundingWindow(fundingBuckets, cutoff);
+  const latestCoinalyzeFunding = latestHyperliquidFunding ? null
+    : contiguousFundingWindow(indexFearFunding(coinalyzeFunding), utcBucket(cutoff, HOUR_MS) - 1);
+  const fundingWindow = latestHyperliquidFunding ?? latestCoinalyzeFunding;
 
   const txSeries = (txCountRaw?.values ?? [])
     .map((v) => asNumber(v.y))
@@ -1056,8 +1200,11 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     mempoolSeries.length > 0 ? mempoolSeries[mempoolSeries.length - 1] : null;
 
   const fundingRateUnified = hyperliquidMetrics.fundingRate ?? fundingRate;
-  const openInterestUnified = hyperliquidMetrics.openInterest ?? openInterest;
-  const manual = FEAR_MANUAL_SNAPSHOT;
+  const { openInterest: hyperliquidOpenInterest, markPrice } = hyperliquidMetrics;
+  const openInterestUsd = hyperliquidOpenInterest !== null && markPrice !== null
+    ? hyperliquidOpenInterest * markPrice
+    : openInterest;
+  const manual: FearManualSnapshot = useManualFallback ? FEAR_MANUAL_SNAPSHOT : { asOf: FEAR_MANUAL_SNAPSHOT.asOf };
   const manualFallbackFields: string[] = [];
 
   const layer1: FearDashboardData['layer1'] = {
@@ -1075,7 +1222,7 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     ),
     realizedCap: pickApiOrManual(
       'layer1.realizedCap',
-      realizedCap,
+      latestBitview?.realizedCap ?? realizedCap,
       manual.layer1?.realizedCap,
       manualFallbackFields
     ),
@@ -1091,9 +1238,9 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
       manual.layer1?.mvrv,
       manualFallbackFields
     ),
-    mvrvZ: pickApiOrManual(
+    mvrvZ: latestBitview ? currentBitview?.mvrvZ?.value ?? null : pickApiOrManual(
       'layer1.mvrvZ',
-      mvrvZUnified,
+      mvrvZ ?? bitboMvrvZ,
       manual.layer1?.mvrvZ,
       manualFallbackFields
     ),
@@ -1209,7 +1356,7 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     ),
     openInterest: pickApiOrManual(
       'layer3.openInterest',
-      openInterestUnified,
+      openInterestUsd,
       manual.layer3?.openInterest,
       manualFallbackFields
     ),
@@ -1311,112 +1458,85 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     )
   };
 
-  const fundingHistoryRecent = fundingHistory.slice(-8);
-
-  const bottomSignals: BottomSignal[] = [
-    {
-      label: 'BTC price below Realized Price',
-      status:
-        layer1.btcPrice !== null && layer1.realizedPrice !== null
-          ? layer1.btcPrice < layer1.realizedPrice
-            ? 'on'
-            : 'off'
-          : 'unknown',
-      detail:
-        layer1.btcPrice !== null && layer1.realizedPrice !== null
-          ? `${layer1.btcPrice.toFixed(0)} < ${layer1.realizedPrice.toFixed(0)}`
-          : 'Missing BTC price or realized price'
+  const signalStates = evaluateFearSignals({
+    btcPrice: currentBitview?.usdClose,
+    realizedPrice: currentBitview?.realizedPrice,
+    mvrvZ: layer1.mvrvZ,
+    fearGreed: layer3.fearGreed,
+    dormancyFlow: layer2.dormancyFlow,
+    uniqueAddressesRising: layer2.activeAddressesRising,
+    vix: layer5.vix,
+    sp500Drawdown: layer5.sp500Drawdown,
+    fundingWindow,
+  });
+  const details: Record<FearSignalId, string> = {
+    realizedPrice: currentBitview
+      ? `${currentBitview.usdClose.toFixed(2)} ${signalStates.realizedPrice === 'on' ? '<' : '≥'} ${currentBitview.realizedPrice.toFixed(2)} USD/BTC`
+      : 'Need a matched BTC close and realized price for the last closed UTC day',
+    mvrvZ: layer1.mvrvZ !== null ? `Current ${layer1.mvrvZ.toFixed(2)}` : 'Missing MVRV Z-score',
+    fearGreed: layer3.fearGreed !== null
+      ? `Current ${layer3.fearGreed} (${layer3.fearGreedClass ?? 'N/A'})`
+      : 'Missing fear and greed index',
+    dormancyFlow: layer2.dormancyFlow !== null
+      ? `Current ${layer2.dormancyFlow.toFixed(0)}`
+      : 'Missing dormancy flow',
+    uniqueAddresses: layer2.activeAddressesRising === null
+      ? 'Need 14 consecutive daily address counts'
+      : layer2.activeAddressesRising ? '7d average is rising' : '7d average is not rising',
+    vix: layer5.vix !== null ? `Current ${layer5.vix.toFixed(2)}` : 'Missing VIX',
+    sp500Drawdown: layer5.sp500Drawdown !== null ? `Current ${layer5.sp500Drawdown.toFixed(2)}%` : 'Missing S&P 500 drawdown',
+    funding: fundingWindow
+      ? `Last 8h max=${Math.max(...fundingWindow.map(([, rate]) => rate)).toExponential(2)}`
+      : 'Need 8 consecutive hourly funding observations',
+  };
+  const observations: Record<FearSignalId, SignalObservation[]> = {
+    realizedPrice: currentBitview ? [{ source: 'Bitview', observedAt: currentBitview.date }] : [],
+    mvrvZ: currentBitview?.mvrvZ ? [{ source: 'Bitview', observedAt: currentBitview.date }]
+      : latestBitview ? [] : mvrvZ !== null ? [{ source: 'Glassnode' }] : bitboMvrvZ !== null ? [{ source: 'Bitbo' }] : [],
+    fearGreed: fearGreed !== null && fearGreedAsOf ? [{ source: 'Alternative.me', observedAt: fearGreedAsOf }] : [],
+    dormancyFlow: [],
+    uniqueAddresses: latestAddressDay === undefined ? [] : [{ source: 'Blockchain.com', observedAt: fearDay(latestAddressDay) }],
+    vix: latestVixFred ? [{ source: 'FRED VIXCLS', observedAt: latestVixFred[0] }]
+      : vix.current !== null ? [{ source: 'Yahoo Finance' }] : [],
+    sp500Drawdown: latestSp500FredDay ? [{ source: 'FRED SP500', observedAt: latestSp500FredDay }]
+      : sp500.drawdown !== null ? [{ source: 'Yahoo Finance' }] : [],
+    funding: fundingWindow
+      ? [{ source: latestHyperliquidFunding ? 'Hyperliquid BTC perpetual' : 'Coinalyze BTC perpetual',
+          observedAt: new Date(fundingWindow[7][0]).toISOString() }]
+      : [],
+  };
+  const bottomSignals: BottomSignal[] = FEAR_SIGNAL_IDS.map(id => ({
+    label: FEAR_SIGNAL_LABELS[id],
+    status: signalStates[id],
+    detail: details[id],
+    observations: observations[id],
+  }));
+  const { score: compositeScore } = summarizeFearScore(Object.values(signalStates));
+  const signalHistory = buildFearSignalHistory(cutoff, btcBinanceDailyPoints, fearGreedDays, addressDays, fundingBuckets, bitviewValuationHistory);
+  const bitviewStatus = freshBitviewDays.length === FEAR_HISTORY_DAYS ? 'ok' : freshBitviewDays.length ? 'degraded' : 'down';
+  const historySources: FearHistorySources = {
+    funding: describeFearArchive(signalHistory, 'funding', hyperliquidFunding.complete),
+    uniqueAddresses: describeFearArchive(signalHistory, 'uniqueAddresses', Array.isArray(uniqueAddressesRaw?.values)),
+    realizedPrice: {
+      source: 'Bitview BTC valuation',
+      status: bitviewStatus,
+      freshDays: freshBitviewDays.length,
+      retainedDays: bitviewValuationHistory.length - freshBitviewDays.length,
     },
-    {
-      label: 'MVRV Z-score below -1',
-      status:
-        layer1.mvrvZ !== null ? (layer1.mvrvZ < -1 ? 'on' : 'off') : 'unknown',
-      detail:
-        layer1.mvrvZ !== null
-          ? `Current ${layer1.mvrvZ.toFixed(2)}`
-          : 'Missing MVRV Z-score'
+    mvrvZ: {
+      source: 'Bitview inputs for calculated MVRV Z-score',
+      status: zScores.size === FEAR_HISTORY_DAYS ? 'ok' : zScores.size ? 'degraded' : 'down',
+      freshDays: zScores.size,
+      retainedDays: bitviewValuationHistory.filter(day => day.mvrvZ).length - zScores.size,
     },
-    {
-      label: 'Fear and Greed index below 20',
-      status:
-        layer3.fearGreed !== null
-          ? layer3.fearGreed < 20
-            ? 'on'
-            : 'off'
-          : 'unknown',
-      detail:
-        layer3.fearGreed !== null
-          ? `Current ${layer3.fearGreed} (${layer3.fearGreedClass ?? 'N/A'})`
-          : 'Missing fear and greed index'
-    },
-    {
-      label: 'Dormancy flow extremely low',
-      status:
-        layer2.dormancyFlow !== null
-          ? layer2.dormancyFlow < 450000
-            ? 'on'
-            : 'off'
-          : 'unknown',
-      detail:
-        layer2.dormancyFlow !== null
-          ? `Current ${layer2.dormancyFlow.toFixed(0)}`
-          : 'Missing dormancy flow'
-    },
-    {
-      label: 'Active addresses rising',
-      status:
-        layer2.activeAddressesRising === null
-          ? 'unknown'
-          : layer2.activeAddressesRising
-            ? 'on'
-            : 'off',
-      detail:
-        layer2.activeAddressesRising === null
-          ? 'Need 14-day active address history'
-          : layer2.activeAddressesRising
-          ? '7d average is rising'
-          : '7d average is not rising'
-    },
-    {
-      label: 'VIX above 30',
-      status:
-        layer5.vix !== null ? (layer5.vix > 30 ? 'on' : 'off') : 'unknown',
-      detail:
-        layer5.vix !== null
-          ? `Current ${layer5.vix.toFixed(2)}`
-          : 'Missing VIX'
-    },
-    {
-      label: 'S&P 500 drawdown above 20%',
-      status:
-        layer5.sp500Drawdown !== null
-          ? layer5.sp500Drawdown > 20
-            ? 'on'
-            : 'off'
-          : 'unknown',
-      detail:
-        layer5.sp500Drawdown !== null
-          ? `Current ${layer5.sp500Drawdown.toFixed(2)}%`
-          : 'Missing S&P 500 drawdown'
-    },
-    {
-      label: 'Funding rate negative for extended period',
-      status:
-        fundingHistoryRecent.length === 8
-          ? fundingHistoryRecent.every((v) => v < 0)
-            ? 'on'
-            : 'off'
-          : 'unknown',
-      detail:
-        fundingHistoryRecent.length === 8
-          ? `Last 8h min=${Math.min(...fundingHistoryRecent).toExponential(2)}`
-          : 'Need at least 8 hourly funding points'
-    }
-  ];
-
-  const compositeScore = buildCompositeScore(bottomSignals);
+  };
 
   const sources: SourceHealth[] = [
+    {
+      name: 'Bitview',
+      status: bitviewStatus,
+      detail: 'Daily BTC valuation (CC BY 4.0)',
+    },
     {
       name: 'Hyperliquid API',
       status:
@@ -1497,7 +1617,7 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
       status:
         sp500FredSeries.length ||
         nasdaqFredSeries.length ||
-        vixFredSeries.length ||
+        vixFredMap.size ||
         moveFredSeries.length
           ? 'ok'
           : 'degraded',
@@ -1557,19 +1677,24 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
           : process.env.BITBO_API_KEY || process.env.BITBO_KEY
             ? 'Authorized but no metric response'
             : 'Set BITBO_API_KEY (or BITBO_KEY) if your Bitbo plan requires auth'
-    },
-    {
-      name: 'Research Snapshot (Manual)',
-      status: manualFallbackFields.length > 0 ? 'ok' : 'degraded',
-      detail:
-        manualFallbackFields.length > 0
-          ? `Fallback for ${manualFallbackFields.length} fields, as of ${manual.asOf}`
-          : `Available, as of ${manual.asOf}`
     }
   ];
 
+  if (manualFallbackFields.length > 0) {
+    sources.push({
+      name: 'Research Snapshot (Manual)',
+      status: 'degraded',
+      detail: `Fallback for ${manualFallbackFields.length} fields, as of ${manual.asOf}`
+    });
+  }
+
   return {
     generatedAt: new Date().toISOString(),
+    observedAt: {
+      btcPrice: btcPriceFromBinance !== null ? btcBinanceAsOf : btcPriceFromCoinGecko !== null ? coinGeckoAsOf : null,
+      fearGreed: fearGreed !== null ? fearGreedAsOf : null,
+      ma200Week: btc200WeekMean?.asOf ?? null
+    },
     sources,
     layer1,
     layer2,
@@ -1577,6 +1702,10 @@ export async function getFearDashboardData(): Promise<FearDashboardData> {
     layer4,
     layer5,
     bottomSignals,
-    compositeScore
+    compositeScore,
+    bitviewValuationHistory,
+    bitviewTrend,
+    signalHistory,
+    historySources
   };
 }

@@ -6,7 +6,7 @@ import StocksIssuers from './stocks-client';
 import InstrumentTable from '@/components/stocks/instrument-table';
 import {
   QUOTES_AS_OF,
-  QUOTES_REPORTED_TOTAL,
+  BSTOCKS_REGISTER,
   QUOTES_SOURCE,
   getBookTotals,
   issuerSlugsWithInstruments,
@@ -152,20 +152,12 @@ export async function renderPage(locale: Locale) {
           <InstrumentTable />
 
           <p className='mt-4 max-w-[760px] font-mono text-[11px] leading-[1.8] text-subtle'>
-            {/* reportedTotal belongs to the one issuer the snapshot was pulled
-                for, so the coverage clause only holds while that is the only
-                ingested issuer. It drops out rather than going quietly wrong. */}
-            {book.issuerCount === 1
-              ? t(
-                  `Covers ${ingestedNames} only — ${book.instrumentCount} of the ${QUOTES_REPORTED_TOTAL} instruments that issuer reports. `,
-                  `目前只覆盖 ${ingestedNames}，是该发行方已报告 ${QUOTES_REPORTED_TOTAL} 个标的中的 ${book.instrumentCount} 个。`,
-                  `現在は ${ingestedNames} のみ、同発行体が報告する ${QUOTES_REPORTED_TOTAL} 銘柄のうち ${book.instrumentCount} 銘柄です。`
-                )
-              : t(
-                  `Covers ${ingestedNames} — ${book.instrumentCount} instruments in all. `,
-                  `覆盖 ${ingestedNames}，共 ${book.instrumentCount} 个标的。`,
-                  `対象は ${ingestedNames}、合計 ${book.instrumentCount} 銘柄です。`
-                )}
+            {t(
+              `${ingestedNames} · ${book.instrumentCount} verified listings, ${book.quotedCount} in the dated CMC aggregate. `,
+              `${ingestedNames} 共核验 ${book.instrumentCount} 个发行标的。旧版 CMC 聚合快照覆盖 ${book.quotedCount} 个。`,
+              `${ingestedNames} の上場確認済み ${book.instrumentCount} 銘柄のうち、CMC 集計の取得対象は ${book.quotedCount} 銘柄です。`
+            )}
+            <a href={BSTOCKS_REGISTER.source} target='_blank' rel='noopener noreferrer' className='mr-1 text-brand'>ADGM ↗</a>
             {t(
               'The other issuers below have no ingested instrument list, so their rows carry their own published figures and nothing to open. Market cap is price times circulating supply on the CMC definition; turnover is 24h volume over market cap, so a small market cap inflates it. The on-chain size on an issuer row comes from another source at another date and will not tie out against the total above.',
               '下面其余发行方没有已摄入的标的清单，所以那些行显示的是它们自己公布的数字，点不开。市值为 CMC 口径的价格 × 流通量；换手为 24h 成交额 ÷ 市值，分母小的时候这个比值会被放大。发行方行上的「链上规模」来自另一个来源和时点，不会与上面的合计对平。',

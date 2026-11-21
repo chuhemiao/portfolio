@@ -1,8 +1,10 @@
 import type { OscillatorData } from './oscillator-data';
+import type { OscillatorHistory } from './oscillator-history';
 
 export interface OscillatorSnapshotEnvelope {
   asOf: string;
   data: Omit<OscillatorData, 'mode' | 'snapshotAsOf' | 'note'>;
+  history?: Record<string, OscillatorHistory>;
 }
 
 const SNAPSHOT_NOTE =

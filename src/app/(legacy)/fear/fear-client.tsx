@@ -2,14 +2,16 @@
 
 import type { Locale } from '@/lib/i18n';
 import { useDashboardI18n } from '../fear/use-dashboard-i18n';
+import { FearTriggerHistory } from './trigger-history';
 
 import type { FearDashboardData, SignalStatus } from '@/lib/fear-data';
+import { FEAR_BASE_SCORE, FEAR_SIGNAL_POINTS, summarizeFearScore } from '@/lib/fear-signals';
 import {
   FEAR_CORE_STRATEGIES,
   FEAR_EXPANDED_STRATEGIES,
   FEAR_OPERATOR_GUIDELINES
 } from '@/data/fear-playbook';
-import { useEffect, useState } from 'react';
+import type { ReactNode } from 'react';
 
 function formatNumber(
   value: number | null,
@@ -22,7 +24,7 @@ function formatNumber(
 
 function formatCurrency(value: number | null, locale: Locale, digits = 0) {
   if (value === null || Number.isNaN(value)) return 'N/A';
-  return new Intl.NumberFormat('en-US', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'USD',
     maximumFractionDigits: digits
@@ -38,7 +40,7 @@ function scoreBand(score: number) {
   if (score < 30) return 'Overvalued';
   if (score < 60) return 'Neutral';
   if (score < 80) return 'Undervalued';
-  return 'High probability bottom zone';
+  return 'High rule score';
 }
 
 function statusBadge(status: SignalStatus) {
@@ -73,39 +75,49 @@ function trafficLight(active: number) {
   };
 }
 
-function Sparkline({ values }: { values: number[] }) {
+function Sparkline({ values, comparison = [], label }: {
+  values: (number | null)[];
+  comparison?: (number | null)[];
+  label?: string;
+}) {
   const { d } = useDashboardI18n();
-  if (!values.length) {
+  const observed = [...values, ...comparison].filter((value): value is number => value !== null);
+  if (!observed.length) {
     return <p className='text-xs text-muted-foreground'>{d("No chart data")}</p>;
   }
 
   const width = 220;
   const height = 56;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
+  const min = Math.min(...observed);
+  const max = Math.max(...observed);
   const range = max - min || 1;
 
-  const points = values
-    .map((v, i) => {
-      const x = (i / Math.max(values.length - 1, 1)) * width;
-      const y = height - ((v - min) / range) * height;
-      return `${x},${y}`;
-    })
-    .join(' ');
+  const line = (series: (number | null)[]) => series.map((value, index) => {
+    if (value === null) return '';
+    const x = index * width / Math.max(values.length - 1, 1);
+    const y = height - (value - min) * height / range;
+    return `${series[index - 1] == null ? 'M' : 'L'}${x.toFixed(2)} ${y.toFixed(2)}`;
+  }).join(' ');
 
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       width='100%'
       height='56'
+      role={label ? 'img' : undefined}
+      aria-label={label}
       className='overflow-visible'>
-      <polyline
+      <path
         fill='none'
         stroke='currentColor'
         strokeWidth='2'
-        points={points}
+        d={line(values)}
         className='text-primary'
       />
+      {comparison.length ? (
+        <path fill='none' stroke='currentColor' strokeWidth='2' strokeDasharray='4 3'
+          d={line(comparison)} className='text-amber-700 dark:text-amber-400' />
+      ) : null}
     </svg>
   );
 }
@@ -117,14 +129,14 @@ function MetricCard({
 }: {
   title: string;
   value: string;
-  hint?: string;
+  hint?: ReactNode;
 }) {
   const { d } = useDashboardI18n();
   return (
     <div className='rounded-lg border p-3 bg-surface'>
       <p className='text-xs text-muted-foreground mb-1'>{d(title)}</p>
       <p className='text-sm font-semibold break-words'>{d(value)}</p>
-      {hint && <p className='text-[11px] text-muted-foreground mt-1'>{d(hint)}</p>}
+      {hint && <p className='text-[11px] text-muted-foreground mt-1'>{typeof hint === 'string' ? d(hint) : hint}</p>}
     </div>
   );
 }
@@ -168,38 +180,26 @@ function StrategyCard({
 }
 
 export default function FearClient({
-  data: initialData
+  data,
+  children
 }: {
   data: FearDashboardData;
+  children?: ReactNode;
 }) {
   const { locale, d } = useDashboardI18n();
-  const [remoteData, setRemoteData] = useState<FearDashboardData | null>(null);
-  const data = remoteData ?? initialData;
-  const activeSignals = data.bottomSignals.filter(
-    (s) => s.status === 'on'
-  ).length;
+  const activeSignals = data.bottomSignals.filter(s => s.status === 'on').length;
+  const { raw, known: observedSignals } = summarizeFearScore(data.bottomSignals.map(signal => signal.status));
   const tl = trafficLight(activeSignals);
   const gaugeDeg = Math.round((data.compositeScore / 100) * 360);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    fetch('/api/fear-data')
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json() as Promise<FearDashboardData>;
-      })
-      .then((json) => {
-        if (!cancelled) setRemoteData(json);
-      })
-      .catch(() => {
-        // Keep the build-time snapshot when the Worker is unavailable.
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  const date = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' });
+  const day = new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' });
+  const signedPoints = new Intl.NumberFormat(locale, { signDisplay: 'exceptZero' });
+  const latestValuation = data.bitviewValuationHistory?.at(-1);
+  const latestZ = data.bitviewValuationHistory?.findLast(point => point.mvrvZ)?.mvrvZ;
+  const valuationByDay = new Map(data.bitviewValuationHistory?.map(point => [point.date, point]));
+  const valuationDays = data.signalHistory?.map(point => valuationByDay.get(point.date)) ?? [];
+  const trendByDay = new Map(data.bitviewTrend?.points.map(point => [point.date, point]));
+  const trendDays = data.signalHistory?.map(point => trendByDay.get(point.date)) ?? data.bitviewTrend?.points ?? [];
 
   return (
     <section className='space-y-8 pb-8'>
@@ -207,14 +207,32 @@ export default function FearClient({
         <h1 className='font-medium text-2xl tracking-tighter'>{d("fear")}</h1>
         <p className='text-sm text-muted-foreground'> {d("DYOR, this dashboard is meant to be a comprehensive data reference for Bitcoin market conditions, not a trading signal generator. Always cross-check with your own research and risk management.")} </p>
         <p className='text-sm text-muted-foreground'> {d("Use the playbook below to observe regime shifts, leverage resets, liquidity migration, market rotation, and macro spillovers across crypto.")} </p>
-        <p className='text-xs text-muted-foreground'> {d("Last refresh:")} {new Date(data.generatedAt).toLocaleString(locale, { timeZone: 'UTC' })}
-        </p>
+        <div className='flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground'>
+          <span>{d("Last refresh:")} <time dateTime={data.generatedAt}>{date.format(new Date(data.generatedAt))} UTC</time></span>
+          {data.observedAt.btcPrice ? (
+            <span>{d("BTC quote observed")} <time dateTime={data.observedAt.btcPrice}>{date.format(new Date(data.observedAt.btcPrice))} UTC</time></span>
+          ) : null}
+          {data.observedAt.fearGreed ? (
+            <span>{d("Fear & Greed observation")} <time dateTime={data.observedAt.fearGreed}>{date.format(new Date(data.observedAt.fearGreed))} UTC</time></span>
+          ) : null}
+        </div>
       </div>
+
+      {children}
 
       <div className='w-full space-y-8'>
         <div className='rounded-xl border p-5 space-y-5'>
           <h2 className='text-lg font-semibold'>{d("Composite Bottom Model")}</h2>
-          <p className='text-sm text-muted-foreground'> {d("Combine all indicators into a single bottom probability score.")} </p>
+          <p className='text-sm text-muted-foreground'>
+            {d("The bottom score summarizes the available signals.")} {d("Signals with data")} {observedSignals}/{data.bottomSignals.length}
+          </p>
+          <div className='flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground'>
+            <span>{d('Base score')} {FEAR_BASE_SCORE}</span>
+            <span>{d('ON')} {signedPoints.format(FEAR_SIGNAL_POINTS.on)}</span>
+            <span>{d('OFF')} {signedPoints.format(FEAR_SIGNAL_POINTS.off)}</span>
+            <span>{d('UNKNOWN')} {signedPoints.format(FEAR_SIGNAL_POINTS.unknown)}</span>
+            {raw !== data.compositeScore ? <span>{d('Score limited to 0–100')} · {raw} → {data.compositeScore}</span> : null}
+          </div>
           <div className='grid grid-cols-1 lg:grid-cols-[220px_1fr] gap-6 items-center'>
             <div className='flex justify-center'>
               <div
@@ -242,7 +260,7 @@ export default function FearClient({
                   '0 - 30 Overvalued',
                   '30 - 60 Neutral',
                   '60 - 80 Undervalued',
-                  '80 - 100 High probability bottom zone'
+                  '80 - 100 High rule score'
                 ]}
               />
             </div>
@@ -265,17 +283,37 @@ export default function FearClient({
             {data.bottomSignals.map((signal) => (
               <div
                 key={signal.label}
-                className='rounded-lg border p-3 flex items-center justify-between gap-3'>
-                <div>
+                className='rounded-lg border p-3 flex items-start justify-between gap-3'>
+                <div className='min-w-0'>
                   <p className='text-sm'>{d(signal.label)}</p>
                   <p className='text-xs text-muted-foreground mt-1'>
                     {d(signal.detail)}
                   </p>
+                  {signal.observations?.length ? (
+                    <ul className='mt-1.5 space-y-0.5 text-[11px] text-muted-foreground'>
+                      {signal.observations.map(observation => (
+                        <li key={observation.source}>
+                          {observation.source === 'Alternative.me' ? (
+                            <a href='https://alternative.me/crypto/fear-and-greed-index/' className='underline'>{observation.source}</a>
+                          ) : observation.source === 'Bitview' ? (
+                            <a href='https://bitview.space/' className='underline'>Bitview</a>
+                          ) : observation.source}
+                          {observation.observedAt && Number.isFinite(Date.parse(observation.observedAt)) ? (
+                            <> · <time dateTime={observation.observedAt}>
+                              {(observation.observedAt.length === 10 ? day : date).format(Date.parse(observation.observedAt))}
+                            </time> UTC</>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
                 </div>
-                <span
-                  className={`text-xs px-2 py-1 rounded-full border ${statusBadge(signal.status)}`}>
-                  {d(signal.status.toUpperCase())}
-                </span>
+                <div className='grid shrink-0 gap-1 text-right text-xs'>
+                  <span className={`px-2 py-1 rounded-full border ${statusBadge(signal.status)}`}>
+                    {d(signal.status.toUpperCase())}
+                  </span>
+                  <span className='text-muted-foreground'>{d('Contribution')} {signedPoints.format(FEAR_SIGNAL_POINTS[signal.status])}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -283,9 +321,19 @@ export default function FearClient({
           <p className='text-xs text-muted-foreground'> {d("Traffic light system: Green = strong accumulation zone, Yellow = neutral, Red = risk zone.")} </p>
         </div>
 
+        <FearTriggerHistory history={data.signalHistory ?? []} historySources={data.historySources} />
+
         <div className='space-y-4'>
           <h2 className='text-lg font-semibold'> {d("Layer 1: Market Price and Core Valuation")} </h2>
           <p className='text-sm text-muted-foreground'> {d("Display key valuation metrics for Bitcoin.")} </p>
+          {latestValuation ? (
+            <p className='flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground'>
+              <span><a href='https://bitview.space/' className='underline'>Bitview (bitview.space)</a> · <a href='https://creativecommons.org/licenses/by/4.0/' className='underline'>CC BY 4.0</a></span>
+              <span>{d('Valuation observation')} <time dateTime={latestValuation.date}>{day.format(Date.parse(latestValuation.date))} UTC</time></span>
+              <span>{d('Source data collected')} <time dateTime={latestValuation.collectedAt}>{date.format(Date.parse(latestValuation.collectedAt))} UTC</time></span>
+              <span>{d('MVRV is calculated as Bitview market cap divided by realized cap.')}</span>
+            </p>
+          ) : null}
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
             <MetricCard
               title={d("Bitcoin Price (real-time)")}
@@ -293,24 +341,21 @@ export default function FearClient({
             />
             <MetricCard
               title={d("Market Cap")}
-              value={formatCurrency(data.layer1.marketCap, locale)}
+              value={formatCurrency(latestValuation ? latestValuation.marketCap : data.layer1.marketCap, locale)}
             />
             <MetricCard
               title={d("Realized Cap")}
               value={formatCurrency(data.layer1.realizedCap, locale)}
-              hint={d("CryptoQuant")}
             />
             <MetricCard
               title={d("Realized Price")}
               value={formatCurrency(data.layer1.realizedPrice, locale, 2)}
-              hint={d("CryptoQuant")}
             />
             <MetricCard
               title={d("MVRV Ratio")}
               value={
                 data.layer1.mvrv === null ? 'N/A' : data.layer1.mvrv.toFixed(2)
               }
-              hint={d("CryptoQuant")}
             />
             <MetricCard
               title={d("MVRV Z-Score")}
@@ -319,11 +364,14 @@ export default function FearClient({
                   ? 'N/A'
                   : data.layer1.mvrvZ.toFixed(2)
               }
-              hint={d("Optional Glassnode fallback")}
+              hint={latestValuation ? undefined : d("Optional Glassnode fallback")}
             />
             <MetricCard
               title={d("200 Week MA")}
               value={formatCurrency(data.layer1.ma200Week, locale, 2)}
+              hint={data.observedAt.ma200Week
+                ? `${d("200 closed Binance BTC/USDT weeks")} · ${date.format(new Date(data.observedAt.ma200Week))} UTC`
+                : undefined}
             />
             <MetricCard
               title={d("Bottom Zone Rules")}
@@ -334,19 +382,53 @@ export default function FearClient({
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3'>
             <div className='rounded-lg border p-4 bg-gradient-to-br from-muted/50 via-muted/20 to-background'>
               <p className='text-sm font-medium mb-2'> {d("Price vs Realized Price")} </p>
-              <Sparkline values={data.layer1.btcPriceSeries} />
+              <Sparkline
+                values={valuationDays.map(point => point?.usdClose ?? null)}
+                comparison={valuationDays.map(point => point?.realizedPrice ?? null)}
+                label={d('Price vs Realized Price')}
+              />
+              {latestValuation ? (
+                <p className='mt-2 flex flex-wrap gap-x-2 text-[11px]'>
+                  <span className='text-primary'>{d('Bitview BTC/USD daily close')}</span>
+                  <span className='text-amber-700 dark:text-amber-400'>{d('Realized Price')}</span>
+                </p>
+              ) : null}
             </div>
             <div className='rounded-lg border p-4 bg-gradient-to-br from-muted/50 via-muted/20 to-background'>
               <p className='text-sm font-medium mb-2'>{d("Price vs 200W MA")}</p>
-              <Sparkline values={data.layer1.btcPriceSeries} />
+              <Sparkline
+                values={trendDays.map(point => point?.usdClose ?? null)}
+                comparison={trendDays.map(point => point?.ma200Week ?? null)}
+                label={d('Price vs 200W MA')}
+              />
+              {data.bitviewTrend ? (
+                <div className='mt-2 space-y-1 text-[11px] text-muted-foreground'>
+                  <p className='flex flex-wrap gap-x-2'>
+                    <span className='text-primary'>{d('Bitview BTC/USD daily close')}</span>
+                    <span className='text-amber-700 dark:text-amber-400'>{d('Bitview 200-week MA')} · USD/BTC</span>
+                  </p>
+                  <p>{d('Each daily value averages the latest 200 Sunday UTC closes.')}</p>
+                  <p>
+                    <a href='https://bitview.space/' className='underline'>Bitview (bitview.space)</a> · <a href='https://creativecommons.org/licenses/by/4.0/' className='underline'>CC BY 4.0</a>
+                    {' · '}{d('Source data collected')} <time dateTime={data.bitviewTrend.collectedAt}>{date.format(Date.parse(data.bitviewTrend.collectedAt))} UTC</time>
+                  </p>
+                </div>
+              ) : null}
             </div>
             <div className='rounded-lg border p-4 bg-gradient-to-br from-muted/50 via-muted/20 to-background'>
               <p className='text-sm font-medium mb-2'>{d("MVRV Ratio historical")}</p>
-              <p className='text-xs text-muted-foreground'> {d("Waiting for CryptoQuant series")} </p>
+              <Sparkline values={valuationDays.map(point => point ? point.marketCap / point.realizedCap : null)} label={d('MVRV Ratio historical')} />
             </div>
             <div className='rounded-lg border p-4 bg-gradient-to-br from-muted/50 via-muted/20 to-background'>
               <p className='text-sm font-medium mb-2'>{d("MVRV Z-score cycle")}</p>
-              <p className='text-xs text-muted-foreground'> {d("Waiting for Glassnode series")} </p>
+              <Sparkline values={valuationDays.map(point => point?.mvrvZ?.value ?? null)} label={d('MVRV Z-score cycle')} />
+              {data.historySources?.mvrvZ ? (
+                <p className='mt-2 space-y-1 text-[11px] text-muted-foreground'>
+                  <span className='block'>{d('Z-score uses the difference between market cap and realized cap, divided by the population standard deviation of market cap through that day.')}</span>
+                  <a className='block underline' href='https://github.com/bitcoinresearchkit/mono/blob/main/showcases/studio/presets.js#L651-L659'>{d("Calculated here using Bitview's published method")}</a>
+                  {latestZ ? <span className='block'>{d('Source data collected')} <time dateTime={latestZ.collectedAt}>{date.format(Date.parse(latestZ.collectedAt))} UTC</time></span> : null}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -356,7 +438,7 @@ export default function FearClient({
           <p className='text-sm text-muted-foreground'> {d("Measure network usage and long-term holder conviction.")} </p>
           <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3'>
             <MetricCard
-              title={d("Active Addresses")}
+              title={d("Unique addresses used")}
               value={formatNumber(data.layer2.activeAddresses, locale)}
               hint={d("Blockchain.com")}
             />
@@ -442,6 +524,7 @@ export default function FearClient({
                   ? 'N/A'
                   : `${data.layer3.fearGreed} (${data.layer3.fearGreedClass ?? 'N/A'})`
               }
+              hint={<a className='underline' href='https://alternative.me/crypto/fear-and-greed-index/'>Alternative.me</a>}
             />
             <MetricCard
               title={d("Funding Rate (perpetual futures)")}
@@ -453,10 +536,8 @@ export default function FearClient({
               hint={d("Hyperliquid / Coinalyze")}
             />
             <MetricCard
-              title={d("Open Interest")}
-              value={formatNumber(data.layer3.openInterest, locale, {
-                maximumFractionDigits: 0
-              })}
+              title={d("BTC perpetual open interest (USD)")}
+              value={formatCurrency(data.layer3.openInterest, locale)}
               hint={d("Hyperliquid / Coinalyze")}
             />
             <MetricCard
@@ -631,8 +712,7 @@ export default function FearClient({
         </div>
 
         <div className='rounded-xl border p-5 space-y-4'>
-          <h2 className='text-lg font-semibold'> {d("Historical Backtesting Module")} </h2>
-          <p className='text-sm text-muted-foreground'> {d("Overlay all indicators during 2015, 2018, 2020, 2022 to visually compare cycle bottoms.")} </p>
+          <h2 className='text-lg font-semibold'> {d("Historical cycle notes")} </h2>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3'>
             <div className='rounded-lg border p-4'>
               <p className='text-xs text-muted-foreground mb-1'>2015</p>

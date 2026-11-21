@@ -7,9 +7,7 @@ import type { Instrument } from './tokenized-equities';
  * a committed snapshot refreshed by scripts/sync-instruments.mjs, so every
  * figure on a page can name the moment it was measured.
  *
- * An instrument may have no quote: CMC reports 105 and the payload carries 100.
- * Those render as dashes rather than zeros, so the count of instruments and the
- * count of priced instruments are kept separate everywhere.
+ * The ADGM roster and CMC priced subset are independently dated.
  */
 
 export type Quote = {
@@ -34,6 +32,12 @@ const QUOTE_ROWS = snapshot.rows as Record<string, Quote>;
 export const QUOTES_AS_OF = snapshot.asOf;
 export const QUOTES_SOURCE = snapshot.source;
 export const QUOTES_REPORTED_TOTAL = snapshot.reportedTotal;
+export const BSTOCKS_REGISTER = {
+  observedAt: '2026-11-20T10:08:56.001Z',
+  issuer: 'BTech Holdings Limited',
+  exchange: 'Nest Exchange Limited',
+  source: 'https://www.adgm.com/financial-services-regulatory-authority/listing-authority/official-list-of-securities',
+};
 
 export const getInstruments = (issuerSlug: string): Instrument[] =>
   BY_ISSUER[issuerSlug] ?? [];

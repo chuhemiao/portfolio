@@ -9,6 +9,13 @@ import {
   paginateCollection,
   pickBinanceBtcMarket,
 } from './oscillator-helpers.ts';
+import {
+  binanceDailyCloses,
+  historyAnchors,
+  makeOscillatorHistory,
+  ratioByUtcDay,
+  UTC_DAY_MS,
+} from './oscillator-history.ts';
 
 test('isExcludedFromAltUniverse filters out bitcoin and stablecoins', () => {
   assert.equal(isExcludedFromAltUniverse('BTC', 'Bitcoin'), true);
@@ -268,4 +275,46 @@ test('fresh stablecoin source tags exclude new stablecoins from both source list
     {id: 2, symbol: 'CHIP', name: 'USD.AI', cmcRank: 80, tags: ['ai-big-data']},
   ];
   assert.deepEqual(mergeMarketSources(cg, cmc, new Map()).map((row) => row.symbol), ['CHIP']);
+});
+
+test('identical tickers do not merge incompatible provider identities', () => {
+  const cg = [
+    {id: 'aave', symbol: 'aave', name: 'Aave', market_cap_rank: 50},
+    {id: 'impostor', symbol: 'aave', name: 'Unrelated', market_cap_rank: 3},
+  ];
+  const cmc = [{id: 321, symbol: 'AAVE', name: 'Unrelated', cmcRank: 3, quotes: [{percentChange7d: 25}]}];
+  const [row] = mergeMarketSources(cg, cmc, new Map(), new Map([['AAVE', 'aave']]));
+  assert.equal(row.id, 'aave');
+  assert.equal(row.coingeckoId, 'aave');
+  assert.equal(row.identityAmbiguous, true);
+  assert.equal(row.coinmarketcapRank, null);
+  assert.equal(row.change7d, null);
+});
+
+test('daily ratios require the exact UTC day, a completed candle and an unambiguous benchmark', () => {
+  const day = Date.UTC(2026, 11, 20);
+  const from = day - 2 * UTC_DAY_MS;
+  const candle = (open, close, duration = UTC_DAY_MS) =>
+    [open, '1', '1', '1', close, '1', open + duration - 1, '1', 1];
+  const closes = binanceDailyCloses([
+    candle(from, '50'),
+    candle(from + UTC_DAY_MS, '60', UTC_DAY_MS - 1),
+    candle(day, '70'),
+  ], day);
+  assert.deepEqual(closes, [[from, 50]]);
+  assert.deepEqual(ratioByUtcDay(closes, [[from + UTC_DAY_MS, 100]]), []);
+  assert.deepEqual(ratioByUtcDay(closes, [[from, 100], [from, 200]]), []);
+  assert.deepEqual(ratioByUtcDay(closes, [[from, 100]]), [[from, 0.5]]);
+});
+
+test('missing dates stay missing and invalidate the complete two-year peak', () => {
+  const cutoff = Date.UTC(2026, 11, 20);
+  const start = cutoff - 730 * UTC_DAY_MS;
+  const closes = Array.from({length: 730}, (_, i) => [start + i * UTC_DAY_MS, i + 1]);
+  const complete = makeOscillatorHistory(closes, 'binance', ['ETHBTC'], cutoff);
+  assert.equal(historyAnchors(complete).currentCyclePeak, 730);
+  const gap = makeOscillatorHistory(closes.filter((_, i) => i !== 200), 'binance', ['ETHBTC'], cutoff);
+  assert.equal(gap.closes[200], null);
+  assert.equal(historyAnchors(gap).historyPointCount, 729);
+  assert.equal(historyAnchors(gap).currentCyclePeak, null);
 });

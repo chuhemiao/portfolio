@@ -1,4 +1,5 @@
 export type ResearchFocusItem = {
+  id?: string;
   name: string;
   slug: string;
   type: string;
@@ -68,6 +69,8 @@ export type SurfMarketRankingCoin = {
 
 export type MarketSourceCoin = {
   id: string;
+  coingeckoId?: string;
+  identityAmbiguous?: boolean;
   symbol: string;
   name: string;
   coingeckoRank: number | null;
@@ -134,9 +137,21 @@ function normalizeName(value: string): string {
 }
 
 function toNumber(value: string | number | null | undefined): number | null {
-  if (value === null || value === undefined) return null;
+  if (typeof value !== 'number' && (typeof value !== 'string' || !value.trim())) return null;
   const parsed = typeof value === 'number' ? value : Number(value);
   return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function usdBreadth(rows: MarketSourceCoin[], window: 'change7d' | 'change30d') {
+  let valid = 0;
+  let positive = 0;
+  for (const row of rows) {
+    const change = row[window];
+    if (typeof change !== 'number' || !Number.isFinite(change)) continue;
+    valid++;
+    if (change > 0) positive++;
+  }
+  return { positive, valid, percent: valid ? positive / valid * 100 : null };
 }
 
 function toSubscript(value: number): string {
@@ -214,7 +229,8 @@ export function paginateCollection<T>(
 export function mergeMarketSources(
   coingeckoCoins: CoinGeckoMarketCoin[],
   coinmarketcapCoins: CoinMarketCapListing[],
-  researchFocusMap: Map<string, ResearchFocusItem>
+  researchFocusMap: Map<string, ResearchFocusItem>,
+  knownIds: Map<string, string> = new Map()
 ): MarketSourceCoin[] {
   const stablecoinSymbols = new Set(coinmarketcapCoins
     .filter((coin) => coin.tags?.includes('stablecoin'))
@@ -226,12 +242,24 @@ export function mergeMarketSources(
     if (isExcludedFromAltUniverse(coin.symbol, coin.name) || stablecoinSymbols.has(coin.symbol.toUpperCase())) continue;
 
     const symbol = coin.symbol.toUpperCase();
-    const research = researchFocusMap.get(symbol) ?? null;
+    const expectedId = knownIds.get(symbol);
+    const existing = merged.get(symbol);
+    if (existing && existing.id !== coin.id) {
+      if (coin.id !== expectedId && (existing.id === expectedId ||
+        (existing.coingeckoRank ?? Infinity) <= (coin.market_cap_rank ?? Infinity))) {
+        existing.identityAmbiguous = true;
+        continue;
+      }
+    }
+    const candidate = researchFocusMap.get(symbol);
+    const research = !candidate?.id || candidate.id === coin.id ? candidate : null;
     const marketCap = toNumber(coin.market_cap);
     const volume24h = toNumber(coin.total_volume);
 
     merged.set(symbol, {
       id: coin.id,
+      coingeckoId: coin.id,
+      ...(existing && existing.id !== coin.id ? { identityAmbiguous: true } : {}),
       symbol,
       name: coin.name,
       coingeckoRank: coin.market_cap_rank ?? null,
@@ -256,31 +284,36 @@ export function mergeMarketSources(
     if (isExcludedFromAltUniverse(coin.symbol, coin.name) || stablecoinSymbols.has(coin.symbol.toUpperCase())) continue;
 
     const symbol = coin.symbol.toUpperCase();
-    const research = researchFocusMap.get(symbol) ?? null;
     const candidates = symbolIndex.get(symbol) ?? [];
-    const exact = candidates.find(
-      (candidate) => normalizeName(candidate.name) === normalizeName(coin.name)
-    );
-    const match = exact ?? (candidates.length === 1 ? candidates[0] : null);
-    const quote = coin.quotes?.[0];
     const existing = merged.get(symbol);
+    const sameName = normalizeName(existing?.name ?? '') === normalizeName(coin.name);
+    if (existing && (!existing.coingeckoId || !sameName || (candidates.length > 1 && candidates.filter(
+      (candidate) => normalizeName(candidate.name) === normalizeName(coin.name)
+    ).length !== 1))) {
+      existing.identityAmbiguous = true;
+      continue;
+    }
+    const candidate = researchFocusMap.get(symbol);
+    const research = !candidate?.id || candidate.id === existing?.coingeckoId ? candidate : null;
+    const quote = coin.quotes?.find((item) => item.name === 'USD') ?? coin.quotes?.find((item) => item.name === undefined);
     const marketCap = existing?.marketCap ?? toNumber(quote?.marketCap);
     const volume24h = existing?.volume24h ?? toNumber(quote?.volume24h);
 
     merged.set(symbol, {
-      id: existing?.id ?? match?.id ?? coin.slug ?? symbol.toLowerCase(),
+      id: existing?.id ?? coin.slug ?? symbol.toLowerCase(),
+      ...(existing?.coingeckoId ? { coingeckoId: existing.coingeckoId } : {}),
+      ...(existing?.identityAmbiguous ? { identityAmbiguous: true } : {}),
       symbol,
-      name: existing?.name ?? match?.name ?? coin.name,
-      coingeckoRank: existing?.coingeckoRank ?? match?.market_cap_rank ?? null,
+      name: existing?.name ?? coin.name,
+      coingeckoRank: existing?.coingeckoRank ?? null,
       coinmarketcapRank: coin.cmcRank ?? null,
       marketRank:
         existing?.marketRank ??
         existing?.coingeckoRank ??
-        match?.market_cap_rank ??
         coin.cmcRank ??
         null,
       dualTop300: Boolean(
-        (existing?.coingeckoRank ?? match?.market_cap_rank ?? Infinity) <= 300 &&
+        (existing?.coingeckoRank ?? Infinity) <= 300 &&
         (coin.cmcRank ?? Infinity) <= 300
       ),
       researchFocus: existing?.researchFocus ?? Boolean(research),

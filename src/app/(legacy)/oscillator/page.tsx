@@ -1,6 +1,7 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import { getTranslator, localizeHref, type Locale } from '@/lib/i18n';
 import OscillatorClient from './oscillator-client';
+import { MarketNews } from '@/components/market-news';
 import { DATA } from '@/data/resume';
 import { getOscillatorData } from '@/lib/oscillator-data';
 import type { Metadata } from 'next';
@@ -60,7 +61,9 @@ export async function renderPage(locale: Locale) {
     <div className='relative left-1/2 min-h-[100dvh] w-screen -translate-x-1/2 overflow-x-clip'>
       <div className='relative mx-auto w-full max-w-[1150px] px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
         <script type='application/ld+json' suppressHydrationWarning dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
-        <OscillatorClient data={data} />
+        <OscillatorClient data={data}>
+          <MarketNews page='oscillator' locale={locale} />
+        </OscillatorClient>
       </div>
     </div>
   );

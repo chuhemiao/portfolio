@@ -8,6 +8,15 @@ import { syncWatchSnapshot, syncBtcScoreSnapshot } from './sync-watch-snapshot.m
 const { collectWatchData } = await import('../src/lib/watch-data.ts');
 const day = 86_400_000;
 const now = Date.now();
+const stableListedAt = new Date(now - day).toISOString();
+const stableProduct = {
+  product_id: 'STABLE-USD', base_currency_id: 'STABLE', product_type: 'SPOT',
+  new_at: stableListedAt, is_disabled: false, trading_disabled: false,
+};
+
+function coinbaseInventory(products) {
+  return { products, num_products: products.length, pagination: { has_next: false, has_prev: false, next_cursor: '', prev_cursor: '' } };
+}
 
 function sourceFixture(url) {
   if (url.includes('instruments?instType=SPOT')) return { code: '0', data: [{ instId: 'FOO-USDT', state: 'live', listTime: String(now - 60 * day) }, { instId: 'PREOPEN-USDT', state: 'preopen', listTime: String(now - day) }] };
@@ -16,7 +25,7 @@ function sourceFixture(url) {
   if (url.includes('category=spot')) return { retCode: 0, result: { list: [] } };
   if (url.includes('spot/public/symbols')) return { code: '00000', data: [{ symbol: 'ALPHAUSDT', baseCoin: 'ALPHA', status: 'halt', openTime: String(now - day) }, { symbol: 'FOOUSDT', baseCoin: 'FOO', status: 'online', openTime: String(now - day) }, { symbol: 'BITGETONLYUSDT', baseCoin: 'BITGETONLY', status: 'online', openTime: String(now - day) }] };
   if (url.includes('mix/market/contracts')) return { code: '00000', data: [] };
-  if (url.includes('market/products')) return { products: [] };
+  if (url.includes('market/products')) return coinbaseInventory([stableProduct]);
   if (url.includes('fapi/v1/exchangeInfo')) return { symbols: [{ symbol: 'FUTUREUSDT', baseAsset: 'FUTURE', status: 'TRADING', onboardDate: now + 1, contractType: 'PERPETUAL' }, { symbol: 'SETTLEDUSDT', baseAsset: 'SETTLED', status: 'SETTLING', onboardDate: now - day, contractType: 'PERPETUAL' }] };
   if (url.includes('api/v3/exchangeInfo')) return { symbols: [{ baseAsset: 'FOO', status: 'TRADING' }] };
   if (url.includes('/market/all')) return [];
@@ -36,11 +45,15 @@ function sourceFixture(url) {
   throw new Error(`Unexpected source ${url}`);
 }
 
-async function withSources(run, fail = false) {
+async function withSources(run, { fail = false, coinbase, response } = {}) {
   const originalFetch = globalThis.fetch;
   const originalNow = Date.now;
   Date.now = () => now;
-  globalThis.fetch = async url => fail ? new Response('{}', { status: 503 }) : Response.json(sourceFixture(String(url)));
+  globalThis.fetch = async url => {
+    if (fail) return new Response('{}', { status: 503 });
+    const source = String(url);
+    return response?.(source) ?? Response.json(coinbase && source.includes('market/products') ? coinbase(new URL(source)) : sourceFixture(source));
+  };
   try { return await run(); } finally { globalThis.fetch = originalFetch; Date.now = originalNow; }
 }
 
@@ -64,13 +77,54 @@ test('native collection retains old spot presence, valid quotes, window edges an
   assert.ok(data.sources.successful.length >= 3);
 });
 
+test('collects Coinbase spot pairs and their original date beyond the first public page', async () => {
+  const first = coinbaseInventory([{ ...stableProduct, product_id: 'OLDER-USD', base_currency_id: 'OLDER', new_at: null }]);
+  first.pagination = { ...first.pagination, has_next: true, next_cursor: 'other-products' };
+  const full = coinbaseInventory([...first.products, stableProduct, { ...stableProduct, product_id: 'STABLE-USDC' },
+    { ...stableProduct, product_id: 'DISABLED-USD', base_currency_id: 'DISABLED', trading_disabled: true }]);
+  const data = await withSources(() => collectWatchData(), {
+    coinbase: url => url.searchParams.get('get_all_products') === 'true' ? full : first,
+  });
+  const stable = data.listings.find(coin => coin.symbol === 'STABLE');
+  assert.deepEqual(stable?.coinbase.spotPairs, ['STABLE-USD', 'STABLE-USDC']);
+  assert.equal(stable.firstSeenAt, Date.parse(stableListedAt));
+  assert.equal(stable.coinbase.spotListedAt, stable.firstSeenAt);
+  assert.ok(!data.listings.some(coin => coin.symbol === 'DISABLED'));
+  assert.ok(!data.errors.some(error => error.startsWith('Coinbase inventory:')));
+});
+
+test('an incomplete or invalid Coinbase inventory cannot replace a Watch snapshot', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'watch-coinbase-test-'));
+  const destination = join(directory, 'watch-data.json');
+  const previous = '{"previous":true}\n';
+  await writeFile(destination, previous);
+  const complete = coinbaseInventory([stableProduct]);
+  const invalid = [
+    { ...complete, pagination: { ...complete.pagination, has_next: true, next_cursor: 'more' } },
+    { ...complete, pagination: { ...complete.pagination, has_prev: true, prev_cursor: 'earlier' } },
+    { ...complete, num_products: 2 },
+    coinbaseInventory([stableProduct, stableProduct]),
+    coinbaseInventory([{ ...stableProduct, product_type: 'FUTURE' }]),
+    { products: [stableProduct] },
+    coinbaseInventory([]),
+  ];
+  try {
+    for (const inventory of invalid) {
+      await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), {
+        coinbase: () => inventory,
+      });
+      assert.equal(await readFile(destination, 'utf8'), previous);
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
 test('native failure retains existing bytes and timestamp; success replaces one complete snapshot', async () => {
   const directory = await mkdtemp(join(tmpdir(), 'watch-sync-test-'));
   const destination = join(directory, 'watch-data.json');
   const previous = '{"generatedAt":"2026-07-02T00:00:00Z","previous":true}\n';
   await writeFile(destination, previous);
   try {
-    await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), true);
+    await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), { fail: true });
     assert.equal(await readFile(destination, 'utf8'), previous);
     assert.deepEqual(await readdir(directory), ['watch-data.json']);
     const saved = await withSources(() => syncWatchSnapshot({ destination }));
@@ -81,6 +135,79 @@ test('native failure retains existing bytes and timestamp; success replaces one 
       await assert.rejects(syncWatchSnapshot({ destination, collect: async () => malformed }), /previous snapshot retained/);
       assert.equal(await readFile(destination, 'utf8'), before);
     }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('keeps the previous Watch bytes when a presence or discovery source fails', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'watch-inventory-test-'));
+  const destination = join(directory, 'watch-data.json');
+  try {
+    const healthy = await withSources(() => syncWatchSnapshot({ destination }));
+    assert.equal(healthy.listings.find(row => row.symbol === 'FOO').binance.spot, true);
+    const before = await readFile(destination, 'utf8');
+    for (const source of [
+      'https://api.binance.com/api/v3/exchangeInfo',
+      'https://api.bybit.com/v5/market/instruments-info?category=spot&limit=1000',
+      'https://api.bitget.com/api/v2/spot/public/symbols',
+      'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=2&sparkline=false',
+    ]) {
+      await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), {
+        response: url => url === source ? new Response('{}', { status: 503 }) : undefined,
+      });
+      assert.equal(await readFile(destination, 'utf8'), before);
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('rejects an inventory with missing presence data while accepting valid empty inventories', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'watch-envelope-test-'));
+  const destination = join(directory, 'watch-data.json');
+  const source = 'https://api.binance.com/api/v3/exchangeInfo';
+  try {
+    const healthy = await withSources(() => syncWatchSnapshot({ destination }));
+    assert.ok(healthy.sources.successful.includes('https://api.upbit.com/v1/market/all'));
+    const before = await readFile(destination, 'utf8');
+    for (const invalid of [{}, { symbols: [{}] }]) {
+      const options = { response: url => url === source ? Response.json(invalid) : undefined };
+      await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), options);
+      assert.equal(await readFile(destination, 'utf8'), before);
+      const observed = await withSources(() => collectWatchData(), options);
+      assert.ok(observed.sources.failed.includes(source));
+      assert.ok(!observed.sources.successful.includes(source));
+    }
+  } finally { await rm(directory, { recursive: true, force: true }); }
+});
+
+test('a ticker failure leaves valid alternate prices and venue data eligible for publication', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'watch-quote-source-test-'));
+  const destination = join(directory, 'watch-data.json');
+  const source = 'https://api.binance.com/api/v3/ticker/24hr?type=MINI';
+  const valid = { symbol: 'FOOUSDT', openPrice: '5', lastPrice: '10', quoteVolume: '1000' };
+  try {
+    for (const [ticker, price, failed] of [
+      [new Response('{}', { status: 503 }), 2, true],
+      [Response.json({}), 2, true],
+      [Response.json(null), 2, true],
+      [Response.json([{ ...valid, lastPrice: {} }]), 2, true],
+      [Response.json([null, valid]), 10, true],
+      [Response.json([]), 2, false],
+      [Response.json([valid]), 10, false],
+    ]) {
+      const data = await withSources(() => syncWatchSnapshot({ destination }), {
+        response: url => url === source ? ticker : undefined,
+      });
+      const foo = data.listings.find(row => row.symbol === 'FOO');
+      assert.equal(foo.priceUsdt, price);
+      assert.equal(foo.binance.spot, true);
+      assert.equal(data.sources.failed.includes(source), failed);
+      assert.equal(data.sources.successful.includes(source), !failed);
+      assert.deepEqual(JSON.parse(await readFile(destination, 'utf8')), data);
+    }
+    const before = await readFile(destination, 'utf8');
+    await withSources(() => assert.rejects(syncWatchSnapshot({ destination }), /previous snapshot retained/), {
+      response: url => url === source ? Response.json({}) : url.includes('coins/markets') ? Response.json([]) : undefined,
+    });
+    assert.equal(await readFile(destination, 'utf8'), before);
   } finally { await rm(directory, { recursive: true, force: true }); }
 });
 

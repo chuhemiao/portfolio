@@ -72,6 +72,24 @@ export interface WatchData {
 }
 
 const FETCH_TIMEOUT_MS = 12000;
+export const COINBASE_SPOT_SOURCE = 'https://api.coinbase.com/api/v3/brokerage/market/products?product_type=SPOT&get_all_products=true';
+const inventorySources = {
+  okxSpot: 'https://www.okx.com/api/v5/public/instruments?instType=SPOT',
+  okxSwap: 'https://www.okx.com/api/v5/public/instruments?instType=SWAP',
+  bybitLinear: 'https://api.bybit.com/v5/market/instruments-info?category=linear&limit=1000',
+  bitgetSpot: 'https://api.bitget.com/api/v2/spot/public/symbols',
+  coinbaseSpot: COINBASE_SPOT_SOURCE,
+  binanceFutures: 'https://fapi.binance.com/fapi/v1/exchangeInfo',
+  bybitSpot: 'https://api.bybit.com/v5/market/instruments-info?category=spot&limit=1000',
+  bitgetPerp: 'https://api.bitget.com/api/v2/mix/market/contracts?productType=USDT-FUTURES',
+  binanceSpot: 'https://api.binance.com/api/v3/exchangeInfo',
+  upbit: 'https://api.upbit.com/v1/market/all',
+  hyperliquid: 'https://api.hyperliquid.xyz/info',
+};
+const alphaSources = [1, 2].map(page =>
+  `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`);
+export const WATCH_INVENTORY_SOURCES = [...Object.values(inventorySources), ...alphaSources];
+
 // ─── Error collection ─────────────────────────────────────────────────────────
 // Threads a per-request error list through the whole Promise.all fan-out in
 // getWatchData() without changing any of the ~15 fetcher helpers' signatures.
@@ -81,7 +99,10 @@ const errorStore = new AsyncLocalStorage<{ errors: string[]; successful: Set<str
 function recordError(source: string, detail: string, failed = true) {
   const store = errorStore.getStore();
   if (!store) return;
-  if (failed) store.failed.add(source);
+  if (failed) {
+    store.successful.delete(source);
+    store.failed.add(source);
+  }
   const message = `${source}: ${detail}`;
   if (!store.errors.includes(message)) store.errors.push(message);
 }
@@ -128,6 +149,15 @@ async function fetchJsonUncached<T>(url: string, init: RequestInit): Promise<T |
 
 // ─── Exchange fetchers ────────────────────────────────────────────────────────
 
+function inventoryRows<T>(source: string, rows: T[] | null | undefined, fields: readonly (keyof T)[]): T[] {
+  if (Array.isArray(rows) && rows.every(row => row && fields.every(field => {
+    const value = row[field];
+    return typeof value === 'string' && value.trim().length > 0;
+  }))) return rows;
+  if (errorStore.getStore()?.successful.has(source)) recordError(source, 'invalid inventory payload');
+  return [];
+}
+
 interface RawInstrument {
   symbol: string;     // base coin symbol (uppercase)
   pair: string;       // full pair, e.g. CHIP-USDT
@@ -140,8 +170,9 @@ type ExchangeKey = 'binance' | 'okx' | 'bybit' | 'bitget' | 'coinbase' | 'upbit'
 async function fetchOkxSpot(): Promise<RawInstrument[]> {
   type Item = { instId: string; listTime: string; state: string };
   type Resp = { data: Item[] };
-  const d = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SPOT');
-  return (d?.data ?? [])
+  const source = inventorySources.okxSpot;
+  const d = await fetchJson<Resp>(source);
+  return inventoryRows(source, d?.data, ['instId', 'state'])
     .filter(x => x.instId && x.state === 'live')
     .map(x => {
       const [base] = x.instId.split('-');
@@ -152,8 +183,9 @@ async function fetchOkxSpot(): Promise<RawInstrument[]> {
 async function fetchOkxSwap(): Promise<RawInstrument[]> {
   type Item = { instId: string; listTime: string; state: string };
   type Resp = { data: Item[] };
-  const d = await fetchJson<Resp>('https://www.okx.com/api/v5/public/instruments?instType=SWAP');
-  return (d?.data ?? [])
+  const source = inventorySources.okxSwap;
+  const d = await fetchJson<Resp>(source);
+  return inventoryRows(source, d?.data, ['instId', 'state'])
     .filter(x => x.instId && x.state === 'live')
     .map(x => {
       const [base] = x.instId.split('-');
@@ -164,8 +196,9 @@ async function fetchOkxSwap(): Promise<RawInstrument[]> {
 async function fetchBybitLinear(): Promise<RawInstrument[]> {
   type Item = { symbol: string; baseCoin: string; launchTime: string; contractType: string; status: string };
   type Resp = { result: { list: Item[] } };
-  const d = await fetchJson<Resp>('https://api.bybit.com/v5/market/instruments-info?category=linear&limit=1000');
-  return (d?.result?.list ?? [])
+  const source = inventorySources.bybitLinear;
+  const d = await fetchJson<Resp>(source);
+  return inventoryRows(source, d?.result?.list, ['symbol', 'baseCoin', 'contractType', 'status'])
     .filter(x => x.contractType === 'LinearPerpetual' && x.status === 'Trading')
     .map(x => ({
       symbol: x.baseCoin.toUpperCase(),
@@ -178,8 +211,9 @@ async function fetchBybitLinear(): Promise<RawInstrument[]> {
 async function fetchBitgetSpot(): Promise<RawInstrument[]> {
   type Item = { symbol: string; baseCoin: string; openTime: string; status: string };
   type Resp = { data: Item[] };
-  const d = await fetchJson<Resp>('https://api.bitget.com/api/v2/spot/public/symbols');
-  return (d?.data ?? [])
+  const source = inventorySources.bitgetSpot;
+  const d = await fetchJson<Resp>(source);
+  return inventoryRows(source, d?.data, ['symbol', 'baseCoin', 'status'])
     .filter(x => x.baseCoin && x.symbol && x.status === 'online')
     .map(x => ({
       symbol: x.baseCoin.toUpperCase(),
@@ -190,11 +224,30 @@ async function fetchBitgetSpot(): Promise<RawInstrument[]> {
 }
 
 async function fetchCoinbaseSpot(): Promise<RawInstrument[]> {
-  type Item = { product_id: string; base_currency_id: string; new_at: string | null; product_type: string; is_disabled?: boolean; trading_disabled?: boolean };
-  type Resp = { products: Item[] };
-  const d = await fetchJson<Resp>('https://api.coinbase.com/api/v3/brokerage/market/products?product_type=SPOT&limit=500');
-  return (d?.products ?? [])
-    .filter(x => x.base_currency_id && x.product_id && !x.is_disabled && !x.trading_disabled)
+  type Item = { product_id: string; base_currency_id: string; new_at?: string | null; product_type: string; is_disabled?: boolean; trading_disabled?: boolean };
+  type Resp = {
+    products?: Item[];
+    num_products?: number;
+    pagination?: { has_next: boolean; has_prev: boolean; next_cursor: string; prev_cursor: string };
+  };
+  const d = await fetchJson<Resp>(COINBASE_SPOT_SOURCE);
+  const products = d?.products;
+  const pagination = d?.pagination;
+  if (!Array.isArray(products) || !products.length || d?.num_products !== products.length ||
+      pagination?.has_next !== false || pagination.has_prev !== false || pagination.next_cursor !== '' || pagination.prev_cursor !== '' ||
+      !products.every(x => x && typeof x.product_id === 'string' && !!x.product_id.trim() &&
+        typeof x.base_currency_id === 'string' && !!x.base_currency_id.trim() && x.product_type === 'SPOT' &&
+        (x.is_disabled === undefined || typeof x.is_disabled === 'boolean') &&
+        (x.trading_disabled === undefined || typeof x.trading_disabled === 'boolean') &&
+        (x.new_at == null || (typeof x.new_at === 'string' && Number.isFinite(Date.parse(x.new_at))))) ||
+      new Set(products.map(x => x.product_id)).size !== products.length) {
+    if (errorStore.getStore()?.successful.has(COINBASE_SPOT_SOURCE)) {
+      recordError(COINBASE_SPOT_SOURCE, 'incomplete or invalid Coinbase spot inventory');
+    }
+    return [];
+  }
+  return products
+    .filter(x => !x.is_disabled && !x.trading_disabled)
     .map(x => ({
       symbol: x.base_currency_id.toUpperCase(),
       pair: x.product_id,
@@ -206,8 +259,9 @@ async function fetchCoinbaseSpot(): Promise<RawInstrument[]> {
 async function fetchBinanceFutures(): Promise<RawInstrument[]> {
   type Item = { symbol: string; baseAsset: string; onboardDate: number; contractType: string; status: string };
   type Resp = { symbols: Item[] };
-  const d = await fetchJson<Resp>('https://fapi.binance.com/fapi/v1/exchangeInfo');
-  return (d?.symbols ?? [])
+  const source = inventorySources.binanceFutures;
+  const d = await fetchJson<Resp>(source);
+  return inventoryRows(source, d?.symbols, ['symbol', 'baseAsset', 'contractType', 'status'])
     .filter(x => x.contractType === 'PERPETUAL' && x.status === 'TRADING')
     .map(x => ({
       symbol: x.baseAsset.toUpperCase(),
@@ -219,14 +273,20 @@ async function fetchBinanceFutures(): Promise<RawInstrument[]> {
 
 async function fetchBybitSpot(): Promise<RawInstrument[]> {
   type Resp = { result?: { list?: Array<{ symbol: string; baseCoin: string; status: string }> } };
-  const data = await fetchJson<Resp>('https://api.bybit.com/v5/market/instruments-info?category=spot&limit=1000');
-  return (data?.result?.list ?? []).filter(x => x.status === 'Trading').map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'spot', listedAt: 0 }));
+  const source = inventorySources.bybitSpot;
+  const data = await fetchJson<Resp>(source);
+  return inventoryRows(source, data?.result?.list, ['symbol', 'baseCoin', 'status'])
+    .filter(x => x.status === 'Trading')
+    .map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'spot', listedAt: 0 }));
 }
 
 async function fetchBitgetPerp(): Promise<RawInstrument[]> {
   type Resp = { data?: Array<{ symbol: string; baseCoin: string; symbolStatus: string; symbolType: string }> };
-  const data = await fetchJson<Resp>('https://api.bitget.com/api/v2/mix/market/contracts?productType=USDT-FUTURES');
-  return (data?.data ?? []).filter(x => x.symbolStatus === 'normal' && x.symbolType === 'perpetual').map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'perp', listedAt: 0 }));
+  const source = inventorySources.bitgetPerp;
+  const data = await fetchJson<Resp>(source);
+  return inventoryRows(source, data?.data, ['symbol', 'baseCoin', 'symbolStatus', 'symbolType'])
+    .filter(x => x.symbolStatus === 'normal' && x.symbolType === 'perpetual')
+    .map(x => ({ symbol: x.baseCoin.toUpperCase(), pair: x.symbol, type: 'perp', listedAt: 0 }));
 }
 
 // ─── Existence checkers (no timestamp, just presence) ─────────────────────────
@@ -234,9 +294,10 @@ async function fetchBitgetPerp(): Promise<RawInstrument[]> {
 async function getBinanceSpotSet(): Promise<Set<string>> {
   type Item = { baseAsset: string; quoteAsset: string; status: string };
   type Resp = { symbols: Item[] };
-  const d = await fetchJson<Resp>('https://api.binance.com/api/v3/exchangeInfo');
+  const source = inventorySources.binanceSpot;
+  const d = await fetchJson<Resp>(source);
   const s = new Set<string>();
-  for (const sym of d?.symbols ?? []) {
+  for (const sym of inventoryRows(source, d?.symbols, ['baseAsset', 'status'])) {
     if (sym.status === 'TRADING') s.add(sym.baseAsset.toUpperCase());
   }
   return s;
@@ -244,9 +305,10 @@ async function getBinanceSpotSet(): Promise<Set<string>> {
 
 async function getUpbitSet(): Promise<Set<string>> {
   type Item = { market: string };
-  const d = await fetchJson<Item[]>('https://api.upbit.com/v1/market/all');
+  const source = inventorySources.upbit;
+  const d = await fetchJson<Item[]>(source);
   const s = new Set<string>();
-  for (const m of d ?? []) {
+  for (const m of inventoryRows(source, d, ['market'])) {
     // market format: "KRW-BTC", "BTC-ETH", "USDT-XRP"
     const parts = m.market.split('-');
     if (parts.length === 2) s.add(parts[1].toUpperCase());
@@ -261,15 +323,9 @@ async function getBinanceAlphaSet(): Promise<Set<string>> {
   type Item = { symbol: string };
   const s = new Set<string>();
 
-  // Fetch up to 2 pages (250 tokens) — CoinGecko free tier allows this without a key
-  await Promise.all([1, 2].map(async (page) => {
-    const d = await fetchJson<Item[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`
-    );
-    for (const item of d ?? []) {
-      const sym = (item.symbol || '').toUpperCase();
-      if (sym) s.add(sym);
-    }
+  await Promise.all(alphaSources.map(async source => {
+    const d = await fetchJson<Item[]>(source);
+    for (const item of inventoryRows(source, d, ['symbol'])) s.add(item.symbol.toUpperCase());
   }));
 
   return s;
@@ -277,13 +333,14 @@ async function getBinanceAlphaSet(): Promise<Set<string>> {
 
 async function getHyperliquidSet(): Promise<Set<string>> {
   type Resp = { universe: Array<{ name: string }> };
-  const d = await fetchJson<Resp>('https://api.hyperliquid.xyz/info', {
+  const source = inventorySources.hyperliquid;
+  const d = await fetchJson<Resp>(source, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ type: 'meta' }),
   });
   const s = new Set<string>();
-  for (const m of d?.universe ?? []) s.add(m.name.toUpperCase());
+  for (const m of inventoryRows(source, d?.universe, ['name'])) s.add(m.name.toUpperCase());
   return s;
 }
 
@@ -294,11 +351,11 @@ type MarketQuote = { price: number | null; change: number | null; volume: number
 async function fetchCoinGeckoMarkets(): Promise<Map<string, MarketQuote>> {
   type Item = { symbol: string; current_price: number | null; price_change_percentage_24h: number | null; total_volume: number | null; market_cap: number | null; fully_diluted_valuation: number | null };
   const urls = [1, 2, 3].map(page => `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`);
-  urls.push(...[1, 2].map(page => `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&category=binance-alpha-spotlight&order=market_cap_desc&per_page=250&page=${page}&sparkline=false`));
+  urls.push(...alphaSources);
   const pages = await Promise.all(urls.map(url => fetchJson<Item[]>(url)));
   const result = new Map<string, MarketQuote>();
-  for (const item of pages.flatMap(page => page ?? [])) {
-    const symbol = item.symbol?.toUpperCase();
+  for (const item of pages.flatMap(page => Array.isArray(page) ? page : [])) {
+    const symbol = typeof item?.symbol === 'string' ? item.symbol.toUpperCase() : '';
     if (!symbol || result.has(symbol)) continue;
     result.set(symbol, { price: item.current_price, change: item.price_change_percentage_24h, volume: item.total_volume, marketCap: item.market_cap, fdv: item.fully_diluted_valuation });
   }
@@ -308,18 +365,34 @@ async function fetchCoinGeckoMarkets(): Promise<Map<string, MarketQuote>> {
 // ─── Price fetcher ────────────────────────────────────────────────────────────
 
 async function fetchBinancePrices(symbols: string[]): Promise<Map<string, { price: number; change: number; volume: number }>> {
-  type Item = { symbol: string; openPrice: string; lastPrice: string; quoteVolume: string };
+  type Item = { symbol: string; openPrice: string | number; lastPrice: string | number; quoteVolume: string | number };
   const result = new Map<string, { price: number; change: number; volume: number }>();
   const wanted = new Set(symbols);
   if (!wanted.size) return result;
-  const data = await fetchJson<Item[]>('https://api.binance.com/api/v3/ticker/24hr?type=MINI');
-  for (const item of data ?? []) {
+  const source = 'https://api.binance.com/api/v3/ticker/24hr?type=MINI';
+  const data = await fetchJson<Item[]>(source);
+  if (!Array.isArray(data)) {
+    if (errorStore.getStore()?.successful.has(source)) recordError(source, 'invalid ticker payload');
+    return result;
+  }
+  for (const item of data) {
+    if (typeof item?.symbol !== 'string' || !item.symbol.trim()) {
+      recordError(source, 'invalid ticker row');
+      continue;
+    }
     if (!item.symbol.endsWith('USDT')) continue;
     const base = item.symbol.slice(0, -4);
     if (!wanted.has(base)) continue;
-    const open = Number(item.openPrice), last = Number(item.lastPrice), volume = Number(item.quoteVolume);
-    if (!(open > 0) || !(last > 0) || !Number.isFinite(volume)) continue;
-    result.set(base, { price: last, change: (last - open) / open * 100, volume });
+    const [open, last, volume] = [item.openPrice, item.lastPrice, item.quoteVolume].map(value => {
+      if (typeof value === 'number') return value;
+      return typeof value === 'string' && value.trim() ? Number(value) : NaN;
+    });
+    const change = (last - open) / open * 100;
+    if (!(open > 0) || !(last > 0) || !Number.isFinite(volume) || !Number.isFinite(change)) {
+      recordError(source, 'invalid ticker row');
+      continue;
+    }
+    result.set(base, { price: last, change, volume });
   }
   return result;
 }
@@ -376,7 +449,6 @@ async function getWatchDataInner(lookbackDays: number): Promise<WatchData> {
     fetchCoinGeckoMarkets(), fetchBybitSpot(), fetchBitgetPerp(),
   ]);
   recordError('Bitget listing dates', 'legacy spot inventory does not supply verified listing dates', false);
-  if (cbSpot.length >= 500) recordError('Coinbase inventory', 'coverage limited to the first 500 public products', false);
   const fearGreed = fngRaw?.data?.[0] ? { value: Number(fngRaw.data[0].value), label: fngRaw.data[0].value_classification } : null;
 
   const global: GlobalMarket = {

@@ -1,6 +1,6 @@
 'use client';
 
-import type { Locale } from '@/lib/i18n';
+import { getTranslator, type Locale } from '@/lib/i18n';
 import { useDashboardI18n } from '../fear/use-dashboard-i18n';
 
 import type {
@@ -10,7 +10,7 @@ import type {
   SignalRating,
   ListingSequence,
 } from '@/lib/watch-data';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { loadWatchUpdate } from '@/lib/watch-client-data';
 import { RadioIcon, ZapIcon, SearchIcon, TrendingUpIcon } from 'lucide-react';
 
@@ -153,8 +153,9 @@ function filterCoins(coins: ListingCoin[], tab: FilterTab): ListingCoin[] {
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
-export default function WatchClient({ data: initialData }: { data: WatchData }) {
+export default function WatchClient({ data: initialData, children }: { data: WatchData; children?: ReactNode }) {
   const { locale, d } = useDashboardI18n();
+  const t = getTranslator(locale);
   const [remoteData, setRemoteData] = useState<WatchData | null>(null);
   const data = remoteData && Date.parse(remoteData.generatedAt) >= Date.parse(initialData.generatedAt) ? remoteData : initialData;
   const { fearGreed, global: g, listings, generatedAt, lookbackDays, errors } = data;
@@ -285,6 +286,8 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
           </div>
         </div>
 
+        {children}
+
         {/* ── Signal Legend ─────────────────────────────────────────── */}
         <div className='rounded border border-border bg-surface px-5 py-4'>
           <p className='mb-3 text-[10px] font-medium uppercase tracking-[0.16em] text-muted-foreground'>{d("Signal Rating Guide")}</p>
@@ -370,7 +373,9 @@ export default function WatchClient({ data: initialData }: { data: WatchData }) 
                     ))}
                     <th className='text-left px-3 py-3 font-medium text-muted-foreground text-xs'>{d("Type")}</th>
                     <th className='text-center px-3 py-3 font-medium text-muted-foreground text-xs'>{d("Sig")}</th>
-                    <th className='text-left px-3 py-3 font-medium text-muted-foreground text-xs'>{d("First seen")}</th>
+                    <th className='text-left px-3 py-3 font-medium text-muted-foreground text-xs' title={t('Earliest instrument date reported in the inventory window', '清单观察窗口内最早的市场标的日期', '観測期間内に一覧で確認した最も早い銘柄の日付')}>
+                      {t('Inventory date', '清单日期', '一覧の日付')}
+                    </th>
                   </tr>
                 </thead>
                 <tbody>

@@ -13,9 +13,11 @@ import {
   instrumentCountFor,
 } from './instruments.ts';
 
-const TICKERS = getInstruments('bstocks').map((instrument) => instrument.ticker);
+const LISTINGS = getInstruments('bstocks');
+const TICKERS = LISTINGS.map((instrument) => instrument.ticker);
+const RESEARCHED_TICKERS = LISTINGS.filter((instrument) => instrument.listing?.underlyingProvenance !== 'announced-addition').map((instrument) => instrument.ticker);
 
-test('every ingested instrument belongs to exactly one group', () => {
+test('the historical research cohort still belongs to exactly one group', () => {
   const seen = new Map();
   for (const group of INSTRUMENT_GROUPS) {
     for (const ticker of group.tickers) {
@@ -23,8 +25,9 @@ test('every ingested instrument belongs to exactly one group', () => {
       seen.set(ticker, group.slug);
     }
   }
-  const unassigned = TICKERS.filter((ticker) => !seen.has(ticker));
+  const unassigned = RESEARCHED_TICKERS.filter((ticker) => !seen.has(ticker));
   assert.deepEqual(unassigned, [], `unassigned: ${unassigned.join(' ')}`);
+  assert.equal(seen.size, RESEARCHED_TICKERS.length);
 });
 
 test('no group points at an instrument that does not exist', () => {
@@ -107,8 +110,8 @@ test('issuer totals separate instruments from priced instruments', () => {
   assert.ok(QUOTES_REPORTED_TOTAL >= totals.quotedCount);
 });
 
-test('every instrument has a group, so an instrument page always has a next read', () => {
-  for (const ticker of TICKERS) {
+test('every researched instrument has four companion instruments', () => {
+  for (const ticker of RESEARCHED_TICKERS) {
     const group = groupForTicker(ticker);
     assert.ok(group, `${ticker} has no group`);
     assert.equal(group.tickers.filter((t) => t !== ticker).length, 4);

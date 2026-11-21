@@ -44,11 +44,16 @@ test('only issuers with an ingested list get a page', () => {
 
 test('instrument route params cover every instrument exactly once', () => {
   const params = instrumentRouteParams();
-  assert.equal(params.length, 100);
+  assert.equal(params.length, 113);
   assert.equal(new Set(params.map((p) => `${p.issuer}/${p.ticker}`)).size, params.length);
+  const isins = new Set();
   for (const { issuer, ticker } of params) {
-    assert.ok(getInstrument(issuer, ticker), `no instrument behind /stocks/${issuer}/${ticker}`);
+    const instrument = getInstrument(issuer, ticker);
+    assert.ok(instrument, `no instrument behind /stocks/${issuer}/${ticker}`);
+    assert.match(instrument.listing?.isin ?? '', /^AE[A-Z0-9]{10}$/);
+    isins.add(instrument.listing.isin);
   }
+  assert.equal(isins.size, 113);
 });
 
 test('no ticker needs URL escaping', () => {
@@ -74,7 +79,10 @@ test('every internal link the stocks pages emit has a route behind it', async ()
   for (const { issuer, ticker } of params) {
     assert.ok(routes.has(`/stocks/${issuer}`), `breadcrumb of ${ticker} points at a missing issuer page`);
     const group = groupForTicker(ticker);
-    assert.ok(group, `${ticker} has no group, so its page would have no next read`);
+    if (!group) {
+      assert.equal(getInstrument(issuer, ticker).listing?.underlyingProvenance, 'announced-addition');
+      continue;
+    }
     for (const sibling of group.tickers) {
       assert.ok(routes.has(`/stocks/${issuer}/${sibling}`), `${ticker} links to missing ${sibling}`);
     }

@@ -1,8 +1,7 @@
-import { mkdir, open, rename, unlink } from 'node:fs/promises';
-import { dirname, resolve } from 'node:path';
+import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
-import { randomUUID } from 'node:crypto';
 import { registerHooks } from 'node:module';
+import { writeSnapshot } from './lib/write-snapshot.mjs';
 
 registerHooks({
   resolve(specifier, context, nextResolve) {
@@ -12,47 +11,21 @@ registerHooks({
     return nextResolve(specifier, context);
   },
 });
-const { collectWatchData } = await import('../src/lib/watch-data.ts');
+const { collectWatchData, WATCH_INVENTORY_SOURCES } = await import('../src/lib/watch-data.ts');
 const { isWatchData } = await import('../src/lib/watch-client-data.ts');
 const { isBtcScoreData } = await import('../src/lib/btc-score-client-data.ts');
 
-const listingSources = [
-  'https://www.okx.com/api/v5/public/instruments?instType=SPOT',
-  'https://www.okx.com/api/v5/public/instruments?instType=SWAP',
-  'https://api.bybit.com/v5/market/instruments-info?category=linear&limit=1000',
-  'https://api.bitget.com/api/v2/spot/public/symbols',
-  'https://api.coinbase.com/api/v3/brokerage/market/products?product_type=SPOT&limit=500',
-  'https://fapi.binance.com/fapi/v1/exchangeInfo',
-];
-
 export async function syncWatchSnapshot({ destination = resolve('public/data/watch-data.json'), collect = collectWatchData } = {}) {
   const data = await collect(30);
-  const successful = new Set(data?.sources?.successful ?? []);
-  const liveListingSources = listingSources.filter(source => successful.has(source)).length;
-  const recentCount = data?.listings?.filter(coin => coin.firstSeenAt !== null).length ?? 0;
-  const pricedCount = data?.listings?.filter(coin => coin.priceUsdt !== null).length ?? 0;
+  const inventoryReady = isWatchData(data) && data.sources && WATCH_INVENTORY_SOURCES.every(source =>
+    data.sources.successful.includes(source) && !data.sources.failed.includes(source));
   const age = Date.now() - Date.parse(data?.generatedAt);
-  if (!isWatchData(data) || liveListingSources < 3 || recentCount < 1 || pricedCount < 1 || !Number.isFinite(age) || age < -60_000 || age > 600_000) {
+  if (!inventoryReady || !data.listings.some(coin => coin.firstSeenAt !== null) || !data.listings.some(coin => coin.priceUsdt !== null) ||
+      !Number.isFinite(age) || age < -60_000 || age > 600_000) {
     throw new Error('Watch sync refused incomplete or stale collection; previous snapshot retained');
   }
   await writeSnapshot(destination, data);
   return data;
-}
-
-async function writeSnapshot(destination, data) {
-  await mkdir(dirname(destination), { recursive: true });
-  const temporary = `${destination}.${randomUUID()}.tmp`;
-  const handle = await open(temporary, 'wx', 0o644);
-  try {
-    await handle.writeFile(`${JSON.stringify(data, null, 2)}\n`);
-    await handle.sync();
-    await handle.close();
-    await rename(temporary, destination);
-  } catch (error) {
-    await handle.close().catch(() => {});
-    await unlink(temporary).catch(() => {});
-    throw error;
-  }
 }
 
 export async function syncBtcScoreSnapshot({ destination = resolve('public/data/btc-score.json') } = {}) {

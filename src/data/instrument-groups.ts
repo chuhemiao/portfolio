@@ -7,8 +7,8 @@ import type { InstrumentGroup } from './tokenized-equities';
  * snapshot moves, these read as of that date, so an article quoting one dates
  * itself explicitly.
  *
- * Group 21 is missing: CMC reports 105 instruments and the payload on hand has
- * 100. It gets written once the last five arrive.
+ * Groups describe the original research cohort. Additional ADGM listings get
+ * detail pages when they enter the roster, independently of article coverage.
  */
 export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
   {
@@ -19,9 +19,9 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     label: ['Flagships', '旗舰', '旗艦'],
     title: ['Five flagships, five pricing anchors', '旗舰与五种定价锚', '旗艦5銘柄、5つの価格アンカー'],
     thesis: [
-      'The five largest are 47.4% of all bStocks value and no two are priced the same way: SPCXB tracks a private valuation with no public quote, CRCLB a recently listed stock, GOOGLB a mega-cap, MSTRB a bitcoin treasury, QQQB an index fund. Ranked by how loose the anchor is, the range traded since listing opens up from 1.158x to 2.168x.',
-      '最大的 5 个占全盘 47.4%，却是 5 种完全不同的定价依据：SPCXB 追未上市公司的内部估值、CRCLB 追新股、GOOGLB 追蓝筹、MSTRB 追持币实体、QQQB 追指数。按锚的松紧排序，上市以来的区间宽度从 1.158× 展开到 2.168×。',
-      '上位5銘柄で全体の47.4%を占めるが、価格の根拠は5通りすべて異なる。SPCXBは未公開企業の評価、CRCLBは新規上場株、GOOGLBは大型株、MSTRBはビットコイン保有法人、QQQBは指数。アンカーの緩さで並べると、上場以来のレンジ幅は1.158倍から2.168倍へ開く。',
+      'The five largest in the research snapshot account for 47.4% of its bStocks value. SPCXB is tied to SpaceX, CRCLB to Circle, GOOGLB to Alphabet, MSTRB to a bitcoin treasury company, and QQQB to an index fund. The observed ranges since token listing span 1.158x to 2.168x.',
+      '原研究快照中，规模最大的五个标的占快照内 bStocks 市值的 47.4%。SPCXB 对应 SpaceX，CRCLB 对应 Circle，GOOGLB 对应 Alphabet，MSTRB 对应比特币财库公司，QQQB 对应指数基金。观察到的代币上线以来价格区间倍数为 1.158 至 2.168 倍。',
+      '調査時点のスナップショットでは、上位5銘柄が収録 bStocks の時価総額の47.4%を占めます。SPCXB は SpaceX、CRCLB は Circle、GOOGLB は Alphabet、MSTRB はビットコイン保有企業、QQQB は指数連動ファンドに対応します。トークン上場来の観測レンジは1.158倍から2.168倍です。',
     ],
     articleSlugs: {
       'zh-CN': 'bstocks-flagship-pricing-anchors',
@@ -214,12 +214,12 @@ export const INSTRUMENT_GROUPS: InstrumentGroup[] = [
     index: 12,
     issuerSlug: 'bstocks',
     tickers: ['QNTB', 'AGPUB', 'SHAZB', 'BOTB', 'SECZB'],
-    label: ['No public anchor', '无公开锚', '公開アンカーなし'],
-    title: ['A tokenized stock with nothing to track', '没有公开锚的标的', '追う対象のないトークン化株式'],
+    label: ['Verified U.S. listings', '已核实的美国挂牌标的', '上場確認済みの米国銘柄'],
+    title: ['Five verified U.S. listings', '五个已核实的美国挂牌标的', '米国上場を確認した5銘柄'],
     thesis: [
-      'None of these five has an established public listing to price against, and for SECZB and BOTB CMC carries no underlying name at all — the name had to be read off the token itself. If there is no anchor, what is the price?',
-      '这五个都没有可对照的公开上市标的，其中 SECZB 和 BOTB 在 CMC 上连标的名都没有，只能从代币名反推。没有锚，价格是什么？',
-      'この5銘柄にはいずれも価格を照合できる公開上場がなく、SECZBとBOTBについてはCMCに原資産名すら存在せず、トークン名から読み取るしかなかった。アンカーがないなら、価格とは何なのか。',
+      'QNT, AGPU, SHAZ and BOT are listed on Nasdaq, and SECZ on the NYSE. To compare bStock prices with their underlying securities, match the observation time, currency and effective conversion ratio.',
+      'QNT、AGPU、SHAZ 和 BOT 在纳斯达克挂牌，SECZ 在纽约证券交易所挂牌。比较 bStock 与原资产价格时，应对齐观测时点、币种和当时有效的换算比例。',
+      'QNT、AGPU、SHAZ、BOT はナスダックに、SECZ はニューヨーク証券取引所に上場しています。bStock と原資産の価格を比較する際は、観測時刻と通貨をそろえ、その時点で有効な換算比率を使います。',
     ],
     articleSlugs: {
       'zh-CN': 'bstocks-no-public-anchor',

@@ -2,6 +2,7 @@ import { OSCILLATOR_MANUAL_SNAPSHOT } from '../data/oscillator-manual-snapshot';
 import { normalizeOscillatorSnapshot } from './oscillator-snapshot';
 import type { CoinConfig } from '../data/oscillator-coins';
 import type { MarketSourceCoin } from './oscillator-helpers';
+import type { OscillatorHistorySource } from './oscillator-history';
 
 export type Grade = 'S' | 'A' | 'B' | 'F';
 export type Action = 'Focus' | 'Watch' | 'Avoid';
@@ -25,9 +26,12 @@ export interface OscillatorResult {
   currentCyclePeak: number | null;
   lastCyclePeak: number | null;
   fiveYearLow: number | null;
-  historySource?: 'binance' | 'coingecko' | 'none';
+  historySource?: OscillatorHistorySource | 'none';
   historyAsOf?: string | null;
   historyStart?: string | null;
+  historyPointCount?: number;
+  historyMarkets?: string[];
+  historyRetained?: boolean;
   cycleChange: number | null;
   aboveFiveYearLow: number | null;
   grade: Grade;
@@ -55,6 +59,8 @@ export interface OscillatorSummary {
   binanceBtcPairs: number;
   positive7dCount: number;
   positive30dCount: number;
+  valid7dCount?: number;
+  valid30dCount?: number;
   positive7dBreadth: number | null;
   positive30dBreadth: number | null;
 }
@@ -78,4 +84,14 @@ export interface OscillatorData {
 
 export async function getOscillatorData(): Promise<OscillatorData> {
   return normalizeOscillatorSnapshot(OSCILLATOR_MANUAL_SNAPSHOT);
+}
+
+export function getOscillatorHistoryAssetIds(): string[] {
+  return Object.keys(OSCILLATOR_MANUAL_SNAPSHOT.history ?? {});
+}
+
+export function getOscillatorHistory(asset: string) {
+  const history = OSCILLATOR_MANUAL_SNAPSHOT.history;
+  if (!history || !Object.hasOwn(history, asset)) return null;
+  return { asOf: OSCILLATOR_MANUAL_SNAPSHOT.asOf, series: history[asset] };
 }

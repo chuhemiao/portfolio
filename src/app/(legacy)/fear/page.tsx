@@ -1,8 +1,10 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import type { Locale } from '@/lib/i18n';
 import FearClient from './fear-client';
+import { MarketNews } from '@/components/market-news';
 import { DATA } from '@/data/resume';
-import { getFearDashboardData } from '@/lib/fear-data';
+import fearSnapshot from '@/data/fear-dashboard-snapshot.json';
+import type { FearDashboardData } from '@/lib/fear-data';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = localizedPageMetadata('/fear', 'en', {
@@ -44,10 +46,11 @@ export default async function FearPage() {
 }
 
 export async function renderPage(locale: Locale) {
-  const data = await getFearDashboardData();
   return (
     <div lang={locale} className='mx-auto w-full max-w-[1150px] px-4 pb-dock-safe pt-6 sm:px-6 sm:pb-dock-safe-lg sm:pt-10 lg:px-8'>
-      <FearClient data={data} />
+      <FearClient data={fearSnapshot as FearDashboardData}>
+        <MarketNews page='fear' locale={locale} />
+      </FearClient>
     </div>
   );
 }

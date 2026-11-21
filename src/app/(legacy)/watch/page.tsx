@@ -1,9 +1,16 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import type { Locale } from '@/lib/i18n';
 import WatchClient from './watch-client';
+import { ListingEvents } from './listing-events';
+import { MarketNews } from '@/components/market-news';
+import news from '@/data/market-news.json';
+import listingEvents from '@/data/watch-listing-events.json';
 import { DATA } from '@/data/resume';
 import { getWatchData } from '@/lib/watch-data';
+import { readWatchListingEvents } from '@/lib/watch-listing-events';
 import type { Metadata } from 'next';
+
+const verifiedEvents = readWatchListingEvents(listingEvents, news.panels.watch);
 
 export const metadata: Metadata = localizedPageMetadata('/watch', 'en', {
   title: 'Watch',
@@ -45,5 +52,12 @@ export default async function WatchPage() {
 
 export async function renderPage(locale: Locale) {
   const data = await getWatchData();
-  return <div lang={locale}><WatchClient data={data} /></div>;
+  return (
+    <div lang={locale}>
+      <WatchClient data={data}>
+        {verifiedEvents ? <ListingEvents {...verifiedEvents} locale={locale} /> : null}
+        <MarketNews page='watch' locale={locale} />
+      </WatchClient>
+    </div>
+  );
 }

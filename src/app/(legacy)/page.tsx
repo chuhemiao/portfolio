@@ -138,7 +138,7 @@ export async function renderPage(locale: Locale) {
   };
 
   return (
-    <div>
+    <main>
       <script
         type='application/ld+json'
         suppressHydrationWarning
@@ -212,44 +212,97 @@ export async function renderPage(locale: Locale) {
         </div>
       </section>
 
-      {/* ── 索引 + 侧栏 ───────────────────────────────────────────── */}
-      <div className='mx-auto flex max-w-[1240px] flex-wrap items-start gap-12 px-4 pt-14 sm:px-8 lg:gap-14'>
-        <main className='min-w-0 flex-[999_1_560px]'>
-          <div className='mb-5 flex items-baseline justify-between gap-4'>
-            <h2 className='text-xl font-semibold tracking-[-0.015em]'>
-              {t('Latest', '最近更新', '最新の更新')}
-            </h2>
-            <Link href={href('/blog')} className='font-mono text-[12px] text-muted-foreground transition-colors hover:text-foreground'>
-              {t('All', '全部', 'すべて')} {localizedPosts.length.toLocaleString(locale)} →
-            </Link>
-          </div>
+      <div className='mx-auto max-w-[1240px] px-4 pt-12 sm:px-8 sm:pt-14'>
+        <div className='grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(270px,30%)] lg:gap-10'>
+          <section aria-labelledby='latest-title' className='min-w-0'>
+            <div className='mb-5 flex items-baseline justify-between gap-4'>
+              <h2 id='latest-title' className='text-xl font-semibold tracking-[-0.015em]'>
+                {t('Latest', '最近更新', '最新の更新')}
+              </h2>
+              <Link href={href('/blog')} className='font-mono text-[12px] text-muted-foreground transition-colors hover:text-foreground'>
+                {t('All', '全部', 'すべて')} {localizedPosts.length.toLocaleString(locale)} →
+              </Link>
+            </div>
 
-          <div className='grid grid-cols-[84px_minmax(0,1fr)] gap-5 border-b border-border-strong px-3 pb-2.5 font-mono text-[11px] tracking-[0.14em] text-subtle sm:grid-cols-[92px_minmax(0,1fr)_130px]'>
-            <div>{t('DATE', '日期', '日付')}</div>
-            <div>{t('TITLE', '标题', 'タイトル')}</div>
-            <div className='hidden sm:block'>{t('CATEGORY', '分类', 'カテゴリ')}</div>
-          </div>
+            <div className='grid grid-cols-[84px_minmax(0,1fr)] gap-5 border-b border-border-strong px-3 pb-2.5 font-mono text-[11px] tracking-[0.14em] text-subtle sm:grid-cols-[92px_minmax(0,1fr)_130px]'>
+              <div>{t('DATE', '日期', '日付')}</div>
+              <div>{t('TITLE', '标题', 'タイトル')}</div>
+              <div className='hidden sm:block'>{t('CATEGORY', '分类', 'カテゴリ')}</div>
+            </div>
 
-          {latestPosts.map((post) => (
-            <Link
-              key={post.slug}
-              href={getPostHref(post, locale)}
-              className='idx-row grid-cols-[84px_minmax(0,1fr)] sm:grid-cols-[92px_minmax(0,1fr)_130px]'
-            >
-              <div className='tnum font-mono text-[12px] text-subtle'>
-                {post.metadata.publishedAt}
+            {latestPosts.map((post) => (
+              <Link
+                key={post.slug}
+                href={getPostHref(post, locale)}
+                className='idx-row grid-cols-[84px_minmax(0,1fr)] sm:grid-cols-[92px_minmax(0,1fr)_130px]'
+              >
+                <div className='tnum font-mono text-[12px] text-subtle'>
+                  {post.metadata.publishedAt}
+                </div>
+                <div className='truncate text-[14.5px] leading-[1.5]'>{post.metadata.title}</div>
+                <div className='hidden font-mono text-[11px] tracking-[0.06em] text-muted-foreground sm:block'>
+                  {post.metadata.category ? categoryLabel(post.metadata.category, locale) : '—'}
+                </div>
+              </Link>
+            ))}
+          </section>
+
+          <aside className='grid min-w-0 gap-4 sm:grid-cols-2 lg:grid-cols-1'>
+            {weeklyBrief && (
+              <section aria-labelledby='weekly-brief-title' className='min-w-0 rounded border border-border bg-surface p-5'>
+                <h2 id='weekly-brief-title' className='mono-label mb-2.5'>
+                  {t('Weekly brief', '本周简报', 'ウィークリーブリーフ')}
+                  {localizedBrief?.fallbackOriginal && <> · {t('original', '原文', '原文')}</>}
+                </h2>
+                <time dateTime={weeklyBrief.id} className='tnum mb-2 block font-mono text-[11px] tracking-[0.1em] text-subtle'>
+                  {formatLocaleDate(weeklyBrief.id, locale)}
+                </time>
+                <h3 lang={localizedBrief?.language} className='mb-2 text-base font-semibold leading-[1.5]'>
+                  {weeklyBrief.headline}
+                </h3>
+                {weeklyBrief.coreCrypto && (
+                  <p lang={localizedBrief?.language} className='mb-3 line-clamp-4 text-[13px] leading-[1.7] text-muted-foreground'>
+                    {weeklyBrief.coreCrypto}
+                  </p>
+                )}
+                <Link href={href('/pulse')} className='font-mono text-[12px] text-brand transition-opacity hover:opacity-80'>
+                  {t('Read in full', '读全文', '全文を読む')} →
+                </Link>
+              </section>
+            )}
+
+            <section aria-labelledby='advertising-title' className='flex min-w-0 flex-col gap-3 rounded border border-dashed border-border-strong bg-surface p-5'>
+              <div>
+                <p className='mono-label mb-1.5'>{t('Advertisement', '广告位', '広告枠')}</p>
+                <h2 id='advertising-title' className='text-balance text-base font-semibold'>
+                  {t('Showcase your product here', '在这里展示您的产品', 'ここで製品を紹介しませんか')}
+                </h2>
               </div>
-              <div className='truncate text-[14.5px] leading-[1.5]'>{post.metadata.title}</div>
-              <div className='hidden font-mono text-[11px] tracking-[0.06em] text-muted-foreground sm:block'>
-                {post.metadata.category ? categoryLabel(post.metadata.category, locale) : '—'}
+              <p className='text-pretty text-[13px] leading-[1.65] text-muted-foreground'>
+                {t('Support this site by booking this advertising space.', '预订这个广告位，支持本站持续创作。', '広告の掲載で、このサイトの運営を応援できます。')}
+              </p>
+              <p>
+                <span className='font-mono text-2xl font-medium'>US$300</span>
+                <span className='ml-2 text-sm text-muted-foreground'>{t('/ month', '/ 月', '/ 月')}</span>
+              </p>
+              <div>
+                <a
+                  href={`mailto:chuhemiao@gmail.com?subject=${encodeURIComponent(t('Homepage advertising inquiry', '首页广告位咨询', 'トップページ広告掲載のお問い合わせ'))}`}
+                  className='inline-flex min-h-11 w-full items-center justify-center rounded bg-brand px-3 py-2 text-center text-sm font-semibold text-brand-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface active:opacity-80'
+                >
+                  {t('Contact to advertise', '联系投放', '掲載について問い合わせる')}
+                </a>
+                <p className='mt-2 break-all text-xs text-muted-foreground'>chuhemiao@gmail.com</p>
               </div>
-            </Link>
-          ))}
+            </section>
+          </aside>
+        </div>
 
-          <h2 className='mb-5 mt-12 text-xl font-semibold tracking-[-0.015em]'>
+        <section aria-labelledby='featured-research-title' className='mt-10 sm:mt-12'>
+          <h2 id='featured-research-title' className='mb-5 text-xl font-semibold tracking-[-0.015em]'>
             {t('Featured research', '重点研究', '注目のリサーチ')}
           </h2>
-          <div className='grid gap-px border border-border bg-border sm:grid-cols-2'>
+          <div className='grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4'>
             {FEATURED_RESEARCH.map((project) => (
               <Link
                 key={project.slug}
@@ -269,106 +322,57 @@ export async function renderPage(locale: Locale) {
               </Link>
             ))}
           </div>
-        </main>
+        </section>
 
-        <aside className='flex min-w-0 flex-[1_1_320px] flex-col gap-8'>
-          <section aria-labelledby='advertising-title' className='flex min-h-80 flex-col justify-between gap-8 rounded border border-dashed border-border-strong bg-surface p-6 text-center'>
-            <div>
-              <p className='mb-3 font-mono text-xs tracking-wide text-subtle'>
-                {t('Advertisement', '广告位', '広告枠')}
-              </p>
-              <h2 id='advertising-title' className='text-balance text-xl font-semibold'>
-                {t('Showcase your product here', '在这里展示您的产品', 'ここで製品を紹介しませんか')}
-              </h2>
-            </div>
-            <div>
-              <p className='mb-6 text-pretty text-sm leading-6 text-muted-foreground'>
-                {t('Support this site by booking this advertising space.', '预订这个广告位，支持本站持续创作。', '広告の掲載で、このサイトの運営を応援できます。')}
-              </p>
-              <p className='mb-6'>
-                <span className='font-mono text-3xl font-medium'>US$300</span>
-                <span className='ml-2 text-sm text-muted-foreground'>{t('/ month', '/ 月', '/ 月')}</span>
-              </p>
-              <a
-                href={`mailto:chuhemiao@gmail.com?subject=${encodeURIComponent(t('Homepage advertising inquiry', '首页广告位咨询', 'トップページ広告掲載のお問い合わせ'))}`}
-                className='inline-flex min-h-11 w-full items-center justify-center rounded bg-brand px-3 py-2 text-base font-semibold text-brand-foreground transition-opacity duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-2 focus-visible:ring-offset-surface active:opacity-80'
+        <section aria-labelledby='market-tools-title' className='mt-10'>
+          <h2 id='market-tools-title' className='mb-3 text-lg font-semibold tracking-[-0.015em]'>
+            {t('Market tools', '市场工具', '市場ツール')}
+          </h2>
+          <div className='grid gap-px border border-border bg-border sm:grid-cols-2 lg:grid-cols-4'>
+            {TOOLS.map((tool) => (
+              <Link
+                key={tool.href}
+                href={href(tool.href)}
+                className='flex items-center justify-between gap-3 bg-background px-4 py-3.5 transition-colors hover:bg-surface-2 focus-visible:z-10'
               >
-                {t('Contact to advertise', '联系投放', '掲載について問い合わせる')}
-              </a>
-              <p className='mt-3 break-all text-xs text-muted-foreground'>chuhemiao@gmail.com</p>
-            </div>
-          </section>
-
-          {weeklyBrief && (
-            <section className='rounded border border-border bg-surface p-5'>
-              <div className='mono-label mb-3.5'>
-                {t('Weekly brief', '本周简报', 'ウィークリーブリーフ')}
-                {localizedBrief?.fallbackOriginal && <> · {t('original', '原文', '原文')}</>}
-              </div>
-              <div className='tnum mb-2 font-mono text-[11px] tracking-[0.1em] text-subtle'>
-                {formatLocaleDate(weeklyBrief.id, locale)}
-              </div>
-              <h3 lang={localizedBrief?.language} className='mb-3 text-base font-semibold leading-[1.5]'>
-                {weeklyBrief.headline}
-              </h3>
-              {weeklyBrief.coreCrypto && (
-                <p lang={localizedBrief?.language} className='mb-3 line-clamp-4 text-[13px] leading-[1.7] text-muted-foreground'>
-                  {weeklyBrief.coreCrypto}
-                </p>
-              )}
-              <Link href={href('/pulse')} className='font-mono text-[12px] text-brand transition-opacity hover:opacity-80'>
-                {t('Read in full', '读全文', '全文を読む')} →
+                <span className='min-w-0'>
+                  <span className='block text-sm font-semibold'>{tool.label}</span>
+                  <span className='mt-0.5 block text-[12px] text-subtle'>{tool.desc}</span>
+                </span>
+                <ArrowRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
               </Link>
-            </section>
-          )}
+            ))}
+          </div>
+        </section>
 
-          <section>
-            <div className='mono-label mb-3'>{t('Market tools', '市场工具', '市場ツール')}</div>
-            <div className='overflow-hidden rounded border border-border'>
-              {TOOLS.map((tool, i) => (
-                <Link
-                  key={tool.href}
-                  href={href(tool.href)}
-                  className={`flex items-center justify-between gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2 ${i < TOOLS.length - 1 ? 'border-b border-border' : ''}`}
-                >
-                  <span className='min-w-0'>
-                    <span className='block text-sm font-semibold'>{tool.label}</span>
-                    <span className='mt-0.5 block text-[12px] text-subtle'>{tool.desc}</span>
-                  </span>
-                  <ArrowRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
-                </Link>
-              ))}
-            </div>
-          </section>
-
-          {/* Referral links keep a fixed, labelled slot instead of an unlabelled dock icon. */}
-          <section>
-            <div className='mono-label mb-3'>{t('Exchanges', '交易入口', '取引所')}</div>
-            <div className='overflow-hidden rounded border border-border'>
-              {EXCHANGES.map((ex, i) => (
-                <Link
-                  key={ex.name}
-                  href={ex.url}
-                  target='_blank'
-                  rel='sponsored noopener'
-                  className={`flex items-center gap-3 px-4 py-3.5 transition-colors hover:bg-surface-2 ${i < EXCHANGES.length - 1 ? 'border-b border-border' : ''}`}
-                >
-                  <span className='flex size-7 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-[11px] font-medium text-muted-foreground'>
-                    {ex.initial}
-                  </span>
-                  <span className='min-w-0 flex-grow'>
-                    <span className='block text-sm font-semibold'>{ex.name}</span>
-                    <span className='block text-[12px] text-subtle'>{ex.desc}</span>
-                  </span>
-                  <ArrowUpRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
-                </Link>
-              ))}
-            </div>
-            <p className='mt-2 font-mono text-[10.5px] tracking-[0.04em] text-subtle'>
-              {t('Referral links · research stays independent', '含邀请链接 · 不影响研究结论', '紹介リンク · リサーチの結論には影響しません')}
-            </p>
-          </section>
-        </aside>
+        <section aria-labelledby='exchanges-title' className='mt-8'>
+          <h2 id='exchanges-title' className='mb-3 text-lg font-semibold tracking-[-0.015em]'>
+            {t('Exchanges', '交易入口', '取引所')}
+          </h2>
+          <div className='grid gap-px border border-border bg-border md:grid-cols-3'>
+            {EXCHANGES.map((ex) => (
+              <Link
+                key={ex.name}
+                href={ex.url}
+                target='_blank'
+                rel='sponsored noopener'
+                className='flex items-center gap-3 bg-background px-4 py-3.5 transition-colors hover:bg-surface-2 focus-visible:z-10'
+              >
+                <span aria-hidden='true' className='flex size-7 shrink-0 items-center justify-center rounded-full bg-muted font-mono text-[11px] font-medium text-muted-foreground'>
+                  {ex.initial}
+                </span>
+                <span className='min-w-0 flex-1'>
+                  <span className='block text-sm font-semibold'>{ex.name}</span>
+                  <span className='block text-[12px] text-subtle'>{ex.desc}</span>
+                </span>
+                <ArrowUpRightIcon aria-hidden='true' className='size-3.5 shrink-0 text-subtle' />
+              </Link>
+            ))}
+          </div>
+          <p className='mt-2 font-mono text-[10.5px] tracking-[0.04em] text-subtle'>
+            {t('Referral links · research stays independent', '含邀请链接 · 不影响研究结论', '紹介リンク · リサーチの結論には影響しません')}
+          </p>
+        </section>
       </div>
 
       {/* ── 订阅 ──────────────────────────────────────────────────── */}
@@ -387,6 +391,6 @@ export async function renderPage(locale: Locale) {
           </div>
         </div>
       </section>
-    </div>
+    </main>
   );
 }

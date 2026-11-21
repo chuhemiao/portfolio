@@ -1,5 +1,6 @@
 import { localizedPageMetadata } from '@/lib/localized-metadata';
 import type { Locale } from '@/lib/i18n';
+import CardWeekly from './card-weekly';
 import PulseClient from './pulse-client';
 import { DATA } from '@/data/resume';
 import { getPulseData } from '@/lib/pulse-data';
@@ -45,5 +46,5 @@ export default async function PulsePage() {
 
 export async function renderPage(locale: Locale) {
   const data = await getPulseData();
-  return <div lang={locale}><PulseClient data={data} /></div>;
+  return <div lang={locale}><PulseClient data={data}><CardWeekly locale={locale} /></PulseClient></div>;
 }

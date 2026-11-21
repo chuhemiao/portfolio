@@ -318,9 +318,9 @@ export default function StocksIssuers() {
                                 className='mt-3.5 flex items-center gap-2 font-mono text-[11.5px] text-brand'
                               >
                                 {t(
-                                  `All ${getInstrumentCount(issuer.slug)} instruments, with quotes`,
-                                  `全部 ${getInstrumentCount(issuer.slug)} 个标的及行情`,
-                                  `全 ${getInstrumentCount(issuer.slug)} 銘柄と価格`
+                                  `All ${getInstrumentCount(issuer.slug)} instrument details`,
+                                  `全部 ${getInstrumentCount(issuer.slug)} 个标的详情`,
+                                  `全 ${getInstrumentCount(issuer.slug)} 銘柄の詳細`
                                 )}
                                 <span aria-hidden='true'>→</span>
                               </Link>

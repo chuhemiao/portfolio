@@ -12,7 +12,18 @@ import {
   appendSurfRankingFallbackRows,
   mergeMarketSources,
   pickBinanceBtcMarket,
+  usdBreadth,
 } from '../src/lib/oscillator-helpers.ts';
+import {
+  binanceDailyCloses,
+  coinGeckoDailySamples,
+  historyAnchors,
+  isOscillatorHistory,
+  makeOscillatorHistory,
+  MAX_OSCILLATOR_HISTORY_DAYS,
+  ratioByUtcDay,
+  UTC_DAY_MS,
+} from '../src/lib/oscillator-history.ts';
 
 const COINGECKO_PAGE_SIZE = 250;
 const TOP_UNIVERSE_LIMIT = 500;
@@ -37,8 +48,8 @@ const SURF_CANDIDATES = [
 
 const WITH_SURF = process.argv.includes('--with-surf');
 const DRY_RUN = process.argv.includes('--dry-run');
+const MISSING_HISTORY_ONLY = process.argv.includes('--missing-history');
 const MAX_MARKET_AGE_MS = 6 * 60 * 60 * 1000;
-const DAY_MS = 24 * 60 * 60 * 1000;
 const sourceAsOf = {};
 const unavailableSources = new Set();
 let surfCommandPromise;
@@ -107,7 +118,7 @@ async function runSurfJson(command, args = []) {
   }
 }
 
-async function fetchJson(url, init) {
+async function fetchJson(url, init, onHttpFailure) {
   try {
     const res = await fetch(url, {
       ...init,
@@ -115,6 +126,7 @@ async function fetchJson(url, init) {
     });
     if (!res.ok) {
       unavailableSources.add(new URL(url).pathname);
+      onHttpFailure?.(res.status);
       return null;
     }
     return await res.json();
@@ -146,11 +158,6 @@ function normalizeSearchName(value) {
   return String(value).toLowerCase().replace(/[^a-z0-9]+/g, '');
 }
 
-function ratioToPct(value, total) {
-  if (!total) return null;
-  return (value / total) * 100;
-}
-
 function bestRank(row) {
   return row.marketRank ?? row.coingeckoRank ?? row.coinmarketcapRank ?? null;
 }
@@ -164,6 +171,7 @@ function buildResearchFocusMap() {
     all.map((coin) => [
       coin.symbol.toUpperCase(),
       {
+        id: coin.id,
         name: coin.name,
         slug: coin.researchSlug,
         type: coin.researchType ?? 'Research',
@@ -372,67 +380,65 @@ async function fetchCoinGeckoBtcRatios(coinIds) {
   return ratios;
 }
 
-function buildHistoryStats(points, historySource) {
-  const now = Date.now();
-  const latestClosedSample = historySource === 'coingecko' ? Math.floor(now / DAY_MS) * DAY_MS : now;
-  const cleaned = points.filter(([timestamp, value]) =>
-    Number.isFinite(timestamp) && timestamp >= now - 1825 * DAY_MS && timestamp <= latestClosedSample &&
-    Number.isFinite(value) && value > 0
-  ).sort((left, right) => left[0] - right[0]);
-  if (!cleaned.length || now - cleaned.at(-1)[0] > 2 * DAY_MS) return null;
-
-  const recent = cleaned.filter(([timestamp]) => timestamp >= now - 730 * DAY_MS);
-  return {
-    currentCyclePeak: recent.length && recent[0][0] <= now - 728 * DAY_MS
-      ? Math.max(...recent.map((point) => point[1])) : null,
-    fiveYearLow: Math.min(...cleaned.map((point) => point[1])),
-    historySource,
-    historyAsOf: new Date(cleaned.at(-1)[0]).toISOString(),
-    historyStart: new Date(cleaned[0][0]).toISOString(),
-  };
+async function fetchBinanceSpotMarkets() {
+  const data = await fetchJson('https://api.binance.com/api/v3/exchangeInfo?permissions=SPOT');
+  const markets = new Set();
+  for (const row of Array.isArray(data?.symbols) ? data.symbols : []) {
+    if (row?.status === 'TRADING' && row.isSpotTradingAllowed === true &&
+      /^[A-Z0-9]+$/.test(row.baseAsset ?? '') && ['BTC', 'USDT'].includes(row.quoteAsset) &&
+      row.symbol === `${row.baseAsset}${row.quoteAsset}`) markets.add(row.symbol);
+  }
+  return markets;
 }
 
-async function fetchBinanceHistory(binanceSymbol) {
-  if (!binanceSymbol) return null;
+async function fetchBinanceDailyCloses(symbol, cutoff) {
   const points = [];
-  const endTime = Date.now();
-  let startTime = endTime - 1825 * DAY_MS;
-  // Binance returns at most 1000 daily candles per request.
+  let startTime = Math.floor(cutoff / UTC_DAY_MS) * UTC_DAY_MS -
+    MAX_OSCILLATOR_HISTORY_DAYS * UTC_DAY_MS;
   for (let page = 0; page < 2; page += 1) {
     const candles = await fetchJson(
-      `https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=1d&limit=1000&startTime=${startTime}&endTime=${endTime}`
+      `https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d&limit=1000&startTime=${startTime}&endTime=${cutoff - 1}`
     );
-    if (!Array.isArray(candles)) return null;
-    for (const candle of candles) {
-      // Only closed daily candles belong to historical anchors.
-      if (Number(candle[6]) <= endTime) points.push([Number(candle[6]), asNumber(candle[4])]);
-    }
+    if (!Array.isArray(candles) || candles.length > 1000) return [];
+    points.push(...binanceDailyCloses(candles, cutoff));
     if (candles.length < 1000) break;
-    startTime = Number(candles.at(-1)[0]) + DAY_MS;
+    const nextStart = candles.at(-1)?.[0] + UTC_DAY_MS;
+    if (!Number.isSafeInteger(nextStart) || nextStart <= startTime) return [];
+    startTime = nextStart;
   }
-  return buildHistoryStats(points, 'binance');
+  return points;
 }
 
-let coinGeckoHistoryUnavailable = false;
-async function fetchAltBtcHistory(coinId, binanceSymbol) {
-  const binanceHistory = await fetchBinanceHistory(binanceSymbol);
-  if (binanceHistory) return binanceHistory;
-
-  if (!coinGeckoHistoryUnavailable) {
-    const cfg = coingeckoConfig();
-    const chart = await fetchJson(
-      `${cfg.base}/coins/${coinId}/market_chart?vs_currency=btc&days=1825&interval=daily`,
-      { headers: cfg.headers }
-    );
-    const stats = buildHistoryStats(chart?.prices ?? [], 'coingecko');
-    if (stats) return stats;
-    // Public CoinGecko access may reject 5-year histories; avoid repeatedly exhausting its rate limit.
-    if (!chart && !process.env.COINGECKO_API_KEY) coinGeckoHistoryUnavailable = true;
+let coinGeckoHistoryRateLimited = false;
+async function fetchAltBtcHistory(coin, markets, btcCloses, cutoff) {
+  const native = `${coin.symbol}BTC`;
+  if (markets?.has(native)) {
+    const points = await fetchBinanceDailyCloses(native, cutoff);
+    const history = makeOscillatorHistory(points, 'binance', [native], cutoff);
+    if (history) return history;
   }
-  return {
-    currentCyclePeak: null, fiveYearLow: null,
-    historySource: 'none', historyAsOf: null, historyStart: null,
-  };
+
+  const usdt = `${coin.symbol}USDT`;
+  if (markets?.has(usdt) && markets.has('BTCUSDT')) {
+    const [base, benchmark] = await Promise.all([fetchBinanceDailyCloses(usdt, cutoff), btcCloses()]);
+    const history = makeOscillatorHistory(
+      ratioByUtcDay(base, benchmark), 'binance-cross', [usdt, 'BTCUSDT'], cutoff
+    );
+    if (history) return history;
+  }
+
+  if (!coinGeckoHistoryRateLimited) {
+    const cfg = coingeckoConfig();
+    const days = process.env.COINGECKO_API_KEY ? MAX_OSCILLATOR_HISTORY_DAYS : 365;
+    const chart = await fetchJson(
+      `${cfg.base}/coins/${encodeURIComponent(coin.id)}/market_chart?vs_currency=btc&days=${days}&interval=daily`,
+      { headers: cfg.headers },
+      (status) => { if (status === 429) coinGeckoHistoryRateLimited = true; }
+    );
+    const history = makeOscillatorHistory(coinGeckoDailySamples(chart?.prices, cutoff), 'coingecko', [], cutoff);
+    if (history) return history;
+  }
+  return null;
 }
 
 function applySurfRankingOverlay(sourceRows, surfRows) {
@@ -641,8 +647,8 @@ function computeGrade(cycleChange, aboveFiveYearLow, isVeteran, hasLastCyclePeak
 function buildUniverseRows(sourceRows, ratios, binanceTickers, btcPrice) {
   return sourceRows
     .map((row) => {
-      const binanceMarket = pickBinanceBtcMarket(row.symbol, binanceTickers);
-      const coingeckoRatio = ratios.get(row.id) ?? null;
+      const binanceMarket = row.identityAmbiguous ? null : pickBinanceBtcMarket(row.symbol, binanceTickers);
+      const coingeckoRatio = ratios.get(row.coingeckoId) ?? null;
       const derivedRatio = row.currentPriceUsd > 0 && btcPrice > 0 ? row.currentPriceUsd / btcPrice : null;
       const currentRatio = binanceMarket?.price ?? coingeckoRatio ?? derivedRatio;
       const currentRatioSource = binanceMarket?.price
@@ -673,72 +679,83 @@ function buildUniverseRows(sourceRows, ratios, binanceTickers, btcPrice) {
     });
 }
 
-function buildFocusConfigs(universe) {
-  const universeMap = new Map(universe.map((coin) => [coin.symbol, coin]));
+function buildFocusConfigs() {
   const focusMap = new Map();
-
-  for (const coin of OSCILLATOR_COINS) {
-    const fromUniverse = universeMap.get(coin.symbol);
-    focusMap.set(coin.symbol, {
-      ...coin,
-      id: coin.id ?? fromUniverse?.id,
-      name: fromUniverse?.name ?? coin.name,
-      researchSlug: coin.researchSlug ?? fromUniverse?.researchSlug ?? undefined,
-      researchType: coin.researchType ?? fromUniverse?.researchType ?? undefined,
-    });
-  }
-
-  for (const coin of OSCILLATOR_RESEARCH_FOCUS) {
-    const fromUniverse = universeMap.get(coin.symbol);
-    if (!fromUniverse) continue;
-
+  for (const coin of [...OSCILLATOR_RESEARCH_FOCUS, ...OSCILLATOR_COINS]) {
     const existing = focusMap.get(coin.symbol);
-    focusMap.set(coin.symbol, {
-      ...coin,
-      ...existing,
-      id: existing?.id ?? fromUniverse.id,
-      name: fromUniverse.name,
-      researchSlug: coin.researchSlug ?? existing?.researchSlug,
-      researchType: coin.researchType ?? existing?.researchType,
-    });
+    focusMap.set(coin.symbol, { ...existing, ...coin });
   }
-
-  return Array.from(focusMap.values()).filter((coin) => Boolean(coin.id));
+  return [...focusMap.values()].filter((coin) => coin.id);
 }
 
-async function buildFocusResults(universe) {
-  const universeMap = new Map(universe.map((coin) => [coin.symbol, coin]));
-  const focusCoins = buildFocusConfigs(universe);
+function sortFocusResults(results) {
+  const gradeOrder = { S: 0, A: 1, B: 2, F: 3 };
+  return results.sort((left, right) =>
+    gradeOrder[left.grade] - gradeOrder[right.grade] ||
+    (left.bestRank ?? Number.MAX_SAFE_INTEGER) - (right.bestRank ?? Number.MAX_SAFE_INTEGER)
+  );
+}
+
+async function buildFocusResults(universe, focusCoins, markets, previous) {
+  const universeById = new Map(universe.filter((row) => row.coingeckoId).map((row) => [row.coingeckoId, row]));
+  const previousUniverseById = new Map(previous.data.universe.filter((row) => row.coingeckoId).map((row) => [row.coingeckoId, row]));
+  const lostIds = focusCoins
+    .filter((coin) => isOscillatorHistory(previous.history?.[coin.id]) && universeById.get(coin.id)?.symbol !== coin.symbol)
+    .map((coin) => coin.id);
+  if (lostIds.length) {
+    throw new Error(`Refusing to overwrite oscillator snapshot without existing chart identities: ${lostIds.join(', ')}.`);
+  }
+  const cutoff = Date.now();
+  let benchmark;
+  const btcCloses = () => benchmark ??= fetchBinanceDailyCloses('BTCUSDT', cutoff);
+  const historyById = {};
   const results = [];
 
   for (let index = 0; index < focusCoins.length; index += HISTORY_BATCH_SIZE) {
     const batch = focusCoins.slice(index, index + HISTORY_BATCH_SIZE);
     const batchResults = await Promise.all(
       batch.map(async (coin) => {
-        const marketRow = universeMap.get(coin.symbol);
-        if (!marketRow || !coin.id) return null;
+        const marketRow = universeById.get(coin.id);
+        if (!marketRow || marketRow.symbol !== coin.symbol) return null;
 
-        const history = await fetchAltBtcHistory(coin.id, marketRow.binanceSymbol);
+        const venueMarkets = marketRow.identityAmbiguous ? null : markets;
+        const fetchedHistory = await fetchAltBtcHistory(coin, venueMarkets, btcCloses, cutoff);
+        const prior = previous.history?.[coin.id];
+        const previousRow = previousUniverseById.get(coin.id);
+        const trustedPrior = isOscillatorHistory(prior) && (
+          prior.source === 'coingecko' ||
+          (!marketRow.identityAmbiguous && previousRow?.symbol === coin.symbol && !previousRow.identityAmbiguous &&
+            prior.markets[0] === `${coin.symbol}${prior.source === 'binance' ? 'BTC' : 'USDT'}`)
+        );
+        const history = fetchedHistory ?? (trustedPrior ? prior : null);
+        if (history) historyById[coin.id] = history;
+        const anchors = history ? historyAnchors(history) : {
+          currentCyclePeak: null,
+          fiveYearLow: null,
+          historyStart: null,
+          historyAsOf: null,
+          historyPointCount: 0,
+        };
         const currentRatio = marketRow.currentRatio;
         const lastCyclePeak = coin.lastCyclePeak ?? null;
 
         let cycleChange = null;
         if (
           coin.category === 'veteran' &&
-          history.currentCyclePeak !== null &&
+          anchors.currentCyclePeak !== null &&
           lastCyclePeak !== null &&
           lastCyclePeak > 0
         ) {
-          cycleChange = ((history.currentCyclePeak - lastCyclePeak) / lastCyclePeak) * 100;
+          cycleChange = ((anchors.currentCyclePeak - lastCyclePeak) / lastCyclePeak) * 100;
         }
 
         let aboveFiveYearLow = null;
         if (
           currentRatio !== null &&
-          history.fiveYearLow !== null &&
-          history.fiveYearLow > 0
+          anchors.fiveYearLow !== null &&
+          anchors.fiveYearLow > 0
         ) {
-          aboveFiveYearLow = ((currentRatio - history.fiveYearLow) / history.fiveYearLow) * 100;
+          aboveFiveYearLow = ((currentRatio - anchors.fiveYearLow) / anchors.fiveYearLow) * 100;
         }
 
         const gradeInfo = computeGrade(
@@ -749,15 +766,14 @@ async function buildFocusResults(universe) {
         );
 
         return {
-          coin,
+          coin: { ...coin, name: marketRow.name },
           currentRatio,
           currentRatioSource: marketRow.currentRatioSource,
-          currentCyclePeak: history.currentCyclePeak,
+          ...anchors,
           lastCyclePeak,
-          fiveYearLow: history.fiveYearLow,
-          historySource: history.historySource,
-          historyAsOf: history.historyAsOf,
-          historyStart: history.historyStart,
+          historySource: history?.source ?? 'none',
+          historyMarkets: history?.markets,
+          historyRetained: Boolean(history && !fetchedHistory),
           cycleChange,
           aboveFiveYearLow,
           grade: gradeInfo.grade,
@@ -783,17 +799,7 @@ async function buildFocusResults(universe) {
     results.push(...batchResults.filter(Boolean));
   }
 
-  const gradeOrder = { S: 0, A: 1, B: 2, F: 3 };
-  results.sort((left, right) => {
-    const gradeGap = gradeOrder[left.grade] - gradeOrder[right.grade];
-    if (gradeGap !== 0) return gradeGap;
-
-    const leftRank = left.bestRank ?? Number.MAX_SAFE_INTEGER;
-    const rightRank = right.bestRank ?? Number.MAX_SAFE_INTEGER;
-    return leftRank - rightRank;
-  });
-
-  return results;
+  return { results: sortFocusResults(results), history: historyById };
 }
 
 function buildSummary(universe) {
@@ -801,23 +807,53 @@ function buildSummary(universe) {
   const researchFocusCount = universe.filter((coin) => coin.researchFocus).length;
   const dualRankedCount = universe.filter((coin) => coin.dualTop300).length;
   const binanceBtcPairs = universe.filter((coin) => coin.binanceListed).length;
-  const positive7dCount = universe.filter((coin) => (coin.change7d ?? -Infinity) > 0).length;
-  const positive30dCount = universe.filter((coin) => (coin.change30d ?? -Infinity) > 0).length;
+  const breadth7d = usdBreadth(universe, 'change7d');
+  const breadth30d = usdBreadth(universe, 'change30d');
 
   return {
     trackedAltcoins,
     researchFocusCount,
     dualRankedCount,
     binanceBtcPairs,
-    positive7dCount,
-    positive30dCount,
-    positive7dBreadth: ratioToPct(positive7dCount, trackedAltcoins),
-    positive30dBreadth: ratioToPct(positive30dCount, trackedAltcoins),
+    positive7dCount: breadth7d.positive,
+    positive30dCount: breadth30d.positive,
+    valid7dCount: breadth7d.valid,
+    valid30dCount: breadth30d.valid,
+    positive7dBreadth: breadth7d.percent,
+    positive30dBreadth: breadth30d.percent,
   };
 }
 
-async function buildSnapshotData() {
+async function fillMissingHistory(previous) {
+  const existingIds = new Set(previous.data.results.map((row) => row.coin.id));
+  const missingCoins = buildFocusConfigs().filter((coin) =>
+    existingIds.has(coin.id) && !isOscillatorHistory(previous.history?.[coin.id])
+  );
+  const update = await buildFocusResults(previous.data.universe, missingCoins, null, previous);
+  if (!Object.keys(update.history).length) return previous;
+
+  const history = { ...previous.history, ...update.history };
+  const updatedById = new Map(update.results.filter((row) => update.history[row.coin.id]).map((row) => [row.coin.id, row]));
+  const results = sortFocusResults(previous.data.results.map((row) => updatedById.get(row.coin.id) ?? row));
+  return {
+    ...previous,
+    history,
+    data: {
+      ...previous.data,
+      results,
+      freshness: {
+        sourceAsOf: previous.data.freshness?.sourceAsOf ?? {},
+        historyAvailable: Object.keys(history).length,
+        historyTotal: results.length,
+        unavailableSources: previous.data.freshness?.unavailableSources ?? [],
+      },
+    },
+  };
+}
+
+async function buildSnapshot(previous) {
   const researchFocusMap = buildResearchFocusMap();
+  const focusCoins = buildFocusConfigs();
 
   const [btcPrice, coingeckoCoins, coinmarketcapCoins, surfRanking] = await Promise.all([
     fetchBtcPrice(),
@@ -839,7 +875,8 @@ async function buildSnapshotData() {
       mergeMarketSources(
         coingeckoCoins,
         coinmarketcapCoins,
-        researchFocusMap
+        researchFocusMap,
+        new Map(focusCoins.map((coin) => [coin.symbol, coin.id]))
       ),
       surfRanking,
       researchFocusMap
@@ -852,25 +889,31 @@ async function buildSnapshotData() {
     .sort((left, right) => (bestRank(left) ?? Infinity) - (bestRank(right) ?? Infinity))
     .slice(0, TOP_UNIVERSE_LIMIT);
 
-  const binanceTickers = await fetchBinanceBtcTickers(
-    sourceRows.map((coin) => coin.symbol)
-  );
-  const ratios = await fetchCoinGeckoBtcRatios(sourceRows.map((coin) => coin.id));
+  const [binanceTickers, spotMarkets, ratios] = await Promise.all([
+    fetchBinanceBtcTickers(sourceRows.map((coin) => coin.symbol)),
+    fetchBinanceSpotMarkets(),
+    fetchCoinGeckoBtcRatios(sourceRows.flatMap((coin) => coin.coingeckoId ? [coin.coingeckoId] : [])),
+  ]);
   const universe = buildUniverseRows(sourceRows, ratios, binanceTickers, btcPrice);
-  const results = await buildFocusResults(universe);
+  const { results, history } = await buildFocusResults(universe, focusCoins, spotMarkets, previous);
   const summary = buildSummary(universe);
+  const asOf = new Date().toISOString();
 
   return {
-    generatedAt: new Date().toISOString(),
-    results,
-    universe,
-    summary,
-    btcPrice: asNumber(btcPrice),
-    freshness: {
-      sourceAsOf,
-      historyAvailable: results.filter((row) => row.historySource !== 'none').length,
-      historyTotal: results.length,
-      unavailableSources: Array.from(unavailableSources).sort(),
+    asOf,
+    history,
+    data: {
+      generatedAt: asOf,
+      results,
+      universe,
+      summary,
+      btcPrice: asNumber(btcPrice),
+      freshness: {
+        sourceAsOf,
+        historyAvailable: Object.keys(history).length,
+        historyTotal: results.length,
+        unavailableSources: Array.from(unavailableSources).sort(),
+      },
     },
   };
 }
@@ -883,19 +926,25 @@ export const OSCILLATOR_MANUAL_SNAPSHOT: OscillatorSnapshotEnvelope = ${JSON.str
 }
 
 async function main() {
-  const data = await buildSnapshotData();
+  const { OSCILLATOR_MANUAL_SNAPSHOT: previous } = await import('../src/data/oscillator-manual-snapshot.ts');
+  const snapshot = MISSING_HISTORY_ONLY ? await fillMissingHistory(previous) : await buildSnapshot(previous);
+  const { data } = snapshot;
 
   if (!data.universe.length) {
     throw new Error('Refusing to overwrite oscillator snapshot because the universe is empty.');
   }
 
-  const snapshot = {
-    asOf: data.generatedAt,
-    data,
-  };
+  if (Object.keys(previous.history ?? {}).length && !data.freshness?.historyAvailable) {
+    throw new Error('Refusing to overwrite oscillator snapshot because no verified chart history is available.');
+  }
 
   if (DRY_RUN) {
     console.log(JSON.stringify(snapshot));
+    return;
+  }
+
+  if (snapshot === previous) {
+    console.log('No additional exact-ID histories were available. Kept the existing oscillator snapshot.');
     return;
   }
 
