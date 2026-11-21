@@ -24,6 +24,14 @@ export function countProjectsByType(types: readonly string[]): number {
 
 export const PROJECTS = [
   {
+    name: "oripa.xyz / ORIPA",
+    description: "Prelaunch physical-card pools on HyperEVM with loss-based minting; conditional staking economics, audit/deployment matching and reserve risks",
+    type: "RWA",
+    slug: "oripa-oripa-prelaunch-loss-mining-tokenomics-research",
+    color: "#DC2626",
+    initial: "OR",
+  },
+  {
     name: 'Anthropic',
     description: 'IPO research on operating economics, compute commitments and valuation; filing details and cash-flow assumptions need verification',
     type: 'AI',

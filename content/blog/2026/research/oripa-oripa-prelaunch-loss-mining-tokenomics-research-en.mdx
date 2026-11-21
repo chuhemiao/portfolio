@@ -1,0 +1,131 @@
+---
+title: "oripa.xyz ($ORIPA): Prelaunch Research"
+publishedAt: "2026-11-20"
+summary: "ORIPA turns recorded rip losses into tokens and proposes distributing rip proceeds to stakers. A review of issuance, cash minting costs, releases, audit status, and conditional valuation."
+slug: "oripa-oripa-prelaunch-loss-mining-tokenomics-research-en"
+category: "research"
+language: "en"
+translationKey: "oripa-oripa-prelaunch-loss-mining-tokenomics-research"
+sourceSlug: "oripa-oripa-prelaunch-loss-mining-tokenomics-research"
+---
+
+## TL;DR
+
+Under the proposed design, $ORIPA is a **loss-mining token**. Tokens are minted along a curve only when the drawn card’s locked price is below the ticket price. In the all-melt model, **up to about 27.75% of rip revenue goes to stakers**. The project states there is no presale, VC allocation, or team allocation. Its platform allocation is the Vault, representing 28.6% of total supply, with linear releases starting in March 2027.
+
+Three points guide this assessment. **First, trading availability remains unconfirmed.** The original says contracts are not deployed, but this review has not independently confirmed mainnet addresses. Under the announced schedule, tokens cannot transfer before January 13, 2027. First rips are scheduled for November 25, 2026, five days after this report. BlockSec listed an audit report on November 13. The fixed version still needs to be matched to the eventual deployment. [BlockSec report page](https://blocksec.com/audit-report/oripa-contract) **Second, the initial economics are unusual.** The first $5 million of cumulative recorded losses mint at ten tokens per USDC, implying a cash minting cost of about **$0.14–0.19 per token**. With a 20% required yield, 60% staking participation, and the time assumptions explained below, the conditional model implies **around $1.30**, roughly 7–9 times the cost range. I see that model gap as an explanation for a whitelist lottery with equal spending caps. **Third, the system is reflexive.** Token-mining demand may drive rip volume, while token price, rip volume, and staking income reinforce one another in both directions.
+
+---
+
+## Project structure
+
+oripa.xyz brings the Japanese card shop’s “oripa,” or original pack assembled by the shop, on-chain. It changes three features. The entire pool is **disclosed and committed on-chain before the first rip**, each card can be **melted into USDC at 85% of its index price**, and recorded losses **mint tokens**. The operator is Spatial Temporal Markets Ltd, a British Virgin Islands company. The planned network is HyperEVM, chain ID 999, with deposits through Circle CCTP. [Project documentation](https://docs.oripa.xyz/)
+
+A pool contains a fixed set of physical cards and one ticket price. Each rip draws one card. The card index is a weighted median of completed sales on venues such as Mercari, Yahoo! Auctions, and SNKRDUNK, weighted 3; C2C asking prices, weighted 2; and retail inventory prices, weighted 1. It updates daily in yen and is converted to USDC at that day’s exchange rate. At pool creation, the day’s index becomes its fixed **locked price**, used for pool RTP, recorded loss per rip, and reserved backing.
+
+Pools target an index RTP of **0.85**. The sum of locked card prices equals 0.85 × ticket price × number of tickets. If the melt index remains equal to locked prices and the whole pool is melted, every 100 USDC spent returns **72.25 USDC**, from 0.85 × 0.85. Cards remain in custody. A drawn card automatically melts after 24 hours if shipping is not selected. Shipping costs 25 USDC per order, is limited to Japan, South Korea, Taiwan, and Hong Kong, and allows at most five cards per wallet per day.
+
+## Token mechanism: mining recorded losses
+
+The minting path depends on the platform’s cumulative recorded loss, H.
+
+~~~text
+R(H) = 10                                      H < 5,000,000
+R(H) = 10 × [50,000,000 / (50,000,000 + H − 5,000,000)]²
+                                               H ≥ 5,000,000
+~~~
+
+Recorded loss is L = max(0, ticket price − locked price). A high-value hit records zero, never a negative loss. For every 100 tokens minted to users, another 40 are minted to the Vault. Tokens held by the Vault do not stake or earn rewards; eligibility after release still needs confirmation. The design says T = 5M, S = 50M, and the opening rate have no ordinary administrator setters. Upgrade authority needs separate examination.
+
+Integrating the continuous curve gives 50 million tokens in the flat segment and ∫10S²(S+u)⁻²du = 10S = 500 million thereafter. **User issuance approaches a 550 million cap, or 770 million including the Vault.** Those are formula limits. Discrete minting and calculations across thresholds must be checked against the implementation. Issuance is front-loaded and the rate declines thereafter.
+
+| Cumulative recorded loss H | User tokens minted | Share of 550M user cap | Marginal tokens per USDC | Implied cash minting cost* |
+|---|---:|---:|---:|---:|
+| $5M | 50.0M | 9.1% | 10.0 | **$0.14–0.19** |
+| $20M | 165.4M | 30.1% | 5.9 | $0.23–0.31 |
+| $50M | 286.8M | 52.1% | 2.8 | $0.50–0.67 |
+| $100M | 377.6M | 68.7% | 1.2 | $1.17–1.55 |
+
+*Derived from a 27.75% cash loss and an assumed recorded-loss ratio of 15–20%, as explained below. This depends on pool composition. Winning cards never offset recorded losses.*
+
+**The schedule is the immediate verification priority.**
+
+| Date | Event |
+|---|---|
+| 2026-11-25 | Whitelist opens and first rips begin. Wallets are selected by lottery and receive equal spending caps |
+| 2026-12-01 | Whitelist ends |
+| 2026-12-02 | Public access opens |
+| 2027-01-13 | **Transfers enabled**; 50% of tokens minted before this date become immediately transferable |
+| 2027-01-27 → 2027-07-14 | Remaining 50% released in 13 installments, every 14 days |
+| 2027-03-02 | Vault balance snapshot |
+| 2027-03-16 → 2027-08-31 | Vault’s snapshotted locked allocation released in 13 installments |
+
+First rips to August 31, 2027 span about **nine months**. Transfer activation on January 13 to the end of August spans about **7.5 months**. These dates release the early user allocation and the Vault’s snapshotted locked balance. They do not establish that every future mint will already be unlocked. The arrangements described in the source include no buybacks, burns, or additional lock incentives. Supply release remains a constraint.
+
+## Unit economics
+
+Consider each 100 USDC across the full pool, assuming an average locked value of 85, unchanged melt prices, and all cards melted.
+
+| Destination | Amount | Nature |
+|---|---:|---|
+| Reserve, 0.85 × locked value of 85 | 72.25 | Liability for future melts |
+| Rip fee, 5% of ticket price | 5.00 | Immediately allocated to stakers |
+| Rip surplus | 22.75 | Allocated to stakers, netted across rips |
+| Platform | 0.00 | — |
+
+The expected cash returned to rippers is 72.25. **The remaining 27.75 is staker revenue in this model** and the cash cost of minting. Divide cash lost per USDC of recorded loss by the mint rate to obtain an **implied cash minting price**. With a 15% recorded-loss ratio, the price is 1.85 ÷ R(H). At 20%, it is 1.39 ÷ R(H). The opening segment gives **$0.14–0.19 per token**, increasing with H and exceeding $1 by H = $100 million.
+
+Cash cost also depends on pool skew. At the opening rate of ten, a ticket price of 100, and an unchanged index, a near miss with locked value 99 costs **about $1.59 per minted token**. A deep loss with locked value 20 costs **about $0.10**. The source quotes the design as saying the cheapest path is to rip and immediately melt. The per-rip comparison is narrower. **Melting a deep-loss draw costs less per token.** A player cannot therefore choose which card to draw in advance.
+
+Staking revenue is at most 27.75% × rip volume V in this model. If many cards ship, restock deductions can consume up to 0.15 × locked value, reducing the payout share toward **15.0%**. For staking participation f, annual required yield y, user token stock N, and annual rip volume V, the conditional formula is
+
+~~~text
+p* = 0.2775 × V / (y × f × N)
+~~~
+
+V cancels only if user supply is approximated by the output of a full year of the same flat-segment volume, temporarily excluding the effects of Vault circulation. Then N ≈ 10λV, with λ denoting recorded losses divided by rip spending. Short-term cumulative volume cannot be mixed directly with an annual yield. Under those assumptions, p* ≈ 0.2775/(y·f·10λ). At y = 20%, f = 60%, and λ = 18%, **p* ≈ $1.28**. Full staking gives about **$0.77**. Raising the required yield to 40% gives about **$0.64**. The source’s illustrative range is roughly **$0.40–1.30**, still above the modeled $0.14–0.19 minting cost.
+
+**This valuation depends on sustained rip volume.** V is endogenous. In the unchanged-index, all-melt model, the expected cash return is −27.75%. The source infers that return-seeking players would primarily pursue tokens, with behavior still to be tested after launch and collecting or entertainment demand still possible. The feedback is token price ↑ → profitable mining → rip volume ↑ → staking income ↑ → price ↑, and works in reverse. Treating V as independent overstates equilibrium stability. This is a valuation conditional on volume holding up, not a price target.
+
+## Competition and market
+
+Collector Crypt ($CARDS) on Solana, where rips deliver physical cards, is the main listed comparison in the source. At **November 20, 2026, 08:00 UTC**, it traded at **$0.1582**, with a **$140.9 million** market cap and **$4.75 million** in 24-hour volume. Returns were **−53.6% over 30 days**, −25.1% over 90 days, and +216.5% over a year.
+
+The source reads this as a market that established demand over a year but is losing its speculative premium sharply over the last month. oripa is launching into support for the category and pressure on valuations.
+
+| Comparison | Model | Scale signal |
+|---|---|---|
+| Collector Crypt ($CARDS) | Solana; pack ripping and physical cards | $141M market cap, $4.75M 24h volume, −54% over 30 days |
+| Courtyard | Polygon; custody and secondary trading | $30M Series A in July 2025, led by Forerunner; 54,000 X followers |
+| Rips (Triumph) | App only, off-chain | More than 6M downloads since launch, according to Apptopia as reported by WIRED |
+| oripa.xyz | HyperEVM; card pools and loss-based minting | Prelaunch, without third-party operating data |
+
+The source cites a growing trading-card market, at around **$8.4 billion in 2025**, projected to reach **$16.9 billion in 2035**, with Pokémon at roughly 12% share. It quotes a 6.9% CAGR. Those endpoints imply about 7.2% over ten years, so the original report’s base period needs checking. [Yahoo Finance, February 28, 2026](https://finance.yahoo.com/news/trading-card-games-market-forecast-153356253.html)
+
+The comparison rests on different uses. Courtyard provides custody and secondary trading; Rips offers pack-opening experience and volatility; oripa attempts to **turn negative-expectation card draws into token-producing mining**. The source regards monetizing recorded losses as distinctive, but this review does not establish market-wide uniqueness. If yield demand dominates, token prices will matter more. Collecting demand still needs observation.
+
+## Risks
+
+**The index is a single point of trust.** Locked prices, melt prices, reserve requirements, and minting all derive from oripa’s own index. The design promises to disclose each price, source, and update time before use, but describes no external oracle or dispute arbitration. Underpricing can increase minting dilution and reduce melt proceeds; overpricing can drain reserves. The source regards this as the weakest part of the system.
+
+**Reserves may be insufficient.** They are calculated at 0.85 × the current index and recalculated daily. A sharp card-price increase can create a melt queue, paid later at the price quoted when requested. The design’s claim that queueing leaves balances and withdrawals unaffected depends on the operator’s continued solvency.
+
+**Upgradeable contracts require an audit-to-deployment comparison.** The source identifies six contracts, around 1,250 nSLOC, and commit d84c69e as submitted for audit. BlockSec’s report page is now accessible, making the source’s “not yet published” status outdated. Scope, fixes, and deployment consistency need checking. The design lists a 48-hour upgrade timelock, unpausable withdrawals, and no ordinary administrator setters for core parameters. The 2-of-3 Safe and relayer, operator, and reserve-writer hot wallets remain trusted actors.
+
+**Wagering and securities exposure depend on jurisdiction.** The source describes an 18+ restriction and blocks covering the US and sanctioned regions, with a BVI operator. It cites WIRED’s characterization of the category as digitally wagering on everything. Nontransferability alone does not resolve securities questions. A Howey analysis considers an investment of money, a common enterprise, profit expectations, and dependence on others’ essential managerial efforts. Lockups or expected appreciation cannot determine the outcome alone. The source’s restriction list omits mainland China; omission does not establish local permission. [SEC explanation](https://www.sec.gov/resources-small-businesses/capital-raising-building-blocks/transactions-involving-crypto-assets)
+
+**Liquidity has a discontinuity.** Before January 13, 2027, no transferable market price is confirmed and transfer-based exit is unavailable under the schedule. The last Vault release follows about 7.5 months later. November 25 to January 13 is **49 days, or seven weeks**. Participants entering in December face a shorter wait, depending on their entry date.
+
+**Category sentiment is weak.** A close listed peer lost about half its value in 30 days. The source takes that as evidence that the physical-card-plus-token narrative premium is shrinking.
+
+## Conclusion
+
+I consider oripa relatively direct about the source and allocation of revenue. Its proposed arrangements include no presale or VC allocation, no platform share of rip revenue, fixed parameters, and unpausable withdrawals. The Vault and users receive the same token and have 13 biweekly linear installments, but users also receive 50% immediately and the two schedules have different dates. The source interprets the token as **structured compensation for negative expected rip returns**. Modeled compensation cost, $0.14–0.19, is below the conditional valuation. That is a gap between a model cost and a conditional estimate, not an executable arbitrage. I see it as one explanation for the whitelist design.
+
+It is also a **reflexive system**. In this analysis, the dominant economic incentive is exchanging losses for yield, while cards remain physical deliverables. Token price drives ripping, ripping drives staking revenue, and revenue feeds back into price. A positive cycle can push prices far above fundamentals. On reversal, payouts from rip activity can contract quickly. This model assumes no independent income buffer beyond rip fees and surplus.
+
+**The mechanism merits tracking, while entry timing needs to wait.** As of November 20, 2026, this review has not independently confirmed mainnet deployment, has located an audit report, and treats tokens as nontransferable under the schedule. Watch three things: actual first-day rip volume on November 25 and whether spending approaches per-wallet caps; audit severity and remediation scope; and the January 13 transfer-release structure as a dividing point for assessing entry. Until then, valuation remains an exercise in a curve awaiting real operating data.
+
+*Source scope. Project rules follow the author-supplied design material. Market figures retain the November 20, 2026, 08:00 UTC snapshot. Documentation access was restricted during this review. Mainnet addresses, the full price index, and financial flows were not independently verified. BlockSec confirms that a report exists; that fact alone does not establish launch or trading availability.*
+
+[Related reading — ORIPA and CARDS valuation comparison](/en/blog/oripa-cards-valuation-value-capture-comparison-en)
