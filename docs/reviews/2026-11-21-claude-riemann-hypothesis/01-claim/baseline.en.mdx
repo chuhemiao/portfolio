@@ -1,0 +1,62 @@
+---
+title: 'The Alpöge–Claude Riemann Hypothesis Claim and the Public Evidence So Far'
+publishedAt: '2026-11-21'
+summary: 'Alpöge released a four-page announcement and 14 Lean archive parts. This report distinguishes RH from Dirichlet GRH, reviews the independent machine checks and explains how Clay considers a Millennium Prize solution.'
+slug: 'claude-riemann-hypothesis-claim-evidence-en'
+category: 'research'
+researchProjectSlug: 'anthropic-ipo-s1-ai-capital-structure-valuation-research'
+language: 'en'
+translationKey: 'claude-riemann-hypothesis-claim-evidence'
+sourceSlug: 'claude-riemann-hypothesis-claim-evidence'
+---
+
+On November 20, 2026, number theorist Levent Alpöge announced that he believed he and Claude had found a proof of the Riemann Hypothesis. He said that the same method resolves the generalized hypothesis for Dirichlet L-functions. He published a four-page note and the Lean source in 14 archive parts. By **22:05 UTC** that day, MIT mathematician Andrew Sutherland had reported successful compilation, an axiom audit and independent kernel checks. His end-to-end Comparator run was still in progress, and the Clay Mathematics Institute still listed the problem as unsolved. This article checked the public record around **01:20 UTC on November 21, 2026**. The machine results below retain the timestamp of Sutherland’s report. [Alpöge’s note](https://alpo.ge/remark.pdf) · [Sutherland’s verification log](https://math.mit.edu/~drew/grh/) · [Clay’s problem page](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## What the hypothesis says
+
+For complex `s` with real part greater than 1, the Riemann zeta function is defined by `Σ(n ≥ 1) n^(−s)` and can also be expressed as an Euler product over the primes. After continuation to the complex plane, it has trivial zeros at the negative even integers `−2, −4, …` and a pole at `s = 1`. The hypothesis, proposed in 1859, places every nontrivial zero on the line of real part `1/2`. A formal statement needs to handle the trivial zeros and the pole. Spotting the zeta function and `1/2` in a file gives very little evidence about the meaning of the theorem. [Bombieri’s official problem description](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+The prime number theorem gives the average behavior of the prime count. Riemann’s explicit formula connects fluctuations around that average with zeros of the zeta function. Under RH, the real parts of the zeros limit their powers of `x` to `x^(1/2)`. Summing the contributions with the relevant truncation gives error bounds with logarithmic factors. The bound is about the error in counting primes. Finding individual primes still requires separate computation. Dirichlet GRH makes the analogous assertion for L-functions attached to Dirichlet characters and has applications to primes in arithmetic progressions. [Bombieri’s official problem description](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+## From a toy model to the announcement
+
+Alpöge’s CV records a Harvard undergraduate mathematics degree, a Cambridge MASt and a Princeton mathematics doctorate in 2020. His dissertation, *Points on Curves*, was supervised by Manjul Bhargava. He received the Morgan Prize and was a Harvard Society of Fellows Junior Fellow from 2021 to 2025. His earlier work includes integral points on elliptic curves, nonmonogenic number fields and low-lying zeros of Maass-form L-functions. He describes returning to computing and joining Anthropic on his personal website. That background helps explain his choice of problem. The proof still has to be checked on its own merits. [Author’s CV](https://people.math.harvard.edu/~alpoge/cv.pdf) · [Author’s homepage](https://alpo.ge/)
+
+Alpöge says he first brought two ideas together in a toy setting and looked for a genuine mathematical setting with the same structure. He recalls Claude moving much faster than he did toward the end. His concrete example is the proposal to imitate multiplicity in Stepanov’s method by chaining theta lifts. Claude suggested a chain on the order of `√X` for a von Mangoldt sum of length `X`. Alpöge also says the higher-rank automorphic portions extend beyond what he had mastered. Claude compiled the timeline, and he cautions that his account of some details may be wrong. The account gives a route to investigate. The Lean dependencies and a readable derivation are the places to test the individual steps. [Alpöge’s note, pp. 1, 3 and 4](https://alpo.ge/remark.pdf)
+
+| Date in 2026 | Milestone reported in the note |
+|---|---|
+| October 6 | Stepanov determinant, the Iwasawa-tower analogy and Bost’s slope inequality |
+| October 20 | Shift to a weighted sum built around the von Mangoldt function |
+| November 15 | Iterated theta lifts between definite unitary groups, with work on norms, divisibility, the Rallis seesaw and the cost per lift |
+| November 16 | The published rough timeline records GRH |
+| November 20 | Public release of the four-page note and the formal source |
+
+The table rearranges selected milestones by date. The 20 entries in the original are partly out of chronological order. Alpöge reports generating more than 250,000 pages of expanded prose. That is his description of the expanded draft, separate from the four public pages and the Lean source. The [author’s archive](https://alpo.ge/lean.tar.gz.part01) runs through [part 14](https://alpo.ge/lean.tar.gz.part14). The [GitHub link supplied by the reader](https://github.com/CocoSgt/riemann-hypothesis-lean) is a mirror, with a different role from a mathematical check or a license grant. [Alpöge’s note](https://alpo.ge/remark.pdf)
+
+## What independent checks established
+
+Sutherland’s 22:05 UTC report separates compilation, kernel checks and statement comparisons. It reports a zero-error build of 175,187 modules under Lean and Mathlib v4.33.1. For the five theorems in `Main.lean`, `#print axioms` reported only `propext`, `Classical.choice` and `Quot.sound`. Lean’s `leanchecker` replayed all modules. The independently written nanoda and con-leche kernels accepted the full export, and con-leche’s `--compare` mode accepted all five theorems against separately written challenge statements. All modules passed lean4lean, including five that needed a rerun with a higher step limit. [Sutherland’s verification files and logs](https://math.mit.edu/~drew/grh/)
+
+The same report lists remaining checks and their scope. The build called Lean directly on individual files in an unsandboxed environment. No full comparison with an export from a sandboxed build had been made. The end-to-end `lake comparator` process and the default and paranoid Lean kernel runs on the export were still under way. There is already independent machine evidence. Further work can reduce the trust assumptions, confirm how the formal targets correspond to customary mathematical definitions and make the argument usable by other mathematicians. Terence Tao points readers to the Lean community discussion and treats understanding the proof strategy as work still to be done. [Sutherland’s verification log](https://math.mit.edu/~drew/grh/) · [Terence Tao’s first-person account](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+
+## The scope of GRH checked here
+
+Sutherland limits the reported GRH claims to Dirichlet L-functions. The ordinary RH target uses Mathlib’s own `RiemannHypothesis`. The other targets cover the zeta-zero statement written out, a nonvanishing result to the right of the critical line for Dirichlet L-functions, and two versions of the critical-strip zero statement. Alpöge describes the broader Extended Riemann Hypothesis as a direction he expects the method to reach with more work. The listed independent checks do not address that extension. [Sutherland’s scope of verification](https://math.mit.edu/~drew/grh/) · [Alpöge’s note](https://alpo.ge/remark.pdf)
+
+Anthropic published a different result in August. It reported that Claude increased a lower bound on the proportion of zeta zeros on the critical line from 41.6% to 67.2%. A proportion bound and a statement about all zeros have different evidentiary burdens. Even a proportion tending to 100% leaves room for a sparse set of off-line zeros. The November claim concerns the real part of every nontrivial zero. [Anthropic’s August report](https://www.anthropic.com/research/riemann-zeta) · [Clay’s statement of the problem](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## How Clay considers a solution
+
+The Clay Mathematics Institute still lists the Riemann Hypothesis as unsolved. Its Millennium Prize rules require publication in a qualifying outlet, at least two years since that publication and general acceptance by the international mathematics community before the institute will consider a proposed solution. The date of a personal website release or mirror is insufficient to establish when the two-year clock begins. Formal evidence and a professional mathematical argument can precede the institute’s prize process. These are separate timelines. [Clay’s problem page](https://www.claymath.org/millennium/riemann-hypothesis/) · [Millennium Prize rules](https://www.claymath.org/millennium-problems/rules/)
+
+## If the remaining checks continue to pass
+
+The immediate number-theoretic value is that results conditional on RH or Dirichlet GRH could drop the corresponding premise. Their other assumptions would still need to be checked individually. Beyond that, a readable account could show whether the iterated theta lifts, divisibility and error control yield a reusable argument, and identify which steps need the technical machinery of the release. Alpöge expects a substantially shorter proof. That expectation awaits further work. [Bombieri’s official problem description](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf) · [Alpöge’s note](https://alpo.ge/remark.pdf)
+
+For AI research, the public record raises a concrete question. Can people and a separate set of tools reuse, revise or reject the steps proposed by the model? The release makes that question easier to test. Progress in one closely supervised collaboration with formal verification leaves the answer for other problems and fields open. [Alpöge’s note](https://alpo.ge/remark.pdf) · [Sutherland’s verification log](https://math.mit.edu/~drew/grh/)
+
+## In this series
+
+- [Part 2. From Stepanov’s method to chains of theta lifts](/en/blog/claude-riemann-theta-lift-stepanov-method-en)
+- [Part 3. How Lean checks a Riemann Hypothesis proof](/en/blog/claude-riemann-lean-proof-verification-en)

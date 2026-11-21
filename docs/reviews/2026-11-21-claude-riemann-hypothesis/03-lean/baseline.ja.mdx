@@ -1,0 +1,60 @@
+---
+title: "Claude とリーマン予想 3/3｜Lean の検証でどこまで確認できたか"
+publishedAt: "2026-11-21"
+summary: "Sutherland が 175,187 モジュールの検証結果を公表した。五つの定理文、公理、独立カーネルの結果を読み分け、隔離環境での再現と数学的な検討に残る課題を整理する。"
+slug: "claude-riemann-lean-proof-verification-ja"
+category: "research"
+language: "ja"
+translationKey: "claude-riemann-lean-proof-verification"
+sourceSlug: "claude-riemann-lean-proof-verification"
+---
+
+## 独立検証はすでに公表されている
+
+11 月 20 日、Levent Alpöge は Claude とともにリーマン予想およびディリクレ L 関数に対する一般化を証明したとするノートを公開した。Lean のソースは 14 分割のアーカイブで公開された。その後、MIT の数学者 Andrew Sutherland が Claude Code を用いた独立検証の記録を公表した。記載された最終更新は **2026 年 11 月 20 日 22:05 UTC**。175,187 モジュールがエラーなくコンパイルされ、五つの定理の公理依存を確認し、独立したカーネルが証明のエクスポートを受理した。以下はこの時点の記録に基づく。 [Alpöge の原声明](https://alpo.ge/remark.pdf) · [Sutherland の検証記録](https://math.mit.edu/~drew/grh/)
+
+## 機械が検査した命題を特定する
+
+Sutherland が挙げたのは、`Main.lean` の `riemannHypothesis : RiemannHypothesis` である。右辺は Mathlib の命題だ。複素数が ζ 関数の零点であり、負の偶数にある自明な零点に当たらず、1 にも等しくなければ、実部は 1/2 になる。数学上は極となる 1 も明示的に扱う。Mathlib の ζ は複素数から複素数への全域関数として定義されるからだ。形式化が古典的な予想に対応するかを判断するには、関数の定義、零点の範囲、量化の仕方まで確認する必要がある。 [Mathlib の ζ 関数と RH の定義](https://leanprover-community.github.io/mathlib4_docs/Mathlib/NumberTheory/LSeries/RiemannZeta.html#RiemannHypothesis) · [Sutherland の検証記録](https://math.mit.edu/~drew/grh/)
+
+残る四つは、RH の定義を展開した命題、指定した右半平面でのディリクレ L 関数の非消滅、零点が臨界線上にあることを述べる一般形と原始指標版である。ここで検証対象となる GRH は **ディリクレ L 関数**に関するものだ。Alpöge が別途示した、さらに広い場合への期待には範囲を広げない。変数 `s` と法、指標の範囲に加え、自明指標の `s = 1` における例外も、命題を読む際に確認しておきたい。 [独立した命題ファイル](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean) · [Alpöge の原声明](https://alpo.ge/remark.pdf)
+
+## 五つの定理が通過した検査
+
+| 公表された検査 | 記録時点の結果 |
+| --- | --- |
+| ソースのコンパイルと Lean カーネルでの再検査 | Lean と Mathlib v4.33.1 で 175,187 モジュールすべてがコンパイルされた。報告によれば `leanchecker` による再検査も全モジュールで通過した。 |
+| 公理への依存 | 五つの定理の依存は `propext`、`Classical.choice`、`Quot.sound` に限られた。 |
+| エクスポートを別実装のカーネルで確認 | nanoda と対応するバージョンの con-leche が全体を受理した。 |
+| 独立した命題との照合 | con-leche の `--compare` が五つの命題を受理した。照合先は Mathlib のみをインポートする。 |
+| コンパイル済みファイルを別実装で確認 | lean4lean は 175,187 モジュールすべてを受理した。うち 5 モジュールは計算ステップの上限を引き上げてから通過した。 |
+
+同じ報告では、`lake comparator` による一連の実行と、Lean の標準・paranoid 両カーネルによるエクスポートの検査は進行中だった。必要な型に未対応のため終了した旧バージョンの記録もある。終了ステータスは理由と併せて読むと、どの検査で何が確認できたか分かる。 [Sutherland の検査表とログ](https://math.mit.edu/~drew/grh/)
+
+## 目当ての定理の公理依存を読む
+
+`#print` は現在の環境での宣言を表示する。`#print axioms` は証明が使う公理を、間接依存もたどって表示する。報告された三つは Lean で一般的に使われる標準的な論理公理である。対象が `sorryAx` に依存していれば、埋まっていない証明義務がある。独自の公理やネイティブ計算が持ち込む公理が含まれる場合は、それを支える前提も調べる必要がある。注目すべきは対象の定理が実際にどの公理に依存するかだ。次は公開報告で特定されている宣言への照会例である。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland の公理監査ログ](https://math.mit.edu/~drew/grh/audit.log)
+
+```lean
+#print riemannHypothesis
+#print axioms riemannHypothesis
+```
+
+依存する公理の一覧を得たあとには、宣言の意味を確認する。名前が `RiemannHypothesis` でも、想定した量化や例外を含むかを読む必要がある。信頼する Mathlib だけをインポートした独立環境に対象命題を書き、提出された証明と照合すれば、その点を検査できる。チャレンジファイルの仮置きは検証の仕様を記すために使われる。検証器は、提出側が実際に対象命題の証明を与えていることも確かめる。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [独立した命題ファイル](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
+
+## 再現可能な検証に必要な記録
+
+ソース、コンパイル済みの `.olean`、外部カーネルに渡すエクスポートは、それぞれの版とハッシュで識別する。Sutherland はソースアーカイブと、チャレンジおよび解答のエクスポートの SHA-256 を公開した。ハッシュが一致すれば、検証者が同じバイト列を使ったと分かる。定理が成立するかどうかは、別途カーネルが検査する。今回の報告では、隔離されていないクラウド環境で `lean` を使ってファイルを個別にコンパイルした。77 モジュールでは通常の Lake ビルドとバイト単位で一致した。全体の照合はまだ行われておらず、解答のエクスポートにも同じ出所の制約が残る。 [Sutherland の出所と留保](https://math.mit.edu/~drew/grh/)
+
+より強い再現では、ツールチェーンと依存関係の版を固定し、原本とエクスポートのハッシュを記録する。解答は隔離環境でソースから再構築し、独立した命題は提出物から変更できない環境に置く。別実装のカーネルで確認したら、対象の定理名、バージョン、終了ステータス、未完了の検査を公開する。この記録があれば、ソースの再構築、コンパイル済みファイルの再検査、同じエクスポートの複数カーネルによる検査を区別できる。本稿は公開された報告と命題を確認しており、アーカイブを独自には実行していない。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [独立 Comparator の検証構成](https://github.com/Deicyde/riemann-hypothesis)
+
+## 数学として残る作業
+
+公表資料からはすでに一つの重要な結論が読める。独立した検証者が、形式化された五つの命題はチャレンジと対応し、列挙されたカーネル検査を通過したと報告している。数論の専門家は依存関係をたどって要となる補題を見つけ、テータ持ち上げの反復がどのように評価を伝えるか、証明をどこまで簡潔にできるかを検討できる。Tao は 11 月 20 日の記事で、検証と証明戦略の抽出の両方が進められていると述べた。 [Tao の 11 月 20 日の記事](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+
+クレイ数学研究所のミレニアム懸賞には独自の規則がある。解答は適格な媒体で公表され、その公表から少なくとも 2 年が経過し、世界の数学界で広く受け入れられる必要がある。懸賞の審査資格、数学界での合意、機械が特定の形式証明を受理したことには、それぞれ確認すべき証拠がある。次の知らせがどの証拠を加えたのかを確かめたい。 [クレイ数学研究所のリーマン予想ページ](https://www.claymath.org/millennium/riemann-hypothesis/) · [ミレニアム懸賞の規則](https://www.claymath.org/millennium-problems/rules/)
+
+## シリーズ
+
+- [第 1 回｜証明の主張とその証拠](/ja/blog/claude-riemann-hypothesis-claim-evidence-ja)
+- [第 2 回｜Stepanov の方法からテータ持ち上げへ](/ja/blog/claude-riemann-theta-lift-stepanov-method-ja)

@@ -1,0 +1,62 @@
+---
+title: 'Claude and the Riemann Hypothesis II — From Stepanov Multiplicity to Iterated Theta Lifts'
+publishedAt: '2026-11-21'
+summary: 'The Euler product, the von Mangoldt sum and the explicit formula explain why Alpöge proposed a finite-field analogy, a chain of roughly √X theta lifts, and a balance between norms and divisibility.'
+slug: 'claude-riemann-theta-lift-stepanov-method-en'
+category: 'research'
+researchProjectSlug: 'anthropic-ipo-s1-ai-capital-structure-valuation-research'
+language: 'en'
+translationKey: 'claude-riemann-theta-lift-stepanov-method'
+sourceSlug: 'claude-riemann-theta-lift-stepanov-method'
+---
+
+In a November 20, 2026 note titled *Remark*, Levent Alpöge outlined a technical strategy. He and Claude sought a counterpart in number fields for the multiplicity used by Stepanov's method over finite fields, using a succession of theta lifts. The note calls the scale of the von Mangoldt sum X and credits Claude with choosing a chain of roughly √X lifts. This article explains the mathematical connections. As of November 21, 2026, at 01:20 UTC, MIT’s Andrew Sutherland had reported a successful build of 175,187 modules and acceptance by several independently implemented checkers. This article focuses on the mathematical strategy. A step-by-step account still calls for reading the formalization and its dependencies. [Alpöge's original note](https://alpo.ge/remark.pdf) · [Terence Tao's preliminary note](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/) · [Sutherland’s formal verification report](https://math.mit.edu/~drew/grh/)
+
+## How primes enter the zeta function
+
+Write the complex variable s as σ + it. In the half-plane σ > 1, the Riemann zeta function has two absolutely convergent representations, a sum over positive integers and an Euler product over primes.
+
+```text
+ζ(s) = Σₙ≥₁ n⁻ˢ = ∏ₚ (1 − p⁻ˢ)⁻¹.
+```
+
+Expand each factor as a geometric series and multiply. Unique prime factorization ensures that every positive integer occurs exactly once. Taking the logarithmic derivative of the Euler product gives another absolutely convergent series, `−ζ′(s)/ζ(s) = Σₙ≥₁ Λ(n)n⁻ˢ`. The von Mangoldt function Λ equals log p at a prime power pᵏ with k ≥ 1 and vanishes elsewhere. For example, Λ(8) = log 2 and Λ(12) = 0. This explains why the explicit formula naturally uses ψ(x) = Σₙ≤ₓ Λ(n). The ordinary prime count π(x) can be studied by accounting for prime powers and applying partial summation. [NIST DLMF §25.2](https://dlmf.nist.gov/25.2) · [NIST DLMF §27.2](https://dlmf.nist.gov/27.2)
+
+## Zeros govern the scale of the fluctuations
+
+The meromorphic continuation of ζ has a simple pole at s = 1. Its nontrivial zeros lie in the critical strip `0 < σ < 1`. RH asserts that every one lies on σ = 1/2. For non-integer x > 1, the von Mangoldt explicit formula takes the following form. Zeros are counted with multiplicity and summed by a symmetric cutoff on the absolute value of their imaginary parts.
+
+```text
+ψ(x) = x − lim(T→∞) Σ[ρ: |Im ρ|≤T] x^ρ/ρ
+       − log(2π) − ½ log(1 − x⁻²).
+```
+
+The pole at s = 1 contributes the main term x. The nontrivial zeros contribute oscillating corrections. For ρ = β + iγ, we have x^ρ = x^β exp(iγ log x). The real part β governs the power of x in an individual term, while γ sets its frequency as log x varies. That explains the significance of real part 1/2. A standard conditional consequence is `ψ(x) = x + O(√x log²x)`. This bound also requires zero counting and truncation control. Adding the √x scales of individual terms alone does not establish it. The prime number theorem already gives ψ(x) ∼ x. RH imposes a stronger constraint on the size of the deviation. [Tao's lecture notes, Theorem 8](https://terrytao.wordpress.com/2021/02/12/246b-notes-4-the-riemann-zeta-function-and-the-prime-number-theorem/) · [Clay's description of RH](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## What Dirichlet GRH adds
+
+A Dirichlet character χ is a periodic multiplicative function modulo q. It gives different weights to different residue classes. The Dirichlet L-function is defined for σ > 1 by `L(s,χ) = Σₙ≥₁ χ(n)n⁻ˢ`. Replacing Λ(n) by Λ(n)χ(n), then using character orthogonality, isolates different residue classes coprime to q. Dirichlet GRH usually asserts that all nontrivial zeros of every primitive Dirichlet L-function lie on the critical line. The classical ζ corresponds to the trivial character modulo 1. Claims concerning wider families of L-functions require their own precise scope. The author expresses an expectation about the Extended Riemann Hypothesis for future work. [NIST DLMF §25.15](https://dlmf.nist.gov/25.15) · [Alpöge's original note, page 1](https://alpo.ge/remark.pdf)
+
+## Why multiplicity helps over finite fields
+
+Stepanov's method over finite fields constructs a nonzero auxiliary polynomial that vanishes to high order at the points of interest. In a simple one-variable example, if the polynomial has degree at most D and N distinct roots of multiplicity at least r, then Nr ≤ D. With D = 120 and r = 5, that would give N ≤ 24. The mathematical difficulty lies in keeping the degree small, ensuring that the auxiliary polynomial is nonzero and imposing many vanishing derivatives or suitable higher-order coefficient conditions at the same time. On curves, the corresponding accounting involves local orders of vanishing of divisors. The example only illustrates the conversion from multiplicity to a count. [Avi Wigderson's IAS lecture on the Stepanov method](https://www.ias.edu/video/csdm/stepanov)
+
+Weil's theorem for curves over finite fields supplies the analogy. For a smooth projective geometrically connected curve over F_q, the main term in the point count is q + 1, with deviations governed by Frobenius eigenvalues, each of relevant complex absolute value √q. For the zeta zeros over the integers, there is no direct entry point for importing that geometric argument. Alpöge likens the search for a replacement for multiplicity to trying to differentiate integers. [Wolfgang M. Schmidt's ICM proceedings article](https://www.mathunion.org/fileadmin/ICM/Proceedings/ICM1974.1/ICM1974.1.ocr.pdf) · [Alpöge's original note, page 1](https://alpo.ge/remark.pdf)
+
+## How iterated theta lifts enter the claim
+
+A theta lift uses a theta kernel to transfer automorphic data from one group to another. Alpöge's timeline describes a chain `U(X₀) → U(X₁) → … → U(Xₘ)` of lifts between totally definite unitary groups. The idea in the note is to have each lift mimic one unit of multiplicity, then choose m around √X. Here X is the scale of a weighted von Mangoldt sum. The October 20 entry uses a weight such as `(X/n − 1)₊` and subtracts main terms. The weighted sum is related to the unsmoothed ψ(x) above, and estimates for the two require a justified conversion. [Alpöge's original note, pages 1 and 3–4](https://alpo.ge/remark.pdf) · [Gan, Qiu and Takeda on global theta lifts and Rallis's formula](https://arxiv.org/abs/1207.4709)
+
+To turn the analogy into an argument about the integers, the gain in divisibility or vanishing must enter the same inequality as the norms, levels and normalization of the lifts. As a purely illustrative example, a fixed factor B greater than 1 at each step can accumulate to Bᵐ over m steps. Linear growth in multiplicity by itself gives no guarantee of a stronger final bound. The Bᵐ example explains why accumulated costs must be accounted for. It is independent of the specific model in the announced proof.
+
+## What a √X chain needs quantitatively
+
+The November 15 entries list norms of repeated lifts and a lower bound for divisibility, Rallis and seesaw identities, precise per-lift costs, averaging across Hecke characters, covolumes and congruences. The note also mentions an a priori 2/3 barrier in a naive calculation of the costs. It does not spell out which exponent or uniform inequality that number represents in the final argument. The Rallis inner product formula is an established tool for studying norms of theta lifts. The reported combination of tools still needs to be checked against the formal statements and dependencies. [Alpöge's original note, entries 8–18](https://alpo.ge/remark.pdf) · [Research on the Rallis inner product formula](https://arxiv.org/abs/1207.4709)
+
+Three mathematical links merit close scrutiny. Nonvanishing and divisibility have to hold along the actual chain chosen. Local factors, normalization at the infinite places and conductors or levels varying with the characters must remain uniformly controlled as m grows with X. The final estimate must specify the weighted sums, parameters and characters it covers, and justify the step back to the claimed zero-free region off the critical line. The short note poses a route for inspection and gives too little detail for those calculations to be independently recovered from the note alone.
+
+## What the route establishes at this stage
+
+Established mathematics gives two clear starting points, the explicit formula for controlling prime distributions and the conversion of high multiplicity into counting bounds over finite fields. The public note proposes a connection with a specific scale parameter and ends its November 16 timeline entry with GRH. The central question for review is whether the divisibility gained by iterating the lifts can still deliver the required analytic bound after the full quantitative costs are paid. The author reports the √X choice. Its effect depends on the entire system of inequalities and their uniformity. [Alpöge's original note](https://alpo.ge/remark.pdf)
+
+In this series: [The announcement and its evidence](/en/blog/claude-riemann-hypothesis-claim-evidence-en) · [How to verify the Lean formalization](/en/blog/claude-riemann-lean-proof-verification-en)

@@ -1,0 +1,36 @@
+--- baseline.en.mdx
++++ content/blog/2026/research/claude-riemann-lean-proof-verification-en.mdx
+@@ -7,6 +7,7 @@
+ language: "en"
+ translationKey: "claude-riemann-lean-proof-verification"
+ sourceSlug: "claude-riemann-lean-proof-verification"
++researchProjectSlug: "anthropic-ipo-s1-ai-capital-structure-valuation-research"
+ ---
+ 
+ ## Independent checks have been published
+@@ -33,14 +34,14 @@
+ 
+ ## Read the axiom report for the actual theorem
+ 
+-`#print` shows a declaration in the current environment. `#print axioms` reports the axioms used by its proof, including indirect dependencies. The three reported axioms are standard Lean logical axioms. A dependency on `sorryAx` exposes an unfilled proof obligation. A custom axiom or one introduced by native computation calls for further scrutiny of the assumptions involved. The material issue is which axioms the target depends on. The following queries identify a declaration from the public report. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland’s axiom audit](https://math.mit.edu/~drew/grh/audit.log)
++`#print` shows a declaration in the current environment. `#print axioms` reports the axioms used by its proof, including indirect dependencies. The three reported axioms are standard Lean logical axioms. A dependency on `sorryAx` exposes an unfilled proof obligation. A custom axiom or one introduced by native computation calls for further scrutiny of the assumptions involved. Reviewers examine the target theorem’s dependency chain. The following queries identify a declaration from the public report. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland’s axiom audit](https://math.mit.edu/~drew/grh/audit.log)
+ 
+ ```lean
+ #print riemannHypothesis
+ #print axioms riemannHypothesis
+ ```
+ 
+-A clean dependency list still leaves the meaning of the declaration to check. A statement called `RiemannHypothesis` must express the intended quantifiers and exceptions. Writing the target in an independent environment that imports only trusted Mathlib, then comparing it with the submitted proof, addresses that question. The placeholders in the challenge give the specification. The verifier still needs to establish that the submission supplies proofs of the targets. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Independent challenge file](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
++Reviewers also check that the definition of `RiemannHypothesis` expresses the intended quantifiers and exceptions. Writing the target in an independent environment that imports only trusted Mathlib, then comparing it with the submitted proof, addresses that question. The placeholders in the challenge give the specification. The verifier still needs to establish that the submission supplies proofs of the targets. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Independent challenge file](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
+ 
+ ## What makes a check reproducible
+ 
+@@ -50,7 +51,7 @@
+ 
+ ## The mathematical work still ahead
+ 
+-The public record already supports a substantial conclusion. Independent checkers report that the five formal targets match the challenge and pass the listed kernel checks. Number theorists can use the dependency graph to find the decisive lemmas, understand how iterated theta lifts transport estimates, and see how far the argument can be simplified. In his November 20 post, Terence Tao describes verification and reconstruction of the proof strategy as ongoing work. [Tao’s November 20 post](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
++The independent verification report says that the five formal targets match the challenge and pass the listed kernel checks. Number theorists can use the dependency graph to find the decisive lemmas, understand how iterated theta lifts transport estimates, and see how far the argument can be simplified. In his November 20 post, Terence Tao describes verification and reconstruction of the proof strategy as ongoing work. [Tao’s November 20 post](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+ 
+ The Clay Mathematics Institute has its own Millennium Prize rules. A proposed solution must appear in a qualifying outlet, at least two years must pass after publication, and the solution must gain general acceptance in the global mathematical community. Prize eligibility, mathematical consensus, and a machine accepting a particular formal proof each have their own evidence. The next update is easier to read once you identify which evidence it adds. [Clay’s Riemann Hypothesis page](https://www.claymath.org/millennium/riemann-hypothesis/) · [Millennium Prize rules](https://www.claymath.org/millennium-problems/rules/)
+ 

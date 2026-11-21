@@ -1,0 +1,62 @@
+---
+title: 'Alpöge と Claude のリーマン予想証明の発表を公開資料から読む'
+publishedAt: '2026-11-21'
+summary: '4 ページの発表文と 14 分割の Lean ソースを起点に、リーマン予想とディリクレ L 関数の一般化リーマン予想を整理し、独立した機械検証の進捗とクレイ数学研究所の審査要件を確認する。'
+slug: 'claude-riemann-hypothesis-claim-evidence-ja'
+category: 'research'
+researchProjectSlug: 'anthropic-ipo-s1-ai-capital-structure-valuation-research'
+language: 'ja'
+translationKey: 'claude-riemann-hypothesis-claim-evidence'
+sourceSlug: 'claude-riemann-hypothesis-claim-evidence'
+---
+
+2026 年 11 月 20 日、数論研究者 Levent Alpöge は、Claude とリーマン予想の証明を見つけたと考えていると発表した。同じ方法でディリクレ L 関数の一般化リーマン予想も解決できるとし、4 ページの発表文と 14 分割の Lean ソースを公開した。MIT の数学者 Andrew Sutherland は同日 **22:05 UTC** までにコンパイル、公理の監査、独立したカーネルでの検査結果を報告した。Comparator の一連の処理は当時進行中で、クレイ数学研究所の問題ページは未解決と表示していた。本稿が公開資料を確認したのは **2026 年 11 月 21 日 01:20 UTC** 頃である。機械検証の結果には原報告の時刻を用いる。[Alpöge の発表文](https://alpo.ge/remark.pdf) · [Sutherland の検証記録](https://math.mit.edu/~drew/grh/) · [クレイ数学研究所の問題ページ](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## リーマン予想の主張
+
+実部が 1 より大きい複素数 `s` に対し、リーマンのゼータ関数は級数 `Σ(n ≥ 1) n^(−s)` で定義され、素数にわたるオイラー積でも表せる。複素平面に解析接続すると、負の偶数 `−2, −4, …` に自明な零点があり、`s = 1` に極を持つ。1859 年に提唱されたリーマン予想は、非自明な零点の実部がすべて `1/2` に等しいとする。形式化を読むときも、自明な零点と極をどう扱うかを確かめたい。ファイルにゼータ関数と `1/2` が現れるだけでは、定理の意味はほとんど分からない。[Bombieri による公式問題解説](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+素数定理が与えるのは個数の平均的な挙動である。リーマンの明示公式は、その近似からの変動をゼータ関数の零点と結び付ける。予想が成り立つなら、零点の実部に由来する `x` のべきは `x^(1/2)` 以下に抑えられ、適切な打ち切りと総和によって対数因子を伴う誤差評価が得られる。これは素数を数える際の誤差の話であり、一つ一つの素数を求めるには別の計算が要る。ディリクレ版の一般化リーマン予想（GRH）は同様の主張をディリクレ指標に対応する L 関数へ広げる。応用の一つは等差数列における素数の分布である。[Bombieri による公式問題解説](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+## 単純化したモデルから公開発表まで
+
+Alpöge の経歴書によると、ハーバードで数学を学び、ケンブリッジの MASt を経て、2020 年にプリンストン大学で数学の博士号を得た。博士論文は『Points on Curves』で、指導教員は Manjul Bhargava だった。Morgan 賞を受賞し、2021 年から 2025 年までハーバード大学 Society of Fellows の Junior Fellow を務めた。楕円曲線上の整数点、単生成でない数体、Maass 形式の L 関数の低位零点などを研究してきた。本人のサイトには、計算機の分野へ戻り Anthropic に加わった経緯がある。こうした経験は問題の選び方を理解する助けになる。証明の検証はその経歴とは別に必要である。[本人の経歴書](https://people.math.harvard.edu/~alpoge/cv.pdf) · [本人のサイト](https://alpo.ge/)
+
+Alpöge によると、まず単純化したモデルで二つの案を組み合わせ、同じ構造が現れる数学的な状況を探した。議論の終盤では、Claude が自分よりはるかに速く進んだという。具体的に挙げたのは、テータリフトを連ねて Stepanov の方法における重複度を模倣する案だ。長さ `X` の von Mangoldt 和に対し、Claude はリフトの鎖を `√X` 程度にすることを提案した。Alpöge は高階数群の保型形式に関わる箇所を自分が十分に理解しておらず、時系列も Claude がまとめたものだと断っている。一部の説明には誤りがあり得る。発表文は調査の道筋を示しており、各段階の根拠を検証するには Lean の依存関係と、人が読める導出をたどる必要がある。[Alpöge の発表文 1、3、4 ページ](https://alpo.ge/remark.pdf)
+
+| 2026 年の日付 | 発表文に記載された作業 |
+|---|---|
+| 10 月 6 日 | Stepanov 行列式、岩澤塔の類似、Bost の傾き不等式 |
+| 10 月 20 日 | von Mangoldt 関数を用いる重み付き和に軸足を移す |
+| 11 月 15 日 | 定符号ユニタリ群の間で反復するテータリフト、ノルム、整除性、Rallis のシーソー、各段階のコスト |
+| 11 月 16 日 | 公開された大まかな時系列に GRH と記載 |
+| 11 月 20 日 | 4 ページの発表文と形式化のソースを公開 |
+
+表は発表文から選んだ項目を日付順に並べ直した。元の 20 項目は一部が日付順になっていない。Alpöge は詳細な議論を展開した文書が 25 万ページを超えたと述べている。これは本人が説明した詳細稿の規模で、公開した 4 ページや Lean ソースの分量とは別である。[著者の原本](https://alpo.ge/lean.tar.gz.part01)は [第 14 分割](https://alpo.ge/lean.tar.gz.part14)まである。[読者から提示された GitHub](https://github.com/CocoSgt/riemann-hypothesis-lean)はミラーであり、数学的な検証やライセンスの許諾を行うものではない。[Alpöge の発表文](https://alpo.ge/remark.pdf)
+
+## 独立した検証で分かったこと
+
+Sutherland の 22:05 UTC の報告では、ビルド、カーネル検査、命題の比較が分けて記録されている。Lean と Mathlib v4.33.1 で 175,187 モジュールがエラーなくコンパイルされた。`Main.lean` の五つの定理に `#print axioms` を行った結果、依存する公理は `propext`、`Classical.choice`、`Quot.sound` の三つだった。Lean の `leanchecker` は全モジュールを再検査した。別実装の nanoda と con-leche は完全なエクスポートを受理し、con-leche の `--compare` は独立に記述した検証対象に対して五つの定理を受理した。lean4lean でも全モジュールが通り、そのうち五つはステップ数の上限を上げて再実行した。[Sutherland の検証ファイルとログ](https://math.mit.edu/~drew/grh/)
+
+同じ報告には検証条件と継続中の作業も記載されている。ビルドはサンドボックスを使わず、ファイルごとに Lean を直接実行した。隔離環境でのビルドから得たエクスポートとの全体比較は済んでいなかった。エンドツーエンドの `lake comparator` と、エクスポートに対する Lean の標準および厳格なカーネル検査も進行中だった。独立した機械検証の結果はすでにある。残るのは信頼の前提を減らし、形式化された定理と数学で通常使う定義との対応を確かめ、議論を他の数学者が使える形に整理することだ。Terence Tao も Lean コミュニティの議論を案内し、証明戦略を理解する作業には時間がかかるとしている。[Sutherland の検証記録](https://math.mit.edu/~drew/grh/) · [Terence Tao の公開コメント](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+
+## 検証対象となった GRH の範囲
+
+Sutherland が報告した GRH の範囲はディリクレ L 関数である。通常のリーマン予想の入口には Mathlib の `RiemannHypothesis` を用いている。残りの入口には、ゼータ関数の零点に関する同じ主張を展開して書いた定理、臨界線より右側でのディリクレ L 関数の非零性、臨界帯の零点に関する二つの形がある。さらに広い Extended Riemann Hypothesis は、Alpöge が今後方法を延ばせると見込む方向である。報告された独立検証にはその拡張は含まれない。[Sutherland の検証対象](https://math.mit.edu/~drew/grh/) · [Alpöge の発表文](https://alpo.ge/remark.pdf)
+
+Anthropic は 8 月に別の結果を発表した。臨界線上にあるゼータ関数の零点の割合について、Claude が下限を 41.6% から 67.2% に引き上げたという。割合の下限と、すべての零点に対する主張では、必要な根拠が異なる。下限が 100% に近づいても、線の外にまばらな零点がある可能性を割合の情報だけで排除できない。11 月の主張は非自明な零点すべての実部に関するものだ。[Anthropic の 8 月の報告](https://www.anthropic.com/research/riemann-zeta) · [クレイ数学研究所の問題定義](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## クレイ数学研究所の審査の条件
+
+クレイ数学研究所は現在、リーマン予想を未解決と掲載している。ミレニアム懸賞問題の規則では、候補解が要件を満たす媒体で公表され、その公表から少なくとも 2 年が経過し、世界の数学界で広く認められてから、同研究所が審査する。個人サイトやミラーの公開日だけでは 2 年の起算日は定まらない。形式化の証拠や専門家が読める議論が先に得られることはある。懸賞の審査は別の時間軸で進む。[問題ページ](https://www.claymath.org/millennium/riemann-hypothesis/) · [ミレニアム懸賞問題の規則](https://www.claymath.org/millennium-problems/rules/)
+
+## 後続の検証がさらに通れば
+
+数論で最も直接的な効果は、リーマン予想またはディリクレ版 GRH を仮定する結果から、該当する仮定を外せる可能性があることだ。ほかの仮定は結果ごとに確認する必要がある。反復テータリフトと整除性、誤差の制御を説明した議論があれば、この方法を別の問題にどう使えるか、どの箇所に公開ソースほどの技術が必要かを判断できる。Alpöge は大幅な簡略化を見込んでいる。その見通しは今後の成果を待つ。[Bombieri による公式問題解説](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf) · [Alpöge の発表文](https://alpo.ge/remark.pdf)
+
+AI 研究については、公開資料から具体的な問いを立てられる。モデルの提案した段階を、人間と別の検証手段が再利用し、修正し、あるいは退けられるだろうか。資料が公開されたことで、この問いを検証しやすくなった。専門家の協力と形式化がそろった今回の進展から、他の問題や分野について同じ答えが得られるかは、今後の検証に委ねられる。[Alpöge の発表文](https://alpo.ge/remark.pdf) · [Sutherland の検証記録](https://math.mit.edu/~drew/grh/)
+
+## シリーズを読む
+
+- [第 2 回　Stepanov の方法からテータリフトの鎖へ](/ja/blog/claude-riemann-theta-lift-stepanov-method-ja)
+- [第 3 回　Lean はリーマン予想の証明をどう検査するか](/ja/blog/claude-riemann-lean-proof-verification-ja)

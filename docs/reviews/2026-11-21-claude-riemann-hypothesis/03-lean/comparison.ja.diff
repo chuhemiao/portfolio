@@ -1,0 +1,36 @@
+--- baseline.ja.mdx
++++ content/blog/2026/research/claude-riemann-lean-proof-verification-ja.mdx
+@@ -7,6 +7,7 @@
+ language: "ja"
+ translationKey: "claude-riemann-lean-proof-verification"
+ sourceSlug: "claude-riemann-lean-proof-verification"
++researchProjectSlug: "anthropic-ipo-s1-ai-capital-structure-valuation-research"
+ ---
+ 
+ ## 独立検証はすでに公表されている
+@@ -33,14 +34,14 @@
+ 
+ ## 目当ての定理の公理依存を読む
+ 
+-`#print` は現在の環境での宣言を表示する。`#print axioms` は証明が使う公理を、間接依存もたどって表示する。報告された三つは Lean で一般的に使われる標準的な論理公理である。対象が `sorryAx` に依存していれば、埋まっていない証明義務がある。独自の公理やネイティブ計算が持ち込む公理が含まれる場合は、それを支える前提も調べる必要がある。注目すべきは対象の定理が実際にどの公理に依存するかだ。次は公開報告で特定されている宣言への照会例である。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland の公理監査ログ](https://math.mit.edu/~drew/grh/audit.log)
++`#print` は現在の環境での宣言を表示する。`#print axioms` は証明が使う公理を、間接依存もたどって表示する。報告された三つは Lean で一般的に使われる標準的な論理公理である。対象が `sorryAx` に依存していれば、埋まっていない証明義務がある。独自の公理やネイティブ計算が持ち込む公理が含まれる場合は、それを支える前提も調べる必要がある。検証者は対象の定理から依存関係をたどる。次は公開報告で特定されている宣言への照会例である。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland の公理監査ログ](https://math.mit.edu/~drew/grh/audit.log)
+ 
+ ```lean
+ #print riemannHypothesis
+ #print axioms riemannHypothesis
+ ```
+ 
+-依存する公理の一覧を得たあとには、宣言の意味を確認する。名前が `RiemannHypothesis` でも、想定した量化や例外を含むかを読む必要がある。信頼する Mathlib だけをインポートした独立環境に対象命題を書き、提出された証明と照合すれば、その点を検査できる。チャレンジファイルの仮置きは検証の仕様を記すために使われる。検証器は、提出側が実際に対象命題の証明を与えていることも確かめる。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [独立した命題ファイル](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
++公理の依存に加え、`RiemannHypothesis` の定義で量化と例外が想定どおりかを確かめる。信頼する Mathlib だけをインポートした独立環境に対象命題を書き、提出された証明と照合すれば、その点を検査できる。チャレンジファイルの仮置きは検証の仕様を記すために使われる。検証器は、提出側が実際に対象命題の証明を与えていることも確かめる。 [Lean 公式の証明検証ガイド](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [独立した命題ファイル](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
+ 
+ ## 再現可能な検証に必要な記録
+ 
+@@ -50,7 +51,7 @@
+ 
+ ## 数学として残る作業
+ 
+-公表資料からはすでに一つの重要な結論が読める。独立した検証者が、形式化された五つの命題はチャレンジと対応し、列挙されたカーネル検査を通過したと報告している。数論の専門家は依存関係をたどって要となる補題を見つけ、テータ持ち上げの反復がどのように評価を伝えるか、証明をどこまで簡潔にできるかを検討できる。Tao は 11 月 20 日の記事で、検証と証明戦略の抽出の両方が進められていると述べた。 [Tao の 11 月 20 日の記事](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
++独立検証の報告では、形式化された五つの命題はチャレンジと対応し、列挙されたカーネル検査を通過したとされる。数論の専門家は依存関係をたどって要となる補題を見つけ、テータ持ち上げの反復がどのように評価を伝えるか、証明をどこまで簡潔にできるかを検討できる。Tao は 11 月 20 日の記事で、検証と証明戦略の抽出の両方が進められていると述べた。 [Tao の 11 月 20 日の記事](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+ 
+ クレイ数学研究所のミレニアム懸賞には独自の規則がある。解答は適格な媒体で公表され、その公表から少なくとも 2 年が経過し、世界の数学界で広く受け入れられる必要がある。懸賞の審査資格、数学界での合意、機械が特定の形式証明を受理したことには、それぞれ確認すべき証拠がある。次の知らせがどの証拠を加えたのかを確かめたい。 [クレイ数学研究所のリーマン予想ページ](https://www.claymath.org/millennium/riemann-hypothesis/) · [ミレニアム懸賞の規則](https://www.claymath.org/millennium-problems/rules/)
+ 

@@ -1,0 +1,209 @@
+{
+  "meta": {
+    "n_candidates": 19,
+    "n_rename": 6,
+    "n_cohesion": 5,
+    "n_colon": 8,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 1,
+      "para": "---\ntitle: \"Claude 与黎曼猜想 3/3｜Lean 复核已经通过了哪些检查？\"\npublishedAt: \"2026-11-21\"\nsummary: \"Sutherland 公布了 175,187 个模块的构建与复核结果。本文拆解五条定理的命题对照、标准公理、独立内核，以及仍待完成的隔离复现和数学审阅。\"\nslug: \"claude-riemann-lean-proof-verification\"\ncategory: \"research\"\nlanguage: \"zh-CN\"\ntranslationKey: \"claude-riemann-lean-proof-verification\"\nsourceSlug: \"claude-riemann-lean-proof-verification\"\n---",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "同一组为元数据字段，不属于正文概念指称。"
+    },
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 14,
+      "para": "11 月 20 日，Levent Alpöge 发布说明，称他与 Claude 找到黎曼猜想及其 Dirichlet 广义形式的证明。原始 Lean 源码分成 14 卷。随后，MIT 数学家 Andrew Sutherland 公布了他用 Claude Code 协助完成的独立复核。其页面最后标注的更新时间为 2026 年 11 月 20 日 22:05 UTC。页面记录了 175,187 个模块零错误编译、五条定理的公理检查，以及独立内核的成功结果。下文按该版本的报告说明证据状态。 Alpöge 原始声明 · Sutherland 复核记录",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "作者、复核者及复核动作各自有稳定名称。"
+    },
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 18,
+      "para": "Sutherland 指向 Main.lean 中的 riemannHypothesis : RiemannHypothesis。右侧的命题来自 Mathlib，要求任取一个复数，若它是 ζ 函数的零点、不是负偶数平凡零点，且不等于 1，就必须有实部 1/2。形式化还要显式处理在数学上是极点的 1，因为 Mathlib 中的 ζ 函数以从复数到复数的全函数表示。逐项核对函数、零点范围和量词，才能把 Lean 文件里的结论与经典命题接上。 Mathlib 的 ζ 函数与 RH 定义 · Sutherland 复核记录",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "声明、定义、零点范围和量词是不同对象。"
+    },
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 20,
+      "para": "另外四条包含展开写出的 RH、Dirichlet L 函数在指定右半平面的非消失命题，以及两条零点在线命题，一般形式和本原特征形式各一条。验证范围的 GRH 专指 Dirichlet L 函数。作者对更广义情形另有期待，核对报告的五条结论有明确范围。自变量 s 的范围、模数、Dirichlet 特征，以及平凡特征在 s = 1 的例外，都是阅读命题时要注意的细节。 独立命题文件 · Alpöge 原始声明",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "各定理与更广义候选范围属于独立命题。"
+    },
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 36,
+      "para": "print 显示既定环境中的声明，print axioms 列出证明用到的公理，包括间接依赖。三个报告中的公理是 Lean 常见的标准逻辑公理。若目标依赖出现 sorryAx，则有未填补的证明义务。若出现自定义或原生计算引入的公理，还须检查其可信前提。审阅者要读取的是目标定理的依赖，而不是整个源码里某个词出现了多少次。以下仅列报告可定位的声明和查询形式。 Lean 官方核验文档 · Sutherland 的公理审计",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "声明、公理、依赖及证据是不同对象。"
+    },
+    {
+      "type": "rename",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 47,
+      "para": "源码、已经编译的 .olean 和可交给其他内核的导出物，需要各自的版本和摘要。Sutherland 给出了源码档案、挑战和解答导出物的 SHA-256。摘要匹配说明核对者使用的字节一致。它本身没有验证一个定理。此次报告的源文件在没有沙箱的云机器上用 lean 分别编译，77 个模块的样本与常规 Lake 构建逐字节相同，完整集合尚无这一对照，解答导出也继承同一来源限制。 Sutherland 的来源与限制",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "源码、编译文件和导出都是不同阶段产物。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 14,
+      "prev_tail": "\"\nslug: \"claude-riemann-lean-proof-verification\"\ncategory: \"research\"\nlanguage: \"zh-CN\"\ntranslationKey: \"claude-riemann-lean-proof-verification\"\nsourceSlug: \"claude-riemann-lean-proof-verification\"\n---",
+      "next_head": "11 月 20 日，Levent Alpöge 发布说明，称他与 Claude 找到黎曼猜想及其 Dirichlet 广义形式的证明",
+      "label": "无法判断",
+      "confidence": "高",
+      "reason": "前文是信源元数据。"
+    },
+    {
+      "type": "cohesion",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 18,
+      "prev_tail": "Alpöge 原始声明 · Sutherland 复核记录",
+      "next_head": "Sutherland 指向 Main.lean 中的 riemannHypothesis : RiemannHypothesis",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "上段末端只抽取链接标签，不能显示正文接口。"
+    },
+    {
+      "type": "cohesion",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 20,
+      "prev_tail": "Mathlib 的 ζ 函数与 RH 定义 · Sutherland 复核记录",
+      "next_head": "另外四条包含展开写出的 RH、Dirichlet L 函数在指定右半平面的非消失命题，以及两条零点在线命题，一般形式和本原特征形式各一条",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "上段末端只抽取链接标签，完整上下文是同一组五条命题。"
+    },
+    {
+      "type": "cohesion",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 36,
+      "prev_tail": "独立命题文件 · Alpöge 原始声明",
+      "next_head": "print 显示既定环境中的声明，print axioms 列出证明用到的公理，包括间接依赖",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "上段末端只抽取链接标签，中间还有核对表。"
+    },
+    {
+      "type": "cohesion",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 47,
+      "prev_tail": "Lean 官方核验文档 · Sutherland 的公理审计",
+      "next_head": "源码、已经编译的 .olean 和可交给其他内核的导出物，需要各自的版本和摘要",
+      "label": "无法判断",
+      "confidence": "中",
+      "reason": "上段末端只抽取链接标签，中间还有代码块和命题段。"
+    }
+  ],
+  "colon": [
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 2,
+      "colon_before": "title",
+      "colon_after": " \"Claude 与黎曼猜想 3/3｜Lean 复核已经通过了哪些检查？\"",
+      "sentence": "title: \"Claude 与黎曼猜想 3/3｜Lean 复核已经通过了哪些检查？\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 3,
+      "colon_before": "publishedAt",
+      "colon_after": " \"2026-11-21\"",
+      "sentence": "publishedAt: \"2026-11-21\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 4,
+      "colon_before": "summary",
+      "colon_after": " \"Sutherland 公布了 175,187 个模块的构建与复核结果。本文拆解五条定理的命题对照、标准公理、独立内核",
+      "sentence": "summary: \"Sutherland 公布了 175,187 个模块的构建与复核结果。本文拆解五条定理的命题对照、标准公理、独立内核，以及仍待完成的隔离复现和数学审阅。\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 5,
+      "colon_before": "slug",
+      "colon_after": " \"claude-riemann-lean-proof-verification\"",
+      "sentence": "slug: \"claude-riemann-lean-proof-verification\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 6,
+      "colon_before": "category",
+      "colon_after": " \"research\"",
+      "sentence": "category: \"research\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 7,
+      "colon_before": "language",
+      "colon_after": " \"zh-CN\"",
+      "sentence": "language: \"zh-CN\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 8,
+      "colon_before": "translationKey",
+      "colon_after": " \"claude-riemann-lean-proof-verification\"",
+      "sentence": "translationKey: \"claude-riemann-lean-proof-verification\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    },
+    {
+      "type": "colon",
+      "file": "claude-riemann-lean-proof-verification.mdx",
+      "line": 9,
+      "colon_before": "sourceSlug",
+      "colon_after": " \"claude-riemann-lean-proof-verification\"",
+      "sentence": "sourceSlug: \"claude-riemann-lean-proof-verification\"",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "YAML 前置元数据的冒号不属于正文。"
+    }
+  ],
+  "iso3": []
+}

@@ -1,0 +1,61 @@
+---
+title: "Claude and the Riemann Hypothesis 3/3 | What the Lean Checks Established"
+publishedAt: "2026-11-21"
+summary: "Andrew Sutherland published checks on 175,187 modules. This article examines the five target statements, their axioms, the independent kernels, and the work still open on isolated reproduction and mathematical review."
+slug: "claude-riemann-lean-proof-verification-en"
+category: "research"
+language: "en"
+translationKey: "claude-riemann-lean-proof-verification"
+sourceSlug: "claude-riemann-lean-proof-verification"
+researchProjectSlug: "anthropic-ipo-s1-ai-capital-structure-valuation-research"
+---
+
+## Independent checks have been published
+
+On November 20, Levent Alpöge released a note claiming that he and Claude had found a proof of the Riemann Hypothesis and its Dirichlet generalization. The Lean source came in 14 archive parts. MIT mathematician Andrew Sutherland then published independent checks conducted with Claude Code. His page lists **2026-11-20 at 22:05 UTC** as its latest update. It reports that 175,187 modules compiled without errors, that five theorems passed an axiom audit, and that independent kernels accepted the proof export. The status below refers to that version of the report. [Alpöge’s announcement](https://alpo.ge/remark.pdf) · [Sutherland’s verification log](https://math.mit.edu/~drew/grh/)
+
+## Identify the exact problem being checked
+
+Sutherland points to `riemannHypothesis : RiemannHypothesis` in `Main.lean`. The proposition on the right comes from Mathlib. It says that any complex zero of ζ has real part 1/2 if it is outside the negative even trivial zeros and is different from 1. The formal statement explicitly handles 1, a pole in the mathematics, because Mathlib represents ζ as a total function from complex numbers to complex numbers. Connecting the Lean statement to the classical problem requires checking the function, the domain of the zeros, and the quantifiers. [Mathlib’s ζ and RH definitions](https://leanprover-community.github.io/mathlib4_docs/Mathlib/NumberTheory/LSeries/RiemannZeta.html#RiemannHypothesis) · [Sutherland’s verification log](https://math.mit.edu/~drew/grh/)
+
+The other four targets are the expanded RH statement, nonvanishing of Dirichlet L-functions in the specified right half-plane, and two statements about zeros on the critical line, one general and one for primitive characters. In this verification, GRH covers **Dirichlet L-functions**. Alpöge expresses hopes for a broader result separately. The five targets have a defined scope. Look closely at the range of `s`, the moduli, the characters, and the exception for the trivial character at `s = 1`. [Independent challenge file](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean) · [Alpöge’s announcement](https://alpo.ge/remark.pdf)
+
+## What the five theorems passed
+
+| Published check | Result at the reported cutoff |
+| --- | --- |
+| Source compilation and Lean kernel replay | All 175,187 modules compiled with Lean and Mathlib v4.33.1. The report says every module also passed `leanchecker` replay. |
+| Axiom dependencies | The five targets used only `propext`, `Classical.choice`, and `Quot.sound`. |
+| Independent kernels on the export | Both nanoda and the relevant version of con-leche accepted the full export. |
+| Comparison with independent statements | The con-leche `--compare` run accepted all five targets. The challenge imports only Mathlib. |
+| Another implementation on the compiled files | lean4lean accepted all 175,187 modules after five modules were rerun with a higher step limit. |
+
+The same report lists the end-to-end `lake comparator` run and the default and paranoid Lean kernels’ checks of the export as still running. It also lists older checker versions that exited because they lacked support for a required type. The reason for an exit belongs alongside its status. [Sutherland’s test matrix and logs](https://math.mit.edu/~drew/grh/)
+
+## Read the axiom report for the actual theorem
+
+`#print` shows a declaration in the current environment. `#print axioms` reports the axioms used by its proof, including indirect dependencies. The three reported axioms are standard Lean logical axioms. A dependency on `sorryAx` exposes an unfilled proof obligation. A custom axiom or one introduced by native computation calls for further scrutiny of the assumptions involved. Reviewers examine the target theorem’s dependency chain. The following queries identify a declaration from the public report. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Sutherland’s axiom audit](https://math.mit.edu/~drew/grh/audit.log)
+
+```lean
+#print riemannHypothesis
+#print axioms riemannHypothesis
+```
+
+Reviewers also check that the definition of `RiemannHypothesis` expresses the intended quantifiers and exceptions. Writing the target in an independent environment that imports only trusted Mathlib, then comparing it with the submitted proof, addresses that question. The placeholders in the challenge give the specification. The verifier still needs to establish that the submission supplies proofs of the targets. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Independent challenge file](https://github.com/Deicyde/riemann-hypothesis/blob/main/src/Challenge.lean)
+
+## What makes a check reproducible
+
+Source, compiled `.olean` files, and the export passed to other kernels each need their own version and digest. Sutherland published SHA-256 hashes for the source archive and the challenge and solution exports. A matching digest shows that reviewers are using the same bytes. The mathematical check is a separate step. The report’s source was compiled file by file with `lean` on unsandboxed cloud machines. A 77-module sample matched a conventional Lake build byte for byte. A comparison of the entire set remained outstanding, and the solution export inherited the same provenance caveat. [Sutherland’s provenance and caveats](https://math.mit.edu/~drew/grh/)
+
+A stronger reproduction would pin the toolchain and dependencies, record hashes of the original archive and the exports, rebuild the solution from source in isolation, and keep the independent challenge in an environment that the submission cannot modify. It would then check the result with independent kernels and publish target names, versions, exit statuses, and unfinished checks. This lets later reviewers distinguish a rebuild of the source, replay of compiled files, and checks of the same export by several kernels. This article examined public reports and statements. It did not independently run the archive. [Lean’s proof validation guide](https://lean-lang.org/doc/reference/latest/ValidatingProofs/) · [Independent Comparator setup](https://github.com/Deicyde/riemann-hypothesis)
+
+## The mathematical work still ahead
+
+The independent verification report says that the five formal targets match the challenge and pass the listed kernel checks. Number theorists can use the dependency graph to find the decisive lemmas, understand how iterated theta lifts transport estimates, and see how far the argument can be simplified. In his November 20 post, Terence Tao describes verification and reconstruction of the proof strategy as ongoing work. [Tao’s November 20 post](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+
+The Clay Mathematics Institute has its own Millennium Prize rules. A proposed solution must appear in a qualifying outlet, at least two years must pass after publication, and the solution must gain general acceptance in the global mathematical community. Prize eligibility, mathematical consensus, and a machine accepting a particular formal proof each have their own evidence. The next update is easier to read once you identify which evidence it adds. [Clay’s Riemann Hypothesis page](https://www.claymath.org/millennium/riemann-hypothesis/) · [Millennium Prize rules](https://www.claymath.org/millennium-problems/rules/)
+
+## In this series
+
+- [Part 1 | The claim and the evidence](/en/blog/claude-riemann-hypothesis-claim-evidence-en)
+- [Part 2 | From Stepanov to theta lifts](/en/blog/claude-riemann-theta-lift-stepanov-method-en)

@@ -1,0 +1,62 @@
+---
+title: 'Alpöge 与 Claude 的黎曼猜想证明声明，公开证据走到哪一步'
+publishedAt: '2026-11-21'
+summary: '从 Alpöge 的四页声明和 14 个原始分卷出发，区分黎曼猜想与狄利克雷广义黎曼猜想，核对 MIT 独立机器检查的成果、尚在运行的复核与千禧年难题的认定程序。'
+slug: 'claude-riemann-hypothesis-claim-evidence'
+category: 'research'
+researchProjectSlug: 'anthropic-ipo-s1-ai-capital-structure-valuation-research'
+language: 'zh-CN'
+translationKey: 'claude-riemann-hypothesis-claim-evidence'
+sourceSlug: 'claude-riemann-hypothesis-claim-evidence'
+---
+
+2026 年 11 月 20 日，数论学家 Levent Alpöge 公开表示，他相信自己与 Claude 找到了黎曼猜想的证明，并称同一方法也解决了狄利克雷 L 函数的广义黎曼猜想。他同日公开四页说明与 14 个 Lean 源码压缩分卷。MIT 数学家 Andrew Sutherland 截至当天 **22:05 UTC** 的报告已经给出编译、公理审计和独立内核检查结果。完整的 Comparator 流程仍在运行，Clay 数学研究所页面仍把黎曼猜想列为未解决。本文在 **2026 年 11 月 21 日 01:20 UTC** 左右核查公开记录，所引用的机器结果以原报告时间为准。[Alpöge 的说明](https://alpo.ge/remark.pdf) · [Sutherland 的核验记录](https://math.mit.edu/~drew/grh/) · [Clay 问题页](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## 猜想究竟说了什么
+
+对于实部大于 1 的复数 `s`，黎曼 ζ 函数由级数 `Σ(n ≥ 1) n^(−s)` 定义，还可以写成遍历素数的欧拉乘积。把 ζ 函数解析延拓到复平面后，负偶数 `−2, −4, …` 给出平凡零点，`s = 1` 是极点。1859 年提出的黎曼猜想要求所有非平凡零点的实部都等于 `1/2`。读形式化命题时，先检查极点与负偶数的处理，再核对它是否覆盖了所有非平凡零点。[Bombieri 的官方问题说明](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+素数定理给出素数计数的平均趋势。黎曼的显式公式把围绕趋势的波动与 ζ 函数的零点联系起来。若黎曼猜想成立，零点实部造成的幂次至多为 `x^(1/2)`，适当汇总后会得到带对数因子的误差界。它约束的是计数偏差，而逐个素数的位置仍需要另外计算。狄利克雷版 GRH 把类似断言扩展到狄利克雷特征的 L 函数，对应的应用包括算术级数中的素数分布。[Bombieri 的官方问题说明](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf)
+
+## 从玩具模型到公开声明
+
+Alpöge 的履历列出哈佛数学本科、剑桥 MASt 和 2020 年普林斯顿数学博士，博士论文为《Points on Curves》，导师是 Manjul Bhargava。他获得过 Morgan 奖，并在 2021 至 2025 年任哈佛 Society of Fellows 初级研究员。其既有研究包括椭圆曲线的整点数、数域的非单基生成，以及 Maass 形式 L 函数的低位零点。他的个人主页说明他后来转向计算机方向并加入 Anthropic。这些经历可以解释他如何选题，证明本身仍需要检查。[作者履历](https://people.math.harvard.edu/~alpoge/cv.pdf) · [作者主页](https://alpo.ge/)
+
+Alpöge 说，他先在玩具模型里把两种思路组合起来，再寻找对应的真实数学情形。按他的回忆，靠近论证末尾时，Claude 走得比他更快。声明举出的具体例子是把一串 theta 提升用来模仿 Stepanov 方法的重数，并由 Claude 建议，对长度为 `X` 的 von Mangoldt 和，把提升链的长度取在 `√X` 的量级。Alpöge 同时说明，涉及高秩群自守形式的部分自己尚未吃透，时间线由 Claude 整理，他对某些细节的复述可能有误。这段回顾记录了候选论证的来历。各环节的检验要看 Lean 的依赖和可读推导。[Alpöge 的说明第 1、3、4 页](https://alpo.ge/remark.pdf)
+
+| 日期 | 声明中对应的工作 |
+|---|---|
+| 10 月 6 日 | Stepanov 行列式、Iwasawa 塔的类比与 Bost 斜率不等式 |
+| 10 月 20 日 | 转向以 von Mangoldt 函数为主的加权和 |
+| 11 月 15 日 | 确定酉群间迭代 theta 提升的候选路线，讨论范数、整除性、Rallis 跷跷板与每步代价 |
+| 11 月 16 日 | 作者刊出的粗略时间线标为 GRH |
+| 11 月 20 日 | 四页声明和形式化源文件公开 |
+
+表格按日期重排了声明的部分节点。原表共 20 项，日期并非严格顺排。Alpöge 在脚注里说，为展开论证生成的详细文稿超过 25 万页。这个数字只描述他所说的展开稿，公开发布物是四页说明和分卷 Lean 源码。可供检查的发布物以 [作者原始分卷](https://alpo.ge/lean.tar.gz.part01) 为准，末卷是 [第 14 卷](https://alpo.ge/lean.tar.gz.part14)。[用户提供的 GitHub 链接](https://github.com/CocoSgt/riemann-hypothesis-lean) 是镜像，不承担数学核验或版权授权。[Alpöge 的说明](https://alpo.ge/remark.pdf)
+
+## 独立检查已经确认什么
+
+Sutherland 的 22:05 UTC 报告把构建、机器检查和命题比较分开列出。175,187 个模块在 Lean 与 Mathlib v4.33.1 下完成编译，`Main.lean` 的五个定理经 `#print axioms` 检查只依赖 `propext`、`Classical.choice` 和 `Quot.sound`。Lean 的 `leanchecker` 重放了全部模块。独立实现的 nanoda 与 con-leche 接受完整导出，con-leche 的 `--compare` 也接受了以独立命题为挑战目标的五个定理。lean4lean 通过全部模块，其中五个模块提高步数上限后重跑成功。[Sutherland 的核验记录与日志](https://math.mit.edu/~drew/grh/)
+
+同一报告保留几个范围限定。构建在未隔离的环境中逐文件直接调用 Lean，报告还没有把完整导出和一个隔离构建的导出逐一比对。报告里的端到端 `lake comparator` 及导出上的 Lean 默认、严格内核检查仍未结束。独立机器检查已有公开结果。后续工作还需要缩小核验依赖的信任范围，核对形式命题与通常使用的数学定义，并把数学机制整理成可供同行使用的论证。陶哲轩将读者引到 Lean 社区的复核讨论，也明确把消化证明策略视为后续工作。[Sutherland 的核验记录](https://math.mit.edu/~drew/grh/) · [陶哲轩的公开说明](https://terrytao.wordpress.com/2026/11/20/unforced-euler-singularity-unforced-navier-stokes-singularity-and-the-generalized-riemann-hypothesis/)
+
+## 已检验的 GRH 范围
+
+Sutherland 报告将 GRH 范围限定为狄利克雷 L 函数。普通 RH 的入口采用 Mathlib 自身的 `RiemannHypothesis`，其余入口涵盖直接写出的 ζ 零点断言、临界线右侧的狄利克雷非零断言，以及狄利克雷 L 函数临界带零点的两个版本。Alpöge 在声明里将更广范围的 Extended Riemann Hypothesis 写成他预计能够继续推进的方向。这个预期没有进入已经列明的独立检验范围。[Sutherland 核验范围](https://math.mit.edu/~drew/grh/) · [Alpöge 的说明](https://alpo.ge/remark.pdf)
+
+8 月 Anthropic 公布过另一项工作，报告称 Claude 将临界线上 ζ 零点比例的下界从 41.6% 提高到 67.2%。比例下界和全称命题的区别关系到如何解读 11 月进展。即使下界趋近 100%，依靠比例一项仍无法排除临界线外稀疏存在的零点。11 月声明的靶标是每一个非平凡零点的实部。[Anthropic 的 8 月原始报告](https://www.anthropic.com/research/riemann-zeta) · [Clay 的命题定义](https://www.claymath.org/millennium/riemann-hypothesis/)
+
+## Clay 如何认定一个解答
+
+Clay 数学研究所当前把黎曼猜想列为未解决。千禧年难题规则列明，候选解答须先在符合条件的发表渠道公开，从该次发表起至少经过两年，而且取得全球数学界普遍认可，才会进入审议。个人主页的公布日期或镜像发布日期本身不能确定两年时钟何时开始。定理可以先得到形式化证据和专业论证，大奖审议按机构门槛另行开始。[Clay 问题页](https://www.claymath.org/millennium/riemann-hypothesis/) · [Clay 千禧年难题规则](https://www.claymath.org/millennium-problems/rules/)
+
+## 如果后续复核继续通过
+
+对数论最直接的价值，是一批原本以 RH 或狄利克雷 GRH 为前提的结论有机会去掉对应前提，其余前提仍需要逐项检查。进一步的价值在于能否把 theta 提升链、整除性与误差控制整理成可复用的论证，明确哪些部分需要那么高的技术复杂度。作者预计可以大幅简化，这仍需后来工作支持。[Bombieri 的官方问题说明](https://www.claymath.org/wp-content/uploads/2022/05/riemann.pdf) · [Alpöge 的说明](https://alpo.ge/remark.pdf)
+
+公开记录也给 AI 研究留下了一个可检验的问题。人和另一套工具能否独立复用、修改或驳回模型提出的步骤？一次在专门合作与形式化环境中的进展，仍不能替其他数学问题或其他学科作答。[Alpöge 的说明](https://alpo.ge/remark.pdf) · [Sutherland 的核验记录](https://math.mit.edu/~drew/grh/)
+
+## 系列阅读
+
+- [二、从 Stepanov 到 theta 提升链](/zh-CN/blog/claude-riemann-theta-lift-stepanov-method)
+- [三、Lean 如何核对一份黎曼猜想证明](/zh-CN/blog/claude-riemann-lean-proof-verification)
