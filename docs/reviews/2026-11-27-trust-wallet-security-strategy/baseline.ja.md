@@ -1,0 +1,98 @@
+# Trust Walletのセキュリティ戦略：署名を守り、バックアップとパスキーで復旧を支える
+
+## TL;DR
+
+- **署名前の保護は維持し、追加のセキュリティ予算はバックアップと復旧に配分する。** 取引の確認は日常的な被害を防ぐ。プレビューや承認の共通規格も整いつつある。復旧フレーズの流出は頻度が低くても、一件でウォレット全体が危険にさらされる。
+- **端末やクライアントの侵害で復旧情報が漏れる場合がある。** SEALが集計した2026年10月28日から11月3日までのシード漏えい被害は **362万ドルと0.91 BTC**。別のTRONのアドレス群では、Bitqueryが少なくとも **406万ドル相当のUSDT** を追跡し、iPhoneの被害と公開情報で照合できたのは1件だった。
+- **SWIFTではパスキーを使うスマートアカウントを選べる。** 製品ページの対応先は6ネットワーク。機種変更時の復旧はiCloudやGoogleの認証情報に依存する。独立した復旧手段とともに標準化できれば、初期設定の手間と復旧フレーズの管理リスクを減らせる。
+- **高額資産を扱うアカウントでは専用のハードウェア認証と代替の復旧手段を用意したい。** FIDOは利用中のパスキーを **70億件** と推計し、調査対象機関で成功したサインインの **36%** をパスキーが占めた。Yubicoの2026年7–9月期は純売上高が **29.3%増**、受注額が **88.2%増**。アカウントへのアクセスと資産の保管には別々の認証情報を割り当てたい。
+
+## 端末やクライアントが侵害されたときの露出
+
+Corunaは **5つのiOS攻撃チェーンと23件のエクスプロイト** を含み、iOS **13.0–17.2.1** を対象にした。Googleは偽の金融サイト経由の配布と、端末に保存された復旧情報が狙われた事例を確認した。DarkSwordの対象はiOS **18.4–18.7** で、ウォレットのデータも収集できた。これとは別に、Binanceはworse_queryに関連して、iOS **26.7.1、27.0.1、27.2** の利用者にウォレットやログイン情報への注意を呼びかけた。この問題は、端末上ですでに動作している悪意あるアプリが、別のアプリのコンテナ内にあるファイルを読み取れるというものだ。こうした状況では、取引を確認する前に端末内の秘密情報が露出しうる。 [Google Threat Intelligence: Coruna](https://cloud.google.com/blog/topics/threat-intelligence/coruna-powerful-ios-exploit-kit) [Google Threat Intelligence: DarkSword](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) [Cointelegraph](https://cointelegraph.com/news/binance-warns-ios-flaw-could-expose-crypto-wallet-keys) · [Appleのセキュリティリリース](https://support.apple.com/en-us/149715)
+
+| 日付 | 事案 | 影響を受けたセキュリティ境界 | 被害または影響 |
+| --- | --- | --- | --- |
+| 2026-03 | Corunaの公表 | iOS 13.0–17.2.1、悪意あるサイト、写真・メモ・メッセージに保存された秘密情報 | 5つのチェーンと23件のエクスプロイト |
+| 2026-03 | DarkSwordの公表 | iOS 18.4–18.7。一部で悪質な広告や使われなくなった分析用ドメインが使われ、ウォレットのデータも対象 | 複数グループが使用。脆弱性はiOS 26.3までに修正 |
+| 2026-09 | FomoPeek | App Storeに掲載された悪意あるアプリ。キーチェーンと他のアプリのファイルの隔離 | 調査で約58万USDTを追跡 |
+| 2026-10-05–11-04 | Bitqueryの初期TRONサンプル | ウォレットからの資産流出 | 少なくとも406万ドル相当のUSDT、365のアドレスと43の集約先 |
+| 2026-10-28–11-03 | SEALの週報 | シードの漏えい | 362万ドルと0.91 BTC |
+| 2026-11 | worse_query | Binanceが挙げたiOS 26.7.1、27.0.1、27.2。アプリのコンテナ内ファイルの読み取り | 公開時点のセキュリティ情報からは修正を特定できなかった |
+| 2025-12 | Trust WalletのChrome拡張機能v2.68 | リリースのサプライチェーンとクライアントのロック解除 | 2,520のアドレス、約850万ドル |
+
+調査対象が重なる可能性がある。被害額は各資料が扱う範囲で読む必要がある。 [SlowMist](https://slowmist.medium.com/threat-intelligence-analysis-of-fomopeek-app-store-poisoning-and-ios-kernel-exploitation-e568762d11ca) [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt) [SEAL](https://radar.securityalliance.org/seal-weekly-stats-28-oct-3-nov-2026/) [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update) [iVerify](https://www.iverify.com/blog/malvertising-coruna-darksword-iphone-exploits)
+
+Trust Walletは、復旧フレーズと秘密鍵を端末内で暗号化して平文で保存していないため、worse_queryは同社のiOSウォレットに影響しないと説明した。この回答が扱うのはアプリのコンテナ内にある保存ファイルの読み取りだ。端末やウォレットクライアントが侵害され、復旧情報を使用している間の露出は、実行時の保護に左右される。端末の脅威とiOS向け予算の配分は、以前のDarkSwordの記事でも取り上げた。 [Trust WalletのiOS向け説明](https://trustwallet.com/blog/security/ios-update-crypto-wallet-security) · [Phemex](https://phemex.com/news/article/trust-wallet-confirms-ios-users-safe-from-worsequery-vulnerability-103144) [前回のDarkSword分析](/ja/blog/trust-wallet-ios-security-after-darksword-ja)
+
+2025年12月のChrome拡張機能 **v2.68** では、改ざんされた拡張機能が、ユーザーによるロック解除後にウォレットの復旧情報へアクセスできた。公開するビルドの完全性とクライアント権限に課題が残る。Trust Walletは **2,520のアドレス** と約 **850万ドル** の被害を報告し、自主補償を発表して確認手続きを始めた。ロック解除にパスキーを使っても、クライアントによる復旧フレーズの再構成は別途防ぐ必要がある。 [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update)
+
+Bitqueryの **365アドレス** はオンチェーンで抽出されたサンプルで、このうちiPhoneの事例と公開情報で照合できたのは1件だった。**43の集約先** は資金移動のつながりから特定された。各アドレスの管理者や、すべての流出に関与した端末と脆弱性は判別できない。ここでは原稿で扱った初期の集計期間を用いた。Bitqueryはその後、対象を広げている。 [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt)
+
+## 署名前の保護は維持する
+
+Trust Walletは **2025年11月** にトークン承認をまとめて管理できるようにし、**2026年3月** に **32のEVMチェーン** でアドレスポイズニングの自動検知を導入した。取引シミュレーションは承認前の警告に役立つ。ガス代の肩代わりとAI取引エージェントには、それぞれ別の認可と実行の設計が必要だ。共通規格が普及すれば、基礎的な対策だけで他社との違いを出しにくくなる。 [Trust Walletの承認管理](https://trustwallet.com/blog/company/control-and-revoke-token-approvals-in-trust-wallet) [Trust Walletのセキュリティ概要](https://trustwallet.com/security) · [The Block](https://www.theblock.co/news/regulation/2026-03-10-trust-wallet-launches-automatic-address-poisoning-protection-prevent-common-attack-392749)
+
+Scam Snifferによれば、署名フィッシングの被害額は2024年の **4億9,400万ドル** から2025年の **8,385万ドル** へ約 **83%減少** した。被害に遭ったウォレットは約 **33万2,000** から **10万6,000** に **68%減少**。単一事案の最大額は **5,540万ドル** から **650万ドル** になった。防御策の改善と整合する結果だが、シミュレーション、ブロックリスト、承認管理それぞれの寄与までは集計から読み取れない。 [Scam Snifferの年次報告](https://drops.scamsniffer.io/scam-sniffer-2025-crypto-phishing-losses-fall-83-to-84-million/)
+
+署名前の保護は引き続き必要だ。2026年1月の署名フィッシング被害は **627万ドル** と前月比 **207%増** で、**4,741のウォレット** が被害に遭った。11月27日にはEthereum上で **51,536 USDT** のアドレスポイズニング被害があったとScam Snifferが報告した。送金先を確認する意義が分かる事例だ。不審な署名や送金は、多くの利用者が接する機会の多いリスクでもある。 [Scam Snifferの1月集計](https://finance.yahoo.com/news/signature-phishing-200-january-losses-143036953.html) [Scam Sniffer](https://x.com/realScamSniffer/status/2126177954816479665)
+
+Ethereumの **ERC-7730** は、クリア署名に使う取引の説明を構造化する。LedgerはSolanaのJupiterやKaminoなどにも対応を広げ、Solanaは **11月26日** にクリア署名の提供開始を発表した。使い勝手は各ウォレットとプロトコルの実装に左右される。Blockaidが2025年から2026年初めのDeFi事案を調べたところ、秘密鍵とインフラの侵害が集計額の大きな部分を占めた。主にプロトコルや組織の事案だが、有効な鍵で署名されると監視に限界があることも示す。署名に共通規格と外部のリスク検知を使えば、復旧やリリースの完全性にも開発時間を配分できる。 [ERC-7730](https://ercs.ethereum.org/ERCS/erc-7730) · [Ledger](https://www.ledger.com/blog-solana-clear-signing) · [TechFlow](https://www.techflowpost.com/en-US/newsletter/147100/solana-clear-signing-launch) [Blockaid](https://blockaid.io/blog/compromised-private-keys-remain-the-biggest-source-of-defi-losses)
+
+## 初期設定と復旧はつながっている
+
+通常のTrust Walletは復旧フレーズを使う。iCloudやGoogle Driveへの暗号化バックアップは任意で、ユーザーが設定したパスワードが必要だ。復旧フレーズとバックアップ用パスワードの両方を失うと、ウォレット提供元ではアクセスを復元できない。初めて利用する人が復旧情報を保管し、後から確認できるようにするところまでが初期設定だ。 [Trust Walletの復旧ガイド](https://trustwallet.com/glossary/cryptography)
+
+SWIFTはアカウント抽象化を利用したスマートアカウントで、パスキーと端末の生体認証で確認する。製品ページの対応先は **Arbitrum、BSC、opBNB、Base、Optimism、Avalanche**。復旧ガイドでは、iCloudキーチェーンまたはGoogleパスワードマネージャーで同期された認証情報を使う。クラウドアカウントに入れなくなった場合はAppleまたはGoogleの復旧手続きが必要だ。現在の対応先だけでは、複数チェーンを使う一部のユーザーをカバーできない。 [Trust Wallet SWIFT](https://trustwallet.com/swift) · [SWIFTの復旧ガイド](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability)
+
+CoinbaseのBase Account（旧Smart Wallet）は、復旧フレーズを先に保管せずにパスキーで開設できる。MetaMaskが2026年に発表したEmbedded Wallets開発プラットフォームはメール、ソーシャルログイン、SMSでの認証に対応し、フレーズを手で控える手順を省ける。Breez SDKではパスキーでログインし、必要なときに復旧情報を導出する。いずれも利用開始の手間を減らす一方、署名と復旧の仕組みはそれぞれ異なる。 [Coinbase](https://help.coinbase.com/wallet/getting-started/smart-wallet) · [MetaMask](https://metamask.com/news/embedded-wallets-developer-platform) · [Breez SDK](https://sdk-doc-spark.breez.technology/guide/passkey.html)
+
+2026年3月のインタビューでCEOのFelixは、Trust Walletのダウンロードが **2億2,000万件** に達し、利用開始と継続的な利用が課題だと述べた。利用者が重視する安全性はブランドの中核でもあると述べた。ダウンロード数は過去の配布規模を表す。Binanceの集客に加え、初回取引までに復旧フレーズを管理する手順を減らせば、利用を始める人が増える可能性がある。効果は初回取引への移行率と復旧成功率で確かめたい。 [Felixへのインタビュー](https://www.odaily.news/en/post/5135852)
+
+原稿が使ったSurfの過去のスナップショットは **2026-11-27 00:00 UTC**。**11月4–11日** はTWT **−1.35%**、BTC **−4.73%**、ETH **−9.82%**。**10月28日–11月27日** はTWT **−30.4%**、SFP **−30.1%**、BTC **−25.1%**、ETH **−28.2%** だった。原稿が引用した11月27日のFear & Greed指数は **10**。この動きは市場全体が下げるなかでの小型銘柄の値動きに近い。この二つの期間だけでブランド固有の割引や長期的な信用の低下は判別できない。 [Coinness](https://coinness.com/en/news/1177058)
+
+Trust Walletが取り組める課題は四つある。通常の初期設定ではフレーズを管理する必要があり、クラウドのバックアップ用パスワードは紛失することがある。SWIFTの対応ネットワークには空白があり、機種変更時の復旧もクラウドアカウントに依存する。SWIFT型のアカウントを標準とするには、対応先の拡大と独立した復旧方法が要る。
+
+## パスキー普及後の復旧を設計する
+
+FIDOは、世界で利用中のパスキーが **2026年5月の50億件** から **10月の70億件** に増えたと推計した。Passkey Indexの対象機関では、アクティブなアカウントの約 **90%** がパスキーに対応し、対応アカウントの **42%** が登録済みだった。成功したサインインに占める割合は前年の **26%** から **36%** へ上昇。サインインの成功率はパスキーで **93%**、従来の多要素認証で **78%**。パスキーの方が約 **2.8倍** 速く、平均 **27秒** 短かった。フィッシングを測定した **8機関すべて** が減少を報告し、**13機関中9機関** は今後 **12か月** 以内にパスワード不要のアカウントを提供する予定だった。数値は参加機関の観測結果だ。 [FIDO Alliance](https://fidoalliance.org/7-billion-passkeys-and-counting-the-next-chapter-of-passwordless-authentication/) · [FIDO Passkey Index](https://fidoalliance.org/passkey-index-2026/)
+
+実際の利用は利用可能な範囲に追いついていない。ウォレットはフィッシングに強い認証を標準で提供し、端末を失った場合の復旧手順を明示できる。
+
+パスキーだけに頼る設計には、少なくとも七つの制約がある。第一に、別のエコシステムへ認証情報を移せるかは提供元と端末の設定による。第二に、WebAuthnでは **P-256** が使われることが多く、EthereumやBitcoinでは通常 **secp256k1**、Solanaでは **Ed25519** が使われる。チェーン側に対応する検証方法が必要だ。原稿の **33万～40万ガス** と約 **25ドル** は過去のソフトウェア検証の例で、Ethereum L1では **Fusaka** 後に **EIP-7951** が使え、プリコンパイル自体は **6,900ガス** で動く。第三に、Coinbaseの署名サービスのように、認証情報のRP IDによって利用範囲が結び付く。利用可能なドメインは実装次第だ。第四に、クラウドアカウントや信頼済み端末を失うと、使えなくなる場合がある。第五に、クラウドアカウントの乗っ取りが同期や復旧に及ぼす影響は提供元が行う追加確認による。第六に、署名ごとにユーザー確認が必要な認証情報だけでは、AIエージェントや定期署名を運用できない。取り消せる別の委任権限に範囲を設ける必要がある。第七に、Base Accountの任意の復旧フレーズのように、独立した予備の復旧手段が要る。 [EIP-7951](https://eips.ethereum.org/EIPS/eip-7951) · [Fusakaアップグレード](https://ethereum.org/roadmap/fusaka/) [FIDOの認証情報交換仕様](https://fidoalliance.org/download-credential-exchange-specifications/) · [GoogleのiOS向け認証情報移行ガイド](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en) [Base Accountの復旧ガイド](https://help.coinbase.com/wallet/getting-started/smart-wallet-recovery)
+
+SWIFTではパスキーがアカウントの署名を担い、機種変更は同期に頼る。クラウドアカウントや使える端末を失った場合、復旧は提供元の本人確認に依存する。同期型パスキーは標準の手段に向いている。同期できないときに資産へアクセスする手続きも整える必要がある。 [Trust Wallet SWIFT](https://trustwallet.com/swift) · [SWIFTの復旧ガイド](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability) [FIDOの認証情報交換仕様](https://fidoalliance.org/download-credential-exchange-specifications/) · [GoogleのiOS向け認証情報移行ガイド](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en)
+
+認証、資産の署名、復旧は別々に設計したい。パスキーはアクセスの認証やアカウント操作の承認に使える。署名はマルチパーティ計算（MPC）、信頼できる実行環境（TEE）、アカウント抽象化（AA）を使うスマートアカウントで方針に沿って制御できる。復旧には予備端末、復旧コード、ガーディアン、ハードウェア認証などを使う。ウォレットに合う方式を選び、ユーザーが復旧を練習できるようにしたい。
+
+## YubiKeyと独立したハードウェア認証
+
+Yubicoの2026年7–9月期の純売上高は **7億800万スウェーデンクローナ（29.3%増）**、オーガニック成長率は **28.3%**、サブスクリプション売上高は **1億1,260万クローナ（29.9%増）**、ARRは **4億3,690万クローナ（13.1%増）** だった。EBITは **1億7,930万クローナ**、EBITマージンは **25.3%**。受注額は **9億4,900万クローナ（88.2%増）** に達した。**2027–2031年** は、純売上高の年 **15%–20%** 成長と、期間中にEBITマージンを **20%** に近づける目標を掲げる。売上高を上回る受注の伸びは、ハードウェア認証の需要が加速している可能性を示す同社の指標だ。 [Yubicoの第3四半期報告書](https://investors.yubico.com/en/interim-report-july-september-2026/)
+
+YubicoとOktaの調査では、最も強い手段としてハードウェア型パスキーを選んだ回答が **31%**、同期型が **27%**、スマートフォンにひも付けたパスキーが **23%** だった。独立したハードウェア認証に対する調査対象者の評価が分かる。 [Yubico・Oktaの調査](https://www.yubico.com/resource/global-state-of-authentication-2026/)
+
+YubiKeyのFIDO認証情報はハードウェア内に保持でき、同期せずに使える。取引所、メール、クラウドバックアップ、管理者アカウントの保護に向く。Yubicoは機関向けにYubiHSMも提供している。YubiKey自体に送金先と金額を確認できる取引画面はない。その確認にはハードウェアウォレットや検証済みの署名ポリシーを使う。 [Yubicoの暗号資産業界向け資料](https://www.yubico.com/industries/cryptocurrency/)
+
+| 方式 | フィッシング耐性 | 端末が侵害された場合 | 復旧 | 移行しやすさ | 主な用途 |
+| --- | --- | --- | --- | --- | --- |
+| 同期型パスキー（iCloud、Googleなど） | 高い | アカウント、端末、提供元の確認に依存 | 提供元または予備の認証情報 | 同期と移行への対応による | 日常のログイン、取引所 |
+| 端末にひも付けたパスキー | 高い | 鍵の隔離と信頼できる利用者確認で露出を抑えられる | 予備手段が必要 | 端末、アプリ、ログイン方式による | 高額資産を扱うアカウントの独立した認証要素 |
+| YubiKey | 高い | 認証情報は機器内に保持。接続先の侵害にも注意が必要 | 予備キーを事前登録 | サービスによりUSBまたはNFC | 取引所、メール、クラウドバックアップ、管理者 |
+| ハードウェアウォレット | 取引を独立して確認できるかによる | 秘密鍵をホストから隔離。機器の画面で確認する | フレーズ、独立した署名者、マルチシグ | ウォレットとチェーンの対応による | 長期保管 |
+| ウォレットのMPC・AA | 認証と署名ポリシーによる | 鍵の分割、しきい値、実行環境による | ガーディアンや予備の署名者を利用可能 | 実装とネットワークに依存 | モバイルウォレット、プログラム可能な署名 |
+
+定性的な比較で、実際の強度は登録、承認、復旧の設定に左右される。フィッシングに強い認証を基本とし、資産額の大きいアカウントでは独立した確認を加えたい。
+
+FIDOのCXPとCXFは2026年2月時点で草案だった。FIDOは現在CXF 1.0を標準案として掲載し、GoogleのiOS向けヘルプには対応アプリ間でのパスキーの入出力手順がある。認証情報の移行は進んでいる。機種や利用環境を変えたり、クラウドアカウントを失ったりした場合の資産復旧には、ウォレット側に改善の余地がある。セキュリティセンターに認証情報やハードウェアの登録、復旧訓練、セッション管理をまとめられる。端末内で注意を促せば、写真やメモに秘密情報を残していないか利用者自身が確認できる。 [FIDOの認証情報交換仕様](https://fidoalliance.org/download-credential-exchange-specifications/) · [GoogleのiOS向け認証情報移行ガイド](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en)
+
+一般の利用者には、普段のパスキーに加えて確実な予備手段を一つ用意する方が使いやすい。高額資産を扱うアカウントはログインと資産署名の認証情報を分け、独立したマルチシグやガーディアンを使い、復旧を練習できる。ウォレット提供元は各関係者が復旧できる権限を明確にしたい。
+
+## 追加予算の配分
+
+1. **署名前の保護を維持する。** 取引シミュレーション、クリア署名、アドレスポイズニングの警告、承認管理を維持し、共通規格と外部のリスク検知を使う。
+2. **バックアップと復旧を強化する。** 新規ユーザーにはパスキーとAAまたはマルチチェーンMPCを標準で提供する。既存のフレーズ型ウォレットでは保存中の復旧情報を保護する。端末内の露出に任意で注意を促し、信頼できる端末からの移行や鍵の更新、復旧訓練を支える。高額資産を扱うアカウントには独立したハードウェア認証も用意する。
+3. **サプライチェーンと実行時の完全性を守る。** v2.68の事案は、拡張機能とアプリのビルドやリリースを守る必要性を示した。原稿はPostHog関連のサプライチェーン事案にも触れ、署名付きビルド、依存関係の固定、実行環境のアテステーション、サードパーティSDKの監査を提案している。 [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update)
+
+追いたい指標は五つある。**復旧フレーズの露出率、復旧成功率、復旧にかかった時間、パスキーの登録と有効化、インシデント後30日の継続率** だ。署名前に阻止できた被害額は引き続き取引保護の指標に使える。
+
+**モバイルウォレットへの信頼は、端末が侵害された後に資産の管理権を取り戻せるかにかかっている。** Trust Walletは署名前の保護を維持し、増分予算をパスキーアカウントの標準化、事前に練習できる復旧、そして高額資産向けの独立したハードウェア認証に振り向けたい。

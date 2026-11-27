@@ -1,0 +1,65 @@
+# pump.funがPhantomでのウェブログインを終了した後、旧アドレスの維持に秘密鍵が必要な理由
+
+## 要点
+
+pump.funはウェブ版を、Pump Appが採用済みのメールや外部アカウントでのログイン方式に統合する。旧アドレスを維持し、Privyの組み込みウォレットでそのアドレスの署名を行うには、公式の手順で元の秘密鍵をインポートする。元のウォレットでも署名はできる。移行で鍵を管理し署名する環境が一つ増える。ウォレットによる一度の署名で、アドレスを管理していることは証明できる。同じ通常のウォレットアドレスでPrivyが継続して署名するには、別の権限が必要になる。
+
+私が注目するのは、この設計でプラットフォームが得るものだ。アカウントを統一すると、無期限先物、マルチチェーン取引、法定通貨の入金に対応しやすくなり、利用資格の制限も適用しやすい。手数料が減る局面では、繰り返し取引する利用者をつなぎ止めることが重要になる。利用者はウォレット基盤と認証経路をもう一つ信頼することになる。Ledger、マルチシグ、その他の鍵をエクスポートできないウォレットには、旧アカウントを維持する同等の経路がない。 [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes) · [Privyのインポート設計](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture)
+
+## pump.funが発表した内容
+
+pump.funは**2026年11月22日**、**11月30日15:00 UTC**をもって、ウェブ版でPhantom、Solflare、Ledgerなどの外部ウォレットによる直接ログインを終了し、メール、Google、Apple、GitHubに切り替えると発表した。Pump Appはすでにこの方式を使っている。既存アカウントを移行すれば、アドレス、ポジション、残高、フォローとフォロワー、ユーザー名を維持できるとしている。移行期限後も、すでにログイン済みのウォレットセッションには新しいログイン方法を追加する案内が表示される。告知では、今回の変更でアカウントや資金が削除されることはないとしている。 [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes) · [11月22日の発表報道](https://en.theblockbeats.news/flash/378605)
+
+議論の中心は、既存アカウントを維持する方法だ。ウェブ版でもアプリ版でも、元のウォレットをPrivyにインポートする必要がある。Phantomは引き続き利用でき、PrivyのウォレットをPhantomで使う方法も公開している。変わるのはpump.funでのログインと取引の署名方法だ。 [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes) · [Phantomのヘルプセンター](https://help.phantom.com/articles/import-your-privy-fomo-pump-fun-wallet-into-phantom-41408635409683)
+
+## 同じアドレスでどう署名するか
+
+従来はウォレットアドレスでアカウントを識別し、ウォレットの署名をログイン認証に使っていた。秘密鍵は元のウォレットに残る。新方式ではメールや外部アカウントでログインし、そのアカウントに紐づくウォレットをPrivyが提供する。Sign in with Solana（SIWS）でメッセージに署名すると、その時点でアドレスを管理していることを証明できる。それを根拠に、元のプロフィールを関連づけられる。以後も外部ウォレットを使う場合、取引にはウォレットか、別途権限を与えた署名者による承認が必要だ。
+
+通常のSolanaの鍵ペアに対応する同じアドレスでPrivyが直接署名するには、同じ署名鍵が必要になる。秘密鍵のインポートはこの製品要件を満たす。検証可能な署名で既存プロフィールを紐づけることや、範囲を限定して取り消せる委任で一部の操作を認めることもできる。それぞれが与える権限の範囲は異なる。 [Solanaの署名・認証資料](https://solana.com/docs/frontend/messages-and-auth) · [Privyのウォレット権限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls)
+
+Privyの公開資料では、一時公開鍵を使うHPKEで秘密鍵を暗号化する。秘密鍵は信頼できる実行環境（TEE）内で復号され、ウォレットの初期化に使われる。一時鍵ペアはその後破棄される。暗号化された通信の両端はブラウザとPrivyのTEEだ。Mt. Goxの元CEO、Mark Karpelèsは、エンドツーエンド暗号化を「自分だけが鍵を使える」と利用者が受け取れば誤解を招くと指摘した。 [Privyのインポート設計](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture) · [Karpelèsの指摘を伝えた記事](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html)
+
+移行後も元の秘密鍵は有効だ。Privyの基盤は、認可ポリシーが許す場合に同じ鍵で署名できる。利用者側にもエクスポートの手段がある。pump.funの規約では、Pumpの事業体はウォレットや秘密鍵を管理しないとされる。公開資料から確認できるのは、同じ鍵を扱うためにもう一つの基盤を信頼する必要があることだ。実際の署名主体と権限はウォレットの設定による。 [pump.fun利用規約](https://pump.fun/docs/terms-and-conditions) · [Privyのウォレット権限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls) · [Phantomのヘルプセンター](https://help.phantom.com/articles/import-your-privy-fomo-pump-fun-wallet-into-phantom-41408635409683)
+
+| 移行経路 | アドレスとサービス内の履歴 | 署名環境 | 対象 | 主な負担 |
+| --- | --- | --- | --- | --- |
+| ウェブの「Link email & socials」で秘密鍵をインポート。公式の推奨方法 | 維持される | 元のウォレットとインポート先のPrivyウォレットの両方が署名できる。サービス内の利用にはアカウント認証が必要 | 秘密鍵をエクスポートできるソフトウェアウォレット | 別の署名基盤にも鍵が入り、ウェブ画面、TEE、ログインの安全性に依存する |
+| Pump Appにインポートして紐づける | 維持される | ウェブでインポートする場合と同じ | 秘密鍵をエクスポートできるモバイル利用者 | 組み込みウォレットの基盤も信頼する。インポートはアプリで行う |
+| メールや外部アカウントで新規登録し、移せる資産を手動で送る | 新しいアドレスを使う。フォロー関係とサービス内の履歴は旧アカウントに残る | 新しいPrivyウォレット | Ledger、マルチシグ、その他の鍵をエクスポートできないウォレット | プロフィール情報は引き継げず、資産は別途移す必要がある |
+
+## なぜ今アカウントを統一するのか
+
+10月には、pump.funがHyperliquidの無期限先物への接続を準備していると報じられた。**11月10日**にはクロスマージン、指値注文、時間加重平均価格（TWAP）注文などの更新を発表した。**11月19日**には部分決済に対応し、ポジションの一部を利確または損切りできるようになった。Pro modeで注文、取り消し、ポジション調整を繰り返す場合、組み込みウォレットでの署名は外部ウォレットと画面を行き来する手間を減らす。利用者がオフラインでも、すでに承認した注文が執行を待つことはある。規約の第30B.5節と第30B.6節では、利用者のウォレットの鍵が無期限先物の指示に署名し、条件付き注文はHyperliquidが発動するとしている。製品に求められるのは円滑な承認と執行だ。これらの機能だけで、pump.funが自由に取引や出金に使える鍵を保有するとは判断できない。 [10月の無期限先物報道](https://en.bloomingbit.io/feed/news/121933) · [11月の無期限先物の更新](https://pumpfyi.com/news/2026-11-10-pump-fun-perps-add-limit-orders-cross-margin/) · [Hyperliquidの注文種別](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/order-types) · [pump.fun利用規約](https://pump.fun/docs/terms-and-conditions)
+
+Pump AppはMonadやSuiなどのネットワークにも対応を広げた。外部ウォレット事業者は、対応チェーンを独自の都合で変えられる。Monadの当初の発表では**8月12日**とされたが、Phantomのヘルプセンターでは**2026年8月26日**に対応を終了している。組み込みウォレットなら、登録時に各ネットワークの署名仕様に合うウォレットを用意し、同じアカウントで複数のチェーンを扱える。Apple Payでの入金にもこの登録経路を使える。メールでアカウントを識別し、ウォレットでアドレス、署名、ネットワーク手数料を扱う。 [Monad対応の報道](https://www.panewslab.com/zh/articles/01a170b0-dad1-74df-a9b3-7dbf2c1f3ce1) · [Sui対応の報道](https://coinness.com/en/news/1176655) · [Monadの当初発表の報道](https://www.chaincatcher.com/en/article/2278081) · [PhantomのMonad対応終了のお知らせ](https://help.phantom.com/articles/ending-support-for-monad-in-phantom-38674346854931) · [Pump Appの入金資料](https://intercom.help/pumpfun-web/en/articles/11519838-depositing-funds-on-the-mobile-app)
+
+![pump.funプロジェクトの手数料の7日移動平均。10月7日は約242万ドル、11月22日は約127万ドル。](/images/blog/pump-fun-phantom-login-privy-wallet-migration/fees-7d.png)
+
+*DefiLlamaのpump.funプロジェクトの手数料。当日を含む直近7 UTC日の日平均。単位は米ドル／日。図の期間は2026年10月1日から11月22日まで。* [DefiLlamaの元データ](https://api.llama.fi/summary/fees/pump.fun?excludeTotalDataChartBreakdown=true&dataType=dailyFees)
+
+原稿の**2026年11月24日00:40 UTC**時点の市場スナップショットでは、PUMPの価格が**0.00253ドル**、時価総額が**8億9,300万ドル**、30日リターンが**−41.3%**だった。原稿の手数料では、10月7日と11月22日までの7日平均がそれぞれ**244万ドル／日と129万ドル／日**で、約**47%**減少した。10月1日と11月22日の単日の手数料は、**240万ドルと94万ドル**だった。図の公開データから再計算すると、7日平均は**242万2,427.71ドル／日と126万6,429ドル／日**で**47.72%**減。単日の手数料は**240万773ドルと95万5,779ドル**になる。値には少しずれがあるが、どちらの集計も減少を示す。 [CoinGeckoの参考相場](https://www.coingecko.com/en/coins/pump-fun) · [DefiLlamaの元データ](https://api.llama.fi/summary/fees/pump.fun?excludeTotalDataChartBreakdown=true&dataType=dailyFees)
+
+4月28日、pump.funはPUMPを買い戻して焼却する資金を**プラットフォーム収入の約50%**と見積もった。プロトコル手数料とプラットフォーム収入は集計対象が異なる。取引手数料の減少は買い戻し原資を圧迫する可能性がある。メールや外部アカウントは、ユーザーへの連絡、呼び戻し、利用状況に応じたサービス提供にも使える。取引が減速すると、アドレス数を増やすことより、繰り返し取引する人に使い続けてもらう価値が高まる。 [pump.funの4月28日発表](https://pump.fun/docs/april-28-announcement) · [買い戻しと焼却の報道](https://www.theblock.co/news/ecosystems/2026-04-28-pump-fun-burns-370-million-pump-399288)
+
+## プラットフォームが管理できる範囲
+
+11月16日版の規約は、機能ごとに利用資格を定めている。第30B.2節では無期限先物に利用制限を設け、米国、カナダのオンタリオ州、制裁対象の法域、Hyperliquidが制限対象と定める人などを対象とする。第30E.2節では米国の利用者などの予測市場へのアクセスを制限する。第30D.5節によるPump Bridge上の有価証券に関係する特定資産の制限は、米国、英国、欧州経済領域（EEA）、スイス、カナダなどが対象だ。ウォレットを審査するツールも規約に明記されている。9月には米国とインドのApp StoreでPump Appを一時ダウンロードできなくなったと報じられた。 [pump.fun利用規約](https://pump.fun/docs/terms-and-conditions) · [App Storeでの一時停止報道](https://coinness.com/en/news/1168382)
+
+メールや外部アカウントでログインする方式なら、プラットフォームはアカウントを復旧したり、制限したり、継続して管理したりできる。ウォレットでログインする方式でも地域制限やオンチェーン審査を適用できる。アカウントの統一はウェブとアプリで資格要件を揃え、アクセス記録を管理しやすくする。pump.funはコンプライアンスを今回の変更理由に挙げていない。製品と規約を見る限り、長期的な動機の一つだと考える。
+
+Phantomにはアプリ内ブラウザがあり、独自の無期限先物取引も提供している。ユーザーが取引アプリを最初に開く場所を握る限り、Phantomは利用者への到達経路をめぐる競合になり得る。取引ウォレットを自社アカウントの管理下に置くと、pump.funは標準の入金経路、手数料のルーティング、報酬の配布を管理できる。Privyは**2025年6月**にStripeへの参加を発表した。Hyperliquid、OpenSea、Farcasterなどを採用例として挙げており、このアカウントとウォレットの基盤は消費者向け金融アプリですでに使われている。 [Phantomのアプリ内ブラウザ](https://help.phantom.com/articles/use-the-explore-tab-in-phantom-on-mobile-41523165147667) · [Phantomの無期限先物資料](https://help.phantom.com/articles/42292249388307) · [PrivyとStripeの発表](https://privy.io/blog/announcing-our-acquisition-by-stripe) · [Privyの採用事例](https://privy.io/blog/announcing-our-fundraise-led-by-ribbit-capital)
+
+## 利用者が引き受ける負担
+
+Karpelèsは二つの点を指摘した。まず、秘密鍵を渡す入力画面を信頼する必要がある。暗号化した後も、暗号化の受け手の真正性とPrivyのTEEによる隔離を信頼する必要がある。プラットフォームの利用には、メールや外部アカウントの認証とウォレットの認可設定が関わる。アカウントの乗っ取り、利用停止、裁判所命令や規制上の制限は、サービス内の署名や復旧にも影響し得る。元の秘密鍵を保持する人は、旧アドレスを独立に利用できる。アカウントを閉じてもオンチェーンで鍵を更新したことにはならない。削除後に事業者が鍵を保持する期間は公開資料から確認できない。SIWSでも、外部ウォレットの自己管理を維持したままプロフィールを関連づけられる。インポートでプラットフォームに加わる権限はそれとは異なる。 [Karpelèsの指摘を伝えた記事](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html) · [Privyのウォレット権限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls)
+
+第**12.2(c)**節では、プラットフォームがウォレットの秘密鍵、シードフレーズ、外部アカウントやメールの認証情報の共有を利用者に求めることは一切ないとしている。第**30.1**節では、ログイン時に作成するPrivyウォレットの責任をPrivyと利用者に帰し、Pumpの事業体はウォレットや秘密鍵を管理しないとする。一方、移行案内では公式の手順で元の秘密鍵のインポートを求めている。誰が秘密鍵を受け取るか、誰が署名を承認できるか、制限時の復旧はどうなるかを監査し、手順と規約上の約束の関係を確かめる余地がある。 [pump.fun利用規約](https://pump.fun/docs/terms-and-conditions) · [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes)
+
+秘密鍵のエクスポートは独立したアクセスに役立つ。同じ鍵がすでにインポートされたという事実は変わらない。利用者が別途バックアップを取るとも限らない。Ledgerやマルチシグの利用者は旧アカウントを維持するインポート経路を使えず、告知に沿って新規登録することになる。発表から切り替えまで約**8日**しかない。ログイン済みのセッションには移行案内が残る。時間の制約は主に外部ウォレットで直接ログインできる期限から来る。 [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes)
+
+## 結論
+
+pump.funは、ウォレットアドレスを入口とする製品から、継続して運用できる消費者向け取引アカウントへ移行する。ウェブとアプリに同じログインを使えることが利用者の目に見える変更だ。長期的には、無期限先物、マルチチェーン、入金、利用者の定着、機能ごとの資格審査が動機になっている可能性がある。旧アドレスを維持し、組み込みウォレットが直接署名する設計を選ぶなら、秘密鍵のインポートが最も検証を必要とする部分になる。
+
+**プラットフォームが公表すべきなのは、署名権限、復旧条件、第三者が検証できる安全監査だ。** 移行が必要なユーザーは、公式のエクスポート手段で独立したアクセスを確保し、移行したアドレスには取引用の資金だけを置ける。まとまった資産は、別の鍵で管理するPhantomやハードウェアウォレットに置くのがよい。Ledgerやマルチシグで保管を続けつつpump.funを使う人には、独立した取引アカウントを用意する方法がある。

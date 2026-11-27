@@ -1,0 +1,107 @@
+---
+title: "Trust Wallet 安全战略，怎样兼顾签名防护、备份与 Passkey"
+publishedAt: "2026-11-27"
+summary: "Trust Wallet 应保留签名前防护，把增量安全预算投向备份、可演练的恢复与独立硬件凭证。结合 iOS 与扩展事故，梳理 SWIFT、Passkey 和 YubiKey 的能力边界。"
+slug: "trust-wallet-signing-backup-passkey-strategy"
+category: "thoughts"
+language: "zh-CN"
+translationKey: "trust-wallet-signing-backup-passkey-strategy"
+sourceSlug: "trust-wallet-signing-backup-passkey-strategy"
+---
+
+## TL;DR
+
+- **签名防护维持基线，增量预算优先给备份和恢复。** 交易确认仍能拦截高频风险，行业正在形成通用的交易预览和授权标准。助记词暴露的频率较低，单次失守可能让整个钱包的资产面临风险。
+- **设备和客户端都可能暴露恢复材料。** SEAL 在 2026 年 10 月 28 日至 11 月 3 日记录了 **362 万美元 + 0.91 BTC** 的助记词泄露损失。Bitquery 在另一组 TRON 地址中追踪到至少 **价值 406 万美元的 USDT**，只有一个公开个案能联系到 iPhone。
+- **SWIFT 已提供 passkey 智能账户，仍是可选方案。** 官方页面列出六条链，文档中的换机路径依赖 iCloud 或 Google 的凭证。把这类账户做成默认，并设计独立恢复，可以同时降低新用户门槛和助记词风险。
+- **高价值账户值得保留独立的硬件凭证和恢复路径。** FIDO 估计全球约有 **70 亿个 passkey**，在参与指数研究的机构中，passkey 占成功登录的 **36%**。Yubico 2026 年第三季度净销售额增长 **29.3%**，订单增长 **88.2%**。账户登录与链上保管适合由不同凭证承担。
+
+## 设备与客户端失守后的风险
+
+Coruna 涉及 **5 条 iOS 利用链、23 个漏洞利用**，覆盖 iOS **13.0–17.2.1**。Google 观察到假冒金融网站传播它，攻击目标包括存放在设备内容里的恢复材料。DarkSword 覆盖 iOS **18.4–18.7**，也具备收集钱包数据的能力。Binance 另就 worse_query 提醒 iOS **26.7.1、27.0.1、27.2** 用户注意钱包和登录凭证。该漏洞所涉及的是已经运行的恶意 App 可能读取其他 App 的容器文件。这些场景下，设备内的秘密材料可能在用户确认交易前就暴露。 [Google Threat Intelligence: Coruna](https://cloud.google.com/blog/topics/threat-intelligence/coruna-powerful-ios-exploit-kit) [Google Threat Intelligence: DarkSword](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) [Cointelegraph](https://cointelegraph.com/news/binance-warns-ios-flaw-could-expose-crypto-wallet-keys) · [Apple 安全更新](https://support.apple.com/en-us/149715)
+
+| 时间 | 事件 | 涉及的防护边界 | 损失或影响 |
+| --- | --- | --- | --- |
+| 2026-03 | Coruna 披露 | iOS 13.0–17.2.1；恶意网站；照片、笔记、消息等处的秘密材料 | 5 条链、23 个漏洞利用 |
+| 2026-03 | DarkSword 披露 | iOS 18.4–18.7；部分案例涉及恶意广告或失效分析域名；采集钱包数据 | 多个团伙使用，漏洞至 iOS 26.3 已修复 |
+| 2026-09 | FomoPeek | App Store 恶意应用；钥匙串和其他 App 文件的隔离 | 研究者追踪约 58 万 USDT，范围以调查为准 |
+| 2026-10-05–11-04 | Bitquery 早期 TRON 样本 | 钱包资金异常转出 | 至少 价值 406 万美元的 USDT，365 个地址、43 个归集地址 |
+| 2026-10-28–11-03 | SEAL 周报 | 助记词泄露 | 362 万美元 + 0.91 BTC |
+| 2026-11 | worse_query | Binance 点名 iOS 26.7.1／27.0.1／27.2；容器文件读取 | 补丁状态按公开披露，安全公告未确认对应修复 |
+| 2025-12 | Trust Wallet Chrome 扩展 v2.68 | 发布供应链与客户端解锁边界 | 2,520 个地址，约 850 万美元 |
+
+不同报告的损失范围可能重叠，表中金额各按原来源理解。 [SlowMist](https://slowmist.medium.com/threat-intelligence-analysis-of-fomopeek-app-store-poisoning-and-ios-kernel-exploitation-e568762d11ca) [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt) [SEAL](https://radar.securityalliance.org/seal-weekly-stats-28-oct-3-nov-2026/) [Trust Wallet 事件通报](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update) [iVerify](https://www.iverify.com/blog/malvertising-coruna-darksword-iphone-exploits)
+
+Trust Wallet 称，worse_query 不影响其 iOS 钱包，助记词和私钥在本地加密，不以明文保存。这个回应限定了容器文件被读到时的风险。若设备或钱包客户端已经失守，恢复材料在使用时能否暴露，还取决于运行时保护。相关设备威胁和 iOS 投入比例见此前的 DarkSword 分析。 [Trust Wallet 的 iOS 说明](https://trustwallet.com/blog/security/ios-update-crypto-wallet-security) · [Phemex](https://phemex.com/news/article/trust-wallet-confirms-ios-users-safe-from-worsequery-vulnerability-103144) [前篇 DarkSword 复盘](/zh-CN/blog/trust-wallet-ios-security-after-darksword)
+
+2025 年 12 月的 Chrome 扩展 **v2.68** 是另一类事故。受污染的扩展在用户解锁后能够接触钱包恢复材料，这暴露了构建发布和客户端权限的风险。Trust Wallet 报告 **2,520 个地址**、约 **850 万美元**受影响，并宣布自愿赔付、启动核验。登录时使用 passkey，并不能单独证明客户端无法恢复出助记词。 [Trust Wallet 事件通报](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update)
+
+Bitquery 的 **365 个地址**是链上样本，只有一个地址能与公开的 iPhone 个案对应。**43 个归集地址**是按资金关联识别，无法据此证明每个地址的控制者或每笔盗转的设备和漏洞。这里采用原稿讨论的早期窗口，后续扩围报告另有统计。 [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt)
+
+## 签名防护维持行业基线
+
+Trust Wallet 于 **2025 年 11 月**上线集中管理代币授权，**2026 年 3 月**推出覆盖 **32 条 EVM 链**的自动地址投毒防护。交易模拟也能在确认前提醒用户风险。Gas 赞助和 AI 交易代理是相邻的产品能力，涉及各自的授权和执行边界。随着通用标准成熟，基础防护会更难单独支撑竞争优势。 [Trust Wallet 授权管理说明](https://trustwallet.com/blog/company/control-and-revoke-token-approvals-in-trust-wallet) [Trust Wallet 安全说明](https://trustwallet.com/security) · [The Block](https://www.theblock.co/news/regulation/2026-03-10-trust-wallet-launches-automatic-address-poisoning-protection-prevent-common-attack-392749)
+
+Scam Sniffer 统计的签名钓鱼损失从 2024 年的 **4.94 亿美元**降到 2025 年的 **8,385 万美元**，降幅约 **83%**。受影响的钱包数从约 **33.2 万**降到 **10.6 万**，下降约 **68%**，最大单笔从 **5,540 万美元**降到 **650 万美元**。这些读数与风险防护改善相符，单凭年度变化还无法量化交易模拟、黑名单和授权管理各自的贡献。 [Scam Sniffer 年度报告](https://drops.scamsniffer.io/scam-sniffer-2025-crypto-phishing-losses-fall-83-to-84-million/)
+
+签名前的保护仍要维持。2026 年 1 月，签名钓鱼损失约 **627 万美元**，环比增长 **207%**，涉及 **4,741 个钱包**。11 月 27 日，Scam Sniffer 另报告一例 **51,536 USDT** 的以太坊地址投毒损失，说明核对收款地址仍有价值。对多数用户而言，可疑签名与转账是更常见的接触面。 [Scam Sniffer 1 月数据](https://finance.yahoo.com/news/signature-phishing-200-january-losses-143036953.html) [Scam Sniffer](https://x.com/realScamSniffer/status/2126177954816479665)
+
+以太坊 **ERC-7730** 为清晰签名提供结构化描述。Ledger 已将相关能力推进到 Solana 的 Jupiter、Kamino 等场景，Solana 在 **11 月 26 日**再宣布清晰签名上线。实际体验取决于钱包和协议接入。Blockaid 对 2025 年至 2026 年初的 DeFi 研究也发现，密钥和基础设施失守占样本损失的大头。其样本主要涉及协议与机构，适合用来说明签名监控面对有效密钥时的局限。签名侧可继续接入这些标准与第三方风控，自研预算更多投向恢复和供应链完整性。 [ERC-7730](https://ercs.ethereum.org/ERCS/erc-7730) · [Ledger](https://www.ledger.com/blog-solana-clear-signing) · [TechFlow](https://www.techflowpost.com/en-US/newsletter/147100/solana-clear-signing-launch) [Blockaid](https://blockaid.io/blog/compromised-private-keys-remain-the-biggest-source-of-defi-losses)
+
+## 备份与恢复决定开户体验
+
+Trust Wallet 的常规账户仍用助记词。可选加密云备份依赖用户设定的密码，可存于 iCloud 或 Google Drive。助记词和备份密码都无法取得时，钱包方不能代为恢复。降低抄写、保管和验证恢复材料的成本，是新用户激活的一部分。 [Trust Wallet 恢复说明](https://trustwallet.com/glossary/cryptography)
+
+SWIFT 使用账户抽象智能账户与 passkey，并可通过设备生物识别进行确认。官方页面列出 **Arbitrum、BSC、opBNB、Base、Optimism、Avalanche** 六条链。其换机文档依赖 iCloud 钥匙串或 Google 密码管理器中的同步凭证。若连云账户也无法访问，文档指向 Apple 或 Google 的账户恢复步骤。对需要更多链的用户，SWIFT 目前仍难覆盖全部用途。 [Trust Wallet SWIFT](https://trustwallet.com/swift) · [SWIFT 恢复指南](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability)
+
+Coinbase 的 Base Account（原 Smart Wallet）支持无须先保管助记词的 passkey 开户。MetaMask 的 2026 年嵌入钱包开发平台支持邮箱、社交身份和短信认证，用户可以免去手工保存助记词。Breez SDK 也提供 passkey 登录，内部仍按需生成恢复材料。三种方案减轻了开户摩擦，各自的签名和恢复设计需要单独核对。 [Coinbase](https://help.coinbase.com/wallet/getting-started/smart-wallet) · [MetaMask](https://metamask.com/news/embedded-wallets-developer-platform) · [Breez SDK](https://sdk-doc-spark.breez.technology/guide/passkey.html)
+
+CEO Felix 在 2026 年 3 月受访时称 Trust Wallet 有 **2.2 亿次下载**，并把用户激活和后续使用深度视为瓶颈。Felix 也把用户对安全的重视视为品牌的核心。下载量是历史分发口径。结合 Binance 的分发，减少首次交易前的助记词操作有机会改善激活，效果应由首次交易转化和恢复成功率验证。 [Felix 访谈](https://www.odaily.news/en/post/5135852)
+
+原稿提供的 Surf 历史快照采集于 **2026-11-27 00:00 UTC**。**11 月 4 日至 11 日**，TWT **−1.35%**，BTC **−4.73%**，ETH **−9.82%**。**10 月 28 日至 11 月 27 日**，TWT **−30.4%**、SFP **−30.1%**、BTC **−25.1%**、ETH **−28.2%**。原稿所引的 11 月 27 日恐惧与贪婪指数为 **10**。相对表现更接近小市值资产随市场回撤，这两个窗口不足以识别独立的品牌折价，也无法衡量用户信任的长尾变化。 [Coinness](https://coinness.com/en/news/1177058)
+
+Trust Wallet 可以优先解决四件事。常规开户仍要管理助记词，云备份密码可能丢失，SWIFT 的已列链不足以覆盖许多多链需求，换机又依赖云账户。让 SWIFT 类账户进入默认路径，需要同时补齐链覆盖和独立恢复。
+
+## Passkey 普及之后，恢复靠什么
+
+FIDO 估计，全球在用 passkey 从 **2026 年 5 月的 50 亿**增至 **10 月的 70 亿**。在 Passkey Index 参与机构中，约 **90%** 的活跃账户可使用 passkey，**42%** 的合格账户已注册，**36%** 的成功登录使用 passkey，上一年为 **26%**。Passkey 登录成功率为 **93%**，传统多因素认证为 **78%**，passkey 登录速度约为对照方式的 **2.8 倍**，平均节省 **27 秒**。测量钓鱼的 **8 家**都报告事件减少，**13 家中的 9 家**计划在接下来 **12 个月**推出无密码账户。这些是参与机构的观测。 [FIDO Alliance](https://fidoalliance.org/7-billion-passkeys-and-counting-the-next-chapter-of-passwordless-authentication/) · [FIDO Passkey Index](https://fidoalliance.org/passkey-index-2026/)
+
+覆盖率与实际使用率之间还有差距。钱包能做的是在开户时默认提供抗钓鱼凭证，让用户在原设备不可用时仍知道如何恢复。
+
+Passkey-only 设计至少要处理七种约束。第一，换生态时凭证能否移转取决于提供方和设备配置。第二，WebAuthn 常用 **P-256**，以太坊和比特币常用 **secp256k1**，Solana 使用 **Ed25519**，链上要有匹配的验证路径。原稿的 **33 万至 40 万 gas** 和约 **25 美元**是旧式软件验证的情景。以太坊 L1 自 **Fusaka** 起支持 **EIP-7951**，预编译本身是 **6,900 gas**。第三，凭证的 RP ID 绑定服务范围，例如 Coinbase 的签名登录服务，具体可用域由实现决定。第四，丢失云账户或受信设备会影响可用性。第五，云账户被接管可能影响同步和恢复，保护程度取决于凭证提供方的额外验证。第六，每次需要用户确认的凭证不能自行满足 AI Agent 或定时签名，需要独立、可撤销的有限委托。第七，仍需要独立后备，Base Account 的可选恢复短语就是一例。 [EIP-7951](https://eips.ethereum.org/EIPS/eip-7951) · [Fusaka 升级](https://ethereum.org/roadmap/fusaka/) [FIDO 凭证交换规范](https://fidoalliance.org/download-credential-exchange-specifications/) · [Google 的 iOS 凭证迁移说明](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en) [Base Account 恢复指南](https://help.coinbase.com/wallet/getting-started/smart-wallet-recovery)
+
+SWIFT 把 passkey 用于账户签名，并通过同步凭证支持换机。用户失去云账户或可用设备时，恢复需要走对应服务的验证。把同步 passkey 作为默认仍有价值，但钱包必须知道在这条路走不通时如何恢复资产。 [Trust Wallet SWIFT](https://trustwallet.com/swift) · [SWIFT 恢复指南](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability) [FIDO 凭证交换规范](https://fidoalliance.org/download-credential-exchange-specifications/) · [Google 的 iOS 凭证迁移说明](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en)
+
+我会把认证、资产签名和恢复设计成三个层次。Passkey 用于认证或授权支持的账户操作。签名可由多方计算（MPC）、可信执行环境（TEE）或账户抽象（AA）智能账户按策略执行。恢复由备用设备、恢复码、守护人或硬件凭证承担，路径应根据钱包类型配置，并能由用户演练。
+
+## YubiKey 与独立的硬件凭证
+
+Yubico 2026 年第三季度净销售额为 **SEK 708.0M（+29.3%）**，有机增长 **28.3%**，订阅收入 **SEK 112.6M（+29.9%）**，ARR **SEK 436.9M（+13.1%）**，EBIT **SEK 179.3M**，利润率 **25.3%**，订单 **SEK 949.0M（+88.2%）**。公司对 **2027–2031 年**的目标为净销售额年均增长 **15%–20%**，期内 EBIT 利润率向 **20%** 靠拢。订单增长快于收入，为硬件凭证需求可能加速提供了一个公司层面的信号。 [Yubico 三季报](https://investors.yubico.com/en/interim-report-july-september-2026/)
+
+Yubico 与 Okta 的调查中，**31%** 的受访者把硬件 passkey 视为首选安全基准，**27%** 选同步 passkey，**23%** 选手机上的设备绑定 passkey。高安全需求用户愿意采用独立硬件凭证，这个调查给出了样本内的偏好。 [Yubico 与 Okta 调查](https://www.yubico.com/resource/global-state-of-authentication-2026/)
+
+YubiKey 的 FIDO 凭证可以留在硬件内，使用时无需同步密钥，适合保护交易所、邮箱、云备份和机构管理员账户。Yubico 也面向机构提供 YubiHSM。YubiKey 没有能让用户独立检查收款地址和金额的交易显示能力。核对链上交易仍需硬件钱包或经过审查的签名策略。 [Yubico 加密行业资料](https://www.yubico.com/industries/cryptocurrency/)
+
+| 方案 | 抗钓鱼 | 设备失守时 | 恢复 | 跨平台 | 适用场景 |
+| --- | --- | --- | --- | --- | --- |
+| 同步 passkey（iCloud／Google 等） | 强 | 依赖账户、设备和提供方校验 | 依赖提供方或备用凭证 | 取决于同步和迁移支持 | 大众登录、交易所账户 |
+| 设备绑定 passkey | 强 | 密钥隔离与用户确认有效时可减轻风险 | 需要备用路径 | 取决于设备、应用和登录方式 | 高价值账户的独立因素 |
+| YubiKey | 强 | 凭证留在硬件上；受控主机仍有风险 | 可预先注册备用钥匙 | USB／NFC，视服务支持 | 交易所、邮箱、云备份、管理员 |
+| 硬件钱包 | 依赖独立核对交易 | 私钥与主机隔离；需核对硬件显示 | 助记词、独立签名人或多签 | 视钱包与链支持 | 长期资产保管 |
+| 钱包 MPC／AA | 取决于认证和策略 | 取决于分片、阈值与执行环境 | 可设守护人或备用签名方 | 取决于实现与网络 | 移动端钱包与可编程签名 |
+
+这张表提供定性比较。强度取决于注册、审批和恢复怎样配置。可以先给用户一个抗钓鱼凭证，再按账户价值增加独立校验。
+
+FIDO 的 CXP／CXF 在 2026 年 2 月仍处于草案阶段。当前 FIDO 页面已列出 CXF 1.0 拟议标准，Google 在 iOS 的文档也说明兼容应用间可导入和导出 passkey。凭证交换有了进展。钱包还有机会改善用户换手机、换生态或失去云账户时的资产恢复。钱包可以在原生安全中心提供凭证注册、硬件绑定、恢复演练、会话管理，并在本地提示用户主动检查相册或备忘录中的秘密材料。 [FIDO 凭证交换规范](https://fidoalliance.org/download-credential-exchange-specifications/) · [Google 的 iOS 凭证迁移说明](https://support.google.com/chrome/answer/13068232?co=GENIE.Platform%3DiOS&hl=en)
+
+对大众用户，一个平台 passkey 加一条可靠备份路径通常更容易用。高价值账户可以分开登录凭证和资产签名凭证，加入独立多签或守护人，并定期演练。钱包厂商需要确定每个参与方能恢复哪些权限。
+
+## 预算怎样再平衡
+
+1. **基线签名防护。** 保持交易模拟、清晰签名、地址投毒提示与代币授权管理，复用行业标准和第三方风控。
+2. **备份和恢复。** 将 passkey 和 AA 或适合多链的 MPC 纳入新用户默认选项。为旧助记词账户保护静态秘密材料，提供本地可选的泄露提醒、在可信设备上迁移或换钥、恢复演练。为高价值账户提供独立硬件凭证。
+3. **供应链和运行时完整性。** 扩展 v2.68 的事故表明，扩展与 App 的构建和发布也需要保护。原稿以 PostHog 相关供应链事件为背景，建议采用构建签名、依赖锁定、运行时证明和第三方 SDK 审计。 [Trust Wallet 事件通报](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update)
+
+我会用五个指标判断投入是否有效。**助记词暴露率、恢复成功率、恢复耗时、passkey 注册和激活率、事件后 30 天留存**。签名前拦截金额继续用于衡量交易防护。
+
+**移动钱包的长期信任，取决于设备失守后用户能否恢复对资产的控制。** Trust Wallet 应维持签名防护，把下一笔增量预算用于默认的 passkey 账户、可演练恢复与高价值账户的独立硬件凭证。

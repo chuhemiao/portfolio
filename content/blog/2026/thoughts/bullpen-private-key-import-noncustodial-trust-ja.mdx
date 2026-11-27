@@ -1,0 +1,56 @@
+---
+title: "Bullpenの秘密鍵インポート事件が問う非カストディ型取引端末への信頼"
+publishedAt: "2026-11-27"
+summary: "Bullpenの初期アカウント事件を起点に、取り込んだウォレットの署名権限と段階的な制限が利用者の定着やポイントに与える影響を考える。"
+slug: "bullpen-private-key-import-noncustodial-trust-ja"
+category: "thoughts"
+language: "ja"
+translationKey: "bullpen-private-key-import-noncustodial-trust"
+sourceSlug: "bullpen-private-key-import-noncustodial-trust"
+---
+
+## 要点
+
+Bullpenはウォレットのインポートを段階的に制限する可能性が高い。影響を受けた2024年のベータ版システムは恒久停止した。今後は引き続き対応するインポートをTurnkeyの署名ポリシーに組み込み、パスキーや二要素認証（2FA）を標準で強化できる。出金先の許可リスト、上限、高額送金の待機時間も選択肢になる。問われているのは、ログインでどこまで署名を承認できるか、利用者が取引端末に資金を置き続けるかだ。ポイントや将来のエアドロップの期待も、この信頼に支えられている。
+
+## 判明している被害範囲
+
+Bullpenは11月24日に、**2024年4〜6月**の初期ベータで開設された**18〜19アカウント**が影響を受けたと発表した。11月25日の更新で、共同創業者のAnsemとほかのテスター18人を含む**19件**と確認した。初報の対象は登録アカウントの**0.005%未満**で、流出資金の**99.8%**は一つのアカウントに由来すると同社は述べた。同じ割合を確定数の19件に当てはめると、登録アカウントは**38万超**となる。初報の下限を18件とすれば下限は**36万**だ。いずれも初報の比率から推定した下限だ。初期報道は**約200万ドル**としたが、BitqueryはAnsemのウォレットからの資金移動で**約257万ドル相当のUSDC**を追跡した。 [Bullpenの初報](https://x.com/BullpenFi/status/2125267130870272331) · [99.8%の追記](https://x.com/BullpenFi/status/2125314571158073654) [Bitquery](https://bitquery.io/investigations/ansem-solana-wallet-drain)
+
+原稿が示すインポート時期の**2024年6月から2026年11月までは約29カ月**だ。Bullpenは、初期アカウントに紐づく旧システムが侵入口だったとしている。旧鍵がどのように保管・移行されたか、未承認の要求にどう署名が許可されたかは公表資料から分からない。2FAが回避されたというAnsemの説明を伝えた報道もある。これはアカウント認証に関する主張だ。Turnkeyの署名環境や暗号機構が侵害されたかは確認できていない。 [Bullpenの11月25日更新](https://x.com/BullpenFi/status/2125585437687181318) [2FAに関する報道](https://www.kucoin.com/news/flash/bullpen-2fa-vulnerability-leads-to-19-account-breaches-49-ansem-supply-remains-secure)
+
+Banklessによると、関連ウォレットは数時間で**約8,750万ANSEM**を売却した。**総供給量の約8.8%**に当たる。原稿の相場スナップショットではANSEMが**24時間で約41%**下落した。観測時点と期間によって値は変わる。BitqueryはRelayを介したSolanaからArbitrumへの資金移動を追跡し、後に**約257万ドル相当のUSDC**が**42.24 BTC**に交換されたと報告した。原稿の換算では**約250万ドル**だ。**11月25日14:40 UTC**時点で、そのBTCの追加移動は確認されていなかった。BullpenはFBIなどに協力し、独立したセキュリティ調査を依頼したと発表した。**11月27日**までに確認した公開情報では補償策は示されていない。誰が取引に署名したかには異論がある。19アカウントへの不正アクセスが同社の公表した範囲だ。 [Bankless](https://www.bankless.com/read/news/ansem-blames-bullpen-breach-for-2-57m-wallet-drain) [Bitquery](https://bitquery.io/investigations/ansem-solana-wallet-drain) [Bullpenの11月25日更新](https://x.com/BullpenFi/status/2125585437687181318) [Unchained](https://unchainedcrypto.com/ansem-says-his-solana-wallet-was-hacked-through-his-bullpen-profile-some-analysts-doubt-it/)
+
+## ログインが署名にどう関わるか
+
+Bullpenはホームページで、非カストディ型とSVM、EVMウォレットのインポートをうたう。文書によると、登録時にTurnkeyの組み込みウォレットを作成する。利用者は秘密鍵をエクスポートでき、既存の秘密鍵や**12語または24語の復旧フレーズ**もインポートできる。現在の文書が説明しているのは正式版で、初期ベータの保管方法と認可設定は公開されていない。 [Bullpenのホームページ](https://bullpen.fi/) [アカウント作成](https://docs.bullpen.fi/getting-started/creating-an-account) · [ウォレット管理](https://docs.bullpen.fi/getting-started/wallet-management)
+
+インポートしても、元のウォレットは同じ鍵を使える。取り込み先での署名には、アカウント認証とウォレットのポリシーが関わる。アカウントを乗っ取られたときは、ログイン権限で送金を承認できるかが焦点になる。Bullpenは利用規約で非カストディ型のサービスと説明し、アカウント内の活動の責任を利用者に帰している。実際の管理権限や損失への責任は、署名ポリシー、規約、調査結果を合わせて評価する必要がある。パスキー、端末への紐づけ、許可リスト、待機時間やハードウェア承認を強化すれば署名権限を変えられる。Bullpen自身が鍵を保持するか、資金の凍結・復旧を行える場合は、運用、資本、規制対応の要件が変わり得る。Bullpenが自社保管へ進む可能性は低いと見ている。 [Bullpen利用規約](https://bullpen.fi/terms) [Turnkeyのポリシー文書](https://docs.turnkey.com/features/policies/overview)
+
+CLIの文書には、すでに機能ごとの制限がある。インポート済みのEVMウォレットは一覧に表示されるが、Bullpenが管理する送金、所有権を確認するPolymarketの復旧、管理型取引、メインのEVMウォレットへの指定には使えない。Solanaのインポートは引き続き文書にある。チェーンと機能で制限を分ける設計は確認できる。すべての利用環境でSolanaにどこまで権限があるかは、この資料だけでは分からない。 [Bullpen CLI](https://cli.bullpen.fi/reference/commands/wallet/import/)
+
+## 秘密鍵のインポートは廃止されるか
+
+**2026年11月27日**までにBullpenは、影響のあった旧システムの恒久停止を公表し、ほかのアカウントは影響を受けていないと説明した。インポートの全面廃止は発表していない。投資家向けページでは、非カストディ型を四つの投資理由の一つに挙げている。この設計を維持することは、現在の事業に合っている。 [Bullpenの11月25日更新](https://x.com/BullpenFi/status/2125585437687181318) [Bullpenの投資家](https://docs.bullpen.fi/about-bullpen/investors)
+
+インポートは、すでにウォレットを持つ利用者を呼び込む入口だ。頻繁に取引する人やポイントを集める人がアドレスを使い続けられ、作り直しや資産移動の手間を省ける。外部ウォレットを組み込み型の環境に移す他社例もある。pump.funは**11月30日**にウェブ版の外部ウォレットログインを終える予定で、元のアドレスを残す経路ではPrivyへのインポートが必要になる。Mark Karpelèsは、鍵がPrivyの信頼できる実行環境（TEE）内で復号される点から、エンドツーエンド暗号化という説明を批判した。インポートを廃止しても組み込みウォレットのアカウントは乗っ取られ得るため、認証と署名ポリシーは引き続き見直す必要がある。 [Bullpenのホームページ](https://bullpen.fi/) [pump.funの移行案内](https://pump.fun/docs/wallet-login-changes) [Privyのインポート設計](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture) [Karpelèsの指摘に関する報道](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html)
+
+| シナリオ | 対応 | 可能性 | 非カストディ事業と競争力への影響 |
+| --- | --- | --- | --- |
+| **段階的に制限、基本シナリオ** | 2024年ベータ経路を停止し、対応するインポートにTurnkeyのポリシーを適用。パスキーまたは2FAを標準で強化し、出金先許可リスト、上限、高額出金の待機時間やハードウェア承認を導入 | 最も高い | 非カストディ型を維持。短期には信頼が低下し、中長期は対策の実行次第 |
+| **インポートを全面廃止** | Turnkeyの組み込みウォレットを残し、外部ウォレットは閲覧専用にする。秘密鍵と復旧フレーズの取り込みを停止 | 中〜低 | 古いアドレスを使える利点が消え、一部の取引者がAxiom、Photon、Trojan、GMGNに移る可能性 |
+| **カストディ型や事業者による復旧へ移行** | プラットフォームが鍵を持つか凍結できるようにし、復旧や保険を提供 | 低い | ブランドが変わり、資本、規制対応、ライセンスが必要になる可能性 |
+
+## 競争力はどう変わるか
+
+DefiLlamaの11月27日時点のスナップショットでは、過去**30日間の手数料は1万5,279ドル**で、**365／30**をかけると**年約18万6,000ドル**。2026年10月は**2万3,982ドル**で、2025年10月の**16万1,631ドル**から前年比で**約85%減**だった。2026年第4四半期は**11月26日までに約3万6,551ドル**。2025年第4四半期の全期間では**約31万4,616ドル**だった。無期限先物の名目取引高は**30日で3,366万ドル**、**累計24億8,700万ドル**。10月同士の比較では事件前から取引活動が鈍っていた。前年は四半期全体、今年は途中までの集計だ。今回の事件で鈍化が加速するかは今後のデータを待ちたい。 [DefiLlama](https://defillama.com/protocol/bullpen)
+
+取引端末の競争力は執行の質、銘柄の発見、利用者への到達経路、乗り換えの手間、報酬への期待で決まる。BullpenにはAnsemの発信力があり、Hyperliquid、Polymarket、Solanaを一つの画面で使える。外部資料によると、ポイントの計画総量は**1億**、約**7,000万**が未配分で、**シーズン3**に入り、**$BULL**が想定ティッカーとされる。観測時点に確認した資料ではトークン生成イベント（TGE）は確認できていない。公式の投資家ページでは**6th Man Ventures**が主導し、Delphi、Manifold、Karatage、Temporal、Spartaが参加したとされる。調達額や評価額は記載されていない。 [MEXC](https://blog.mexc.com/token-reviews/bullpen-airdrop-2026-how-to-farm-bull-points-on-the-multi-chain-terminal-co-founded-by-ansem/) · [Airdrops.io](https://airdrops.io/bullpen/) [Bullpenの投資家](https://docs.bullpen.fi/about-bullpen/investors) [Bullpenの取引機能](https://docs.bullpen.fi/trading)
+
+取引端末に資金を置けば、すぐ取引でき、ポイントも貯められる。Ansemは資金が安全だと確信できないとして、いったん引き出すよう公に勧めた。利用者が残す金額を減らせば、取引やポイントの利用にも影響が及ぶ。**預けた資金の残高と報酬への期待に、リスクが先に織り込まれそうだ。** 競合は秘密鍵をインポートせずに使える経路で信頼を得る可能性がある。Bullpenが全面廃止に踏み切れば、既存ウォレットを使い続けたい取引者を失う恐れもある。 [CryptoSlate](https://cryptoslate.com/crypto-host-who-once-promoted-a-50-billion-memecoin-vision-now-tells-traders-to-get-out/)
+
+## 結論
+
+Bullpenがまず明らかにすべきなのは、ログインから署名に至る認可の流れだ。対応チェーンや機能、上限を分けてインポートを制限し、認証と出金確認を標準で強化するのが基本シナリオだ。非カストディ型を維持するなら、それぞれの認証情報で何を承認できるか開示すれば、利用者がリスクを判断できる。
+
+この先**2〜4週間**で確認したいことは三つある。第一に、根本原因と補償策が公表されるか。第二に、インポートしたウォレットの出金や取引が制限されるか。第三に、入金と取引高が**2週間以内に**回復するか。最初の二つは認可の問題への対応を、最後の一つは取引者が資金を端末に置き続けるかを示す。

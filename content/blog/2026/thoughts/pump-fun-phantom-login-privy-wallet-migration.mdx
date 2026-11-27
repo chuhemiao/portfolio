@@ -1,0 +1,74 @@
+---
+title: "pump.fun 停用 Phantom 网页登录，为什么保留旧地址要导入私钥？"
+publishedAt: "2026-11-24"
+summary: "拆解 pump.fun 的三条钱包迁移路径、Privy 的签名与恢复边界，以及永续、多链、入金和地域限制如何影响平台的账号选择。"
+slug: "pump-fun-phantom-login-privy-wallet-migration"
+category: "thoughts"
+language: "zh-CN"
+translationKey: "pump-fun-phantom-login-privy-wallet-migration"
+sourceSlug: "pump-fun-phantom-login-privy-wallet-migration"
+---
+
+## TL;DR
+
+pump.fun 正把网页端并入 Pump App 的邮箱和社交登录体系。用户若要保留旧地址，并让 Privy 嵌入钱包用该地址签名，官方路径要求导入旧私钥。原钱包仍能签名，导入后多了一处密钥管理和签名环境。单次钱包签名可以验证地址控制权。要让 Privy 以同一个普通钱包地址持续签名，还得满足不同的授权条件。
+
+我更关注这套设计给平台带来的好处。统一账号能支撑永续、多链交易和法币入金，也方便执行功能资格限制。费用下滑让留住重复交易的用户更重要。用户则要多信任一套钱包基础设施和登录流程。Ledger、多签和不允许导出密钥的钱包没有保留原账号的同类选项。 [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes) · [Privy 导入架构](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture)
+
+## 官方公布了什么
+
+pump.fun 于 **2026 年 11 月 22 日**公布，**11 月 30 日 15:00 UTC** 起，网页端将用邮箱、Google、Apple 或 GitHub 登录，停止使用 Phantom、Solflare、Ledger 等外部钱包直接登录。Pump App 已使用这套登录。官方称，用户若迁移原账号，地址、持仓、余额、关注关系和用户名都能保留。已经登录的旧钱包会话在截止后仍可看到添加登录方式的提示，公告说账号和资金不会因这次变更被删除。 [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes) · [11 月 22 日的公告报道](https://en.theblockbeats.news/flash/378605)
+
+争议集中在保留旧账号的路径。网页和 App 均需要把原钱包导入 Privy。Phantom 本身仍可使用，它也公开说明了如何将 Privy 钱包在 Phantom 中使用。变化的是 pump.fun 的登录和签名安排。 [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes) · [Phantom 帮助中心](https://help.phantom.com/articles/import-your-privy-fomo-pump-fun-wallet-into-phantom-41408635409683)
+
+## 同一个地址，怎样签名
+
+旧模式用钱包地址识别账号，登录凭证是钱包给出的签名，私钥留在原钱包。新版以邮箱或社交身份登录，账号下的钱包由 Privy 提供。用 Sign in with Solana（SIWS）签一条消息，只能证明人在当时控制该地址。平台可以据此关联旧资料。之后若继续使用外部钱包，交易仍需由钱包或另行授权的签名方批准。
+
+对于普通 Solana 密钥对地址，Privy 要直接产生与原钱包同地址的签名，需要相同的签名密钥。导入私钥解决的是这个具体产品要求。可验证的签名可以用于迁移账号资料，范围受限、可撤销的委托也可以支持某些操作，它们各自授予不同权限。 [Solana 签名与认证文档](https://solana.com/docs/frontend/messages-and-auth) · [Privy 钱包权限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls)
+
+Privy 的公开文档说明，导入时用临时公钥作 HPKE 加密，私钥材料在可信执行环境（TEE）内解密并用于初始化钱包，临时密钥对随后销毁。这里的加密传输端点是浏览器和 Privy 的 TEE。前 Mt. Gox CEO Mark Karpelès 批评，若用户把「端到端加密」理解成只有自己能用密钥，就会被这个描述误导。 [Privy 导入架构](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture) · [Karpelès 的批评报道](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html)
+
+迁移后的旧私钥仍然有效。Privy 基础设施可在授权策略允许时用同一密钥签名，用户也有导出路径。pump.fun 条款称 Pump 实体对钱包和私钥没有控制权。公开文件足以确认用户多信任了一套基础设施，具体可签名的主体和权限仍取决于该钱包配置。 [pump.fun 使用条款](https://pump.fun/docs/terms-and-conditions) · [Privy 钱包权限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls) · [Phantom 帮助中心](https://help.phantom.com/articles/import-your-privy-fomo-pump-fun-wallet-into-phantom-41408635409683)
+
+| 迁移路径 | 地址和平台历史 | 签名环境 | 适用对象 | 主要代价 |
+| --- | --- | --- | --- | --- |
+| 网页 `Link email & socials` 导入私钥，官方推荐 | 保留 | 原钱包与完成导入的 Privy 钱包均可签名，平台内访问经过账号门禁 | 可导出私钥的软件钱包 | 密钥进入另一套签名基础设施，增加对网页、TEE 和登录安全的依赖 |
+| 在 Pump App 导入并绑定 | 保留 | 签名边界与网页导入相同 | 手机端用户，且旧私钥可导出 | 同样需要信任嵌入钱包基础设施，导入发生在 App 内 |
+| 用邮箱或社交登录创建新账号，手动转入可转资产 | 使用新地址，原关注关系与平台历史留在旧账号 | 新 Privy 钱包 | Ledger、多签和其他不可导出钱包 | 平台资料无法跟着转入，资产需另行转移 |
+
+## 为什么此时要统一账号
+
+10 月已有报道指 pump.fun 在准备接入 Hyperliquid 永续。**11 月 10 日**公布跨保证金、限价单、时间加权平均价（TWAP）订单等更新，**11 月 19 日**上线的是部分平仓，可分批止盈或止损。Pro mode 下频繁挂单、撤单和调整仓位时，嵌入式签名能减少反复切到外部钱包的摩擦。用户离线时仍可能有已授权的订单待执行。按条款第 30B.5 和 30B.6 节，永续指令由用户钱包的密钥签署，条件单由 Hyperliquid 触发。产品需要的是顺畅的授权与执行，单凭这些功能无法推断 pump.fun 持有可自由交易或提取资金的密钥。 [10 月的永续接入报道](https://en.bloomingbit.io/feed/news/121933) · [11 月永续更新](https://pumpfyi.com/news/2026-11-10-pump-fun-perps-add-limit-orders-cross-margin/) · [部分平仓公告](https://t.me/pumpfun/327) · [Hyperliquid 订单类型](https://hyperliquid.gitbook.io/hyperliquid-docs/trading/order-types) · [pump.fun 使用条款](https://pump.fun/docs/terms-and-conditions)
+
+Pump App 也扩展到 Monad、Sui 等网络。外部钱包可以按自己的节奏调整支持范围。Monad 早期公告给出的日期是 **8 月 12 日**，Phantom 帮助中心确认实际停止支持是 **2026 年 8 月 26 日**。嵌入钱包让平台在注册时按各网络的签名规则创建钱包，并在同一个账号下接入多链。Apple Pay 入金也可以沿用这个开户流程。邮箱解决账号身份问题，嵌入钱包负责处理地址、签名和网络费用。 [Monad 接入报道](https://www.panewslab.com/zh/articles/01a170b0-dad1-74df-a9b3-7dbf2c1f3ce1) · [Pump App 的 Sui 接入公告](https://t.me/pumpfun/341) · [Monad 早期公告报道](https://www.chaincatcher.com/en/article/2278081) · [Phantom 的 Monad 支持说明](https://help.phantom.com/articles/ending-support-for-monad-in-phantom-38674346854931) · [Pump App 入金文档](https://intercom.help/pumpfun-web/en/articles/11519838-depositing-funds-on-the-mobile-app)
+
+![pump.fun 项目费用的 7 日滚动均值。10 月 7 日约 242 万美元，11 月 22 日约 127 万美元。](/images/blog/pump-fun-phantom-login-privy-wallet-migration/fees-7d.png)
+
+*DefiLlama 的 pump.fun 项目费用，按 UTC 日计算含当日的 7 日滚动均值，单位为美元／日。图中覆盖 2026 年 10 月 1 日至 11 月 22 日。* [DefiLlama 原始序列](https://api.llama.fi/summary/fees/pump.fun?excludeTotalDataChartBreakdown=true&dataType=dailyFees)
+
+原稿 **2026 年 11 月 24 日 00:40 UTC** 的市场快照记录 PUMP 价格 **0.00253 美元**、市值 **8.93 亿美元**、30 天回报 **−41.3%**。费用快照中，截至 10 月 7 日和 11 月 22 日的 7 日均值分别为 **244 万与 129 万美元／日**，下降约 **47%**。10 月 1 日和 11 月 22 日单日分别为 **240 万与 94 万美元**。按图中的公开项目序列复算，7 日均值为 **242.24 万与 126.64 万美元／日**（下降 **47.72%**），单日为 **240.08 万与 95.58 万美元**。两套记录略有出入，方向相同。 [CoinGecko 行情参考](https://www.coingecko.com/en/coins/pump-fun) · [DefiLlama 原始序列](https://api.llama.fi/summary/fees/pump.fun?excludeTotalDataChartBreakdown=true&dataType=dailyFees)
+
+4 月 28 日，pump.fun 将用于回购并销毁 PUMP 的资金规模估为约 **50% 的平台收入**。协议费用和平台收入各有统计口径，交易费用下滑可能压缩回购资金来源。邮箱和社交账号则给平台提供了联系、召回和分层服务的渠道。交易活动回落时，留住持续交易的用户比单纯增加地址数更有价值。 [pump.fun 4 月 28 日公告](https://pump.fun/docs/april-28-announcement) · [回购销毁报道](https://www.theblock.co/news/ecosystems/2026-04-28-pump-fun-burns-370-million-pump-399288)
+
+## 平台能控制什么
+
+11 月 16 日版条款对各项产品分别设置资格限制。第 30B.2 节把永续列为受限功能，覆盖美国、加拿大安大略省、受制裁辖区和 Hyperliquid 定义的受限人士等人群。第 30E.2 节限制美国用户等使用预测市场。第 30D.5 节对 Pump Bridge 上涉及证券的特定资产设限，列入美国、英国、欧洲经济区（EEA）、瑞士和加拿大等适用辖区。条款也允许使用工具筛查钱包。9 月曾有报道称 Pump App 暂时从美国和印度 App Store 下架。 [pump.fun 使用条款](https://pump.fun/docs/terms-and-conditions) · [App Store 下架报道](https://coinness.com/en/news/1168382)
+
+邮箱和社交登录为平台提供了可以恢复、限制和持续运营的账号。地理围栏和链上筛查在钱包登录体系中也能执行。统一账号让网页和 App 更容易共同适用资格规则，并保留访问记录。pump.fun 公告没有把合规写成这次变更的理由。结合产品和条款，我认为这项能力很可能是长期动机之一。
+
+Phantom 有应用内浏览器，也有自己的永续交易产品。只要它仍掌握用户最初打开交易应用的入口，它就是潜在的分发竞争者。将交易钱包挂在自家账号下，pump.fun 可以控制默认入金路径、费用路由和奖励发放。Privy 于 **2025 年 6 月**宣布加入 Stripe，并曾列出 Hyperliquid、OpenSea、Farcaster 等采用方，说明这种账号和钱包基础设施已经用于面向消费者的金融应用。 [Phantom 应用内浏览器](https://help.phantom.com/articles/use-the-explore-tab-in-phantom-on-mobile-41523165147667) · [Phantom 永续说明](https://help.phantom.com/articles/42292249388307) · [Privy 与 Stripe 的公告](https://privy.io/blog/announcing-our-acquisition-by-stripe) · [Privy 的采用案例](https://privy.io/blog/announcing-our-fundraise-led-by-ribbit-capital)
+
+## 用户承担的代价
+
+Karpelès 关注两个问题。用户把密钥交给导入界面时，得先信任该界面。加密之后，用户还要信任加密接收方的身份和 Privy TEE 的隔离。平台访问同时依赖邮箱或社交身份及钱包的授权配置。账号被接管、被封禁，或因司法命令和合规要求受限时，平台内的签名和恢复也可能受影响。留有原私钥的用户仍有独立使用旧地址的路径。关闭平台账号本身不会在链上换钥，公开材料也不足以核对供应商删号后的密钥留存。SIWS 可以用于关联原账号并维持外部钱包自托管，平台得到的权限与导入私钥不同。 [Karpelès 的批评报道](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html) · [Privy 钱包权限](https://docs.privy.io/security/wallet-infrastructure/policy-and-controls)
+
+条款第 **12.2(c)** 节称，平台在任何情况下都不会要求用户分享钱包私钥、助记词或社交和邮箱凭证。第 **30.1** 节把登录时生成的 Privy 钱包责任归于 Privy 和用户，并称 Pump 实体不控制钱包和私钥。迁移公告同时要求在其官方流程内导入旧私钥。安全审计可以核对私钥究竟传给了谁、谁能授权签名、账号受限时怎样恢复，并厘清这项流程与条款承诺的关系。 [pump.fun 使用条款](https://pump.fun/docs/terms-and-conditions) · [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes)
+
+可导出密钥有助于独立访问，却不会改变已经导入同一把密钥的事实。用户也未必会额外备份。Ledger 和多签用户无法走保留旧账号的路径，只能按公告另开账号。从公告日期到下线约 **8 天**。旧会话仍可提示迁移，时间压力主要来自外部钱包直接登录的截止点。 [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes)
+
+## 结论
+
+pump.fun 正在把钱包地址作为入口的产品，迁成可运营的消费级交易账号。网页和 App 共用登录是用户直接感受到的变化。更长远的动力可能来自永续、多链、入金、用户留存和按产品执行资格限制。若坚持沿用旧地址，并让嵌入钱包直接签名，私钥导入就会成为这套实现最需要验证的一环。
+
+**对平台，值得公开的是签名权、恢复条件和可复核的安全审计。** 对用户，确需迁移时，可以通过官方导出路径保有独立访问，并只在迁移地址留交易资金。大额资产适合放在由另一把独立密钥控制的 Phantom 或硬件钱包里。Ledger 和多签用户若还要使用 pump.fun，可以开一个独立交易账号，继续让原钱包承担保管。

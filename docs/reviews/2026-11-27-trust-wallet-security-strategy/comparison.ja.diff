@@ -1,0 +1,32 @@
+--- baseline.ja.md
++++ trust-wallet-signing-backup-passkey-strategy-ja.mdx (title and body)
+@@ -21,9 +21,9 @@
+ | 2026-11 | worse_query | Binanceが挙げたiOS 26.7.1、27.0.1、27.2。アプリのコンテナ内ファイルの読み取り | 公開時点のセキュリティ情報からは修正を特定できなかった |
+ | 2025-12 | Trust WalletのChrome拡張機能v2.68 | リリースのサプライチェーンとクライアントのロック解除 | 2,520のアドレス、約850万ドル |
+ 
+-調査対象が重なる可能性がある。被害額は各資料が扱う範囲で読む必要がある。 [SlowMist](https://slowmist.medium.com/threat-intelligence-analysis-of-fomopeek-app-store-poisoning-and-ios-kernel-exploitation-e568762d11ca) [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt) [SEAL](https://radar.securityalliance.org/seal-weekly-stats-28-oct-3-nov-2026/) [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update) [iVerify](https://www.iverify.com/blog/malvertising-coruna-darksword-iphone-exploits)
++被害額は各資料の集計範囲に対応する。同じ被害が複数の調査に含まれる可能性がある。 [SlowMist](https://slowmist.medium.com/threat-intelligence-analysis-of-fomopeek-app-store-poisoning-and-ios-kernel-exploitation-e568762d11ca) [Bitquery](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt) [SEAL](https://radar.securityalliance.org/seal-weekly-stats-28-oct-3-nov-2026/) [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update) [iVerify](https://www.iverify.com/blog/malvertising-coruna-darksword-iphone-exploits)
+ 
+-Trust Walletは、復旧フレーズと秘密鍵を端末内で暗号化して平文で保存していないため、worse_queryは同社のiOSウォレットに影響しないと説明した。この回答が扱うのはアプリのコンテナ内にある保存ファイルの読み取りだ。端末やウォレットクライアントが侵害され、復旧情報を使用している間の露出は、実行時の保護に左右される。端末の脅威とiOS向け予算の配分は、以前のDarkSwordの記事でも取り上げた。 [Trust WalletのiOS向け説明](https://trustwallet.com/blog/security/ios-update-crypto-wallet-security) · [Phemex](https://phemex.com/news/article/trust-wallet-confirms-ios-users-safe-from-worsequery-vulnerability-103144) [前回のDarkSword分析](/ja/blog/trust-wallet-ios-security-after-darksword-ja)
++Trust Walletは、復旧フレーズと秘密鍵を端末内で暗号化して平文で保存していないため、worse_queryは同社のiOSウォレットに影響しないと説明した。この回答が扱うのはアプリのコンテナ内にある保存ファイルの読み取りだ。端末やウォレットクライアントが侵害され、復旧情報を使用している間の露出は、実行時の保護に左右される。端末の脅威とiOS向けの予算配分は、前回のDarkSword分析で詳しく扱った。 [Trust WalletのiOS向け説明](https://trustwallet.com/blog/security/ios-update-crypto-wallet-security) · [Phemex](https://phemex.com/news/article/trust-wallet-confirms-ios-users-safe-from-worsequery-vulnerability-103144) [前回のDarkSword分析](/ja/blog/trust-wallet-ios-security-after-darksword-ja)
+ 
+ 2025年12月のChrome拡張機能 **v2.68** では、改ざんされた拡張機能が、ユーザーによるロック解除後にウォレットの復旧情報へアクセスできた。公開するビルドの完全性とクライアント権限に課題が残る。Trust Walletは **2,520のアドレス** と約 **850万ドル** の被害を報告し、自主補償を発表して確認手続きを始めた。ロック解除にパスキーを使っても、クライアントによる復旧フレーズの再構成は別途防ぐ必要がある。 [Trust Walletの事案報告](https://trustwallet.com/blog/company/trust-wallet-browser-extension-v268-incident-community-update)
+ 
+@@ -35,7 +35,7 @@
+ 
+ Scam Snifferによれば、署名フィッシングの被害額は2024年の **4億9,400万ドル** から2025年の **8,385万ドル** へ約 **83%減少** した。被害に遭ったウォレットは約 **33万2,000** から **10万6,000** に **68%減少**。単一事案の最大額は **5,540万ドル** から **650万ドル** になった。防御策の改善と整合する結果だが、シミュレーション、ブロックリスト、承認管理それぞれの寄与までは集計から読み取れない。 [Scam Snifferの年次報告](https://drops.scamsniffer.io/scam-sniffer-2025-crypto-phishing-losses-fall-83-to-84-million/)
+ 
+-署名前の保護は引き続き必要だ。2026年1月の署名フィッシング被害は **627万ドル** と前月比 **207%増** で、**4,741のウォレット** が被害に遭った。11月27日にはEthereum上で **51,536 USDT** のアドレスポイズニング被害があったとScam Snifferが報告した。送金先を確認する意義が分かる事例だ。不審な署名や送金は、多くの利用者が接する機会の多いリスクでもある。 [Scam Snifferの1月集計](https://finance.yahoo.com/news/signature-phishing-200-january-losses-143036953.html) [Scam Sniffer](https://x.com/realScamSniffer/status/2126177954816479665)
++署名前の保護は引き続き必要だ。2026年1月の署名フィッシング被害は **627万ドル** と前月比 **207%増** で、**4,741のウォレット** が被害に遭った。11月27日にはEthereum上で **51,536 USDT** のアドレスポイズニング被害があったとScam Snifferが報告した。送金先を確認する意義が分かる事例だ。不審な署名依頼や送金先は、多くの利用者が日常的に遭遇しうる。 [Scam Snifferの1月集計](https://finance.yahoo.com/news/signature-phishing-200-january-losses-143036953.html) [Scam Sniffer](https://x.com/realScamSniffer/status/2126177954816479665)
+ 
+ Ethereumの **ERC-7730** は、クリア署名に使う取引の説明を構造化する。LedgerはSolanaのJupiterやKaminoなどにも対応を広げ、Solanaは **11月26日** にクリア署名の提供開始を発表した。使い勝手は各ウォレットとプロトコルの実装に左右される。Blockaidが2025年から2026年初めのDeFi事案を調べたところ、秘密鍵とインフラの侵害が集計額の大きな部分を占めた。主にプロトコルや組織の事案だが、有効な鍵で署名されると監視に限界があることも示す。署名に共通規格と外部のリスク検知を使えば、復旧やリリースの完全性にも開発時間を配分できる。 [ERC-7730](https://ercs.ethereum.org/ERCS/erc-7730) · [Ledger](https://www.ledger.com/blog-solana-clear-signing) · [TechFlow](https://www.techflowpost.com/en-US/newsletter/147100/solana-clear-signing-launch) [Blockaid](https://blockaid.io/blog/compromised-private-keys-remain-the-biggest-source-of-defi-losses)
+ 
+@@ -69,7 +69,7 @@
+ 
+ Yubicoの2026年7–9月期の純売上高は **7億800万スウェーデンクローナ（29.3%増）**、オーガニック成長率は **28.3%**、サブスクリプション売上高は **1億1,260万クローナ（29.9%増）**、ARRは **4億3,690万クローナ（13.1%増）** だった。EBITは **1億7,930万クローナ**、EBITマージンは **25.3%**。受注額は **9億4,900万クローナ（88.2%増）** に達した。**2027–2031年** は、純売上高の年 **15%–20%** 成長と、期間中にEBITマージンを **20%** に近づける目標を掲げる。売上高を上回る受注の伸びは、ハードウェア認証の需要が加速している可能性を示す同社の指標だ。 [Yubicoの第3四半期報告書](https://investors.yubico.com/en/interim-report-july-september-2026/)
+ 
+-YubicoとOktaの調査では、最も強い手段としてハードウェア型パスキーを選んだ回答が **31%**、同期型が **27%**、スマートフォンにひも付けたパスキーが **23%** だった。独立したハードウェア認証に対する調査対象者の評価が分かる。 [Yubico・Oktaの調査](https://www.yubico.com/resource/global-state-of-authentication-2026/)
++YubicoとOktaの調査では、最も強い手段としてハードウェア型パスキーを選んだ回答が **31%**、同期型が **27%**、スマートフォンにひも付けたパスキーが **23%** だった。この調査では、独立したハードウェア認証を選ぶ回答が最も多かった。 [Yubico・Oktaの調査](https://www.yubico.com/resource/global-state-of-authentication-2026/)
+ 
+ YubiKeyのFIDO認証情報はハードウェア内に保持でき、同期せずに使える。取引所、メール、クラウドバックアップ、管理者アカウントの保護に向く。Yubicoは機関向けにYubiHSMも提供している。YubiKey自体に送金先と金額を確認できる取引画面はない。その確認にはハードウェアウォレットや検証済みの署名ポリシーを使う。 [Yubicoの暗号資産業界向け資料](https://www.yubico.com/industries/cryptocurrency/)
+ 

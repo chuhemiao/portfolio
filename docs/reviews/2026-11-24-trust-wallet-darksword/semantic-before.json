@@ -1,0 +1,466 @@
+{
+  "meta": {
+    "n_candidates": 45,
+    "n_rename": 15,
+    "n_cohesion": 16,
+    "n_colon": 14,
+    "n_iso3": 0,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 5,
+      "para": "该挪，但不该挪到“更厚的助记词备份”。DarkSword 证明的是：当 iOS 内核被拿下，钱包在签名前做的一切判断都发生在攻击者可控的进程里；而备份的保密性由 Apple 的 Secure Enclave 与钥匙串决定，钱包在用户态加固不了，投再多也只是租来的护城河。真正稀缺的是“种子不以可窃取形态存在，且仍然可恢复”——Trust Wallet 2024 年就有这张牌（SWIFT：ERC-4337 智能账户 + passkey），却一直把它当可选项。差异化不在密码学，在默认化、恢复运营和可验证的公开承诺。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "“租来的护城河”将依赖平台的保护能力改称为竞争优势。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 17,
+      "para": "所以准确的说法不是“风险从签名转向备份”，而是：风险从“可拦截的交易时点”转向“不可拦截的设备时点”。备份只是密钥的其中一个落点——相册、备忘录、App 容器、进程内存、云盘，都是同一个问题的不同表面。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "把设备上的密钥留存位置称为“落点”和“表面”。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 32,
+      "para": "Trust Wallet 对 worsequery 的回应是“助记词与私钥加密存储、非明文，iOS 用户不受影响”（11 月 11 日多家转载）。这个答法在沙盒逃逸这一层是对的——密文被读走不等于被解密。但把它当成 DarkSword 的答案就错了：全链攻击读的是解密之后的内存，或者干脆记录你输入备份密码的那一刻。Trust Wallet 自己的文档也承认，可选的加密云备份“只能用你设的密码解密”，而密码一旦在同一台被控设备上输入，加密就退化成一层编码。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "密文、运行时明文和备份密码属于不同对象和阶段。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 34,
+      "para": "更根本的约束是：信任锚在 Apple 手里。Secure Enclave、iCloud 钥匙串、Data Protection 的等级都由系统决定，第三方钱包在用户态没有加固余地。把预算投进“更厚的备份加密”，等于把工程路线图绑在苹果的发布节奏上——而苹果每开放一次能力（passkey 同步、密码 App、账户恢复），这项投入就被商品化一次。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "系统能力、工程路线图和投资口径分别有独立含义。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 42,
+      "para": "其余资产也在，但都押在错误的层：Security Scanner 累计拦下 4.58 亿美元流向恶意合约、2025 年提示 1.91 亿美元可疑交易、地址投毒防护——全部是签名前的拦截，恰好是 DarkSword 绕开的那一层。这套 ROI 叙事越成功，组织越有惯性继续往签名层加码。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "从签名前拦截改称签名层加码，仍指同一类投入。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 44,
+      "para": "财务上也没有打军备竞赛的余地。TWT 报 0.3145 美元、市值约 1.31 亿美元、FDV 约 3.15 亿美元、24 小时成交 248 万美元（2026-11-23 01:30 UTC 快照）。对比 Coinbase 与 Phantom 的资产负债表，这决定了策略只能是借标准 + 开源 + 默认化，不能是自研密码学。品牌触达反而是优势：X 粉丝 426 万，对 Phantom 的 96 万。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "代币价格、市值、FDV、成交量和粉丝数是不同指标。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 54,
+      "para": "关键判断：市场上“seedless”话术已经泛滥，但多数只是登录层无密码，账户层仍是一颗单点种子。Trust Wallet 若只把 passkey 当登录方式，不构成差异化；只有做到链上账户层没有单一种子（passkey 签名 + 守护人/多设备恢复 + 大额走硬件或多签），才能说出一句别人说不出口的话。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "“单点种子”和“单一种子”换词指同一个密钥瓶颈。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 58,
+      "para": "可验证。 安全功能天生不可见，靠文案无法说服 iOS 用户换钱包。可验证的做法是：公开账户架构与恢复流程、接受第三方审计、设一个公开悬赏——“攻破我的 iPhone，在不触发守护人的前提下转走资金”。这比任何广告都便宜，且只有真做了架构改造的团队敢接。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "账户审计、公开悬赏和广告分属不同手段。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 60,
+      "para": "可演示。 用户能感知的不是“内核级防护”，是“换新 iPhone 后 90 秒恢复”“币在，但手机上找不到任何 12 个单词”“设备被越狱，App 主动提示并一键迁移到新账户”。这是产品语言，不是安全语言。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "恢复、助记词和迁移是不同的演示功能。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 62,
+      "para": "可承担。 这是最容易被忽略的代价：seedless 会把“丢币责任”从用户转移到品牌。iCloud 账户丢失、passkey 被误删、守护人失效、跨生态（iPhone 换安卓）不可迁移——今天 Trust Wallet 可以说“我们不托管、不担责”，改成 passkey + 守护人之后，用户会来找客服，媒体会来问赔付。预算挪过去的同时，运营与支持成本必须同步挪过去，否则一次大规模恢复失败就能把差异化打成负面。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "登录、守护人、支持及赔付责任各有具体含义。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 73,
+      "para": "衡量指标也应当换掉：从“拦截金额”改为iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持工单占比。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "四个指标和拦截金额有不同统计对象。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 75,
+      "para": "如果内部判断 iOS 用户规模撑不起账户层改造，那么次优解不是“加厚备份”，而是把 20% 那一档做深：备份健康检查 + 被盗后的应急响应与资金迁移指引。这至少是可交付的，也诚实。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "备份健康检查与应急响应都是具体交付项。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 79,
+      "para": "DarkSword 真正推翻的不是签名，而是“把密钥留在设备上、只把它藏好”这个前提。备份加密解决的是“别人读到文件”，解决不了“别人读到解密后的内存”；而它的信任锚在苹果手里，投得越深，越像在为 iOS 的下一个版本做免费验证。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "文件静态访问和密钥在内存解密是不同阶段。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 81,
+      "para": "Trust Wallet 的差异化不在备份层，在“种子不存在，但你不会丢币”——SWIFT/Barz 已经证明技术可行，缺的是把它变成默认、把恢复做成产品、把承诺做成可公开检验的东西。这恰好是它在 iOS 上相对 Phantom（设计）和 Coinbase（合规）唯一能低成本占据的位置。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "把“种子不存在”这项账户设计转述为待默认化的产品能力。"
+    },
+    {
+      "type": "rename",
+      "file": "original.zh-CN.md",
+      "line": 83,
+      "para": "底线判断：把增量预算押到“无种子账户 + 可验证恢复”，备份只投可用性，不投保密性。 如果只能做一件事，就让 iOS 新用户默认不开助记词钱包——这是唯一一个 DarkSword 之后再也没法被质疑的产品决定。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "把“无种子账户”改称“默认不开助记词钱包”。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 17,
+      "prev_tail": "差异化不在密码学，在默认化、恢复运营和可验证的公开承诺",
+      "next_head": "所以准确的说法不是“风险从签名转向备份”，而是：风险从“可拦截的交易时点”转向“不可拦截的设备时点”",
+      "label": "表面有连接词实际关系不清",
+      "confidence": "高",
+      "reason": "前段讲差异化，不能直接推出后段“所以”引导的安全判断。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 28,
+      "prev_tail": "备份只是密钥的其中一个落点——相册、备忘录、App 容器、进程内存、云盘，都是同一个问题的不同表面",
+      "next_head": "上表为基于各攻击链技术描述的评估，非厂商实测数据",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "列出存放位置后用表格说明不同防护层的覆盖范围。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 32,
+      "prev_tail": "上表为基于各攻击链技术描述的评估，非厂商实测数据",
+      "next_head": "Trust Wallet 对 worsequery 的回应是“助记词与私钥加密存储、非明文，iOS 用户不受影响”（11 月 11 日多家转载）",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "从防护判断转向钱包对其中一种沙盒漏洞的回应。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 34,
+      "prev_tail": "Trust Wallet 自己的文档也承认，可选的加密云备份“只能用你设的密码解密”，而密码一旦在同一台被控设备上输入，加密就退化成一层编码",
+      "next_head": "更根本的约束是：信任锚在 Apple 手里",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "从备份凭据风险进入系统层的信任边界。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 42,
+      "prev_tail": "把预算投进“更厚的备份加密”，等于把工程路线图绑在苹果的发布节奏上——而苹果每开放一次能力（passkey 同步、密码 App、账户恢复），这项投入就被商品化一次",
+      "next_head": "其余资产也在，但都押在错误的层：Security Scanner 累计拦下 4.58 亿美元流向恶意合约、2025 年提示 1.91 亿美元可疑交易、地址投毒防护——全部是签名前的拦截，恰好是 DarkSword 绕开的那一层",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "候选中的平台能力与签名前工具之间切换，需要借助章节理解。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 44,
+      "prev_tail": "这套 ROI 叙事越成功，组织越有惯性继续往签名层加码",
+      "next_head": "财务上也没有打军备竞赛的余地",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从产品指标突然转到财务能力，原稿没有提供对应依据。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 54,
+      "prev_tail": "品牌触达反而是优势：X 粉丝 426 万，对 Phantom 的 96 万",
+      "next_head": "关键判断：市场上“seedless”话术已经泛滥，但多数只是登录层无密码，账户层仍是一颗单点种子",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从品牌数据转到登录与账户，主题之间依赖中间的表格。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 58,
+      "prev_tail": "只有做到链上账户层没有单一种子（passkey 签名 + 守护人/多设备恢复 + 大额走硬件或多签），才能说出一句别人说不出口的话",
+      "next_head": "安全功能天生不可见，靠文案无法说服 iOS 用户换钱包",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "先提出账户差异，再说明如何让差异受到公开检验。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 60,
+      "prev_tail": "这比任何广告都便宜，且只有真做了架构改造的团队敢接",
+      "next_head": "用户能感知的不是“内核级防护”，是“换新 iPhone 后 90 秒恢复”“币在，但手机上找不到任何 12 个单词”“设备被越狱，App 主动提示并一键迁移到新账户”",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "同一安全承诺从审计和悬赏转到用户可以看到的演示。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 62,
+      "prev_tail": "这是产品语言，不是安全语言",
+      "next_head": "这是最容易被忽略的代价：seedless 会把“丢币责任”从用户转移到品牌",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从展示产品转到品牌承担责任，需要读者补足关系。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 66,
+      "prev_tail": "预算挪过去的同时，运营与支持成本必须同步挪过去，否则一次大规模恢复失败就能把差异化打成负面",
+      "next_head": "不是“安全预算从 A 挪到 B”，而是把增量按威胁的有效性重新切：",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "恢复运营成本的论点引出增量预算的分配。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 73,
+      "prev_tail": "不是“安全预算从 A 挪到 B”，而是把增量按威胁的有效性重新切：",
+      "next_head": "衡量指标也应当换掉：从“拦截金额”改为iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持工单占比",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "预算分配后列出用于衡量同一组投入的指标。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 75,
+      "prev_tail": "衡量指标也应当换掉：从“拦截金额”改为iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持工单占比",
+      "next_head": "如果内部判断 iOS 用户规模撑不起账户层改造，那么次优解不是“加厚备份”，而是把 20% 那一档做深：备份健康检查 + 被盗后的应急响应与资金迁移指引",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从衡量方法切回账户改造的投入规模和实施条件。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 79,
+      "prev_tail": "这至少是可交付的，也诚实",
+      "next_head": "DarkSword 真正推翻的不是签名，而是“把密钥留在设备上、只把它藏好”这个前提",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从备份备选交付切回早期的攻击论点，话题由结论小节重开。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 81,
+      "prev_tail": "而它的信任锚在苹果手里，投得越深，越像在为 iOS 的下一个版本做免费验证",
+      "next_head": "Trust Wallet 的差异化不在备份层，在“种子不存在，但你不会丢币”——SWIFT/Barz 已经证明技术可行，缺的是把它变成默认、把恢复做成产品、把承诺做成可公开检验的东西",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "从平台信任边界自然引出账户层可以做的产品差异。"
+    },
+    {
+      "type": "cohesion",
+      "file": "original.zh-CN.md",
+      "line": 83,
+      "prev_tail": "这恰好是它在 iOS 上相对 Phantom（设计）和 Coinbase（合规）唯一能低成本占据的位置",
+      "next_head": "底线判断：把增量预算押到“无种子账户 + 可验证恢复”，备份只投可用性，不投保密性",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "最后的预算建议落实前一句所述的位置。"
+    }
+  ],
+  "colon": [
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 5,
+      "colon_before": "DarkSword 证明的是",
+      "colon_after": "当 iOS 内核被拿下，钱包在签名前做的一切判断都发生在攻击者可控的进程里；而备份的保密性由 Apple 的 Secur",
+      "sentence": "该挪，但**不该挪到“更厚的助记词备份”**。DarkSword 证明的是：当 iOS 内核被拿下，钱包在签名前做的一切判断都发生在攻击者可控的进程里；而备份的保密性由 Apple 的 Secure Enclave 与钥匙串决定，钱包在用户",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“证明的是”仍需宾语，冒号前没有独立主张。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 5,
+      "colon_before": "Trust Wallet 2024 年就有这张牌（SWIFT",
+      "colon_after": "ERC-4337 智能账户 + passkey），却一直把它当可选项。差异化不在密码学，在默认化、恢复运营和可验证的公开",
+      "sentence": "该挪，但**不该挪到“更厚的助记词备份”**。DarkSword 证明的是：当 iOS 内核被拿下，钱包在签名前做的一切判断都发生在攻击者可控的进程里；而备份的保密性由 Apple 的 Secure Enclave 与钥匙串决定，钱包在用户",
+      "label": "定义或解释",
+      "confidence": "高",
+      "reason": "解释 SWIFT 对应的 ERC-4337 和 passkey 组成。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 17,
+      "colon_before": "而是",
+      "colon_after": "**风险从“可拦截的交易时点”转向“不可拦截的设备时点”**。备份只是密钥的其中一个落点——相册、备忘录、App 容器、",
+      "sentence": "所以准确的说法不是“风险从签名转向备份”，而是：**风险从“可拦截的交易时点”转向“不可拦截的设备时点”**。备份只是密钥的其中一个落点——相册、备忘录、App 容器、进程内存、云盘，都是同一个问题的不同表面。",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“而是”是未完成的转折结构。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 32,
+      "colon_before": "但把它当成 DarkSword 的答案就错了",
+      "colon_after": "全链攻击读的是**解密之后**的内存，或者干脆记录你输入备份密码的那一刻。Trust Wallet 自己的文档也承认，可",
+      "sentence": "Trust Wallet 对 worse_query 的回应是“助记词与私钥加密存储、非明文，iOS 用户不受影响”（11 月 11 日多家转载）。这个答法在沙盒逃逸这一层是对的——密文被读走不等于被解密。但把它当成 DarkSword 的",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先独立判断不能推广到 DarkSword，再说明原因。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 34,
+      "colon_before": "更根本的约束是",
+      "colon_after": "**信任锚在 Apple 手里**。Secure Enclave、iCloud 钥匙串、Data Protection ",
+      "sentence": "更根本的约束是：**信任锚在 Apple 手里**。Secure Enclave、iCloud 钥匙串、Data Protection 的等级都由系统决定，第三方钱包在用户态没有加固余地。把预算投进“更厚的备份加密”，等于把工程路线图绑在苹",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“约束是”未交代约束是什么。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 42,
+      "colon_before": "但都押在错误的层",
+      "colon_after": "Security Scanner 累计拦下 **4.58 亿美元**流向恶意合约、2025 年提示 **1.91 亿美元",
+      "sentence": "其余资产也在，但都押在错误的层：Security Scanner 累计拦下 **4.58 亿美元**流向恶意合约、2025 年提示 **1.91 亿美元**可疑交易、地址投毒防护——全部是签名前的拦截，恰好是 DarkSword 绕开的那一",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先断定投入层级不合适，再列举签名前工具作为说明。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 44,
+      "colon_before": "4 小时成交 248 万美元**（2026-11-23 01",
+      "colon_after": "30 UTC 快照）。对比 Coinbase 与 Phantom 的资产负债表，这决定了策略只能是**借标准 + 开源 ",
+      "sentence": "财务上也没有打军备竞赛的余地。TWT 报 **0.3145 美元、市值约 1.31 亿美元、FDV 约 3.15 亿美元、24 小时成交 248 万美元**（2026-11-23 01:30 UTC 快照）。对比 Coinbase 与 Ph",
+      "label": "标题时间比例元数据或版式用途",
+      "confidence": "高",
+      "reason": "属于 01:30 的时间分隔。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 44,
+      "colon_before": "品牌触达反而是优势",
+      "colon_after": "X 粉丝 426 万，对 Phantom 的 96 万。",
+      "sentence": "财务上也没有打军备竞赛的余地。TWT 报 **0.3145 美元、市值约 1.31 亿美元、FDV 约 3.15 亿美元、24 小时成交 248 万美元**（2026-11-23 01:30 UTC 快照）。对比 Coinbase 与 Ph",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先判断品牌触达有优势，再给出两组粉丝数。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 54,
+      "colon_before": "关键判断",
+      "colon_after": "市场上“seedless”话术已经泛滥，但多数只是**登录层**无密码，账户层仍是一颗单点种子。Trust Wallet",
+      "sentence": "关键判断：市场上“seedless”话术已经泛滥，但多数只是**登录层**无密码，账户层仍是一颗单点种子。Trust Wallet 若只把 passkey 当登录方式，不构成差异化；只有做到**链上账户层没有单一种子**（passkey 签",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“关键判断”只是一段提示，冒号前没有命题。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 58,
+      "colon_before": "可验证的做法是",
+      "colon_after": "公开账户架构与恢复流程、接受第三方审计、设一个公开悬赏——“攻破我的 iPhone，在不触发守护人的前提下转走资金”。这",
+      "sentence": "**可验证。** 安全功能天生不可见，靠文案无法说服 iOS 用户换钱包。可验证的做法是：公开账户架构与恢复流程、接受第三方审计、设一个公开悬赏——“攻破我的 iPhone，在不触发守护人的前提下转走资金”。这比任何广告都便宜，且只有真做了",
+      "label": "空转提示",
+      "confidence": "高",
+      "reason": "引出拟采取的审计、披露和悬赏，不是独立结论。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 62,
+      "colon_before": "** 这是最容易被忽略的代价",
+      "colon_after": "seedless 会把“丢币责任”从用户转移到品牌。iCloud 账户丢失、passkey 被误删、守护人失效、跨生态（",
+      "sentence": "**可承担。** 这是最容易被忽略的代价：seedless 会把“丢币责任”从用户转移到品牌。iCloud 账户丢失、passkey 被误删、守护人失效、跨生态（iPhone 换安卓）不可迁移——今天 Trust Wallet 可以说“我们",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先评价代价被忽视，再说明责任与运营负担。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 73,
+      "colon_before": "衡量指标也应当换掉",
+      "colon_after": "从“拦截金额”改为**iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持",
+      "sentence": "衡量指标也应当换掉：从“拦截金额”改为**iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持工单占比**。",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先判断衡量指标应当换，再举新指标。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 75,
+      "colon_before": "而是**把 20% 那一档做深**",
+      "colon_after": "备份健康检查 + 被盗后的应急响应与资金迁移指引。这至少是可交付的，也诚实。",
+      "sentence": "如果内部判断 iOS 用户规模撑不起账户层改造，那么次优解不是“加厚备份”，而是**把 20% 那一档做深**：备份健康检查 + 被盗后的应急响应与资金迁移指引。这至少是可交付的，也诚实。",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先给出深化这一档的行动判断，再列出具体交付项。"
+    },
+    {
+      "type": "colon",
+      "file": "original.zh-CN.md",
+      "line": 83,
+      "colon_before": "**底线判断",
+      "colon_after": "把增量预算押到“无种子账户 + 可验证恢复”，备份只投可用性，不投保密性。** 如果只能做一件事，就让 iOS 新用户默",
+      "sentence": "**底线判断：把增量预算押到“无种子账户 + 可验证恢复”，备份只投可用性，不投保密性。** 如果只能做一件事，就让 iOS 新用户默认不开助记词钱包——这是唯一一个 DarkSword 之后再也没法被质疑的产品决定。",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“底线判断”是提示词，具体主张在冒号后。"
+    }
+  ],
+  "iso3": []
+}

@@ -1,0 +1,92 @@
+---
+title: "Where Trust Wallet Should Invest in iOS Security After DarkSword"
+publishedAt: "2026-11-24"
+summary: "DarkSword and a separate iOS sandbox escape make the case for Trust Wallet to prioritize seedless accounts by default, verifiable recovery, and device incident response."
+slug: "trust-wallet-ios-security-after-darksword-en"
+category: "thoughts"
+language: "en"
+translationKey: "trust-wallet-ios-security-after-darksword"
+sourceSlug: "trust-wallet-ios-security-after-darksword"
+---
+
+## TL;DR
+
+Trust Wallet should direct its additional iOS security budget toward **making seedless accounts the default and making recovery verifiable**. DarkSword shows how a device compromise can make a wallet’s pre-signing checks and confirmation screen unreliable. Encrypted backups still protect data at rest, with underlying safeguards from Apple’s Secure Enclave, Keychain, and Data Protection. Making backup encryption more complex does little to address exposure while keys are in use. Trust Wallet has had SWIFT, an ERC-4337 smart account with passkeys, since 2024. Its documentation still describes SWIFT as optional. On supported networks, Trust Wallet could make accounts without a single exportable seed the default and give users a way to test recovery against public commitments. [Google Threat Intelligence Group](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) · [Trust Wallet SWIFT](https://trustwallet.com/swift)
+
+## The device can be compromised before any transaction
+
+Google Threat Intelligence Group documented a DarkSword chain that used six vulnerabilities and supported iOS 18.4–18.7. Starting in November 2025, the team observed commercial surveillance vendors and suspected state-backed groups using the chain against targets in Saudi Arabia, Turkey, Malaysia, and Ukraine. All six flaws had been patched by iOS 26.3. The P7 variant analyzed by iVerify resides in SpringBoard and checks in every 15 seconds by default. iVerify documented its ability to collect Keychain data, photos, Notes, and imToken data. The report did not attribute any specific financial losses to the variant. [Google Threat Intelligence Group](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) · [iVerify's P7 report](https://www.iverify.com/blog/darksword-variant-threat-research)
+
+Censys found **11 recovery phrases belonging to victims, 179 device data directories, and 75 control-panel accounts** in a copy of one operator's server. The sample included **18 wallet-specific modules** and searched photos and Notes for BIP39 recovery phrases. Confiant linked **more than 480 ad domains targeting over 47 countries** to MoldyRoost between May 12 and November 17, 2026. Loading the ad's landing page could compromise a vulnerable iPhone. Related Coruna samples targeted MetaMask, Phantom, Trust Wallet, and other apps. [Censys investigation](https://censys.com/blog/darksword-coruna-open-directory-finding-report) · [Confiant investigation](https://blog.confiant.com/p/moldyroost-a-malvertising-machine)
+
+Bitquery's on-chain investigation provides a lower bound. The TRON sample from October 5 to November 4, 2026 covered **365 addresses and at least $4.06 million in USDT**. The broader estimate of roughly **430 addresses and at least $4.16 million** also count 65 addresses and at least $103,000 in losses on eight other chains. In its November 23 update, Bitquery extended the TRON window through November 21 and counted **535 addresses and at least $5.99 million in USDT**. Beyond one publicly documented case involving an iPhone owner, the chain records cannot establish what device, wallet, or exploit was involved at the other addresses. They cannot link the drained addresses to individual MoldyRoost ads. [Bitquery's on-chain investigation](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt)
+
+The November 8, 2026 disclosure of worse_query describes another kind of threat. Its reported affected versions included iOS 26.0–26.7.2 and 27.2. The researcher said on November 10 that iOS 27.2.1, released on November 9, and iOS 27.3 beta 1 still had the flaw. Apple's security notes for 27.2.1 do not list it. At the time of that disclosure, the risk was that a malicious app already installed and running on the device could read files in another app's container. [Apple security notes](https://support.apple.com/en-us/149715) · [Coverage of the researcher's statement](https://crypto.news/apples-ios-27-2-1-update-leaves-crypto-wallet-security-flaw-unpatched/)
+
+Exposure can occur before a user starts a transaction. Photos, Notes, app containers, process memory, and cloud drives can all hold secret material. What an attacker can reach depends on the privileges gained. Keys may already be exposed by the time a transaction warning appears.
+
+| Protection | Phishing or malicious approvals | DarkSword-class device compromise | worse_query-style container reads | Lost phone or device upgrade |
+| --- | --- | --- | --- | --- |
+| Transaction simulation and risk databases | Can flag risky actions | The screen and checks may be untrustworthy | Outside its scope | Unrelated |
+| Address book and address poisoning alerts | Can reduce misdirected transfers | Depends on a trustworthy interface | Outside its scope | Unrelated |
+| Encryption at rest for app containers and cloud backups | Outside its scope | Plaintext may be exposed in use | Effective while the keys remain isolated | Helps recovery |
+| Device-bound keys or passkeys | Can reduce credential phishing | Makes key copying harder, though authorization may be abused | Effective while keys stay in protected storage | Depends on sync or a backup signer |
+| Seedless ERC-4337 account with guardians | Depends on signing and approval policies | Reduces seed theft, with independent signing rules adding transfer limits | No single exportable seed to read | Depends on guardians or backup devices |
+| Hardware wallet or independent multisig | Can verify or approve independently | Can restrict transfers when signers and their displays are independent | Private keys stay off the phone | Depends on backups and thresholds, with added friction |
+
+*Assessment based on published threat descriptions, without vendor testing.*
+
+## Backup confidentiality and recovery usability
+
+On November 11, Trust Wallet responded to worse_query, saying it encrypts recovery phrases and private keys on the device and considers its iOS users unaffected by this flaw. A file read alone yields ciphertext while its keys remain protected. Once the device is compromised, plaintext in use or credentials entered by the user may be exposed. Trust Wallet's optional encrypted cloud backup uses a password chosen by the user. Recovery should still take place on a trusted device. [Coverage of Trust Wallet's statement](https://www.tokenpost.com/news/technology/53954) · [Trust Wallet on encryption](https://trustwallet.com/glossary/cryptography)
+
+Apple sets the boundaries for the Secure Enclave, iCloud Keychain, and Data Protection. A wallet can choose the right OS protections and key storage and can add its own encryption. The trustworthiness of the device still depends on system security. As Apple offers passkey sync, the Passwords app, and account recovery, some protections become common platform features. [Apple on Keychain data protection](https://support.apple.com/en-is/guide/security/secb0694df1a/web) · [Apple on passkey security](https://support.apple.com/en-ie/102195)
+
+Recovery is an opportunity for Trust Wallet to improve the product. In an interview, Trust Wallet's CEO raised jargon first, then cited confidence in recovery as a barrier to self-custody adoption. Most users have a hard time telling whether their backup will restore. Backup health checks, periodic drills, and **recovery on a new phone in 90 seconds** give Trust Wallet concrete ways to demonstrate how recovery works and measure its performance. [Interview with Trust Wallet's CEO](https://cryptopotato.com/self-custody-has-won-the-argument-now-it-has-to-work-trust-wallet-ceo-interview/)
+
+## Account features Trust Wallet already has
+
+Trust Wallet began rolling out the SWIFT beta on **February 19, 2024**. It uses an ERC-4337 smart account and replaces the manually managed 12-word recovery phrase with a passkey. The documented device migration requires iCloud Keychain or Google Password Manager and access to the same cloud account. Trust Wallet also open-sourced Barz, its smart account implementation. Its public materials still present the seed phrase-controlled externally owned account (EOA) as the standard path and list SWIFT as an option. This comparison relies on documented onboarding flows. [SWIFT launch announcement](https://trustwallet.com/ru/blog/company/predstavlyaem-trust-wallet-swift) · [SWIFT recovery documentation](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability) · [Barz and account abstraction](https://trustwallet.com/blog/developers/2025-account-abstraction-trends) · [Standard account documentation](https://trustwallet.com/blog/product/how-to-backup-your-recovery-phrase-and-export-private-keys-in-trust-wallet)
+
+Trust Wallet's CEO reported that Security Scanner had flagged over **$458 million** directed at malicious contracts and alerted users to over **$191 million** in suspicious transactions in 2025. Address poisoning alerts also happen before a transfer. These figures describe pre-signing protections and give little indication of how they hold up after a device compromise. [Interview with Trust Wallet's CEO](https://cryptopotato.com/self-custody-has-won-the-argument-now-it-has-to-work-trust-wallet-ceo-interview/)
+
+The original **November 23, 2026, 01:30 UTC** snapshot records TWT at **$0.3145**, a circulating market cap of about **$131 million**, a fully diluted valuation of about **$315 million**, and **$2.48 million** in 24-hour trading volume. The original X follower counts were **4.26 million** for Trust Wallet and **960,000** for Phantom. The figures describe the token market and brand reach. They cannot establish Trust Wallet's cash position or research budget, or support a direct comparison with the finances of Coinbase or Phantom. I would rely on existing standards and open-source components, freeing up resources to improve default onboarding and recovery operations. [TWT historical market data for reference](https://www.coingecko.com/en/coins/trust-wallet-token/historical_data)
+
+| iOS wallet or account | Setup | Recovery | Product emphasis | Recovery limits |
+| --- | --- | --- | --- | --- |
+| Trust Wallet | Standard seed phrase EOA, with SWIFT available | 12 words or optional encrypted cloud backup. SWIFT uses a synced passkey | Device security alerts and pre-signing checks | SWIFT is optional. Users lack a verifiable backup recovery drill |
+| Phantom | Recovery phrase or Google/Apple setup. Face ID unlocks the app | Recovery phrase or the original sign-in account. Some older accounts still use a four-digit PIN | Easy setup and unlock | Social sign-in wallet users can still export a recovery phrase |
+| Coinbase Base Account (formerly Smart Wallet) | Smart account supporting passkeys | Passkey, email code, or recovery phrase for eligible accounts | Compliance brand and smart accounts | Depends on account configuration and the signing method |
+
+*The comparison is based on public product documentation, without hands-on testing.* [Trust Wallet SWIFT](https://trustwallet.com/swift) · [Phantom setup](https://help.phantom.com/hc/en-us/articles/8071074929043-Create-a-new-wallet-in-Phantom) · [Phantom recovery](https://help.phantom.com/articles/sign-in-to-or-import-your-phantom-wallet-15079894392851) · [Coinbase Base Account](https://help.coinbase.com/en/wallet/getting-started/smart-wallet-passkeys)
+
+Adding a passkey to sign-in leaves the on-chain recovery rules as they are. Trust Wallet could use passkeys for wallet signing and provide independent recovery via guardians or backup devices. Hardware signers or independent multisig could protect larger transfers. The design can remove the single exportable seed and reduce the risk that one compromised phone can move funds on its own.
+
+## Making the security commitment verifiable
+
+**Verifiability.** Publish the account architecture and recovery flow, get a third-party audit, and run a public bounty with a clear scope. The bounty could test whether funds protected by independent signing rules can move without additional authorization when a test phone is compromised. Recovery guardians and day-to-day signing limits serve different purposes. Publish which circumstances each test covers.
+
+**A recovery users can see.** Demonstrate recovery on a new iPhone with an account that never generates a 12-word phrase. Aim for **90 seconds** in a device migration drill. When an app detects a visible signal such as jailbreaking, it can warn the user and point them to a new-account migration process from a trusted device.
+
+**Operational responsibility.** Users will contact support if they lose their iCloud account, delete a passkey, lose access to a guardian, or switch from iPhone to Android. They will also ask about responsibility and reimbursement after failed recovery. Launching accounts with passkeys and guardians calls for funding both the recovery process and the support team. A widespread recovery failure would damage the security commitment.
+
+## How to allocate the additional budget
+
+Split additional spending by the threats each investment can address.
+
+- **50% for account architecture and recovery.** Make a SWIFT-style smart account the default on supported networks for new iOS users. Add guardian or multi-device recovery and support hardware signing for large transfers. Put recovery success and elapsed time in a public service-level agreement (SLA).
+- **30% for device integrity and incident response.** Detect observable jailbreaks, debugging, abnormal configurations, and unusual sessions or signatures. Provide migration from a trusted device. Treat detection as a signal. Migration needs independent verification of authorization and the destination address.
+- **20% for backup usability and user habits.** Offer backup health checks and regular recovery drill reminders. Remind users to check for recovery phrases in Photos and Notes themselves. Keep encrypted cloud backup as an option.
+- **Home-grown cryptography, encryption-strength marketing, and more pre-signing screens come last.** They offer limited coverage for the recovery and device compromise risks discussed here.
+
+Track the **share of new default iOS accounts that retain no plaintext recovery phrase**, recovery success and median time, confirmed bounty breaches, and the share of support tickets caused by backup failures. The amount blocked before signing can still measure the existing tools.
+
+If the iOS user base cannot yet justify changing account architecture, invest more in the **20%** category first. The team can deliver backup health checks, incident response after theft, and guidance for moving funds.
+
+## Conclusion
+
+DarkSword exposed the limits of hiding keys on a device. Encryption at rest still protects files. Using keys or a backup password still requires a trustworthy device. Apple supplies system protections. Trust Wallet can decide how users authorize actions and recover accounts.
+
+SWIFT and Barz provide the smart account and passkey foundations. The next steps are making accounts without a single exportable seed the default, giving users recovery drills, and publishing verifiable commitments on recovery success and time. This is a way for Trust Wallet to differentiate itself from Phantom's emphasis on ease of use and Coinbase's compliance brand.
+
+**Put the next iOS security dollars into seedless accounts and verifiable recovery.** If Trust Wallet takes just one step, make seedless setup the default for new users on supported networks, with a trusted way to restore access.

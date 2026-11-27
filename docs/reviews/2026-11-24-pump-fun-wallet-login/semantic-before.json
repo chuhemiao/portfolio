@@ -1,0 +1,306 @@
+{
+  "meta": {
+    "n_candidates": 29,
+    "n_rename": 11,
+    "n_cohesion": 10,
+    "n_colon": 7,
+    "n_iso3": 1,
+    "truncated": false
+  },
+  "rename": [
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 5,
+      "para": "pump.fun 并没有升级登录安全，它实际上是把 web 端并入了 Pump App 已经跑通的 Privy 嵌入钱包体系：账号从“一个钱包地址”变成“一个邮箱或社交身份”，签名权从 Phantom 转到平台侧。要保留原地址、又要让 Privy 能代签，交出私钥就成了唯一路径。签名只能证明你是地址主人，无法把长期签名权委托给平台。真正的驱动力是 perps、多链和法币入金所需的可编程签名，是下滑的费用收入，也是把身份与合规开关握在自己手里；代价则是托管集中、与自家条款冲突，以及 Ledger、多签用户被排除在外。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "登录方式、签名权、候选商业动机和用户代价分别有实义。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 19,
+      "para": "严格说，旧版没有“Phantom 账号”。地址就是账号，私钥就是登录凭证；pump.fun 只有钱包连接，没有独立的用户数据库。新版反过来：账号是邮箱或社交身份，钱包是挂在账号下的 Privy 嵌入钱包。旧版是“连接钱包”，新版是“平台给你开钱包”。这是一次账号本体的迁移，并非只是登录方式的优化。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "原稿在定义账号、地址和凭证，未对单个名称反复换词。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 21,
+      "para": "问题在于地址由私钥定义。要让 Privy 代替 Phantom 为同一个地址签名，Privy 必须拿到该地址的私钥。在 Phantom 这类钱包的现有权限模型里，用 Sign in with Solana 签一条消息只能证明“我控制这个地址”，不能把长期签名权委托给 dapp；下一次交易仍然要打开 Phantom 弹窗。钱包标准里也没有“把私钥交给 dapp”的接口，所以只能让用户手动复制粘贴。于是只剩两条路：交出私钥，保留地址与历史；或者开新钱包、转资产，放弃旧地址的历史。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "保留原址、消息认证、交易签名和新账号有不同作用。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 39,
+      "para": "这也是为什么“只加一个邮箱登录”不够：邮箱解决身份，嵌入钱包解决签名、gas 和多链。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "邮箱登录和邮箱使用同一名称，后文拆分不同职责。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 43,
+      "para": "商业压力让这件事更急。PUMP 现价 $0.00253、市值 $8.93 亿、30 天 -41.3%（2026-11-24 00:40 UTC 快照）；协议费用 7 日均值从 10 月 7 日的 $244 万/天 降到 11 月 22 日的 $129 万/天，跌幅 47%，单日费用已从 10 月 1 日的 $240 万 降到 11 月 22 日的 $94 万。4 月起 PUMP 用 50% 收入做回购销毁，The Block 费用下滑会压缩回购资金来源。此时平台的自然动作，是从“拉新钱包”转向“留住能反复交易的账号”：邮箱账号可触达、可召回、可分层运营，钱包地址给不了这些。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "价格、费用、回购预算和触达渠道是独立指标或行为。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 47,
+      "para": "pump.fun 的产品组合已经进入需要按辖区开关的领域。条款把 Perpetuals 列为 Restricted Feature，禁止美国、安大略、受制裁地区及 Hyperliquid 定义的 Restricted Person；Prediction Markets 不对美国用户开放；跨链桥对代币化证券设了美国、英国、欧盟、瑞士、加拿大的限制；条款还写明会用筛查工具标记钱包。pump.fun 条款 9 月 App 曾在美国和印度 App Store 下架。CoinNess",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "把产品地域限制在段首称为辖区开关，随后换成具体限制。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 49,
+      "para": "钱包地址是免费的，封一个换一个；邮箱、Apple、Google 身份则是可追踪、可封禁、可恢复的。更重要的是，只有在账号层才能做地理围栏、制裁筛查、资格判断和条款执行。pump.fun 没有把合规列为理由，但从产品结构和条款文本看，这是这套架构的必然副产品，也很可能是长期主因。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "钱包地址、邮箱或平台身份以及资格判断是不同概念。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 55,
+      "para": "Karpelès 的技术批评值得认真对待：解密发生在 Privy 的 TEE，密钥由平台侧持有并代签；加密公钥由 pump.fun 后端转发，浏览器无法验证它真是 Privy 的；私钥输入框是普通 textarea，页面上的任何脚本理论上都能读；访问权从“谁持有私钥”变成“谁能登录 Privy + 谁能登录邮箱或 Google”，封号、司法命令、TEE 被攻破都成为单点风险；删号也不会把密钥从 Privy 拿走。Karpelès 他还指出，SIWS 签名迁移可以保留自托管，只是平台拿不到代签权——这并非“没有替代方案”，关键在于“替代方案不满足平台目标”。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "TEE、网页登录、密钥、备选方案分别讨论不同信任边界。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 59,
+      "para": "对用户而言，最实际的风险在托管形态变了：从“钥匙只在我手里”变成“供应商托管、用户可导出”，而“Privy 一定会作恶”并不是最需要担心的事。可导出不等于已经导出；多数人不会去点那个按钮。而 Ledger、多签用户连选择的资格都没有，只能开新号。公告到截止只有 8 天，这更像强制迁移，而不是可选升级，用户没有足够时间评估托管风险。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "区分两种保管状态和两种迁移路径，未在同一实体上反复换名。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 63,
+      "para": "pump.fun 做的是账号本体的迁移，并非登录方式的优化。官方的“一次登录覆盖两端”只解释了表象；真正的逻辑是：pump.fun 要把一个匿名、可抛弃的钱包地址，升级成可运营、可合规、可代签的账号体系，为 perps、多链和法币入金铺路。私钥迁移是这个目标的必要代价，也是它最脆弱的一环。",
+      "label": "1组",
+      "confidence": "中",
+      "reason": "用账号本体迁移和升级成可运营的账号体系指向同一项产品变化。"
+    },
+    {
+      "type": "rename",
+      "file": "baseline.zh-CN.md",
+      "line": 65,
+      "para": "底线判断： 对平台，这是从 dapp 转向消费级交易应用的必经之路，但成败取决于它能否把“托管”做成可验证的安全承诺，而不是一句 E2EE；对用户，若必须迁移，迁完立刻导出私钥并只留交易资金，大额资产继续放 Phantom 或硬件钱包；Ledger 和多签用户则应直接走新账号路线。",
+      "label": "0组",
+      "confidence": "高",
+      "reason": "平台与用户的动作各有对象，建议没有把同一实体换名。"
+    }
+  ],
+  "cohesion": [
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 19,
+      "prev_tail": "代价则是托管集中、与自家条款冲突，以及 Ledger、多签用户被排除在外",
+      "next_head": "严格说，旧版没有“Phantom 账号”",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从平台迁移的代价切到旧账号与凭证的定义。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 21,
+      "prev_tail": "这是一次账号本体的迁移，并非只是登录方式的优化",
+      "next_head": "问题在于地址由私钥定义",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "从账户身份切换进入保留原签名地址的具体限制。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 39,
+      "prev_tail": "或者开新钱包、转资产，放弃旧地址的历史",
+      "next_head": "这也是为什么“只加一个邮箱登录”不够：邮箱解决身份，嵌入钱包解决签名、gas 和多链",
+      "label": "表面有连接词实际关系不清",
+      "confidence": "高",
+      "reason": "保留或放弃原地址的分支本身无法推出邮箱登录一定不够。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 43,
+      "prev_tail": "这也是为什么“只加一个邮箱登录”不够：邮箱解决身份，嵌入钱包解决签名、gas 和多链",
+      "next_head": "商业压力让这件事更急",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "账号和签名能力的用途之后，继续讨论推行方案的市场时点。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 47,
+      "prev_tail": "此时平台的自然动作，是从“拉新钱包”转向“留住能反复交易的账号”：邮箱账号可触达、可召回、可分层运营，钱包地址给不了这些",
+      "next_head": "pump.fun 的产品组合已经进入需要按辖区开关的领域",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "由交易留存动机转到辖区资格约束。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 49,
+      "prev_tail": "CoinNess",
+      "next_head": "钱包地址是免费的，封一个换一个",
+      "label": "无法判断",
+      "confidence": "低",
+      "reason": "前段候选只抓到来源名称，缺少用于判读的句义。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 55,
+      "prev_tail": "pump.fun 没有把合规列为理由，但从产品结构和条款文本看，这是这套架构的必然副产品，也很可能是长期主因",
+      "next_head": "Karpelès 的技术批评值得认真对待：解密发生在 Privy 的 TEE，密钥由平台侧持有并代签",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从产品合规推断切到第三方对密钥流程的批评。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 59,
+      "prev_tail": "Karpelès 他还指出，SIWS 签名迁移可以保留自托管，只是平台拿不到代签权——这并非“没有替代方案”，关键在于“替代方案不满足平台目标”",
+      "next_head": "对用户而言，最实际的风险在托管形态变了：从“钥匙只在我手里”变成“供应商托管、用户可导出”，而“Privy 一定会作恶”并不是最需要担心的事",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "用第三方强调的自托管选择引出用户实际承担的模式变化。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 63,
+      "prev_tail": "公告到截止只有 8 天，这更像强制迁移，而不是可选升级，用户没有足够时间评估托管风险",
+      "next_head": "pump.fun 做的是账号本体的迁移，并非登录方式的优化",
+      "label": "有关但转换突然",
+      "confidence": "中",
+      "reason": "从迁移时限重开账号结构的总结，小节分隔了承接。"
+    },
+    {
+      "type": "cohesion",
+      "file": "baseline.zh-CN.md",
+      "line": 65,
+      "prev_tail": "私钥迁移是这个目标的必要代价，也是它最脆弱的一环",
+      "next_head": "底线判断： 对平台，这是从 dapp 转向消费级交易应用的必经之路，但成败取决于它能否把“托管”做成可验证的安全承诺，而不是一句 E2EE",
+      "label": "明确承接",
+      "confidence": "高",
+      "reason": "密钥迁移的脆弱性直接引出需要公开验证的承诺。"
+    }
+  ],
+  "colon": [
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 5,
+      "colon_before": "入了 Pump App 已经跑通的 Privy 嵌入钱包体系",
+      "colon_after": "账号从“一个钱包地址”变成“一个邮箱或社交身份”，签名权从 Phantom 转到平台侧。要保留原地址、又要让 Privy",
+      "sentence": "pump.fun 并没有升级登录安全，它实际上是把 web 端并入了 Pump App 已经跑通的 Privy 嵌入钱包体系：账号从“一个钱包地址”变成“一个邮箱或社交身份”，签名权从 Phantom 转到平台侧。要保留原地址、又要让 Pr",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "冒号前已提出网页并入嵌入式钱包，后句展开身份和签名两项变化。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 19,
+      "colon_before": "新版反过来",
+      "colon_after": "账号是邮箱或社交身份，钱包是挂在账号下的 Privy 嵌入钱包。旧版是“连接钱包”，新版是“平台给你开钱包”。这是一次账",
+      "sentence": "严格说，旧版没有“Phantom 账号”。地址就是账号，私钥就是登录凭证；pump.fun 只有钱包连接，没有独立的用户数据库。新版反过来：账号是邮箱或社交身份，钱包是挂在账号下的 Privy 嵌入钱包。旧版是“连接钱包”，新版是“平台给你",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“反过来”是过渡用语，冒号前未说明具体判断。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 21,
+      "colon_before": "于是只剩两条路",
+      "colon_after": "交出私钥，保留地址与历史；或者开新钱包、转资产，放弃旧地址的历史。",
+      "sentence": "问题在于地址由私钥定义。要让 Privy 代替 Phantom 为同一个地址签名，Privy 必须拿到该地址的私钥。在 Phantom 这类钱包的现有权限模型里，用 Sign in with Solana 签一条消息只能证明“我控制这个地址",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "“只剩两条路”是排他判断，冒号后逐项说明。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 39,
+      "colon_before": "这也是为什么“只加一个邮箱登录”不够",
+      "colon_after": "邮箱解决身份，嵌入钱包解决签名、gas 和多链。",
+      "sentence": "这也是为什么“只加一个邮箱登录”不够：邮箱解决身份，嵌入钱包解决签名、gas 和多链。",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先判断增加邮箱登录不够，再说明身份和签名职责。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 59,
+      "colon_before": "最实际的风险在托管形态变了",
+      "colon_after": "从“钥匙只在我手里”变成“供应商托管、用户可导出”，而“Privy 一定会作恶”并不是最需要担心的事。可导出不等于已经导",
+      "sentence": "对用户而言，最实际的风险在托管形态变了：从“钥匙只在我手里”变成“供应商托管、用户可导出”，而“Privy 一定会作恶”并不是最需要担心的事。可导出不等于已经导出；多数人不会去点那个按钮。而 Ledger、多签用户连选择的资格都没有，只能开",
+      "label": "结论提示",
+      "confidence": "高",
+      "reason": "先断定主要风险是保管形态变化，再解释变化内容。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 63,
+      "colon_before": "官方的“一次登录覆盖两端”只解释了表象；真正的逻辑是",
+      "colon_after": "pump.fun 要把一个匿名、可抛弃的钱包地址，升级成可运营、可合规、可代签的账号体系，为 perps、多链和法币入金",
+      "sentence": "pump.fun 做的是账号本体的迁移，并非登录方式的优化。官方的“一次登录覆盖两端”只解释了表象；真正的逻辑是：pump.fun 要把一个匿名、可抛弃的钱包地址，升级成可运营、可合规、可代签的账号体系，为 perps、多链和法币入金铺路。",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "提示“真正的逻辑是”之后才完整表达动机观点。"
+    },
+    {
+      "type": "colon",
+      "file": "baseline.zh-CN.md",
+      "line": 65,
+      "colon_before": "**底线判断",
+      "colon_after": "** 对平台，这是从 dapp 转向消费级交易应用的必经之路，但成败取决于它能否把“托管”做成可验证的安全承诺，而不是一",
+      "sentence": "**底线判断：** 对平台，这是从 dapp 转向消费级交易应用的必经之路，但成败取决于它能否把“托管”做成可验证的安全承诺，而不是一句 E2EE；对用户，若必须迁移，迁完立刻导出私钥并只留交易资金，大额资产继续放 Phantom 或硬件钱",
+      "label": "其他正文冒号",
+      "confidence": "高",
+      "reason": "“底线判断”在段首提示，具体观点在冒号后。"
+    }
+  ],
+  "iso3": [
+    {
+      "line": 19,
+      "sents": [
+        "严格说，旧版没有“Phantom 账号”",
+        "地址就是账号，私钥就是登录凭证",
+        "pump.fun 只有钱包连接，没有独立的用户数据库"
+      ],
+      "file": "baseline.zh-CN.md",
+      "label": "只有语义并列句法不同",
+      "confidence": "高",
+      "reason": "三个句子围绕旧系统特点，分别用否定、双判断和有限范围陈述，句法不同。"
+    }
+  ]
+}

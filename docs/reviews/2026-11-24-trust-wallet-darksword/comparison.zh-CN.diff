@@ -1,0 +1,133 @@
+--- baseline.zh-CN.md
++++ optimized.zh-CN.md
+@@ -1,83 +1,83 @@
+-# Trust Wallet 的 iOS 安全账本 — DarkSword 之后该往哪投
++# DarkSword 之后，Trust Wallet 的 iOS 安全预算该投向哪里？
+ 
+ ## TL;DR
+ 
+-该挪，但**不该挪到“更厚的助记词备份”**。DarkSword 证明的是：当 iOS 内核被拿下，钱包在签名前做的一切判断都发生在攻击者可控的进程里；而备份的保密性由 Apple 的 Secure Enclave 与钥匙串决定，钱包在用户态加固不了，投再多也只是租来的护城河。真正稀缺的是**“种子不以可窃取形态存在，且仍然可恢复”**——Trust Wallet 2024 年就有这张牌（SWIFT：ERC-4337 智能账户 + passkey），却一直把它当可选项。差异化不在密码学，在默认化、恢复运营和可验证的公开承诺。
++Trust Wallet 应该把 iOS 增量安全预算优先用在**默认无助记词账户和可验证恢复**上。DarkSword 表明，设备一旦失守，钱包的签名前检查和用户看到的确认界面都可能不再可信。加密备份仍能保护静态数据，Apple 的 Secure Enclave、钥匙串和 Data Protection 提供了部分底层保护。把备份加密做得更复杂，解决不了密钥被使用时的风险。Trust Wallet 自 2024 年起已有 SWIFT（ERC-4337 智能账户加 passkey），官方仍把它列为可选账户。差异化在于让支持网络的新用户默认获得无单一可导出种子的账户，并能演练恢复和核验公开承诺。 [Google Threat Intelligence Group](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) · [Trust Wallet SWIFT](https://trustwallet.com/swift)
+ 
+----
++## 风险延伸到了设备层
+ 
+-## 威胁已经换了层级，不是换了目标
++Google 威胁情报组记录的 DarkSword 利用链涉及 6 个漏洞，支持 iOS 18.4–18.7。自 2025 年 11 月起，研究团队观察到商业监控供应商和疑似国家背景组织将这条链用于沙特阿拉伯、土耳其、马来西亚和乌克兰的目标。相关漏洞到 iOS 26.3 已全部修复。iVerify 分析的 P7 变体驻留在 SpringBoard 进程，默认每 15 秒连线一次。报告记录了它收集钥匙串数据、照片、备忘录及 imToken 数据的能力，未据此认定具体资金损失。 [Google Threat Intelligence Group](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain) · [iVerify 的 P7 报告](https://www.iverify.com/blog/darksword-variant-threat-research)
+ 
+-DarkSword 是一条完整攻击链，不是单个漏洞：Google 威胁情报组记录它串联 6 个漏洞、覆盖 iOS 18.4–18.7，自 2025 年 11 月起被多个商业监控供应商用于沙特、土耳其、马来西亚、乌克兰的目标，全部漏洞在 iOS 26.3 修复 [Google](https://cloud.google.com/blog/topics/threat-intelligence/darksword-ios-exploit-chain)。它的演化方向恰好指向“密钥”而不是“交易”：iVerify 分析的 P7 变体注入 SpringBoard、每 15 秒回连一次，打包钥匙串密码、相册、备忘录数据库，并带专门的 imToken 数据提取指令。
++Censys 在一份运营服务器样本中发现 **11 条受害者助记词、179 个设备数据目录和 75 个面板账号**。样本里有针对钱包应用的 **18 个模块**，还会在照片和备忘录里寻找 BIP39 助记词。Confiant 在 2026 年 5 月 12 日至 11 月 17 日追踪到 MoldyRoost 关联的 **480 多个广告域名，目标覆盖超过 47 个国家**。易受攻击的 iPhone 加载广告落地页就可能失守。相关 Coruna 样本针对 MetaMask、Phantom 和 Trust Wallet 等应用。 [Censys 调查](https://censys.com/blog/darksword-coruna-open-directory-finding-report) · [Confiant 调查](https://blog.confiant.com/p/moldyroost-a-malvertising-machine)
+ 
+-规模已经不是个案。Censys 拿到的运营方生产服务器里，有 **11 条受害者助记词、179 个设备取数目录、75 个控制面板账号**，整套工具按钱包 App 分发 **18 个注入模块**，外加专门在相册和备忘录里搜 BIP39 词组的模块 [Censys](https://censys.com/blog/darksword-coruna-open-directory-finding-report/)；Confiant 追踪的 MoldyRoost 广告活动在 5 月 12 日至 11 月 17 日间铺了 **480+ 个广告域名、覆盖 47 国**，单击广告即感染，Coruna 模块明确挂钩 MetaMask、Phantom、Trust Wallet [CoinDesk](https://www.coindesk.com/tech/2026/11/23/moldyroost-malvertizing-campaign-uses-one-tap-iphone-hacks-to-hunt-crypto-wallet-keys-research-shows)。资金侧，Bitquery 追出一条链上路径：**10 月 5 日至 11 月 4 日，约 430 个钱包、至少 416 万美元**，以 Tron 上的 USDT 为主。
++Bitquery 的链上追踪给出了损失下界。2026 年 10 月 5 日至 11 月 4 日，TRON 样本涉及 **365 个地址和至少 406 万美元的 USDT**。原稿的约 **430 个地址、至少 416 万美元**，合计了另 8 条链上查到的 65 个地址和至少 10.3 万美元损失。11 月 23 日更新的报告把 TRON 统计延长至 11 月 21 日，得到 **535 个地址和至少 599 万美元的 USDT**。除一例已公开的 iPhone 用户个案外，链上记录无法确认其他地址使用的设备、钱包或漏洞，也没有把被盗地址与 MoldyRoost 广告逐一对应起来。 [Bitquery 链上调查](https://bitquery.io/investigations/iphone-wallet-drain-tron-usdt)
+ 
+-还有一条更被低估的线：11 月 8 日公开的 **worse_query** 沙盒逃逸，影响 iOS 26.0–26.7.2 与 27.2，苹果 11 月 9 日发布的 27.2.1 并未修复（研究者 11 月 10 日确认 27.3 beta 1 亦未修），攻击面从“打开恶意网页”扩展到“装了任意不可信 App 就能读别的 App 的容器” [crypto.news](https://crypto.news/apples-ios-27-2-1-update-leaves-crypto-wallet-security-flaw-unpatched/)。
++2026 年 11 月 8 日公开的 worse_query 提出了另一类威胁。披露材料所列的受影响版本包括 iOS 26.0–26.7.2 和 27.2。研究者 11 月 10 日表示，11 月 9 日发布的 iOS 27.2.1 与 iOS 27.3 beta 1 均未修复该问题。Apple 的 27.2.1 安全公告没有列出该问题。这个判断截至上述披露，风险是设备上已安装并运行的恶意 App 可能读取其他 App 的容器文件。 [Apple 安全公告](https://support.apple.com/en-us/149715) · [研究者回应报道](https://crypto.news/apples-ios-27-2-1-update-leaves-crypto-wallet-security-flaw-unpatched/)
+ 
+-所以准确的说法不是“风险从签名转向备份”，而是：**风险从“可拦截的交易时点”转向“不可拦截的设备时点”**。备份只是密钥的其中一个落点——相册、备忘录、App 容器、进程内存、云盘，都是同一个问题的不同表面。
++风险可以发生在用户发起交易之前。照片、备忘录、App 容器、进程内存和云盘都可能留有秘密材料，具体能读到哪一层取决于攻击取得的权限。钱包显示交易警告时，外泄可能已经发生。
+ 
+-| 防御层 | 钓鱼/恶意授权 | DarkSword 级全链 | worse_query 沙盒读容器 | 丢机/换机 |
+-|---|---|---|---|---|
+-| 交易模拟、风险库（签名层） | 有效 | 无效（UI 与校验都在对方进程里） | 无关 | 无关 |
+-| 地址簿、地址投毒提示 | 有效 | 无效 | 无关 | 无关 |
+-| 静态加密（容器/云备份） | 无关 | 弱（内存明文、解密路径） | **有效** | 辅助 |
+-| 硬件绑定密钥（Secure Enclave/passkey） | 有效 | 部分（难复制，但可被冒用会话） | 有效 | 依赖云账户 |
+-| 无种子账户（4337 + 守护人） | 有效 | **有效** | **有效** | 有效 |
+-| 硬件钱包/多签 | 有效 | 有效 | 有效 | 有效（体验差） |
++| 防护措施 | 钓鱼或恶意授权 | DarkSword 级设备失守 | worse_query 类容器文件读取 | 丢机或换机 |
++| --- | --- | --- | --- | --- |
++| 交易模拟、风险库 | 可提示风险 | 确认界面和检查结果可能失真 | 不针对该风险 | 无关 |
++| 地址簿、地址投毒提示 | 可减少误转 | 依赖可信界面 | 不针对该风险 | 无关 |
++| 容器与云备份的静态加密 | 不针对该风险 | 运行时明文仍可能暴露 | 密钥保持隔离时有效 | 辅助恢复 |
++| 设备绑定密钥或 passkey | 可降低凭证钓鱼风险 | 降低密钥被复制的风险，授权可能遭滥用 | 密钥留在受保护存储时有效 | 取决于同步或备用签名人 |
++| 无助记词路径的 ERC-4337 账户加守护人 | 取决于签名与授权策略 | 减少种子窃取，独立签名规则能进一步限制转账 | 无可导出的单一种子供读取 | 取决于守护人或备用设备 |
++| 硬件钱包或独立多签 | 可独立核验或审批 | 签名人和核验界面独立时能限制转账 | 私钥与手机隔离 | 依赖备份和阈值，操作成本较高 |
+ 
+-*上表为基于各攻击链技术描述的评估，非厂商实测数据。*
++*这是按公开威胁描述评估的防护边界，未经厂商实测。*
+ 
+-## 备份层的两条轴：保密性守不住，可用性没人做
++## 备份保密与恢复可用性
+ 
+-Trust Wallet 对 worse_query 的回应是“助记词与私钥加密存储、非明文，iOS 用户不受影响”（11 月 11 日多家转载）。这个答法在沙盒逃逸这一层是对的——密文被读走不等于被解密。但把它当成 DarkSword 的答案就错了：全链攻击读的是**解密之后**的内存，或者干脆记录你输入备份密码的那一刻。Trust Wallet 自己的文档也承认，可选的加密云备份“只能用你设的密码解密”，而密码一旦在同一台被控设备上输入，加密就退化成一层编码。
++Trust Wallet 在 11 月 11 日回应 worse_query，称其助记词和私钥在设备上以加密形式存储，并认为其 iOS 用户不受该漏洞影响。就容器文件读取而言，拿到密文和拿到解密后的秘密材料之间还有一道边界。设备失守后，运行中的明文或用户输入的凭据可能暴露。Trust Wallet 的可选加密云备份使用用户设置的密码，恢复仍应经过可信设备。 [Trust Wallet 声明的报道](https://www.tokenpost.com/news/technology/53954) · [Trust Wallet 加密说明](https://trustwallet.com/glossary/cryptography)
+ 
+-更根本的约束是：**信任锚在 Apple 手里**。Secure Enclave、iCloud 钥匙串、Data Protection 的等级都由系统决定，第三方钱包在用户态没有加固余地。把预算投进“更厚的备份加密”，等于把工程路线图绑在苹果的发布节奏上——而苹果每开放一次能力（passkey 同步、密码 App、账户恢复），这项投入就被商品化一次。
++Apple 决定了 Secure Enclave、iCloud 钥匙串和 Data Protection 的能力边界。钱包可以选用合适的保护和密钥存储方式，也可以加应用层加密。设备本身是否可信，仍受系统安全约束。随着 Apple 提供 passkey 同步、密码 App 和账户恢复，部分保护也会逐渐成为平台的通用能力。 [Apple 钥匙串数据保护](https://support.apple.com/en-is/guide/security/secb0694df1a/web) · [Apple 的 passkey 安全说明](https://support.apple.com/en-ie/102195)
+ 
+-但备份层还有另一条轴，而且是空的：**可用性**。Trust Wallet 的 CEO 自己把“恢复要让人放心”列为自助托管普及的第二大障碍，仅次于术语 [CryptoPotato](https://cryptopotato.com/self-custody-has-won-the-argument-now-it-has-to-work-trust-wallet-ceo-interview/)。现实是几乎没有用户知道自己的备份是否真的能恢复。一个“备份健康分 + 定期恢复演练 + 换机 90 秒内完成”的产品，比任何加密参数都更能被感知、被演示、被传播——而且苹果不做，竞品也没做。
++恢复体验还有可做的事。Trust Wallet 的 CEO 在访谈中先谈术语门槛，随后把让用户对恢复有把握列为自托管普及的障碍。普通用户往往难以判断备份能否恢复。备份健康检查、定期演练和 **90 秒换机恢复**是可以演示和衡量的目标。钱包可以把这些能力做进资产恢复流程。 [Trust Wallet CEO 访谈](https://cryptopotato.com/self-custody-has-won-the-argument-now-it-has-to-work-trust-wallet-ceo-interview/)
+ 
+-## 手上的牌比现在打的牌好
++## Trust Wallet 已有的账户能力
+ 
+-Trust Wallet 并不缺“无种子”能力。SWIFT 在 2024 年 2 月 19 日就上线，是 ERC-4337 账户抽象钱包，用 passkey 替代 12 词短语，passkey 存在 iCloud 钥匙串或 Google 密码管理器，换机靠同一云账户恢复 [Trust Wallet](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability)；底层还有开源的 Barz 智能账户方案。问题在于两年半过去，**默认账户仍是助记词 EOA**，SWIFT 是并列选项。安全能力被放在菜单第二页，就不会构成定位。
++Trust Wallet 于 **2024 年 2 月 19 日**启动 SWIFT 测试版。它采用 ERC-4337 智能账户，用 passkey 取代手动保管的 12 词助记词。官方文档所述的换机方式依赖 iCloud 钥匙串或 Google 密码管理器和同一云账户。Trust Wallet 也开源了 Barz 智能账户方案。官方资料仍把助记词控制的外部账户（EOA）作为标准路径，并将 SWIFT 列为可选项。本次比较以公开开户资料为准。 [SWIFT 上线公告](https://trustwallet.com/ru/blog/company/predstavlyaem-trust-wallet-swift) · [SWIFT 恢复说明](https://trustwallet.com/blog/company/trust-wallet-swift-understanding-passkeys-and-recoverability) · [Barz 与账户抽象](https://trustwallet.com/blog/developers/2025-account-abstraction-trends) · [标准账户文档](https://trustwallet.com/blog/product/how-to-backup-your-recovery-phrase-and-export-private-keys-in-trust-wallet)
+ 
+-其余资产也在，但都押在错误的层：Security Scanner 累计拦下 **4.58 亿美元**流向恶意合约、2025 年提示 **1.91 亿美元**可疑交易、地址投毒防护——全部是签名前的拦截，恰好是 DarkSword 绕开的那一层。这套 ROI 叙事越成功，组织越有惯性继续往签名层加码。
++Trust Wallet 的 CEO 披露，Security Scanner 累计标记了超过 **4.58 亿美元**流向恶意合约的交易，2025 年提示超过 **1.91 亿美元**可疑交易。地址投毒提示也在转账前触发。这些指标反映的是签名前的防护活动，无法用来估算设备已经失守时的保护效果。 [Trust Wallet CEO 访谈](https://cryptopotato.com/self-custody-has-won-the-argument-now-it-has-to-work-trust-wallet-ceo-interview/)
+ 
+-财务上也没有打军备竞赛的余地。TWT 报 **0.3145 美元、市值约 1.31 亿美元、FDV 约 3.15 亿美元、24 小时成交 248 万美元**（2026-11-23 01:30 UTC 快照）。对比 Coinbase 与 Phantom 的资产负债表，这决定了策略只能是**借标准 + 开源 + 默认化**，不能是自研密码学。品牌触达反而是优势：X 粉丝 426 万，对 Phantom 的 96 万。
++按原稿 **2026 年 11 月 23 日 01:30 UTC** 的快照，TWT 报 **0.3145 美元**，市值约 **1.31 亿美元**，完全稀释估值约 **3.15 亿美元**，24 小时成交额 **248 万美元**。原稿记录的 X 粉丝数为 Trust Wallet **426 万**、Phantom **96 万**。这些是代币市场和品牌触达的参考，无法据此估算 Trust Wallet 的现金或研究预算，也不能和 Coinbase、Phantom 的公司财务直接比较。我的判断是工程上优先采用通用标准和开源组件，把资源投向默认开户与恢复运营。 [TWT 历史行情参考](https://www.coingecko.com/en/coins/trust-wallet-token/historical_data)
+ 
+-| iOS 钱包 | 默认账户 | 恢复路径 | 安全叙事 | 缺口 |
+-|---|---|---|---|---|
+-| Trust Wallet | 助记词 EOA；SWIFT 为可选项 | 12 词 / 可选加密云备份 | 设备层提醒 + 签名前扫描 | 无种子不是默认；备份不可验证 |
+-| Phantom | 助记词 + Face ID；可用 Google/Apple 账户创建 | 12 词，或 Google/Apple + 四位 PIN | 设计驱动的“一键上手” | “seedless”是登录层，种子仍是最终备份 |
+-| Coinbase Wallet | Smart Wallet passkey | passkey，另可设恢复短语 | 合规 + 智能账户 | 与云账户强绑定，恢复语义复杂 |
++| iOS 钱包或账户 | 开户方式 | 恢复路径 | 产品定位 | 恢复边界 |
++| --- | --- | --- | --- | --- |
++| Trust Wallet | 标准助记词 EOA，另有 SWIFT | 12 词或可选加密云备份，SWIFT 使用同步的 passkey | 设备安全提示和签名前扫描 | SWIFT 未作默认，备份缺少用户可核验的恢复演练 |
++| Phantom | 可用助记词或 Google／Apple 账户开户，Face ID 用于解锁 | 助记词或原登录账户，部分旧账户还需四位 PIN | 简化开户与解锁 | 社交登录路径仍有可导出的助记词 |
++| Coinbase 的 Base Account（原 Smart Wallet） | 智能账户，支持 passkey | passkey、电子邮件验证码或适用账户的恢复短语 | 合规品牌与智能账户 | 恢复取决于账户配置和签名方式 |
+ 
+-*Phantom / Coinbase 依据各自帮助中心文档整理，未做实测。*
++*以上依据各家公开产品文档整理，未经实机测试。* [Trust Wallet SWIFT](https://trustwallet.com/swift) · [Phantom 开户](https://help.phantom.com/hc/en-us/articles/8071074929043-Create-a-new-wallet-in-Phantom) · [Phantom 恢复](https://help.phantom.com/articles/sign-in-to-or-import-your-phantom-wallet-15079894392851) · [Coinbase Base Account](https://help.coinbase.com/en/wallet/getting-started/smart-wallet-passkeys)
+ 
+-关键判断：市场上“seedless”话术已经泛滥，但多数只是**登录层**无密码，账户层仍是一颗单点种子。Trust Wallet 若只把 passkey 当登录方式，不构成差异化；只有做到**链上账户层没有单一种子**（passkey 签名 + 守护人/多设备恢复 + 大额走硬件或多签），才能说出一句别人说不出口的话。
++给登录加一个 passkey，并不会自动改变链上账户的恢复条件。Trust Wallet 可以把它用于账户签名，并通过守护人或备用设备组成独立的恢复路径。大额转账再用硬件签名或独立多签约束。这样才能移除单一可导出的恢复种子，并降低一台失守手机独自转走资金的风险。
+ 
+-## 差异化的三个条件，缺一不可
++## 让安全承诺可验证
+ 
+-**可验证。** 安全功能天生不可见，靠文案无法说服 iOS 用户换钱包。可验证的做法是：公开账户架构与恢复流程、接受第三方审计、设一个公开悬赏——“攻破我的 iPhone，在不触发守护人的前提下转走资金”。这比任何广告都便宜，且只有真做了架构改造的团队敢接。
++**可验证。** 公开账户架构和恢复流程，交由第三方审计，再开设范围明确的安全悬赏。悬赏可以检验当一部测试手机失守时，受独立签名规则保护的资金能否在没有额外授权的情况下被转走。恢复守护人与日常签名限制是两项能力，公开测试需要明确各自覆盖的情形。
+ 
+-**可演示。** 用户能感知的不是“内核级防护”，是“换新 iPhone 后 90 秒恢复”“币在，但手机上找不到任何 12 个单词”“设备被越狱，App 主动提示并一键迁移到新账户”。这是产品语言，不是安全语言。
++**可演示。** 给用户看如何在新 iPhone 上完成恢复，以及账户可以不生成 12 词助记词。**90 秒**是换机演练目标。检测到越狱等可见信号时，App 可发出提示，并引导用户在可信设备上迁移到新账户。
+ 
+-**可承担。** 这是最容易被忽略的代价：seedless 会把“丢币责任”从用户转移到品牌。iCloud 账户丢失、passkey 被误删、守护人失效、跨生态（iPhone 换安卓）不可迁移——今天 Trust Wallet 可以说“我们不托管、不担责”，改成 passkey + 守护人之后，用户会来找客服，媒体会来问赔付。**预算挪过去的同时，运营与支持成本必须同步挪过去**，否则一次大规模恢复失败就能把差异化打成负面。
++**可承担。** 用户会在失去 iCloud 账户、误删 passkey、找不到守护人或从 iPhone 换到 Android 时找客服，也会询问恢复失败后的责任和赔付。推出 passkey 加守护人的账户，需要同步给恢复流程和支持团队拨预算。一次普遍的恢复失败，足以损害这项安全承诺。
+ 
+-## 预算怎么挪
++## 增量预算怎么分配
+ 
+-不是“安全预算从 A 挪到 B”，而是把增量按威胁的有效性重新切：
++按各项能力能覆盖的威胁分配增量预算。
+ 
+-- **50% 账户架构与恢复**：iOS 端新用户默认开 SWIFT 类智能账户；守护人/多设备恢复；与硬件钱包配对作为大额出口；恢复成功率与时长做成对外 SLA。
+-- **30% 设备完整性与事件响应**：越狱/调试/异常配置检测、异常会话与签名行为识别、被攻陷设备的一键迁移通道。这是唯一能在“OS 已失守”假设下仍然有用的 App 侧能力。
+-- **20% 备份可用性与用户行为**：备份健康检查、定期恢复演练提醒、相册/备忘录里的助记词扫描提醒（Coruna 正是在这两种位置找词组）、加密云备份保留但不作为卖点。
+-- **明确不投**：自研密码学、以“更厚的加密”为核心的营销、在签名层继续堆 UI 拦截。
++- **50% 用于账户架构与恢复。** 对支持网络的 iOS 新用户默认提供 SWIFT 类智能账户，加入守护人或多设备恢复。大额转账可接入硬件签名。把恢复成功率和耗时写进对外服务协议（SLA）。
++- **30% 用于设备完整性与事件响应。** 识别可见的越狱、调试、异常配置和会话或签名异常，提供从可信设备发起的迁移入口。检测结果只能作为信号。迁移还需要独立验证授权和收款地址。
++- **20% 用于备份可用性与用户习惯。** 提供备份健康检查、定期恢复演练提醒，并提醒用户自行检查相册和备忘录中是否存有助记词。加密云备份继续作为可选保护。
++- **自研密码学、加密强度营销和新增签名前提示界面排在末位。** 它们对本次讨论的账户恢复和设备失守风险覆盖有限。
+ 
+-衡量指标也应当换掉：从“拦截金额”改为**iOS 端默认账户零明文种子留存率、恢复成功率与中位时长、公开悬赏被攻破次数、因备份失败产生的支持工单占比**。
++评价指标应包括 iOS 新默认账户中**无明文助记词留存的比例**、恢复成功率和中位时长、公开悬赏中证实的突破次数，以及备份失败占支持工单的比例。签名前的拦截金额仍可用于衡量原有功能。
+ 
+-如果内部判断 iOS 用户规模撑不起账户层改造，那么次优解不是“加厚备份”，而是**把 20% 那一档做深**：备份健康检查 + 被盗后的应急响应与资金迁移指引。这至少是可交付的，也诚实。
++如果 iOS 用户规模暂时支撑不了账户改造，可以先把 **20%** 这一档做深。备份健康检查和被盗后的应急响应、资金迁移指引可以先交付。
+ 
+ ## 结论
+ 
+-DarkSword 真正推翻的不是签名，而是“把密钥留在设备上、只把它藏好”这个前提。备份加密解决的是“别人读到文件”，解决不了“别人读到解密后的内存”；而它的信任锚在苹果手里，投得越深，越像在为 iOS 的下一个版本做免费验证。
++DarkSword 暴露了仅靠隐藏设备内密钥的局限。静态加密仍保护文件，密钥或备份密码在实际使用时需要可信的设备环境。Apple 提供系统保护，Trust Wallet 可以决定账户如何授权与恢复。
+ 
+-Trust Wallet 的差异化不在备份层，在**“种子不存在，但你不会丢币”**——SWIFT/Barz 已经证明技术可行，缺的是把它变成默认、把恢复做成产品、把承诺做成可公开检验的东西。这恰好是它在 iOS 上相对 Phantom（设计）和 Coinbase（合规）唯一能低成本占据的位置。
++SWIFT 和 Barz 已经提供了智能账户和 passkey 的基础。下一步是让无单一可导出种子的账户进入默认开户流程，让用户实际演练恢复，并把成功率与耗时变成可公开检验的承诺。Trust Wallet 可以用这套能力，与侧重易用性的 Phantom 和有合规品牌优势的 Coinbase 拉开差异。
+ 
+-**底线判断：把增量预算押到“无种子账户 + 可验证恢复”，备份只投可用性，不投保密性。** 如果只能做一件事，就让 iOS 新用户默认不开助记词钱包——这是唯一一个 DarkSword 之后再也没法被质疑的产品决定。
++**优先把 iOS 增量预算投给无助记词账户和可验证恢复。** 如果只能推进一项，在支持的网络上让新用户默认开户时无需生成助记词，并提供可信的恢复路径。

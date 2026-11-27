@@ -1,0 +1,78 @@
+--- baseline.zh-CN.md
++++ bullpen-private-key-import-noncustodial-trust.mdx (title and body)
+@@ -1,51 +1,47 @@
+-# Bullpen 私钥导入事件 — 非托管叙事与竞争壁垒的压力测试
++# Bullpen 私钥导入事件，非托管终端的信任压力测试
+ 
+ ## TL;DR
+ 
+-Bullpen 大概率不会彻底禁用私钥导入。更可能的是**逐步限制**：永久关闭 2024 年 beta 遗留通道，将导入钱包纳入 Turnkey 的策略与签名控制，叠加 passkey、2FA、提现白名单和大额延时；导入入口保留，但被降级、限额并分层管理。真正被削弱的是“非托管=安全”的营销等式——当登录账户就能触发签名，非托管只剩法律层面的标签。竞争壁垒会受损，但问题出在信任与积分/空投飞轮，不在 custody 技术路线。
++我判断 Bullpen 更可能分层限制钱包导入。受影响的 2024 年 beta 系统已永久关停。下一步可以把仍受支持的导入钱包纳入 Turnkey 签名策略，默认强化 passkey 或双重验证（2FA），为提现设置地址白名单、限额和大额延时。事故检验的是登录凭证能授权哪些签名，以及用户是否仍愿意在终端里留资金。积分和潜在空投的吸引力也依赖这份信任。
+ 
+----
++## 已知的事件范围
+ 
+-## 事件校准
++Bullpen 11 月 24 日初报 **18–19 个账户**受影响，涉及 **2024 年 4 至 6 月**的早期 beta 用户。11 月 25 日更新确认 **19 个**，包括联合创始人 Ansem 和另外 18 名测试者。公司称初报范围占注册账户不到 **0.005%**，并称 **99.8%** 的被转出资金来自同一账户。若同一比例适用于最终的 19 个账户，注册账户数应超过 **38 万**。以初报中的 18 个计算，下界为 **36 万**。这只是根据初报占比估算的下界。约 **200 万美元**是早期报道的量级，Bitquery 在 Ansem 的链上路径追踪到约 **257 万美元 USDC**。 [Bullpen 初报](https://x.com/BullpenFi/status/2125267130870272331) · [99.8% 更新](https://x.com/BullpenFi/status/2125314571158073654) [Bitquery](https://bitquery.io/investigations/ansem-solana-wallet-drain)
+ 
+-先校准金额与账户数量：你提到的“约两百万”是初值，链上追踪与后续报道的数字是**约 257 万美元**；受影响的是 **18–19 个 2024 年 4–6 月早期 beta 账户**，包括联合创始人 Ansem，占注册用户**不到 0.005%**。按 Bullpen 自己的披露反推，注册用户至少**36–38 万**。Bullpen 称 **99.8%** 的损失来自单一账户，结合披露基本就是 Ansem，因此这不是平台级普遍损失，而是针对早期测试用户群的定向接管。[Bullpen 声明](https://x.com/BullpenFi/status/2125267130870272331) [99.8% 更新](https://x.com/BullpenFi/status/2125314571158073654)
++按原稿所引的导入时间，从 **2024 年 6 月到 2026 年 11 月约 29 个月**。Bullpen 称入口是与早期账号关联的遗留系统。公开信息尚未交代旧密钥如何保存或迁移，以及未授权请求如何获得签名许可。另有报道转述 Ansem 称 2FA 被绕过。这个说法涉及账户认证，现有材料不足以确认 Turnkey 的签名环境或密码学组件受到攻破。 [Bullpen 11 月 25 日更新](https://x.com/BullpenFi/status/2125585437687181318) [2FA 说法的报道](https://www.kucoin.com/news/flash/bullpen-2fa-vulnerability-leads-to-19-account-breaches-49-ansem-supply-remains-secure)
+ 
+-真正值得注意的是时间跨度：2024 年 6 月导入的 Solana 私钥，到 2026 年 11 月仍有签名能力，约 **29 个月**。Bullpen 只说攻击者通过“与账户绑定的遗留系统”进入，没有说明密钥是留在旧测试环境还是被迁移到生产；但结果一样——早期导入的密钥在近两年半后仍能触发转账。[Bullpen 最终说明](https://x.com/BullpenFi/status/2125585437687181318) 另有报道称旧账户的 2FA 被绕过；这与“Turnkey 密码学被攻破”是两回事，问题更像账户认证与签名授权，而非 MPC/TEE 本身。[Odaily 转述](https://www.kucoin.com/news/flash/bullpen-2fa-vulnerability-leads-to-19-account-breaches-49-ansem-supply-remains-secure)
++Bankless 报道，相关钱包在数小时内卖出约 **8,750 万枚 ANSEM**，相当于约 **8.8% 的总供应量**。原稿的市场快照记录 ANSEM **24 小时跌约 41%**。价格跌幅会随采样时刻和窗口变化。Bitquery 追踪到部分资金经 Relay 从 Solana 转到 Arbitrum，随后约 **257 万美元 USDC**被换成 **42.24 BTC**，按原稿约值 **250 万美元**。截至 **11 月 25 日 14:40 UTC** 的链上记录，这些 BTC 未再移动。Bullpen 称正与 FBI 等机构合作并委托独立安全审查。截至 **11 月 27 日**，已查的公开更新未给出赔偿安排。部分观察者对交易签名者的身份有争议。19 个账户遭未授权访问是公司披露的事件范围。 [Bankless](https://www.bankless.com/read/news/ansem-blames-bullpen-breach-for-2-57m-wallet-drain) [Bitquery](https://bitquery.io/investigations/ansem-solana-wallet-drain) [Bullpen 11 月 25 日更新](https://x.com/BullpenFi/status/2125585437687181318) [Unchained](https://unchainedcrypto.com/ansem-says-his-solana-wallet-was-hacked-through-his-bullpen-profile-some-analysts-doubt-it/)
+ 
+-资金路径也降低了追回概率：约 **8750 万枚 ANSEM**（约 8.8% 供应）在数小时内卖出，ANSEM 24 小时跌约 **41%**；资金经 Relay 桥到 Arbitrum，再换成 BTC，据 AMLBot 引述约 **42.24 BTC（约 250 万美元）**已在链上静置（dormant）。Bullpen 称正配合 FBI，但截至 2026-11-27，公开信息中仍未给出赔偿方案。[Bankless](https://www.bankless.com/read/news/ansem-blames-bullpen-breach-for-2-57m-wallet-drain) [Airdrops.io](https://airdrops.io/bullpen/) 链上观察者仍在争论“黑客攻击还是自导自演”，但 19 个账户被未授权访问已是公司确认的事实；签名者身份仍未定论。[Unchained](https://unchainedcrypto.com/ansem-says-his-solana-wallet-was-hacked-through-his-bullpen-profile-some-analysts-doubt-it/)
++## 账户登录怎样影响签名
+ 
+-## 架构真相
++Bullpen 首页主打非托管和 SVM、EVM 钱包导入。文档称，注册会创建 Turnkey 嵌入式钱包，用户可导出私钥，也支持导入已有私钥或 **12／24 词助记词**。当前的产品文档描述的是正式产品能力，早期 beta 所用的存储和授权配置尚未公开。 [Bullpen 首页](https://bullpen.fi/) [创建账户](https://docs.bullpen.fi/getting-started/creating-an-account) · [钱包管理](https://docs.bullpen.fi/getting-started/wallet-management)
+ 
+-Bullpen 的公开说法是“**fully non-custodial**，由 Turnkey 的企业级基础设施管理私钥，air-gapped、military-grade”；同一张首页又写着“**Bring your wallets. Import your SVM + EVM wallets**”。[Bullpen 首页](https://bullpen.fi/) 文档进一步说明：注册时自动创建 Turnkey 嵌入式钱包，用户可导出私钥；也支持粘贴私钥或 12/24 词助记词导入。[创建账户](https://docs.bullpen.fi/getting-started/creating-an-account) [钱包管理](https://docs.bullpen.fi/getting-started/wallet-management)
++导入完整私钥后，原钱包仍可使用同一把钥匙，导入后的签名能力受账户认证和钱包策略约束。账户失守时，关键问题是攻击者能否凭登录权限授权转账。Bullpen 条款将其描述为非托管服务，并规定用户承担账户活动的责任。实际控制权与损失责任仍需结合钱包策略、条款和调查结果来判断。加严 passkey、设备绑定、白名单、延时或硬件审批可以改变签名权限。由 Bullpen 持钥或冻结、找回资金则会引入不同的运营、资本和潜在监管义务。我判断后者的可能性较低。 [Bullpen 条款](https://bullpen.fi/terms) [Turnkey 策略文档](https://docs.turnkey.com/features/policies/overview)
+ 
+-这三件事并不矛盾，但拼在一起就暴露了真正的边界。Bullpen 文档的表述是“只有你能授权交易”；可一旦用户把**完整私钥**导入，签名能力就落在“账户 + 应用”这一层。账户被接管，非托管在“谁持有密钥”的技术定义上仍成立，在损失承担上却和托管无异——Bullpen 的条款明确写“你对自己账户下发生的一切活动负责”，且“Bullpen 不是托管人、不对交易损失负责”。[Bullpen 条款](https://bullpen.fi/terms) 所以“非托管”描述的是**谁持有密钥**，不是**谁能发起签名**；后者才是这次事故的失败边界。
++CLI 文档已列出功能边界。导入的 EVM 钱包仍会显示在钱包列表中，但不能用于 Bullpen 管理的转账、所有权验证型 Polymarket 恢复、由 Bullpen 管理的交易操作或设为主 EVM 钱包。文档仍提供 Solana 钱包导入。这支持按链和功能限制的方向，尚不足以确定 Solana 在所有端上的权限。 [Bullpen CLI](https://cli.bullpen.fi/reference/commands/wallet/import/)
+ 
+-因此，“更严格的托管架构”要拆成两层：更严格的**签名授权**（passkey、设备绑定、白名单、延时、硬件确认）是大概率，而且不需要放弃非托管；真正的**托管化**（Bullpen 持有密钥、可冻结或找回）是小概率，那会改变牌照、资本和品牌基因。把两者混为一谈，就会高估 Bullpen 转向托管的可能性。
++## 私钥导入会不会被停用
+ 
+-产品层面其实已经在“逐步收紧”：CLI 文档写明，导入的 EVM 钱包“可见，但不可用于 Bullpen 管理的转账、Polymarket 恢复、托管交易和主 EVM 选择”；Solana 导入则仍被描述为完整功能。[Bullpen CLI](https://cli.bullpen.fi/reference/commands/wallet/import/) 这说明 Bullpen 并非没考虑过限制导入，而是**按链、按功能分层限制**——EVM 已降级，Solana 仍保留完整导入。它更像“禁用无约束的导入”，而不是“禁用导入”。
++截至 **2026 年 11 月 27 日**，Bullpen 已公布永久关闭受影响的遗留系统，称其他账户未受影响，尚未宣布全面停用导入。融资材料把非托管列为四项投资逻辑之一。保留这一产品定位，也符合现有业务设计。 [Bullpen 11 月 25 日更新](https://x.com/BullpenFi/status/2125585437687181318) [Bullpen 投资方](https://docs.bullpen.fi/about-bullpen/investors)
+ 
+-## 弃用路径
+-
+-截至 2026-11-27，没有看到 Bullpen 任何“弃用私钥导入”的官方声明；最新说法只是“永久关闭受影响的遗留系统”，并强调其他账户未受影响。[Bullpen 更新](https://x.com/BullpenFi/status/2125585437687181318) 从激励上看，全面弃用也不符合它的融资说法：投资方页面把“**Non-custodial is non-negotiable**”列为四条投资逻辑之一；转向真正托管等于换一门生意，需要牌照、资本和合规体系。[投资方页面](https://docs.bullpen.fi/about-bullpen/investors)
+-
+-全面弃用还有三个现实阻力。第一，导入是获客入口——专业交易员和空投参与者普遍不愿为了一个终端重新建钱包、搬资产，“Bring your wallets”是首页卖点。第二，行业方向相反：Pump.fun 计划在 11 月 30 日后退役网页端外部钱包登录，迁移用户需改用邮箱/社交登录，导入私钥由 Privy 持有；Karpelès 批评其“端到端加密”说法误导，因为 Privy 的 TEE 会解密并持有私钥。[The Block](https://www.theblock.co/news/ecosystems/2026-11-23-pump-fun-draws-criticism-over-private-key-imports-as-it-retires-external-wallet-sign-in-on-web-444926) 第三，删掉导入按钮不解决根因：嵌入式钱包同样可能被账户接管，真正的修复是认证与签名策略，而不是导入入口。
++导入是老用户接入的一个途径。专业交易员和积分参与者可沿用已有地址，省下重新开户和转资产的成本。行业里也有把外部钱包接入嵌入体系的做法。比如 pump.fun 计划在 **11 月 30 日**结束网页端外部钱包登录，保留原地址的迁移路径需要导入 Privy。Mark Karpelès 对端到端加密表述的批评，关注的是导入的密钥在 Privy 的可信执行环境（TEE）内解密。即使关闭导入，嵌入钱包的账户仍可能被接管，所以账户认证与签名策略仍需修复。 [Bullpen 首页](https://bullpen.fi/) [pump.fun 迁移公告](https://pump.fun/docs/wallet-login-changes) [Privy 导入架构](https://docs.privy.io/wallets/wallets/import-a-wallet/architecture) [Karpelès 的批评报道](https://tech.yahoo.com/cybersecurity/articles/pump-fun-faces-pushback-asking-213700831.html)
+ 
+ | 情景 | 具体动作 | 判断 | 对非托管定位与壁垒 |
+-|---|---|---|---|
+-| **逐步限制 / 分层硬化（基准）** | 关闭 2024 beta 遗留通道；导入强制迁移到 Turnkey 策略；passkey/2FA、提现白名单、大额延时或硬件确认；导入钱包限额或降级 | 最可能 | 标签保留，但“fully non-custodial”改为限定表述；短期信任折价，长期看执行 |
+-| **全面禁用导入** | 只留 Turnkey 嵌入式钱包；外部钱包只读；禁止粘贴私钥/助记词 | 中低 | 安全叙事更纯粹，但“bring your wallets”卖点消失；专业用户流向 Axiom、Photon、Trojan、GMGN |
+-| **转向托管 / 可恢复账户** | Bullpen 持有或可冻结密钥，提供找回、保险 | 低 | 彻底改写品牌与融资逻辑；需要牌照与资本，不再是 crypto-native 非托管终端 |
++| --- | --- | --- | --- |
++| **分层限制，基准情景** | 关闭 2024 beta 遗留通道；将受支持的导入钱包纳入 Turnkey 策略；默认启用 passkey 或 2FA，配合提现白名单、限额、大额延时或硬件确认 | 最可能 | 保留非托管定位；短期有信任折价，长期取决于执行 |
++| **全面禁用导入** | 只保留 Turnkey 嵌入钱包；外部钱包仅供查看；停用私钥与助记词导入 | 中低 | 沿用旧地址的获客优势消失，部分专业用户可能转向 Axiom、Photon、Trojan、GMGN |
++| **转向托管或平台可恢复账户** | 平台持钥或具备冻结能力，提供找回或保险 | 低 | 改变品牌定位，并增加资本、合规与潜在牌照要求 |
+ 
+-## 壁垒重估
++## 竞争壁垒怎样变化
+ 
+-从财务看，Bullpen 从来不是靠手续费轻松盈利的成熟生意：过去 30 天费用 **15,279 美元**，年化约 **49 万美元**；2026 年 10 月费用 **23,982 美元**，对比 2025 年 10 月 **161,631 美元**，约 **-85%**；Q4 2026 至今 **36,550 美元**，而 Q4 2025 全季 **314,620 美元**。Perp 30 天名义成交 **3,366 万美元**，累计 **24.87 亿美元**（数据截至 2026-11-27）。[DeFiLlama](https://defillama.com/protocol/bullpen) 也就是说，事件之前手续费业务就已经在降温；这次事故更像是加速器，而非起点。
++DefiLlama 截至 11 月 27 日的快照显示，过去 **30 天费用为 15,279 美元**，按 **365／30** 折算约 **18.6 万美元／年**。2026 年 10 月费用 **23,982 美元**，2025 年 10 月 **161,631 美元**，同比约 **−85%**。2026 年第四季度截至 **11 月 26 日**约 **36,551 美元**，2025 年第四季度完整季度约 **314,616 美元**。永续名义成交 **30 天 3,366 万美元**、累计 **24.87 亿美元**。最能说明事故前已有降温的是同月费用比较，季内累计与整季的长度不同。事故可能加快交易降温，是否已经发生还要看后续数据。 [DefiLlama](https://defillama.com/protocol/bullpen)
+ 
+-终端类产品的壁垒通常是执行质量、资产发现、社交/分发、切换成本和积分/代币预期；custody 只是底层信任条件，不是差异化来源。Bullpen 真正的壁垒是 **Ansem 的流量与信任、100M 积分（约 70M 未分配、Season 3、尚无 TGE）、$BULL ticker、Hyperliquid + Polymarket + Solana 一站式体验**，以及 6th Man Ventures 领投、Delphi/Manifold/Karatage/Temporal/Sparta 参投的背书（金额与估值未披露）。[MEXC](https://blog.mexc.com/token-reviews/bullpen-airdrop-2026-how-to-farm-bull-points-on-the-multi-chain-terminal-co-founded-by-ansem/) [投资方页面](https://docs.bullpen.fi/about-bullpen/investors)
++终端的竞争力取决于执行质量、资产发现、社交分发、切换成本与积分预期。Bullpen 有 Ansem 的触达、Hyperliquid、Polymarket 和 Solana 的一站式体验。外部积分资料称，计划总量 **1 亿积分**，约 **7,000 万**未分配，处于 **Season 3**，使用 **$BULL** 作为预期代码。截至观察日，已查材料未确认代币生成事件（TGE）。官方投资方页面列出 **6th Man Ventures** 领投，以及 Delphi、Manifold、Karatage、Temporal、Sparta，页面未披露金额和估值。 [MEXC](https://blog.mexc.com/token-reviews/bullpen-airdrop-2026-how-to-farm-bull-points-on-the-multi-chain-terminal-co-founded-by-ansem/) · [Airdrops.io](https://airdrops.io/bullpen/) [Bullpen 投资方](https://docs.bullpen.fi/about-bullpen/investors) [Bullpen 市场接入](https://docs.bullpen.fi/trading)
+ 
+-这次事件打中的正是这条飞轮：用户要在终端里留资金才能快速交易；联合创始人公开说“不能确信资金安全、建议先提走”，会先压低存款与交易量，再传导到积分参与。积分/空投 EV 被加了一层安全折价，这比 257 万美元本身更贵。[Airdrops.io](https://airdrops.io/bullpen/) 外溢效应是品类折价——所有要求导入私钥的终端都被重新审视，竞品可能借“no key import”抢短期信任红利；但 Bullpen 若真的全面弃用，反而会把专业用户推向竞品。**非托管不是护城河，是入场券；真正的壁垒是让用户愿意把资金留在这个界面里。**
++用户要先把资金留在终端里，才有随时交易和累积积分的便利。Ansem 公开表示他无法确认资金安全，并建议用户先提走。若用户减少留存资金，日常成交和积分参与都可能受到影响。**风险折价最可能先出现在存款留存与积分预期上。** 竞品可能借无需导入私钥的接入方式赢得信任。Bullpen 若全面停用导入，也可能失去原本喜欢用现有钱包的交易者。 [CryptoSlate](https://cryptoslate.com/crypto-host-who-once-promoted-a-50-billion-memecoin-vision-now-tells-traders-to-get-out/)
+ 
+ ## 结论
+ 
+-把这次事件读成“非托管 vs 托管”的二选一，会误判 Bullpen 的最优反应。它真正要修的是**从登录到签名的授权链**，而不是把钥匙从用户手里拿走。全面禁用导入既不能消除账户接管风险，又会牺牲获客；托管化则与它的融资说法和品牌基因冲突。基准情景是逐步限制：旧 beta 通道停用，导入被降级并纳入 Turnkey 策略，passkey/2FA/白名单成为默认。非托管标签会保留，但“fully non-custodial”从风险承诺降级为法律描述。
++Bullpen 优先要厘清的是从登录到签名的授权链。我的基准情景仍是逐步限制导入，在正式签名策略下区分不同链、功能和限额，默认强化认证与提现确认。保留非托管定位的同时，平台可以公开哪些凭证能进行哪些操作，让用户评估风险。
+ 
+-未来 2–4 周，三个硬信号足够判断方向：是否公布根因与赔偿；导入钱包是否被限制提现或交易；存款与交易量是否在两周内恢复。**底线判断：** 短期看，“是否弃用导入”不是最关键的问题——真正的信号是 Bullpen 敢不敢公布根因、赔偿方案和导入钱包的签名策略。三件事都含糊，“fully non-custodial”就只是营销；三件事都做实，非托管定位反而能从“标签”升级为“可验证的承诺”。
+\ No newline at end of file
++未来 **2–4 周**，我会看三件事。第一，是否公布根因和赔偿安排。第二，导入钱包的提现或交易权限有没有收紧。第三，存款与交易量能否在 **两周内**恢复。前两项检验平台处理授权问题的进度，第三项检验交易者是否愿意把资金留在终端。

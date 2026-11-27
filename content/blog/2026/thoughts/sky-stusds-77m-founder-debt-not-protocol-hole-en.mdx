@@ -1,0 +1,135 @@
+---
+title: 'SKY / USDS: how the $77 million "hole" formed'
+publishedAt: '2026-11-24'
+summary: 'The $77 million is the unpaid stUSDS debt of a Safe linked to Rune Christensen. It is 48% of the pool and has not had a dollar of principal repaid since the loans opened in May 2025; it is not a hole in the USDS balance sheet. The pool was fully lent by November 10 and its rate hit the 50% cap, then a November 19 report on illicit funds triggered more than $2 billion of USDS swapped out for USDC, turning a slow liquidity squeeze into a confidence shock for SKY. USDS still holds its dollar peg and the risk sits with stUSDS depositors and SKY. Switched-off liquidations and a capped oracle are the institutional root of the problem.'
+slug: 'sky-stusds-77m-founder-debt-not-protocol-hole-en'
+category: 'thoughts'
+language: 'en'
+translationKey: 'sky-stusds-77m-founder-debt-not-protocol-hole'
+sourceSlug: 'sky-stusds-77m-founder-debt-not-protocol-hole'
+---
+
+## TL;DR
+
+**The $77 million is unpaid debt on a founder-linked position, not a hole in USDS. But it is already a liquidity gap for stUSDS and a sword hanging over SKY.**
+
+- **This is a loan, not a protocol loss.** A Safe using the ENS name `rune.eth` owes `$77.1M` on stUSDS, `48%` of everything the pool has lent. Since its loans opened in May 2025 it has borrowed 25 times and repaid principal zero times; `$10.4M` of interest has rolled into the debt.
+- **The pool was fully lent by November 10.** Only unlent USDS can be withdrawn, the loans have no maturity and liquidations are switched off, so the rate climbed from about `6%` at the start of the month to the `50%` cap. On November 23 the pool held about `$159M` and only `$2,715` could be withdrawn immediately.
+- **The November 19 report turned it into a confidence shock.** After CoinDesk reported that $518M of illicit funds had passed through the Sky PSM, `more than $2B` of USDS was swapped for USDC that day, USDS supply fell by nearly two-fifths in a day, and SKY touched `$0.0388`.
+- **USDS itself is fine.** Its low was `0.9962`, and the protocol holds about `$9.3B` of collateral against about `$6.1B` of liabilities. The risk sits with stUSDS depositors and SKY.
+- **At Sky's own oracle price, the position is already under the liquidation line.** At the capped `$0.025`, the 3.58 billion SKY are worth `$89.5M`, about `116%` of the debt, below `120%`. Rune says he still owes about $77M after repaying $3M, so **the repayment did not bring it back over the line**.
+- **The root cause is parameters, not the stablecoin.** No maturity, no liquidation, a capped oracle and one borrower holding half the pool. The 50% rate cap looks like a penalty on the borrower but in practice just makes the debt snowball.
+
+> **Check notes**: the draft's main figures match the primary sources; four points were rewritten to match them. (1) The draft said that after Rune repaid $3M, coverage at the oracle price returned to about **121%**, "right on the line". That subtracts $3M from $77.1M, but Rune's post says that **after** the repayment he "still owes about 77M"; on that basis coverage is still about **116%**, **still under the liquidation line**. Bitquery's $77.1M on November 19 and Rune's "repaid 3M, still owe about 77M" on November 23 differ by about $3M, which four days of interest (roughly $0.2M to $0.4M) cannot explain. Rune may have positions beyond this Safe, or he may just be rounding; **the two cannot be reconciled for now**. (2) The draft attributed the November 26, 2025 forum post that lowered the liquidation ratio to Rune; the forum thread does not name an author, so the body leaves it unattributed. (3) The Odaily example, "selling 100M SKY moves price more than 20%, about 2.5% of the holding", is based on its estimate of about 4 billion SKY; against the 3.58 billion on chain it is about **2.8%**. Its "bad debt could exceed $100M" **cannot refer to Rune alone**, since his whole debt is about $77M; it can only mean the entire pool of about $160M. (4) The November 23 figure of "USDC reserve at 28.3% of circulating USDS and DAI" uses the dashboard definition of circulating supply, not $1.76B divided by $6.11B (which would be about 29%). At the November 19 low, against the $6.92B of Ethereum supply net of the buffer, the USDC available for immediate swaps covered only **12.6%**.
+
+---
+
+## 1. First, what this is: a debt, not a protocol hole
+
+On November 23 Rune Christensen wrote on X that he had just repaid **3M USDS** from his staked-SKY borrow positions, that he "still owe[s] about 77M", that he is exploring selling part of his SKY directly to institutional investors who share Sky's vision, and that he will post updates at least every 48 hours. In his words, "This is on me": he had grown overconfident in Sky's strength and borrowed without thinking through what happens if rates spike, which is part of why stUSDS cannot withdraw. [The Block](https://www.tradingview.com/news/the_block:62fda75e7094b:0-sky-cofounder-weighs-sky-sale-to-repay-77-million-as-stusds-pool-runs-dry/)
+
+The on-chain picture is more specific. On November 19 Bitquery read every loan stUSDS backs. The Safe that uses the ENS name `rune.eth` has **4 loans on Sky's new lending engine, owing $77.1M in total**, which is **48%** of everything stUSDS has lent. Since the loans opened in May 2025 there have been **25 draws** (the first 4 carried older debt over from the previous engine; the other 21 were $21.9M of new money) and **0 repayments**; over the same months 77 other borrowers repaid 307 times. **$10.4M** of interest has never been paid in cash and has rolled into the debt, which rose from about $52.9M in October 2025 to $77.1M. The collateral is **3.58 billion SKY**, about **15%** of SKY in circulation. [Bitquery](https://bitquery.io/investigations/sky-stusds-rune-eth-loan)
+
+Three things link the Safe to Rune: `rune.eth` points to it, Oak Research listed it as his address in 2024, and it has exchanged funds with a wallet labelled as his. **No one has shown who actually signs for the Safe.** But Rune publicly claimed the borrow positions as his, and the market treats them that way.
+
+The key is the accounting. **stUSDS is a product Sky itself calls "risk capital"**: depositors earn the interest borrowers pay and also bear the loss if borrowers default. For stUSDS holders, then, the $77M is a liquidity gap they can see but not reach. It only becomes a realized loss, to be absorbed by stUSDS holders and Sky's reserves (about **$93M**), if SKY keeps falling or the collateral has to be sold at a discount. **It is not misused USDS reserves, and it is not USDS over-issuance.**
+
+## 2. How the pool was lent dry
+
+The stUSDS rules are simple. Depositors put in USDS and receive stUSDS; the pool lends that USDS to borrowers who post staked SKY as collateral; **only USDS that has not been lent out can be withdrawn**. The loans have no maturity and liquidations are switched off, so once the pool is 100% lent, depositors can only wait for borrowers to repay or for new deposits.
+
+| Date | What happened | Key figures |
+|---|---|---|
+| 2025-05 | The `rune.eth` Safe opens 4 loans on the new lending engine | 25 draws and 0 repayments since |
+| 2025-09 | stUSDS starts funding staked-SKY borrowing | The pool becomes the main funding source |
+| 2025-10 | LlamaRisk flags one address holding 93% of USDS borrowed against SKY | The Safe then owed about $52.9M |
+| 2025-11-26 | Forum post: liquidation ratio cut to 120%, SKY oracle capped at $0.025 | Previously 145%; the "temporary" change still stands a year later |
+| 2026-10-26 | The Safe's last $1M draw | Reached a Kraken deposit address 43 minutes later |
+| 2026-10-30 | Raw Power Games, founded by Rune, goes bankrupt | Close in time to the borrowing, which drew questions |
+| 2026-11-10 | The pool becomes fully lent | From here only new deposits can be withdrawn |
+| 2026-11-19 | CoinDesk/Inca report plus more than $2B swapped out | USDS supply -40% in a day, SKY low $0.0388 |
+| 2026-11-23 | Rune repays $3M and apologizes | Pool about $159M, $2,715 withdrawable |
+
+**Concentration is the first problem.** The largest borrower holds 48%, the second owes **$40M (25%)**, and the top five together hold **90%**; the other 30 borrowers share the remaining tenth. Some forum participants say the second borrower is linked to the Sky Frontier Foundation; Bitquery reads it as an unlabelled wallet with no direct transfers to or from the `rune.eth` Safe, and **the link has not been officially confirmed**.
+
+**The rate mechanism backfired.** The fuller the pool, the higher the stUSDS rate, which is meant to push borrowers to repay and draw in new deposits. But the rate rose from about 6% in early November to 20%–25% around November 19 and finally hit the **50% cap**. At $77M and 50%, **monthly interest is about $3.2M**, so Rune's $3M covers roughly one month of interest and leaves the principal almost untouched. Depositors cannot exit through the product and can only sell at a discount on Curve and Morpho; the forum proposal puts that discount at about **15%**, and Odaily counts the two exit routes together at less than **6%** of the pool. [Odaily](https://www.odaily.news/en/post/5214013)
+
+Where the borrowed money went also matters. Bitquery traced **$74.6M** of USDC sent by the Safe to a Bitcoin Suisse deposit address since 2024, with smaller sums reaching Kraken; the last $1M draw on October 26 reached a Kraken deposit address **43 minutes** later. Once the funds reach an exchange, the chain loses sight of them.
+
+## 3. The second shock on November 19
+
+On November 19 CoinDesk published an Inca Digital investigation: over five years, about **$518M** of funds from illicit sources such as hackers and sanctioned entities passed through Sky's PSM (Peg Stability Module), about **$101.9M** of it linked to North Korea, including funds from the February 2025 Bybit hack. The core worry is that the PSM holds Circle's USDC, and a court-ordered freeze could hit Sky's ability to redeem. [CoinDesk](https://www.coindesk.com/business/2026/11/19/north-korean-hackers-used-sky-s-stablecoin-system-putting-billions-at-freeze-risk)
+
+Sky pushed back, citing a review by its risk adviser Block Analitica: $518M is less than **0.06%** of the more than **$960B** that has passed through the PSMs, about two-thirds of it took place between 2021 and mid-2024, before LitePSM launched, and most of the flagged transactions went through automatic routers such as 1inch, ParaSwap and MetaMask Swaps, so it cannot simply be attributed to Sky. [Cointelegraph](https://cointelegraph.com/news/sky-protocol-sees-2b-in-stablecoin-withdrawals-disputes-illicit-fund-claims)
+
+The market ran first anyway. According to the Sky Frontier Foundation, **more than $2B** of USDS was swapped for USDC at par on November 19. The USDC available for immediate swaps on Ethereum fell from **$2.56B** to **$867M** (about $1.69B in a few hours), then recovered on an Obex repayment of about $100M and a $12M swap, to about $1.13B on November 20 and about **$1.76B** on November 23. [CryptoSlate](https://cryptoslate.com/more-than-2-billion-rushed-out-of-skys-stablecoin-in-a-single-day/) USDS supply shrank by nearly **40%** in one day to about **$3.2B**, combined USDS and DAI fell to **$6.11B** on November 20 (-37.8% over 30 days), against protocol collateral of about **$9.3B** and reserves of about **$93M**.
+
+**This was a run on confidence, not a USDS depeg.** USDS bottomed at **0.9962** on November 19 and was back at **1.0001** on November 24. Liabilities shrank and collateral coverage actually rose. What was damaged was the SKY price and the expectation of being able to exit stUSDS.
+
+It helps to keep straight which number measures which risk. $9.3B against $6.1B is **protocol-wide solvency**. For someone who wants to swap USDS back to USDC right now, what matters is the pool of USDC in the PSM. At the November 19 low it covered only **12.6%** of the $6.92B of USDS and DAI on Ethereum (net of the buffer); on November 23 it was back to **28.3%** on the dashboard definition, still below Sky's own 30% target.
+
+Korean exchanges amplified this. On November 23 Upbit, Bithumb and Coinone put SKY and USDS on their trading warning lists and suspended deposits, with Coinone explicitly citing the risk of losses for stUSDS holders. According to PANews, the review runs until **December 21–24**, when the exchanges decide whether to extend it, lift the warning or end trading support. [PANews](https://www.panewslab.com/en/articles/01a2081e-700a-71ec-a6ee-c7beccf891c7)
+
+## 4. The collateral, and the reflexivity of SKY
+
+SKY is at **$0.0400** (2026-11-24 00:00 UTC), **-43.1%** over 30 days and **-21.8%** over 7 days, about 60% below its October 5 all-time high of **$0.10087**. Market cap is **$936M**, 24-hour volume **$65.09M**, and the November 19 low was **$0.03875**.
+
+That leaves the position in an awkward place:
+
+| Basis | SKY price | Value of 3.58B SKY | Cover of the $77.1M debt |
+|---|---|---|---|
+| Market price | 0.0400 | about $143M | about 1.86x |
+| Sky oracle cap | 0.025 | $89.5M | about 116%, under the 120% line |
+| Market-price insolvency threshold | about 0.0215 | $77.1M | 100% |
+
+At market prices it looks safe; at the price Sky itself assigns to these loans, **it is already under the liquidation line**. Rune says he still owes about $77M after repaying, so that row is still about 116% after the repayment. For the market value of the collateral to fall below the face value of the debt, SKY would have to drop another **46%** or so.
+
+**The problem is that liquidations are switched off.** On-chain readings cited in the forum thread show that as of a November 19 block the liquidation ratio is still 120%, the oracle still returns $0.025, and `LOCKSTAKE_CLIP.stopped()` is 3: the auction module is stopped, so falling below the line triggers no forced auction. The November 26, 2025 post cut the ratio from 145% to 120%, capped the oracle at $0.025, and said the cap could not be raised until the ratio returned to 145%. It was a temporary response to thin liquidity, and a year later it has not been reversed. [Sky forum](https://forum.skyeco.com/t/stusds-liquidation-ratio/28443)
+
+That creates a dilemma. Without liquidation, stUSDS depositors cannot get their money back. With liquidation, SKY equal to 15% of circulating supply gets sold into a thin market, and the actual recovery could be far below face value. Odaily, citing 1inch data, says selling just 100 million SKY would move the price more than **20%**.
+
+This is a reflexive loop:
+
+```text
+SKY falls → thinner collateral buffer → wider stUSDS discount → fewer new deposits → drier pool → SKY harder to stabilize
+```
+
+The 15% of supply Rune holds is itself an overhang on the market. Repaying $77M by selling SKY at market would take about **1.9 billion** tokens, around **8%** of circulating supply, which can hardly be done without crashing the price. That is why he has turned to direct sales to institutions.
+
+## 5. Ways out, and scenarios
+
+Three tracks are running in parallel.
+
+**1. Rune repays himself.** He has repaid $3M (about 3.9% of the debt), is exploring direct sales of SKY to institutions, and has promised updates at least every 48 hours. **No institutional sale has been completed**; buyer, size and price are undisclosed. ABCDE co-founder Du Jun has said publicly that he is willing to buy all of Rune's SKY, but that is an expression of interest with no binding force.
+
+**2. Governance proposals.** There are at least three on the forum, and **all are still under discussion; none has passed a vote**:
+
+- **misher's "stUSDS liquidity and protection plan"**: lock the rate at 10%, pause new borrowing against staked SKY, cut the small-loan minimum from $30,000 to $10,000, and use about $7M a month to buy stUSDS on the market until it trades back above 0.98. The ecosystem proposal reported by The Block (rates cut to 10%, new borrowing paused, protocol reserves used to buy stUSDS) matches it.
+- **ares's amendment**: lock the rate at 20% but require a mandatory repayment schedule, have related parties (the foundation, the founder) repay first, distribute repayments pro rata, and track them publicly.
+- **Conquercube's "atomic OTC debt-for-SKY"**: take **$40M–$50M** from the surplus buffer or treasury and let borrowers sell SKY to the protocol atomically at about **$0.038–$0.042**, with the proceeds going straight to wipe debt and never touching the borrower's wallet. The aim is to cut utilization from about 100% to **68%–74%** and reopen withdrawals at once. [Forum proposal](https://forum.skyeco.com/t/proposal-to-resolve-the-stusds-liquidity-crisis-immediately-40-50m-atomic-otc-debt-for-sky-buyback/28473)
+
+**3. Foundation or related-party repayment.** Forum discussion says a position linked to the Sky Frontier Foundation owes about $40M while holding about $25M–$28M of sUSDS. Using that to repay first would free about a quarter of the pool without selling any SKY. It is the most realistic short-term source, but as noted above, **the link itself is unconfirmed**.
+
+Three scenarios:
+
+- **Base case**: Rune completes some institutional or OTC sales, related parties repay part, governance brings rates down and reopens deposits, stUSDS withdrawals gradually resume, the secondary discount narrows, and SKY finds a floor around $0.04.
+- **Stress case**: SKY falls toward $0.025–$0.03, coverage on the oracle basis stays under 120%, stUSDS depositors start accepting discounted exits, and Sky's reserves are drawn on.
+- **Tail case**: the 3.58 billion SKY have to be disposed of and recovery is far below face value. The loss on Rune's position alone is capped at its debt of about $77M; only if other staked-SKY positions, including the second-largest borrower, are hit at the same time could bad debt across the whole pool of about $160M exceed $100M. That would hit every stUSDS holder and deliver a second blow to SKY.
+
+What to watch is concrete:
+
+- **How much USDS Rune actually repays** in his 48-hour updates, not what he says;
+- whether stUSDS **withdrawable liquidity** rises from $2,715, and whether the secondary discount narrows from 15%;
+- whether SKY holds **$0.025** (the oracle line) and **$0.0215** (the market-price insolvency line);
+- the outcome of the Korean exchange reviews on December 21–24;
+- whether PSM USDC as a share of circulating USDS and DAI gets back above the **30%** target.
+
+---
+
+**Conclusion.** At heart this is **a compound failure of governance and risk parameters**, not an insolvent stablecoin. The protocol let one founder-linked borrower take 48% of a pool that has no maturities, switched-off liquidations and a capped oracle, and go 18 months without repaying principal; the 50% rate cap looks like a penalty on the borrower but only makes the debt snowball. The November 19 report on illicit funds then turned a slow liquidity squeeze into a confidence shock for USDS and SKY.
+
+For USDS holders, the good news is that the stablecoin still holds its peg, the protocol has $9.3B of collateral against $6.1B of liabilities, and PSM USDC is back above $1.7B. The bad news is that stUSDS holders are locked in the pool, and the key is held by a founder who is still working out how to sell assets to repay.
+
+**Bottom line:** the $77M is unpaid debt on a founder position, not a hole in USDS; but at Sky's own pricing it is under the liquidation line right now, and liquidation is simply switched off. In the short run, watch Rune's actual repayments; in the medium run, whether governance can separate "founder credit" from the pool; in the long run, whether Sky puts a real cap on any single borrower and restores the "temporary" liquidation parameters. Otherwise the next rate spike will replay the same story.
+
+*SKY and USDS prices are a snapshot provided by the site owner at 2026-11-24 00:00 UTC; on-chain position data are Bitquery's November 19 readings; events and proposals are linked in the text. Personal notes, not investment advice. DYOR.*
